@@ -286,7 +286,23 @@ function SuccessPage({ provider, userData, onContinue }: { provider?: string | u
 }
 
 // Main Signup Page Component
-function SignupPage({ onSocialLogin }: { onSocialLogin: (provider: string) => void }) {
+function SignupPage({ 
+  onSocialLogin, 
+  isLangOpen, 
+  setIsLangOpen, 
+  currentLang, 
+  setCurrentLang, 
+  languages, 
+  getCurrentLanguage 
+}: { 
+  onSocialLogin: (provider: string) => void;
+  isLangOpen: boolean;
+  setIsLangOpen: (open: boolean) => void;
+  currentLang: string;
+  setCurrentLang: (lang: string) => void;
+  languages: Array<{code: string, name: string, flag: string}>;
+  getCurrentLanguage: () => any;
+}) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -328,6 +344,41 @@ function SignupPage({ onSocialLogin }: { onSocialLogin: (provider: string) => vo
     <div className="min-h-screen flex font-['Inter',sans-serif] antialiased">
       {/* Left Side - Brand Section */}
       <div className="flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] flex items-center justify-center p-4 min-h-screen relative overflow-hidden">
+        
+        {/* Language Dropdown - Top Left */}
+        <div className="absolute top-6 left-6 z-20">
+          <div className="relative">
+            <button
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+            >
+              <span className="text-sm">{getCurrentLanguage()?.flag}</span>
+              <span className="text-sm font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
+              <svg className={`w-3 h-3 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {isLangOpen && (
+              <div className="absolute top-full left-0 mt-2 w-40 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg shadow-xl py-1">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setCurrentLang(lang.code);
+                      setIsLangOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-20 w-24 h-24 border border-white/20 rotate-45"></div>
           <div className="absolute bottom-32 right-24 w-20 h-20 border border-white/10 rotate-12"></div>
@@ -618,9 +669,25 @@ function SignupPage({ onSocialLogin }: { onSocialLogin: (provider: string) => vo
 }
 
 // Main Signup App Component - matches the structure of your login page
+ // Main Signup App Component - matches the structure of your login page
 export default function SignupApp() {
   const [currentPage, setCurrentPage] = useState('signup');
   const [authData, setAuthData] = useState<{ email: string; provider: string } | null>(null);
+  
+  // Add language state
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('en');
+
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' }
+  ];
+
+  const getCurrentLanguage = () => {
+    return languages.find(lang => lang.code === currentLang);
+  };
 
   const handleSocialLogin = (provider: string) => {
     setCurrentPage(provider);
@@ -649,6 +716,16 @@ export default function SignupApp() {
     case 'success':
       return <SuccessPage provider={authData?.provider} userData={authData} onContinue={handleContinue} />;
     default:
-      return <SignupPage onSocialLogin={handleSocialLogin} />;
+      return (
+        <SignupPage 
+          onSocialLogin={handleSocialLogin}
+          isLangOpen={isLangOpen}
+          setIsLangOpen={setIsLangOpen}
+          currentLang={currentLang}
+          setCurrentLang={setCurrentLang}
+          languages={languages}
+          getCurrentLanguage={getCurrentLanguage}
+        />
+      );
   }
 }

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
@@ -11,6 +12,9 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ name: 'John Doe', avatar: null });
 
+  //router for navigation
+  const router = useRouter();
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
@@ -41,9 +45,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
-              <i className="bi bi-tropical-storm text-white text-lg"></i>
+          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push('/')}>
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
+              <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
             <span className={`font-bold text-xl transition-colors duration-300 ${
               isScrolled ? 'text-[#083A85]' : 'text-white'
@@ -149,7 +153,7 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center space-x-2">
                 <button 
-                  onClick={() => setIsLoggedIn(true)}
+                  onClick={() => {router.push('/all/login');}}
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-[#083A85] hover:bg-gray-100' 
@@ -159,7 +163,7 @@ const Navbar = () => {
                   Sign in
                 </button>
                 <button 
-                  onClick={() => setIsLoggedIn(true)}
+                  onClick={() => {router.push('/all/signup');}}
                   className="px-4 py-2 bg-[#083A85] text-white text-sm font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
                   Sign up

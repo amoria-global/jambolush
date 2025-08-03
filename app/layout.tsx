@@ -2,12 +2,10 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import "./styles/globals.css";
-<<<<<<< Updated upstream
+
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
-=======
 import Footer from "./components/footer";
->>>>>>> Stashed changes
 
 export default function RootLayout({
   children,

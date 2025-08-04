@@ -2,101 +2,186 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0C2D62] text-white px-[12px] py-[25px] mx-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          {/* Logo and Tagline */}
-          <div className="md:col-span-1 flex flex-col items-start">
-            <img src="/favicon.ico" className="w-12 h-12 mb-3 rounded-lg bg-white p-2" />
-            <p className="text-sm font-medium">Book Unique.<br />Stay Inspired.</p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold mb-4 text-sm tracking-wider">QUICK LINKS</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:underline">HOME</a></li>
-              <li><a href="#" className="hover:underline">HOW IT WORKS</a></li>
-              <li><a href="#" className="hover:underline">CONTACT US</a></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-semibold mb-4 text-sm tracking-wider">LEGAL</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:underline">TERMS & CONDITIONS</a></li>
-              <li><a href="#" className="hover:underline">PRIVACY POLICY</a></li>
-              <li><a href="#" className="hover:underline">AGREEMENTS</a></li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="font-semibold mb-4 text-sm tracking-wider">CONTACT</h3>
-            <div className="space-y-2 text-sm">
-              <p>KIGALI, RWANDA</p>
-              <a href="mailto:SUPPORT@JAMBOLUSH.COM" className="hover:underline cursor-pointer block">SUPPORT@JAMBOLUSH.COM</a>
-              <a href="tel:+250788587420" className="hover:underline cursor-pointer block">+250 788 437 347</a>
-            </div>
-          </div>
-
-          {/* Social Media */}
-          <div>
-            <h3 className="font-semibold mb-4 text-sm tracking-wider">SOCIAL MEDIA</h3>
-            <div className="flex space-x-3">
-              <a href="#" className="bg-[#1877F2] p-2 rounded hover:opacity-80 transition-opacity" aria-label="Facebook">
-                <i className="bi bi-facebook text-white text-sm"></i>
-              </a>
-              <a href="#" className="bg-gradient-to-br from-[#405DE6] via-[#C13584] to-[#F56040] p-2 rounded hover:opacity-80 transition-opacity" aria-label="Instagram">
-                <i className="bi bi-instagram text-white text-sm"></i>
-              </a>
-              <a href="#" className="bg-black p-2 rounded hover:opacity-80 transition-opacity" aria-label="Twitter/X">
-                <i className="bi bi-twitter-x text-white text-sm"></i>
-              </a>
-              <a href="#" className="bg-[#0A66C2] p-2 rounded hover:opacity-80 transition-opacity" aria-label="LinkedIn">
-                <i className="bi bi-linkedin text-white text-sm"></i>
-              </a>
-              <a href="#" className="bg-black p-2 rounded hover:opacity-80 transition-opacity" aria-label="TikTok">
-                <i className="bi bi-tiktok text-white text-sm"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter Signup */}
-        <div className="mt-8 pt-4 mx-12">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full max-w-4xl mx-auto gap-6">
-            {/* Left: Bold Message */}
-            <div className="md:w-1/2 w-full">
-              <p className="font-bold text-white text-left text-base md:text-lg tracking-wider mb-1">
-                NEVER MISS ANY JAMBOLUSH'S UPDATE DAY TO DAY :<br className="md:hidden" />
-                JOIN JAMBOLUSH COMMUNITY
-              </p>
-            </div>
-            {/* Right: Form */}
-            <form className="md:w-1/2 w-full flex flex-col md:flex-row items-start md:items-end gap-2">
-              <div className="w-full md:w-auto flex flex-col">
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  className="bg-white text-black p-2 rounded-full w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  required
-                />
+    <footer className="bg-[#0C2D62] text-white">
+      <div className="w-full">
+        {/* Main Content */}
+        <div className="px-6 md:px-12 lg:px-20 py-12 md:py-16">
+          <div className="max-w-7xl mx-auto">
+            {/* Main Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
+              {/* Logo and Tagline */}
+              <div className="lg:col-span-1">
+                <div className="w-25 h-23 bg-white/0.05 backdrop-blur-sm rounded-l flex items-center justify-center border border-white/10 mb-4">
+                  <img src="/favicon.ico" className="w-22 h-19" alt="Jambolush Logo" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">JamboLush</h3>
+                <p className="text-sm text-white/80 leading-relaxed">
+                  Book Unique.<br />Stay Inspired.
+                </p>
               </div>
-              <button type="submit" className="bg-black text-white font-bold text-sm p-2 rounded-full w-full md:w-auto transition-colors hover:bg-gray-800 cursor-pointer">
-                SUBSCRIBE FOR FREE
-              </button>
-            </form>
+
+              {/* Quick Links */}
+              <div>
+                <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">QUICK LINKS</h3>
+                <ul className="space-y-3">
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">Home</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">How It Works</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Legal */}
+              <div>
+                <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">LEGAL</h3>
+                <ul className="space-y-3">
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">Terms & Conditions</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">Privacy Policy</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">Agreements</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">CONTACT</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <i className="bi bi-geo-alt text-white/50 text-sm mt-0.5"></i>
+                    <p className="text-sm text-white/70">Kigali, Rwanda</p>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <i className="bi bi-envelope text-white/50 text-sm mt-0.5"></i>
+                    <a href="mailto:support@jambolush.com" className="text-sm text-white/70 hover:text-white transition-colors duration-200 break-all">
+                      support@jambolush.com
+                    </a>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <i className="bi bi-telephone text-white/50 text-sm mt-0.5"></i>
+                    <a href="tel:+250788437347" className="text-sm text-white/70 hover:text-white transition-colors duration-200">
+                      +250 788 437 347
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Media */}
+              <div>
+                <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">FOLLOW US</h3>
+                <div className="flex flex-wrap gap-3">
+                  <a 
+                    href="#" 
+                    className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-[#1877F2] transition-all duration-300 group border border-white/10"
+                    aria-label="Facebook"
+                  >
+                    <i className="bi bi-facebook text-white/70 group-hover:text-white transition-colors"></i>
+                  </a>
+                  <a 
+                    href="#" 
+                    className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-gradient-to-br hover:from-[#405DE6] hover:via-[#C13584] hover:to-[#F56040] transition-all duration-300 group border border-white/10"
+                    aria-label="Instagram"
+                  >
+                    <i className="bi bi-instagram text-white/70 group-hover:text-white transition-colors"></i>
+                  </a>
+                  <a 
+                    href="#" 
+                    className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
+                    aria-label="Twitter/X"
+                  >
+                    <i className="bi bi-twitter-x text-white/70 group-hover:text-white transition-colors"></i>
+                  </a>
+                  <a 
+                    href="#" 
+                    className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-[#0A66C2] transition-all duration-300 group border border-white/10"
+                    aria-label="LinkedIn"
+                  >
+                    <i className="bi bi-linkedin text-white/70 group-hover:text-white transition-colors"></i>
+                  </a>
+                  <a 
+                    href="#" 
+                    className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
+                    aria-label="TikTok"
+                  >
+                    <i className="bi bi-tiktok text-white/70 group-hover:text-white transition-colors"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="mt-12">
-          <hr className="border-t border-white/20 mb-6" />
-          <div className="text-center text-sm">
-            <p>Copyright© 2025 Jambolush. All rights reserved.</p>
+        {/* Newsletter Section */}
+        <div className="bg-white/5 backdrop-blur-sm border-t border-white/10">
+          <div className="px-6 md:px-12 lg:px-20 py-8 md:py-12">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-12">
+                {/* Newsletter Text */}
+                <div className="text-center lg:text-left">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">
+                    Stay Connected with JamboLush
+                  </h3>
+                  <p className="text-sm text-white/70">
+                    Get exclusive updates, special offers, and travel inspiration delivered to your inbox.
+                  </p>
+                </div>
+
+                {/* Newsletter Form */}
+                <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    className="px-6 py-3 bg-white text-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full sm:w-80 placeholder:text-gray-500"
+                  />
+                  <button 
+                    className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-sm rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
+                    onClick={() => console.log('Subscribe clicked')}
+                  >
+                    Subscribe Free
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="bg-black/20 backdrop-blur-sm">
+          <div className="px-6 md:px-12 lg:px-20 py-6">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+              <p className="text-sm text-white/60">
+                © 2025 JamboLush. All rights reserved.
+              </p>
+              <div className="flex items-center gap-6">
+                <a href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                  Cookies Policy
+                </a>
+                <a href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                  Sitemap
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

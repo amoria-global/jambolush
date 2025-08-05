@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(true);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,7 +50,7 @@ const Navbar = () => {
               <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
             <span className={`font-bold text-xl transition-colors duration-300 ${
-              isScrolled ? 'text-[#083A85]' : 'text-white'
+              isScrolled ? 'text-[#083A85]' : 'text-slate-300'
             }`}>
               JamboLush
             </span>
@@ -66,7 +66,7 @@ const Navbar = () => {
                 className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors duration-300 ${
                   isScrolled 
                     ? 'text-gray-700 hover:bg-gray-100' 
-                    : 'text-white hover:bg-white/10'
+                    : 'text-slate-300 hover:bg-white/10'
                 }`}
               >
                 <span className="text-sm">{getCurrentLanguage()?.flag}</span>
@@ -157,7 +157,7 @@ const Navbar = () => {
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-[#083A85] hover:bg-gray-100' 
-                      : 'text-white hover:bg-white/10'
+                      : 'text-slate-300 hover:bg-white/10'
                   }`}
                 >
                   Sign in

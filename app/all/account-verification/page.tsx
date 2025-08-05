@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import AccountVerificationPage from '../../pages/account-verification';
+import AccountVerificationPage from '../../pages/auth/account-verification';
 
 
 const AppRouterAccountVerificationPage = () => {

@@ -45,11 +45,11 @@ export default function HowItWorksPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="min-h-screen bg-white mt-16 py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Header Section */}
       <div className={`max-w-7xl mx-auto text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-          How It Works
+          Our Secret Sauce
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Find, Book, Move in — It's That Simple

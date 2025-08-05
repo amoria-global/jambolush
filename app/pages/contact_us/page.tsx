@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Send, CheckCircle } from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -39,7 +38,7 @@ const ContactUsPage = () => {
       <div className="w-full max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row transition-all duration-300 transform hover:scale-[1.01]">
         {/* Left column with logo and slogan */}
         <div className="md:w-1/2 bg-white flex flex-col justify-center items-center p-8 md:p-16 text-center text-gray-800">
-          {/*   image here */}
+          {/* image here */}
           <h2 className="text-3xl font-bold mt-6 text-[#3A4D74]">Book Unique.</h2>
           <p className="mt-2 text-3xl font-bold text-[#3A4D74]">Stay Inspired.</p>
         </div>
@@ -57,7 +56,7 @@ const ContactUsPage = () => {
             // Success message after submission
             <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg shadow-md" role="alert">
               <div className="flex items-center">
-                <CheckCircle size={24} className="flex-shrink-0" />
+                <i className="bi bi-check-circle-fill text-xl"></i>
                 <div className="ml-3">
                   <p className="font-bold text-lg">Thank you for your message!</p>
                   <p className="text-sm">We have received your submission and will get back to you shortly.</p>
@@ -113,7 +112,7 @@ const ContactUsPage = () => {
                 aria-label="Send message"
                 className="w-full flex items-center justify-center space-x-2 py-3 px-6 border border-transparent rounded-full shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-transform duration-150 active:scale-95"
               >
-                <Send size={20} />
+                <i className="bi bi-send-fill text-base"></i>
                 <span>SEND MESSAGE</span>
               </button>
             </form>

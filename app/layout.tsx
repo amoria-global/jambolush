@@ -18,7 +18,7 @@ export default function RootLayout({
   const hideNavbarRoutes = ["/all/login", "/all/signup", "/all/forgotpw"];
   
   // Check if current path should hide navbar
-  const shouldHideNavbar = hideNavbarRoutes.includes(pathname);
+  const shouldHideNavbarFooter = hideNavbarRoutes.includes(pathname);
   
   return (
     <html lang="en">
@@ -26,9 +26,9 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </head>
       <body>
-        {!shouldHideNavbar && <Navbar />}
+        {!shouldHideNavbarFooter && <Navbar />}
         {children}
-        <Footer />
+        {!shouldHideNavbarFooter && <Footer />}
       </body>
     </html>
   );

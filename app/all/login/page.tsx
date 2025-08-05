@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import LoginPage from '../../pages/login';
+import LoginPage from '../../pages/auth/login';
 
 export const metadata: Metadata = {
   title: 'Signin - JamboLush',

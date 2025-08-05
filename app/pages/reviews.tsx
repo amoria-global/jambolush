@@ -1,17 +1,6 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import {
-  Star,
-  X,
-  Search,
-  ChevronDown,
-  Award,
-  Sparkles,
-  MapPin,
-  Handshake,
-  ShieldCheck
-} from 'lucide-react';
 
 const ReviewsPage = () => {
   const overallRating = 4.7;
@@ -29,76 +18,16 @@ const ReviewsPage = () => {
   ];
 
   const reviews = [
-    {
-      id: 1,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-13',
-      rating: 5,
-      text: 'The location was great and the check-in was straightforward. The host\'s efforts to address concerns during the stay are appreciated.'
-    },
-    {
-      id: 2,
-      user: 'Uwitonze Pacific',
-      date: '2020-06-20',
-      rating: 4,
-      text: 'Quiet and secure. Kitchen was small but functional. Easy check-in process. Highly recommend.'
-    },
-    {
-      id: 3,
-      user: 'Uwitonze Pacific',
-      date: '2025-06-03',
-      rating: 3,
-      text: 'Peaceful location, but a few maintenance issues during the stay. Host was responsive though.'
-    },
-    {
-      id: 4,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-01',
-      rating: 5,
-      text: 'Very comfortable stay. The neighborhood is peaceful and safe.'
-    },
-    {
-      id: 5,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-17',
-      rating: 4,
-      text: 'Hosts were responsive and helpful, would stay again.'
-    },
-    {
-      id: 6,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-24',
-      rating: 5,
-      text: 'Loved the clean environment and easy check-in process.'
-    },
-    {
-      id: 7,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-29',
-      rating: 3,
-      text: 'Affordable and decent, but a bit noisy at night.'
-    },
-    {
-      id: 8,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-30',
-      rating: 5,
-      text: 'Perfect location and excellent communication with the host.'
-    },
-    {
-      id: 9,
-      user: 'Uwitonze Pacific',
-      date: '2025-07-31',
-      rating: 4,
-      text: 'Quiet and relaxing stay. I highly recommend this place.'
-    },
-    {
-      id: 10,
-      user: 'Uwitonze Pacific',
-      date: '2025-08-02',
-      rating: 5,
-      text: 'Amazing experience! Everything was spotless and comfortable.'
-    }
+    { id: 1, user: 'Uwitonze Pacific', date: '2025-07-13', rating: 5, text: 'The location was great and the check-in was straightforward. The host\'s efforts to address concerns during the stay are appreciated.' },
+    { id: 2, user: 'Uwitonze Pacific', date: '2020-06-20', rating: 4, text: 'Quiet and secure. Kitchen was small but functional. Easy check-in process. Highly recommend.' },
+    { id: 3, user: 'Uwitonze Pacific', date: '2025-06-03', rating: 3, text: 'Peaceful location, but a few maintenance issues during the stay. Host was responsive though.' },
+    { id: 4, user: 'Uwitonze Pacific', date: '2025-07-01', rating: 5, text: 'Very comfortable stay. The neighborhood is peaceful and safe.' },
+    { id: 5, user: 'Uwitonze Pacific', date: '2025-07-17', rating: 4, text: 'Hosts were responsive and helpful, would stay again.' },
+    { id: 6, user: 'Uwitonze Pacific', date: '2025-07-24', rating: 5, text: 'Loved the clean environment and easy check-in process.' },
+    { id: 7, user: 'Uwitonze Pacific', date: '2025-07-29', rating: 3, text: 'Affordable and decent, but a bit noisy at night.' },
+    { id: 8, user: 'Uwitonze Pacific', date: '2025-07-30', rating: 5, text: 'Perfect location and excellent communication with the host.' },
+    { id: 9, user: 'Uwitonze Pacific', date: '2025-07-31', rating: 4, text: 'Quiet and relaxing stay. I highly recommend this place.' },
+    { id: 10, user: 'Uwitonze Pacific', date: '2025-08-02', rating: 5, text: 'Amazing experience! Everything was spotless and comfortable.' }
   ];
 
   const sortedReviews = useMemo(() => {
@@ -111,7 +40,7 @@ const ReviewsPage = () => {
       case 'Lowest rating':
         return copy.sort((a, b) => a.rating - b.rating);
       default:
-        return copy; // "Most relevant"
+        return copy;
     }
   }, [sortOrder]);
 
@@ -120,11 +49,9 @@ const ReviewsPage = () => {
     const roundedRating = Math.round(rating);
     for (let i = 0; i < 5; i++) {
       stars.push(
-        <Star
-          key={i}
-          size={16}
-          className={i < roundedRating ? 'text-yellow-400 fill-current' : 'text-gray-300'}
-        />
+        <span key={i} className={i < roundedRating ? 'text-yellow-400' : 'text-gray-300'}>
+          ⭐
+        </span>
       );
     }
     return stars;
@@ -132,12 +59,12 @@ const ReviewsPage = () => {
 
   const getRatingIcon = (label: string) => {
     switch (label) {
-      case 'Accuracy': return <Sparkles size={20} className="text-gray-600" />;
-      case 'Cleanliness': return <ShieldCheck size={20} className="text-gray-600" />;
-      case 'Check-in': return <Handshake size={20} className="text-gray-600" />;
-      case 'Communication': return <Award size={20} className="text-gray-600" />;
-      case 'Location': return <MapPin size={20} className="text-gray-600" />;
-      case 'Value': return <Star size={20} className="text-gray-600" />;
+      case 'Accuracy': return <span>✨</span>;
+      case 'Cleanliness': return <span>🛡️</span>;
+      case 'Check-in': return <span>🤝</span>;
+      case 'Communication': return <span>🏆</span>;
+      case 'Location': return <span>📍</span>;
+      case 'Value': return <span>💰</span>;
       default: return null;
     }
   };
@@ -146,9 +73,9 @@ const ReviewsPage = () => {
     <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4 font-sans relative">
       <button
         aria-label="Close reviews panel"
-        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200"
+        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 text-gray-500 text-xl"
       >
-        <X size={24} className="text-gray-500" />
+        ×
       </button>
 
       <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-7xl w-full flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
@@ -189,7 +116,7 @@ const ReviewsPage = () => {
           <header className="flex items-center justify-between border-b pb-4 mb-4">
             <div className="flex items-center space-x-2">
               <h3 className="text-xl font-bold">{totalReviews} reviews</h3>
-              <a href="#" className="text-blue-600 text-sm hover:underline">Back </a>
+              <a href="#" className="text-blue-600 text-sm hover:underline">Back</a>
             </div>
             <div className="relative">
               <select
@@ -203,8 +130,8 @@ const ReviewsPage = () => {
                 <option>Highest rating</option>
                 <option>Lowest rating</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <ChevronDown size={16} />
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 text-sm">
+                ▼
               </div>
             </div>
           </header>
@@ -217,7 +144,7 @@ const ReviewsPage = () => {
               className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-              <Search size={20} />
+              🔍
             </div>
           </div>
 

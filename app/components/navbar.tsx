@@ -28,7 +28,7 @@ const Navbar = () => {
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' }
+    { code: 'sw', name: 'Swahili', flag: '🇹🇿' }
   ];
 
   const getCurrentLanguage = () => {
@@ -94,7 +94,7 @@ const Navbar = () => {
             </div>
 
             {/* Become a Host Button */}
-            <button className="px-4 py-2 bg-[#F20C8F] text-white text-sm font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300">
+            <button className="px-4 py-2 bg-[#F20C8F] text-white text-sm font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer" onClick={() => router.push('/all/become-host')}>
               <i className="bi bi-house-add mr-2"></i>
               Become a Host
             </button>

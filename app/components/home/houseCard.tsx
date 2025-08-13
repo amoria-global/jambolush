@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 
 interface HouseProps {
@@ -25,7 +26,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
   };
 
   return (
-    <a href={`/property/${house.id}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
+    <a href={`/all/property/${house.id}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
       {/* Compact Image Section */}
       <div 
         className="relative h-40 bg-cover bg-center bg-gray-200"
@@ -36,7 +37,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         
         {/* Category Badge - Professional Style */}
         <div className="absolute top-2 left-2">
-          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/20 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg">
+          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg">
             {house.category}
           </span>
         </div>

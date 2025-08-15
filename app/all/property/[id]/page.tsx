@@ -3,18 +3,20 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 
 interface HousePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function HousePage({ params }: HousePageProps) {
+  const resolvedParams = use(params);
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [dateError, setDateError] = useState('');
   const router = useRouter();
+  
   // Sample occupied dates (these would come from your database)
   const occupiedDates = [
     { start: '2025-01-15', end: '2025-01-18' },
@@ -141,7 +143,7 @@ export default function HousePage({ params }: HousePageProps) {
       alert('Check-out date must be after check-in date');
       return;
     }
-    console.log('Reserving:', { checkInDate, checkOutDate, houseId: params.id });
+    console.log('Reserving:', { checkInDate, checkOutDate, houseId: resolvedParams.id });
     alert(`Reservation confirmed!\nCheck-in: ${checkInDate}\nCheck-out: ${checkOutDate}\nTotal: $${calculateTotal()}`);
   };
 
@@ -205,7 +207,7 @@ export default function HousePage({ params }: HousePageProps) {
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
             ))}
-            <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer" onClick={() => router.push(`/all/property/${params.id}/photos`)}>
+            <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer" onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}>
               <i className="bi bi-grid-3x3-gap"></i>
               <span className="text-sm font-medium">Show all photos</span>
             </button>

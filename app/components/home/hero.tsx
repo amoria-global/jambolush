@@ -1,17 +1,23 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 
-const Hero = () => {
+interface Tab {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+interface SearchSuggestion {
+  [key: string]: string[];
+}
+
+const Hero: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [location, setLocation] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [showLocationSuggestions, setShowLocationSuggestions] = useState<boolean>(false);
   const [showSearchSuggestions, setShowSearchSuggestions] = useState<boolean>(false);
-  
-  interface Tab {
-    value: string;
-    label: string;
-    icon: string;
-  }
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const tabs: Tab[] = [
     { value: 'all', label: 'All', icon: 'bi-grid' },
@@ -19,9 +25,8 @@ const Hero = () => {
     { value: 'stay', label: 'Stay', icon: 'bi-calendar-check' },
   ];
 
-  // East African location suggestions
-  const allLocations = [
-    // Rwanda
+  const allLocations: string[] = [
+     // Rwanda
     'Kigali, Rwanda',
     'Kimironko, Kigali',
     'Nyamirambo, Kigali',
@@ -83,14 +88,23 @@ const Hero = () => {
     'Gitega, Burundi'
   ];
 
-  // Filter locations based on input
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const locationSuggestions = location.length > 0 
-    ? allLocations.filter(loc => loc.toLowerCase().includes(location.toLowerCase())).slice(0, 8)
+    ? allLocations.filter(loc => 
+        loc.toLowerCase().includes(location.toLowerCase())
+      ).slice(0, 8)
     : [];
 
-  // Search suggestions based on tab selection
   const getSearchSuggestions = (): string[] => {
-    const baseSuggestions: Record<string, string[]> = {
+    const baseSuggestions: SearchSuggestion = {
       all: ['2 bedroom apartment', '3 bedroom house', 'furnished studio', 'villa with pool', 'modern apartment'],
       spot: ['office space', 'meeting room', 'coworking desk', 'event venue', 'conference hall'],
       stay: ['vacation rental', 'guest house', 'hotel apartment', 'serviced apartment', 'short-term rental']
@@ -99,37 +113,32 @@ const Hero = () => {
     if (!searchKeyword) return [];
     
     return baseSuggestions[selectedTab].filter(
-      suggestion => suggestion.toLowerCase().includes(searchKeyword.toLowerCase())
+      (suggestion: string) => suggestion.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   };
 
-  const handleLocationSelect = (suggestion: string) => {
+  const handleLocationSelect = (suggestion: string): void => {
     setLocation(suggestion);
     setShowLocationSuggestions(false);
   };
 
-  const handleSearchSelect = (suggestion: string) => {
+  const handleSearchSelect = (suggestion: string): void => {
     setSearchKeyword(suggestion);
     setShowSearchSuggestions(false);
   };
 
-  const handleSearch = () => {
-    // API payload structure
+  const handleSearch = (): void => {
     const searchPayload = {
       type: selectedTab,
       location: location,
       keyword: searchKeyword,
       timestamp: new Date().toISOString()
     };
-    
     console.log('Search payload for API:', searchPayload);
-    // TODO: Post to API endpoint
-    // fetch('/api/search', { method: 'POST', body: JSON.stringify(searchPayload) })
   };
 
-  // Close suggestions when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (): void => {
       setShowLocationSuggestions(false);
       setShowSearchSuggestions(false);
     };
@@ -138,9 +147,13 @@ const Hero = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  const primaryBlue = '#083A85';
+  const primaryPink = '#F20C8F';
+  const overlayColor = 'rgba(8, 58, 133, 0.2)';
+
   return (
     <div 
-      className="h-screen flex items-center justify-center relative"
+      className="min-h-screen flex items-center justify-center relative"
       style={{
         backgroundImage: 'url("/hero/dbb0er.jpg")',
         backgroundSize: 'cover',
@@ -149,135 +162,175 @@ const Hero = () => {
       }}
     >
       {/* Dark overlay */}
-      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(8, 58, 133, 0.2)' }}></div>
+      <div className="absolute inset-0" style={{ backgroundColor: overlayColor }}></div>
       
       {/* Content */}
-      <div className="relative z-10 text-center text-white px-4 w-full max-w-5xl mx-auto">
-        <h1 className="text-3xl md:text-5xl font-bold mb-3">Discover your place to live</h1>
-        <p className="text-base md:text-xl mb-12 opacity-90">Let us help you make the right move today!</p>
+      <div className="relative z-10 pt-16 sm:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
+        <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
+          Discover your place to live
+        </h1>
+        <p className="text-xs md:text-base lg:text-lg mb-8 md:mb-12 opacity-90">
+          Let us help you make the right move today!
+        </p>
         
-        {/* Search Container */}
-        <div className="bg-white rounded-lg p-6 shadow-xl">
-          {/* Tab Navigation */}
-          <div className="flex gap-2 mb-6 justify-center">
-            {tabs.map((tab) => (
-              <button
-                key={tab.value}
-                onClick={() => setSelectedTab(tab.value)}
-                className={`px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 transition ${
-                  selectedTab === tab.value
-                    ? 'text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                style={selectedTab === tab.value ? { backgroundColor: '#083A85' } : {}}
-              >
-                <i className={`bi ${tab.icon}`}></i>
-                {tab.label}
-              </button>
-            ))}
+        {/* Enhanced Search Container */}
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Tab Section */}
+          <div className="bg-gray-50 px-4 md:px-8 py-4 border-b border-gray-200">
+            <div className="flex gap-2 md:gap-4 justify-center flex-wrap">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.value}
+                  onClick={() => setSelectedTab(tab.value)}
+                  className={`px-4 md:px-6 py-2 md:py-2.5 rounded-lg text-sm md:text-base font-medium flex items-center gap-2 transition-all duration-200 ${
+                    selectedTab === tab.value
+                      ? 'text-white shadow-lg transform scale-105'
+                      : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
+                  }`}
+                  style={selectedTab === tab.value ? { backgroundColor: primaryBlue } : {}}
+                >
+                  <i className={`bi ${tab.icon}`}></i>
+                  <span className={isMobile && tab.value !== selectedTab ? 'hidden' : ''}>
+                    {tab.label}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
           
-          {/* Search Fields */}
-          <div className="flex flex-col md:flex-row gap-3">
-            {/* Location - Smaller */}
-            <div className="relative md:w-1/3">
-              <i className="bi bi-geo-alt" style={{
-                position: 'absolute',
-                left: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#6B7280',
-                zIndex: 1
-              }}></i>
-              <input 
-                type="text" 
-                placeholder="Browse location"
-                value={location}
-                onChange={(e) => {
-                  setLocation(e.target.value);
-                  setShowLocationSuggestions(e.target.value.length > 0);
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowLocationSuggestions(location.length > 0);
-                }}
-                className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 text-gray-700"
-                style={{ paddingLeft: '40px' }}
-              />
-              {/* Location Suggestions */}
-              {showLocationSuggestions && locationSuggestions.length > 0 && (
-                <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-64 overflow-y-auto">
-                  {locationSuggestions.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLocationSelect(suggestion);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-700 text-sm first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      <i className="bi bi-geo-alt text-gray-400 mr-2"></i>
-                      {suggestion}
-                    </button>
-                  ))}
+          {/* Search Fields Container */}
+          <div className="p-4 md:p-8">
+            <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'md:flex-row'}`}>
+              {/* Location Field */}
+              <div className="relative flex-1 md:flex-none md:w-1/3">
+                <div className="relative">
+                  <i 
+                    className="bi bi-geo-alt absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"
+                  ></i>
+                  <input 
+                    type="text" 
+                    placeholder="Browse location"
+                    value={location}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      setShowLocationSuggestions(e.target.value.length > 0);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (location.length > 0) {
+                        setShowLocationSuggestions(true);
+                      }
+                    }}
+                    className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-gray-700 text-base transition-colors duration-200"
+                  />
                 </div>
-              )}
+                
+                {/* Location Suggestions Dropdown */}
+                {showLocationSuggestions && locationSuggestions.length > 0 && (
+                  <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-20 max-h-64 overflow-y-auto">
+                    {locationSuggestions.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLocationSelect(suggestion);
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-blue-50 text-gray-700 text-sm transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                      >
+                        <i className="bi bi-geo-alt text-gray-400"></i>
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Search Field */}
+              <div className="relative flex-1">
+                <div className="relative">
+                  <i 
+                    className="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"
+                  ></i>
+                  <input 
+                    type="text" 
+                    placeholder="Search keyword"
+                    value={searchKeyword}
+                    onChange={(e) => {
+                      setSearchKeyword(e.target.value);
+                      setShowSearchSuggestions(e.target.value.length > 0);
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (searchKeyword.length > 0) {
+                        setShowSearchSuggestions(true);
+                      }
+                    }}
+                    className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-pink-500 text-gray-700 text-base transition-colors duration-200"
+                  />
+                </div>
+                
+                {/* Search Suggestions Dropdown */}
+                {showSearchSuggestions && getSearchSuggestions().length > 0 && (
+                  <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-20">
+                    {getSearchSuggestions().map((suggestion, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSearchSelect(suggestion);
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-pink-50 text-gray-700 text-sm transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                      >
+                        <i className="bi bi-search text-gray-400"></i>
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {/* Search Button */}
+              <button 
+                onClick={handleSearch}
+                className="text-white px-6 md:px-10 py-3 md:py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:transform hover:scale-105 flex items-center justify-center gap-2 text-base"
+                style={{ backgroundColor: primaryPink }}
+              >
+                <i className="bi bi-search"></i>
+                <span>Search</span>
+              </button>
             </div>
             
-            {/* Search Keyword - Larger */}
-            <div className="relative flex-1">
-              <i className="bi bi-search" style={{
-                position: 'absolute',
-                left: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#6B7280',
-                zIndex: 1
-              }}></i>
-              <input 
-                type="text" 
-                placeholder="Search keyword"
-                value={searchKeyword}
-                onChange={(e) => {
-                  setSearchKeyword(e.target.value);
-                  setShowSearchSuggestions(e.target.value.length > 0);
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSearchSuggestions(searchKeyword.length > 0);
-                }}
-                className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 text-gray-700"
-                style={{ paddingLeft: '40px' }}
-              />
-              {/* Search Suggestions */}
-              {showSearchSuggestions && getSearchSuggestions().length > 0 && (
-                <div className="absolute top-full mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                  {getSearchSuggestions().map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSearchSelect(suggestion);
-                      }}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 text-gray-700 text-sm first:rounded-t-lg last:rounded-b-lg"
-                    >
-                      <i className="bi bi-search text-gray-400 mr-2"></i>
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              )}
+            {/* Quick Filters */}
+            <div className="mt-6 pt-6 border-t border-gray-200 hidden sm:block">
+              <div className="hidden sm:flex flex-wrap gap-2 items-center">
+                <span className="text-sm text-gray-500 mr-2">Quick filters:</span>
+                {['Under $500', 'Pet Friendly', 'Parking', 'Furnished', 'Near Metro'].map((filter, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSearchKeyword(filter)}
+                    className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors duration-150"
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
             </div>
-            
-            {/* Search Button */}
-            <button 
-              onClick={handleSearch}
-              className="text-white px-8 py-3 rounded-lg font-medium transition hover:opacity-90 flex items-center justify-center gap-2 "
-              style={{ backgroundColor: '#F20C8F' }}
-            >
-              <i className="bi bi-search"></i>
-              Search
-            </button>
+          </div>
+        </div>
+        
+        {/* Trust Indicators */}
+        <div className="mt-4 sm:mt-8 flex flex-wrap justify-center gap-6 md:gap-12 text-white">
+          <div className="flex items-center gap-2">
+            <i className="bi bi-shield-check text-xl"></i>
+            <span className="text-sm md:text-base">Verified Listings</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <i className="bi bi-headset text-xl"></i>
+            <span className="text-sm md:text-base">24/7 Support</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <i className="bi bi-cash-stack text-xl"></i>
+            <span className="text-sm md:text-base">Best Prices</span>
           </div>
         </div>
       </div>

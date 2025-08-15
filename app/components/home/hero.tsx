@@ -165,7 +165,7 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0" style={{ backgroundColor: overlayColor }}></div>
       
       {/* Content */}
-      <div className="relative z-10 pt-10 sm:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
+      <div className="relative z-10 pt-16 sm:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
         <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
           Discover your place to live
         </h1>

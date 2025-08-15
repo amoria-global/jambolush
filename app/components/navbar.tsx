@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,7 +50,7 @@ const Navbar = () => {
               <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
             <span className={`font-bold text-xl transition-colors duration-300 ${
-              isScrolled ? 'text-[#083A85]' : 'text-slate-300'
+              isScrolled ? 'text-[#083A85]' : 'text-slate-500'
             }`}>
               JamboLush
             </span>

@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, use } from 'react';
 
 interface HousePageProps {
   params: {
@@ -13,7 +14,7 @@ export default function HousePage({ params }: HousePageProps) {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [dateError, setDateError] = useState('');
-  
+  const router = useRouter();
   // Sample occupied dates (these would come from your database)
   const occupiedDates = [
     { start: '2025-01-15', end: '2025-01-18' },
@@ -153,12 +154,12 @@ export default function HousePage({ params }: HousePageProps) {
   };
 
   return (
-    <div className="mt-10 bg-white">
+    <div className="mt-14 bg-white">
       <div className="mx-auto px-4 sm:px-8 lg:px-12 py-8">
         
         {/* Title Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[#083A85] mb-4">{house.title}</h1>
+          <h1 className="text-2xl font-bold text-[#083A85] mb-4">{house.title}</h1>
           <div className="flex flex-wrap gap-6 text-gray-700">
             <span className="flex items-center gap-2">
               <i className="bi bi-door-open text-[#F20C8F] text-xl"></i>
@@ -204,7 +205,7 @@ export default function HousePage({ params }: HousePageProps) {
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
             ))}
-            <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow">
+            <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer" onClick={() => router.push(`/all/property/${params.id}/photos`)}>
               <i className="bi bi-grid-3x3-gap"></i>
               <span className="text-sm font-medium">Show all photos</span>
             </button>

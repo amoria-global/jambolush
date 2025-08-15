@@ -1,4 +1,5 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -25,19 +26,19 @@ export default function Footer() {
                 <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">QUICK LINKS</h3>
                 <ul className="space-y-3">
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Home</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/how-it-works" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">How It Works</span>
-                    </a>
+                    </Link >
                   </li>
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -47,19 +48,19 @@ export default function Footer() {
                 <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">LEGAL</h3>
                 <ul className="space-y-3">
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Terms & Conditions</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Privacy Policy</span>
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Agreements</span>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -74,15 +75,15 @@ export default function Footer() {
                   </div>
                   <div className="flex items-start gap-2">
                     <i className="bi bi-envelope text-white/50 text-sm mt-0.5"></i>
-                    <a href="mailto:support@jambolush.com" className="text-sm text-white/70 hover:text-white transition-colors duration-200 break-all">
+                    <Link href="mailto:support@jambolush.com" className="text-sm text-white/70 hover:text-white transition-colors duration-200 break-all">
                       support@jambolush.com
-                    </a>
+                    </Link>
                   </div>
                   <div className="flex items-start gap-2">
                     <i className="bi bi-telephone text-white/50 text-sm mt-0.5"></i>
-                    <a href="tel:+250788437347" className="text-sm text-white/70 hover:text-white transition-colors duration-200">
+                    <Link href="tel:+250788437347" className="text-sm text-white/70 hover:text-white transition-colors duration-200">
                       +250 788 437 347
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -91,41 +92,41 @@ export default function Footer() {
               <div>
                 <h3 className="font-bold mb-6 text-sm tracking-wider text-white/90">FOLLOW US</h3>
                 <div className="flex flex-wrap gap-3">
-                  <a 
+                  <Link 
                     href="#" 
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-[#1877F2] transition-all duration-300 group border border-white/10"
                     aria-label="Facebook"
                   >
                     <i className="bi bi-facebook text-white/70 group-hover:text-white transition-colors"></i>
-                  </a>
-                  <a 
+                  </Link>
+                  <Link 
                     href="#" 
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-gradient-to-br hover:from-[#405DE6] hover:via-[#C13584] hover:to-[#F56040] transition-all duration-300 group border border-white/10"
                     aria-label="Instagram"
                   >
                     <i className="bi bi-instagram text-white/70 group-hover:text-white transition-colors"></i>
-                  </a>
-                  <a 
+                  </Link>
+                  <Link 
                     href="#" 
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
                     aria-label="Twitter/X"
                   >
                     <i className="bi bi-twitter-x text-white/70 group-hover:text-white transition-colors"></i>
-                  </a>
-                  <a 
+                  </Link>
+                  <Link 
                     href="#" 
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-[#0A66C2] transition-all duration-300 group border border-white/10"
                     aria-label="LinkedIn"
                   >
                     <i className="bi bi-linkedin text-white/70 group-hover:text-white transition-colors"></i>
-                  </a>
-                  <a 
+                  </Link>
+                  <Link 
                     href="#" 
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
                     aria-label="TikTok"
                   >
                     <i className="bi bi-tiktok text-white/70 group-hover:text-white transition-colors"></i>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -174,12 +175,12 @@ export default function Footer() {
                 © 2025 JamboLush. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
-                <a href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                <Link href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
                   Cookies Policy
-                </a>
-                <a href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                </Link>
+                <Link href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
                   Sitemap
-                </a>
+                </Link>
               </div>
             </div>
           </div>

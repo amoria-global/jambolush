@@ -118,15 +118,15 @@ const BecomeHost = () => {
   const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
     <div 
       onClick={() => onClick(role)}
-      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-xl group"
+      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
     >
-      <div className="flex flex-col items-center text-center space-y-4">
-        <div className="w-14 h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
-          <i className={`${icon} text-white text-xl`}></i>
+      <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
+          <i className={`${icon} text-white text-lg sm:text-xl`}></i>
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
-          <p className="text-base text-gray-600 leading-relaxed">{description}</p>
+          <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
         </div>
       </div>
     </div>
@@ -150,7 +150,7 @@ const BecomeHost = () => {
         <select 
           value={value} 
           onChange={(e) => onChange(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200"
+          className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-sm sm:text-base"
           required={required}
         >
           <option value="">{placeholder}</option>
@@ -164,7 +164,7 @@ const BecomeHost = () => {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200"
+          className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-sm sm:text-base"
           required={required}
         />
       )}
@@ -183,16 +183,16 @@ const BecomeHost = () => {
       <label className="block text-base font-medium text-gray-700">
         {title} <span className="text-[#F20C8F]">*</span>
       </label>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {options.map(option => (
           <label key={option} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors duration-200">
             <input
               type="checkbox"
               checked={selectedOptions.includes(option)}
               onChange={() => onChange(option)}
-              className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F]"
+              className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
             />
-            <span className="text-base text-gray-700">{option}</span>
+            <span className="text-sm text-gray-700">{option}</span>
           </label>
         ))}
       </div>
@@ -201,18 +201,18 @@ const BecomeHost = () => {
 
   if (currentStep === 'role-selection') {
     return (
-      <div className="bg-gray-200">
+      <div className="bg-gray-50">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
         
         {/* Header Section */}
         <div className="">
           <div className="max-w-4xl mx-auto px-6 py-20">
             <div className="text-center space-y-3">
-              <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-base font-medium rounded-full">
+              <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-sm font-medium rounded-full">
                 Join Our Platform
               </div>
-              <h1 className="text-3xl font-bold text-[#083A85]">Become a Host</h1>
-              <p className="text-gray-600 max-w-lg mx-auto">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Host</h1>
+              <p className="text-sm sm:text-base text-gray-600 max-w-lg mx-auto px-4">
                 Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.
               </p>
             </div>
@@ -220,29 +220,31 @@ const BecomeHost = () => {
         </div>
 
         {/* Role Selection Cards */}
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="grid md:grid-cols-3 gap-6">
-            <RoleCard
-              role="host"
-              icon="bi bi-house-door"
-              title="Property Owner"
-              description="List your properties, connect with potential buyers or renters, and manage your real estate portfolio."
-              onClick={handleRoleSelection}
-            />
-            <RoleCard
-              role="field-agent"
-              icon="bi bi-people"
-              title="Field Agent"
-              description="Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
-              onClick={handleRoleSelection}
-            />
-            <RoleCard
-              role="tour-guide"
-              icon="bi bi-geo-alt"
-              title="Tour Guide"
-              description="Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
-              onClick={handleRoleSelection}
-            />
+        <div className="px-4 sm:px-6 pb-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <RoleCard
+                role="host"
+                icon="bi bi-house-door"
+                title="Property Owner"
+                description="List your properties, connect with potential buyers or renters, and manage your real estate portfolio."
+                onClick={handleRoleSelection}
+              />
+              <RoleCard
+                role="field-agent"
+                icon="bi bi-people"
+                title="Field Agent"
+                description="Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
+                onClick={handleRoleSelection}
+              />
+              <RoleCard
+                role="tour-guide"
+                icon="bi bi-geo-alt"
+                title="Tour Guide"
+                description="Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
+                onClick={handleRoleSelection}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -251,24 +253,24 @@ const BecomeHost = () => {
 
   if (currentStep.includes('-form')) {
     return (
-      <div className="mt-10 bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pt-10">
         {/* Header */}
-        <div className="bg-white border-b border-white">
+        <div className="bg-white border-b border-gray-200">
           <div className="max-w-3xl mx-auto px-6 py-6">
             <div className="flex items-center space-x-3">
               <button 
                 onClick={goBack} 
-                className="p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
               >
                 <i className="bi bi-chevron-left text-lg"></i>
               </button>
-              <div>
-                <h2 className="text-xl font-bold text-[#083A85]">
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-[#083A85] truncate">
                   {selectedRole === 'host' && 'Property Owner Registration'}
                   {selectedRole === 'field-agent' && 'Field Agent Registration'}
                   {selectedRole === 'tour-guide' && 'Tour Guide Registration'}
                 </h2>
-                <p className="text-base text-gray-600">Please fill in your details to get started</p>
+                <p className="text-sm text-gray-600">Please fill in your details to get started</p>
               </div>
             </div>
           </div>
@@ -276,15 +278,15 @@ const BecomeHost = () => {
 
         {/* Form */}
         <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="space-y-6">
               {/* Personal Information Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+              <div className="space-y-4 sm:space-y-6">
+                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
                   Personal Information
                 </h3>
                 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     label="Full Name"
                     value={formData.names}
@@ -310,12 +312,12 @@ const BecomeHost = () => {
               </div>
 
               {/* Location Information Section */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+              <div className="space-y-4 sm:space-y-6">
+                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
                   Location Information
                 </h3>
                 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     label="Country"
                     value={formData.country}
@@ -330,7 +332,7 @@ const BecomeHost = () => {
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     label="District"
                     value={formData.district}
@@ -354,8 +356,8 @@ const BecomeHost = () => {
               </div>
 
               {/* Role-specific Information */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+              <div className="space-y-4 sm:space-y-6">
+                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
                   Professional Information
                 </h3>
 
@@ -399,10 +401,10 @@ const BecomeHost = () => {
               </div>
             </div>
 
-            <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0">
               <button
                 onClick={handleFormSubmit}
-                className="bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-3 px-8 rounded-md transition-colors duration-200"
+                className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-sm sm:text-base"
               >
                 Continue Registration
               </button>
@@ -418,28 +420,28 @@ const BecomeHost = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
             <div className="flex items-center space-x-3">
               <button 
                 onClick={goBack} 
-                className="p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
               >
                 <i className="bi bi-chevron-left text-lg"></i>
               </button>
               <div>
                 <h2 className="text-xl font-bold text-[#083A85]">Terms & Agreement</h2>
-                <p className="text-base text-gray-600">Please review and accept our terms of service</p>
+                <p className="text-sm text-gray-600">Please review and accept our terms of service</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-base border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="space-y-6">
               <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-[#083A85] mb-4">Service Agreement</h3>
-                <div className="space-y-3 text-gray-700 text-base leading-relaxed">
+                <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
                   <p>
                     This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : 'tour guide'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
                   </p>
@@ -448,63 +450,63 @@ const BecomeHost = () => {
                   </p>
                 </div>
 
-                <div className="mt-6">
-                  <h4 className="font-medium text-[#083A85] mb-3">Key Areas Covered:</h4>
-                  <div className="grid md:grid-cols-2 gap-4">
+                <div className="mt-4 sm:mt-6">
+                  <h4 className="font-medium text-[#083A85] mb-3 text-sm sm:text-base">Key Areas Covered:</h4>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Service obligations and responsibilities</span>
+                        <span className="text-sm text-gray-700">Service obligations and responsibilities</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Commission structure and payment terms</span>
+                        <span className="text-sm text-gray-700">Commission structure and payment terms</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Quality standards and performance metrics</span>
+                        <span className="text-sm text-gray-700">Quality standards and performance metrics</span>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Liability and insurance requirements</span>
+                        <span className="text-sm text-gray-700">Liability and insurance requirements</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Termination conditions</span>
+                        <span className="text-sm text-gray-700">Termination conditions</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Dispute resolution procedures</span>
+                        <span className="text-sm text-gray-700">Dispute resolution procedures</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-start space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
                 <input
                   type="checkbox"
                   id="agreement"
-                  className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] mt-0.5"
+                  className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] mt-0.5 flex-shrink-0"
                   required
                 />
-                <label htmlFor="agreement" className="text-base text-gray-700 leading-relaxed">
+                <label htmlFor="agreement" className="text-sm text-gray-700 leading-relaxed">
                   I have carefully read, understood, and agree to abide by all the terms and conditions outlined in this service agreement. I acknowledge that this agreement is legally binding.
                 </label>
               </div>
 
-              <div className="flex justify-between pt-6 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
                 <button
                   onClick={goBack}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                  className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-sm sm:text-base"
                 >
                   Go Back
                 </button>
                 <button
                   onClick={() => setCurrentStep('success')}
-                  className="bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-sm sm:text-base"
                 >
                   Accept & Complete Registration
                 </button>
@@ -521,89 +523,89 @@ const BecomeHost = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-6 py-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
             <div className="flex items-center space-x-3">
               <button 
                 onClick={goBack} 
-                className="p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200"
+                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
               >
                 <i className="bi bi-chevron-left text-lg"></i>
               </button>
               <div>
                 <h2 className="text-xl font-bold text-[#083A85]">Field Agent Assessment</h2>
-                <p className="text-base text-gray-600">Complete your knowledge assessment to proceed</p>
+                <p className="text-sm text-gray-600">Complete your knowledge assessment to proceed</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-base border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="space-y-6">
               {/* Assessment Overview */}
-              <div className="bg-[#083A85] text-white p-6 rounded-lg">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                    <i className="bi bi-clipboard-check text-lg"></i>
+              <div className="bg-[#083A85] text-white p-4 sm:p-6 rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i className="bi bi-clipboard-check text-base sm:text-lg"></i>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Assessment Overview</h3>
-                    <p className="text-blue-100 text-base">Evaluate your expertise in real estate and property management</p>
+                    <p className="text-blue-100 text-sm">Evaluate your expertise in real estate and property management</p>
                   </div>
                 </div>
-                <p className="text-blue-100 text-base leading-relaxed">
+                <p className="text-blue-100 text-sm leading-relaxed">
                   This comprehensive assessment consists of 30 carefully crafted questions designed to evaluate your knowledge, skills, and experience in real estate and property management. Your performance will help us understand your expertise level and assign appropriate opportunities.
                 </p>
               </div>
 
               {/* Categories Grid */}
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
                 <div className="space-y-4">
-                  <h4 className="text-md font-semibold text-[#083A85]">Assessment Categories</h4>
+                  <h4 className="text-sm sm:text-base font-semibold text-[#083A85]">Assessment Categories</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Real Estate Market Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">8 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Real Estate Market Knowledge</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">8 questions</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Property Valuation Techniques</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Property Valuation Techniques</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">6 questions</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Client Relations & Communication</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">5 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Client Relations & Communication</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">5 questions</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-md font-semibold text-[#083A85]">Additional Areas</h4>
+                  <h4 className="text-sm sm:text-base font-semibold text-[#083A85]">Additional Areas</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Legal & Regulatory Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Legal & Regulatory Knowledge</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">6 questions</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Sales & Negotiation Skills</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">3 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Sales & Negotiation Skills</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">3 questions</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Technology & Tools Proficiency</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">2 questions</span>
+                      <span className="text-sm font-medium text-gray-800">Technology & Tools Proficiency</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">2 questions</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Instructions */}
-              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i className="bi bi-info-circle"></i>
+              <div className="bg-amber-50 border border-amber-200 p-3 sm:p-4 rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-3">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
+                    <i className="bi bi-info-circle text-sm sm:text-base"></i>
                   </div>
                   <div className="space-y-2">
                     <h4 className="font-medium text-amber-800">Assessment Instructions</h4>
-                    <div className="space-y-1 text-base text-amber-700">
+                    <div className="space-y-1 text-sm text-amber-700">
                       <p>• You will have <strong>45 minutes</strong> to complete all 30 questions</p>
                       <p>• Each question has multiple choice answers with one correct option</p>
                       <p>• A minimum score of <strong>70%</strong> is required to proceed with your application</p>
@@ -613,16 +615,16 @@ const BecomeHost = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between pt-6 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
                 <button
                   onClick={goBack}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                  className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-sm sm:text-base"
                 >
                   Go Back
                 </button>
                 <button
                   onClick={() => setCurrentStep('success')}
-                  className="bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-3 px-6 rounded-md transition-colors duration-200 flex items-center space-x-2"
+                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base"
                 >
                   <span>Start Assessment</span>
                   <i className="bi bi-arrow-right"></i>
@@ -639,17 +641,17 @@ const BecomeHost = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
         <div className="max-w-lg mx-auto">
-          <div className="bg-white rounded-lg shadow-base border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
             <div className="space-y-6">
               {/* Success Icon */}
-              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto">
-                <i className="bi bi-check-circle text-2xl"></i>
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto">
+                <i className="bi bi-check-circle text-xl sm:text-2xl"></i>
               </div>
 
               {/* Success Message */}
-              <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-[#083A85]">Registration Complete!</h2>
-                <p className="text-gray-600 leading-relaxed">
+              <div className="space-y-2 sm:space-y-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#083A85]">Registration Complete!</h2>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed px-2">
                   Congratulations! Your application has been submitted successfully and is now under review by our team.
                 </p>
               </div>
@@ -658,11 +660,11 @@ const BecomeHost = () => {
               <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
                 <div className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <i className="bi bi-clock text-base"></i>
+                    <i className="bi bi-clock text-sm"></i>
                   </div>
                   <div className="text-left">
                     <h4 className="font-medium text-blue-900 mb-1">What Happens Next?</h4>
-                    <p className="text-blue-700 text-base leading-relaxed">
+                    <p className="text-blue-700 text-sm leading-relaxed">
                       You will receive a confirmation email within 24 hours with detailed next steps and account activation instructions. Our team will review your application and contact you shortly.
                     </p>
                   </div>
@@ -689,7 +691,7 @@ const BecomeHost = () => {
                     services: []
                   });
                 }}
-                className="bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+                className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-sm sm:text-base"
               >
                 Go To Home
               </button>
@@ -701,6 +703,5 @@ const BecomeHost = () => {
   }
 
   return null;
-}; 
-
+};
 export default BecomeHost;

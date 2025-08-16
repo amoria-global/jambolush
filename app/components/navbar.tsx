@@ -177,7 +177,7 @@ const Navbar = () => {
                     <a href="#settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       <i className="bi bi-gear mr-3"></i>
                       Settings
-                    </Link>
+                    </a>
                     <hr className="my-1" />
                     <button 
                       onClick={() => setIsLoggedIn(false)}

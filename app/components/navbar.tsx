@@ -193,7 +193,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => {router.push('/all/login');}}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm cursor-pointer font-medium rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-[#083A85] hover:bg-gray-100' 
                       : 'text-slate-300 hover:bg-white/10'
@@ -203,7 +203,7 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => {router.push('/all/signup');}}
-                  className="px-4 py-2 bg-[#083A85] text-white text-sm font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
+                  className="px-4 py-2 bg-[#083A85] text-white text-sm cursor-pointer font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
                   Sign up
                 </button>

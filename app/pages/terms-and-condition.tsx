@@ -199,7 +199,7 @@ const TermsAndConditionsPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col sm:flex-row font-sans">
 
      {/* Mobile Top Bar */}
-      <div className="sm:hidden flex justify-between items-center bg-[#0C2D62] text-white p-4 relative top-16 left-0 right-0 z-10">
+      <div className="sm:hidden flex justify-between items-center bg-[#0C2D62] text-white p-4 relative top-16 left-6 right-6 z-10">
         <h2 className="text-lg font-semibold">Sections</h2>
         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white text-2xl font-bold">
           ☰
@@ -209,7 +209,7 @@ const TermsAndConditionsPage: React.FC = () => {
 
       {/* Sidebar */}
       <aside
-        className={`bg-[#0C2D62] text-white w-full sm:w-64 p-4 flex-shrink-0 sm:block mt-16 ${sidebarOpen ? 'block' : 'hidden'} sm:block`}
+        className={`bg-[#0C2D62] text-white w-full sm:w-64 p-4 flex-shrink-0 sm:block mt-16 ml-10 mb-5  ${sidebarOpen ? 'block' : 'hidden'} sm:block`}
       >
         <ul className="space-y-2 text-sm sm:text-base font-sans">
           {sections.map((section) => (

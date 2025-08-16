@@ -1,20 +1,18 @@
-import React, { use } from 'react';
+import React from "react";
 
-// Define a type for a single photo
+// Type for a single photo
 type Photo = {
   url: string;
   alt: string;
 };
 
-// Define a type for a room, which contains a label and an array of photos
+// Type for a room
 type Room = {
   label: string;
   photos: Photo[];
 };
 
-// Main App Component
 const App: React.FC = () => {
-  // Dummy data for the rooms and their photos
   const roomPhotos: Room[] = [
     {
       label: "Living room",
@@ -27,7 +25,6 @@ const App: React.FC = () => {
         { url: "/LivingRoom/LivingRoom6.png", alt: "Cozy living room corner" },
         { url: "/LivingRoom/LivingRoom7.png", alt: "Living room with plants" },
         { url: "/LivingRoom/LivingRoom8.png", alt: "Living room with fireplace" },
-        
       ],
     },
     {
@@ -39,8 +36,6 @@ const App: React.FC = () => {
         { url: "/kitchen/kitchen4.png", alt: "Kitchen appliances" },
         { url: "/kitchen/kitchen5.png", alt: "Kitchen with dining area" },
         { url: "/kitchen/kitchen6.png", alt: "Kitchen storage" },
-        
-        
       ],
     },
     {
@@ -48,6 +43,9 @@ const App: React.FC = () => {
       photos: [
         { url: "/DiningArea/DiningArea1.png", alt: "Dining table setup" },
         { url: "/DiningArea/DiningArea2.png", alt: "Dining area details" },
+        { url: "/DiningArea/DiningArea1.png", alt: "Dining area with view" },
+        { url: "/DiningArea/DiningArea2.png", alt: "Cozy dining corner" },
+        { url: "/DiningArea/DiningArea1.png", alt: "Dining area decor" },
       ],
     },
     {
@@ -58,7 +56,6 @@ const App: React.FC = () => {
         { url: "/BedRoom/BedRoom3.png", alt: "Bedroom decor" },
         { url: "/BedRoom/BedRoom4.png", alt: "Bedroom with closet" },
         { url: "/BedRoom/BedRoom5.png", alt: "Bedroom with view" },
-        
       ],
     },
     {
@@ -69,7 +66,6 @@ const App: React.FC = () => {
         { url: "/BathRoom/BathRoom3.png", alt: "Bathroom sink" },
         { url: "/BathRoom/BathRoom4.png", alt: "Bathroom decor" },
         { url: "/BathRoom/BathRoom5.png", alt: "Bathroom with tub" },
-       
       ],
     },
     {
@@ -89,7 +85,6 @@ const App: React.FC = () => {
         { url: "/Balcony/Balcony3.png", alt: "Balcony plants" },
         { url: "/Balcony/Balcony4.png", alt: "Balcony with table" },
         { url: "/Balcony/Balcony5.png", alt: "Balcony at sunset" },
-       
       ],
     },
     {
@@ -98,7 +93,6 @@ const App: React.FC = () => {
         { url: "/LaundryArea/LaundryArea1.png", alt: "Washer and dryer" },
         { url: "/LaundryArea/LaundryArea2.png", alt: "Laundry storage" },
         { url: "/LaundryArea/LaundryArea3.png", alt: "Laundry area details" },
-        
       ],
     },
     {
@@ -108,8 +102,7 @@ const App: React.FC = () => {
         { url: "/Gym/Gym2.png", alt: "Gym with weights" },
         { url: "/Gym/Gym3.png", alt: "Gym cardio area" },
         { url: "/Gym/Gym4.png", alt: "Gym with mirrors" },
-        { url: "/Gym/Gym5.png", alt: "Gym with yoga mats"}
-        
+        { url: "/Gym/Gym5.png", alt: "Gym with yoga mats" },
       ],
     },
     {
@@ -134,43 +127,61 @@ const App: React.FC = () => {
   ];
 
   return (
-    <div className="font-sans bg-gray-50 min-h-screen p-8">
-      {/* Tailwind CSS CDN - for a quick, standalone example */}
-      <script src="https://cdn.tailwindcss.com"></script>
+    
+      <div className="font-sans bg-gray-50 min-h-screen mt-20 mb-8 mx-4 sm:mx-6 lg:mx-12 p-4 sm:p-6 lg:p-8 max-w-screen-xl mx-auto rounded-lg shadow-sm">
+  
+      {/* Page Title */}
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#083A85] mb-6 text-center">
+        Photo Tours
+      </h1>
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Photo tours</h1>
-
-      {/* Grid of clickable room thumbnails (now acts as navigation/overview) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-12">
+      {/* Room Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-10">
         {roomPhotos.map((room, index) => (
           <a
             key={index}
-            href={`#${room.label.replace(/\s+/g, '-').toLowerCase()}`} // Anchor link to room section
-            className="group block relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1"
+            href={`#${room.label.replace(/\s+/g, "-").toLowerCase()}`}
+            className="group block relative rounded-xl overflow-hidden shadow hover:shadow-lg transition duration-300"
           >
-            <div className="w-full h-40">
+            <div className="w-full h-28 sm:h-36 md:h-40">
               <img
                 src={room.photos[0].url}
                 alt={room.label}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-50 transition-colors duration-300 flex items-end p-4">
-              <span className="text-white font-semibold text-lg">{room.label}</span>
+            {/*text color */}
+            <div className="absolute inset-0 group-hover:bg-opacity-50 flex items-end p-2 sm:p-3">
+              <span className="text-sm sm:text-sm md:text-sm font-bold text-black bg-white bg-opacity-800 rounded-lg px-3 shadow "> 
+                {room.label}
+              </span>
             </div>
           </a>
         ))}
       </div>
 
-      {/* Display all room photos on the same page */}
-      <div className="space-y-12">
+      {/* Photo Sections */}
+      <div className="space-y-10">
         {roomPhotos.map((room, roomIndex) => (
-          <section key={roomIndex} id={room.label.replace(/\s+/g, '-').toLowerCase()} className="pt-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 border-b pb-3">{room.label}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <section
+            key={roomIndex}
+            id={room.label.replace(/\s+/g, "-").toLowerCase()}
+            className="pt-2"
+          >
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#083A85] mb-4 border-b border-gray-200 pb-2">
+              {room.label}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {room.photos.map((photo, photoIndex) => (
-                <div key={photoIndex} className="w-full h-auto aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
-                  <img src={photo.url} alt={photo.alt} className="w-full h-full object-cover" />
+                <div
+                  key={photoIndex}
+                  className="w-full rounded-lg overflow-hidden shadow"
+                >
+                  <img
+                    src={photo.url}
+                    alt={photo.alt}
+                    className="w-full h-48 sm:h-56 md:h-64 object-cover"
+                  />
                 </div>
               ))}
             </div>

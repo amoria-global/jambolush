@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import AgreementPage from'../../pages/terms-and-condition';
+import TermsAndConditionsPage from '../../pages/terms-and-condition';
 
 const TermsAndCondition = () => {
-  return <AgreementPage />;
+  return <TermsAndConditionsPage />;
 };
 
 export default TermsAndCondition;

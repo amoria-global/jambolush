@@ -206,7 +206,7 @@ const AgreementPage: React.FC = () => {
 
       {/* Sidebar */}
       <aside
-        className={`bg-[#0C2D62] text-white w-full sm:w-64 p-4 flex-shrink-0 sm:block mt-16 ${sidebarOpen ? 'block' : 'hidden'} sm:block`}
+        className={`bg-[#0C2D62] text-white w-full sm:w-64 p-4 flex-shrink-0 sm:block mt-16  ml-10 mb-5 ${sidebarOpen ? 'block' : 'hidden'} sm:block`}
       >
         <ul className="space-y-2 text-sm sm:text-base font-sans">
           {sections.map((section) => (

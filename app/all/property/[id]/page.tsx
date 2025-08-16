@@ -148,8 +148,9 @@ export default function HousePage({ params }: HousePageProps) {
       alert('Check-out date must be after check-in date');
       return;
     }
-    console.log('Reserving:', { checkInDate, checkOutDate, houseId: resolvedParams.id });
-    alert(`Reservation confirmed!\nCheck-in: ${checkInDate}\nCheck-out: ${checkOutDate}\nTotal: $${calculateTotal()}`);
+    //console.log('Reserving:', { checkInDate, checkOutDate, houseId: resolvedParams.id });
+    //alert(`Reservation confirmed!\nCheck-in: ${checkInDate}\nCheck-out: ${checkOutDate}\nTotal: $${calculateTotal()}`);
+    router.push(`/all/property/${resolvedParams.id}/confirm-and-pay`);
   };
 
   const calculateTotal = () => {

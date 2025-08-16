@@ -2,168 +2,292 @@
 
 import React, { useState, useMemo } from 'react';
 
-const ReviewsPage = () => {
-  const overallRating = 4.7;
-  const totalReviews = 10;
+interface Review {
+  id: number;
+  name: string;
+  date: string;
+  stayInfo: string;
+  rating: number;
+  text: string;
+  avatar: string;
+}
 
-  const [sortOrder, setSortOrder] = useState('Most relevant');
+interface RatingDistribution {
+  stars: number;
+  count: number;
+}
 
-  const ratingsBreakdown = [
-    { label: 'Accuracy', value: 4.9 },
-    { label: 'Cleanliness', value: 4.5 },
-    { label: 'Check-in', value: 4.7 },
-    { label: 'Communication', value: 4.6 },
-    { label: 'Location', value: 4.8 },
-    { label: 'Value', value: 5.0 }
+interface SubCategoryRating {
+  category: string;
+  score: number;
+}
+
+const ReviewPage: React.FC = () => {
+  const [filterValue, setFilterValue] = useState('Most relevant');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const reviews: Review[] = [
+    {
+      id: 1,
+      name: "Moise caicedo",
+      date: "3 months ago",
+      stayInfo: "Stayed 3 nights",
+      rating: 5,
+      text: "My daughter and I had a wonderful time. The unit was clean and well-appointed with a beautiful view and comfortable bed. The location is great.",
+      avatar: "https://i.pinimg.com/1200x/1a/6b/b4/1a6bb4a83cae143b81fce25632796c15.jpg"
+    },
+    {
+      id: 2,
+      name: "Enzo Fernandez",
+      date: "4 months ago", 
+      stayInfo: "Stayed 4 nights",
+      rating: 5,
+      text: "Great location, lovely host and the home was clean with lots of amenities",
+      avatar: "https://i.pinimg.com/736x/10/29/c9/1029c9da2424ff502a1b3e5c856c7e51.jpg"
+    },
+    {
+      id: 3,
+      name: "cole palmer",
+      date: "4 months ago",
+      stayInfo: "Stayed 1 night", 
+      rating: 5,
+      text: "Great place, very clean. Great view of the lake!",
+      avatar: "https://i.pinimg.com/736x/3f/5b/a4/3f5ba46c7a10110d11c4358f7c4436ab.jpg"
+    },
+    {
+      id: 4,
+      name: "Romeo Lavia",
+      date: "5 months ago",
+      stayInfo: "Stayed 2 nights",
+      rating: 5,
+      text: "This place is amazing! Beautiful views, clean, and modern with a beautiful lake view. Highly recommend!",
+      avatar: "https://i.pinimg.com/1200x/69/fe/7e/69fe7e2242a2ceffe9b160c904b1b246.jpg"
+    },
+    {
+      id: 5,
+      name: "Liam Delap",
+      date: "5 months ago",
+      stayInfo: "Stayed 3 nights", 
+      rating: 5,
+      text: "Beautiful location, great host and very clean. Will definitely stay here again!",
+      avatar: "https://i.pinimg.com/1200x/a3/74/9a/a3749ae6a10b4c25ab40b0ff4d206ef0.jpg"
+    },
+    {
+      id: 6,
+      name: "Estavao williamz",
+      date: "6 months ago",
+      stayInfo: "Stayed 4 nights",
+      rating: 5,
+      text: "Amazing place with incredible views and excellent hospitality from the host!",
+      avatar: "https://i.pinimg.com/1200x/5f/c5/3b/5fc53b52fd0e4eff1a36322f474529cd.jpg"
+    }
   ];
 
-  const reviews = [
-    { id: 1, user: 'Uwitonze Pacific', date: '2025-07-13', rating: 5, text: 'The location was great and the check-in was straightforward. The host\'s efforts to address concerns during the stay are appreciated.' },
-    { id: 2, user: 'Uwitonze Pacific', date: '2020-06-20', rating: 4, text: 'Quiet and secure. Kitchen was small but functional. Easy check-in process. Highly recommend.' },
-    { id: 3, user: 'Uwitonze Pacific', date: '2025-06-03', rating: 3, text: 'Peaceful location, but a few maintenance issues during the stay. Host was responsive though.' },
-    { id: 4, user: 'Uwitonze Pacific', date: '2025-07-01', rating: 5, text: 'Very comfortable stay. The neighborhood is peaceful and safe.' },
-    { id: 5, user: 'Uwitonze Pacific', date: '2025-07-17', rating: 4, text: 'Hosts were responsive and helpful, would stay again.' },
-    { id: 6, user: 'Uwitonze Pacific', date: '2025-07-24', rating: 5, text: 'Loved the clean environment and easy check-in process.' },
-    { id: 7, user: 'Uwitonze Pacific', date: '2025-07-29', rating: 3, text: 'Affordable and decent, but a bit noisy at night.' },
-    { id: 8, user: 'Uwitonze Pacific', date: '2025-07-30', rating: 5, text: 'Perfect location and excellent communication with the host.' },
-    { id: 9, user: 'Uwitonze Pacific', date: '2025-07-31', rating: 4, text: 'Quiet and relaxing stay. I highly recommend this place.' },
-    { id: 10, user: 'Uwitonze Pacific', date: '2025-08-02', rating: 5, text: 'Amazing experience! Everything was spotless and comfortable.' }
+  const ratingDistribution: RatingDistribution[] = [
+    { stars: 5, count: 28 },
+    { stars: 4, count: 16 },
+    { stars: 3, count: 10 },
+    { stars: 2, count: 5 },
+    { stars: 1, count: 2 }
   ];
 
-  const sortedReviews = useMemo(() => {
-    const copy = [...reviews];
-    switch (sortOrder) {
-      case 'Newest first':
-        return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      case 'Highest rating':
-        return copy.sort((a, b) => b.rating - a.rating);
-      case 'Lowest rating':
-        return copy.sort((a, b) => a.rating - b.rating);
-      default:
-        return copy;
-    }
-  }, [sortOrder]);
+  const subCategoryRatings: SubCategoryRating[] = [
+    { category: "Accuracy", score: 4.9 },
+    { category: "Cleanliness", score: 4.5 },
+    { category: "Check-in", score: 4.7 },
+    { category: "Communication", score: 4.6 },
+    { category: "Location", score: 4.8 },
+    { category: "Value", score: 5.0 }
+  ];
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const roundedRating = Math.round(rating);
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <span key={i} className={i < roundedRating ? 'text-yellow-400' : 'text-gray-300'}>
-          ⭐
-        </span>
-      );
-    }
-    return stars;
-  };
-
-  const getRatingIcon = (label: string) => {
-    switch (label) {
-      case 'Accuracy': return <span>✨</span>;
-      case 'Cleanliness': return <span>🛡️</span>;
-      case 'Check-in': return <span>🤝</span>;
-      case 'Communication': return <span>🏆</span>;
-      case 'Location': return <span>📍</span>;
-      case 'Value': return <span>💰</span>;
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Accuracy": return <i className="bi bi-check-circle-fill text-gray-700 mr-2 sm:mr-3" />;
+      case "Cleanliness": return <i className="bi bi-brush text-gray-700 mr-2 sm:mr-3" />;
+      case "Check-in": return <i className="bi bi-door-open text-gray-700 mr-2 sm:mr-3" />;
+      case "Communication": return <i className="bi bi-chat-dots-fill text-gray-700 mr-2 sm:mr-3" />;
+      case "Location": return <i className="bi bi-geo-alt-fill text-gray-700 mr-2 sm:mr-3" />;
+      case "Value": return <i className="bi bi-star-fill text-gray-700 mr-2 sm:mr-3" />;
       default: return null;
     }
   };
 
+  const overallRating = 4.8;
+  const totalReviews = 30;
+
+  const filteredReviews = useMemo(() => {
+    return reviews.filter(review =>
+      review.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      review.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
+  const renderStars = (rating: number, size: 'sm' | 'md' = 'sm') => {
+    const sizeClass = size === 'sm' ? 'text-base' : 'text-xl';
+    return (
+      <div className="flex">
+        {[1, 2, 3, 4, 5].map(star => (
+          <i
+            key={star}
+            className={`bi ${star <= rating ? 'bi-star-fill text-blue-900' : 'bi-star text-gray-300'} ${sizeClass} mr-1`}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const getProgressPercentage = (count: number) => (count / totalReviews) * 100;
+
   return (
-    <div className="flex justify-center items-start min-h-screen bg-gray-100 p-4 font-sans relative">
-      <button
-        aria-label="Close reviews panel"
-        className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 text-gray-500 text-xl"
-      >
-        ×
-      </button>
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 md:p-8 mt-2 mb-2 ml-1 mr-1 sm:mt-4 sm:mb-4 sm:ml-4 sm:mr-4">
+      <div className="min-h-screen bg-gray-50 p-2 sm:p-4 md:p-8 mt-8 mb-2 ml-1 mr-1 sm:mb-4 sm:ml-4 sm:mr-4">
 
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-7xl w-full flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
-        {/* Left Column */}
-        <div className="lg:w-1/3 space-y-8">
-          <div>
-            <h3 className="text-lg font-semibold">Overall Ratings</h3>
-            <div className="flex items-center space-x-2">
-              <span className="text-3xl font-bold">{overallRating}</span>
-              <div className="flex">{renderStars(overallRating)}</div>
-            </div>
-            <p className="text-gray-600">{totalReviews} reviews</p>
-          </div>
-
-          <div className="space-y-4">
-            {ratingsBreakdown.map((rating) => (
-              <div key={rating.label}>
-                <div className="flex justify-between items-center mb-1">
-                  <div className="flex items-center space-x-2">
-                    {getRatingIcon(rating.label)}
-                    <span className="text-sm font-medium">{rating.label}</span>
-                  </div>
-                  <span className="text-sm text-gray-600">{rating.value}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-gray-800 h-2 rounded-full"
-                    style={{ width: `${(rating.value / 5) * 100}%` }}
-                  />
+        {/* Header Section */}
+        <div className="mb-4 mt-2 sm:mb-8 sm:mt-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 sm:mb-6">
+            <div className="flex items-center mb-2 md:mb-0">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-black rounded-full flex items-center justify-center mr-2 sm:mr-4">
+                <div className="text-white text-xs sm:text-sm font-bold text-center">
+                  <img src ="/favicon.ico" alt="Avatar" className="w-full h-full rounded-full object-cover" />
                 </div>
               </div>
-            ))}
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">More reviews</h1>
+            </div>
+            
+            <div className="relative mt-2 w-full md:w-auto">
+              <select 
+                value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent w-full md:w-auto"
+              >
+                <option>Most relevant</option>
+                <option>Most recent</option>
+                <option>Highest rated</option>
+                <option>Lowest rated</option>
+              </select>
+              <i className="bi bi-chevron-down absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            </div>
+          </div>
+          
+          <div className="relative w-full mt-3 sm:max-w-md">
+            <i className="bi bi-search absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search reviews"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-2 sm:pl-10 sm:pr-4 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+            />
           </div>
         </div>
 
-        {/* Right Column */}
-        <div className="lg:w-2/3 space-y-6">
-          <header className="flex items-center justify-between border-b pb-4 mb-4">
-            <div className="flex items-center space-x-2">
-              <h3 className="text-xl font-bold">{totalReviews} reviews</h3>
-              <a href="#" className="text-blue-600 text-sm hover:underline">Back</a>
-            </div>
-            <div className="relative">
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                aria-label="Sort reviews"
-                className="appearance-none bg-gray-100 pl-4 pr-10 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
-              >
-                <option>Most relevant</option>
-                <option>Newest first</option>
-                <option>Highest rating</option>
-                <option>Lowest rating</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 text-sm">
-                ▼
+        <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-8 gap-4 mt-4 sm:mt-6">
+          {/* Sidebar Section */}
+          <div className="lg:col-span-1 mt-2 sm:mt-4">
+            <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6 lg:sticky lg:top-4">
+              {/* Overall Rating */}
+              <div className="mb-4 sm:mb-8">
+                <div className="flex items-center mb-2 sm:mb-4">
+                  <span className="text-2xl sm:text-3xl font-bold text-gray-900 mr-2">{overallRating}</span>
+                  {renderStars(Math.round(overallRating), 'md')}
+                </div>
+                <p className="text-sm sm:text-base text-gray-600">30 reviews</p>
               </div>
-            </div>
-          </header>
 
-          <div className="relative mb-6">
-            <input
-              type="text"
-              placeholder="Search Review"
-              aria-label="Search reviews"
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
-              🔍
+              {/* Rating Distribution */}
+              <div className="mb-4 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-4">
+                Rating breakdown
+              </h3>
+              {ratingDistribution.map(rating => (
+                <div
+                  key={rating.stars}
+                  className="flex items-center mb-2 sm:mb-3"
+                >
+                  <span className="w-6 sm:w-8 text-xs sm:text-sm text-gray-600 mr-2">
+                    {rating.stars}
+                  </span>
+                  <i className="bi bi-star-fill w-4 h-4 text-blue-900 mr-2" />
+                  <div className="flex-1 mx-2 sm:mx-3">
+                    <div className="w-full bg-pink-100 rounded-full h-1.5 sm:h-2">
+                      <div
+                        className="bg-pink-500 h-1.5 sm:h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${getProgressPercentage(rating.count)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <span className="w-6 sm:w-8 text-xs sm:text-sm text-gray-600 text-right">
+                    {rating.count}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+
+              {/* Sub-category Ratings */}
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-4">Categories</h3>
+                {subCategoryRatings.map(category => (
+                  <div key={category.category} className="flex items-center justify-between mb-2 sm:mb-3 py-2 border-b border-gray-100 last:border-b-0">
+                    <div className="flex items-center">
+                      {getCategoryIcon(category.category)}
+                      <span className="text-xs sm:text-sm text-gray-700">{category.category}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-xs sm:text-sm font-medium text-gray-900 mr-1 sm:mr-2">{category.score}</span>
+                      <div className="flex">
+                        {[1,2,3,4,5].map(star => (
+                          <i
+                            key={star}
+                            className={`bi ${star <= Math.round(category.score) ? 'bi-star-fill text-blue-900' : 'bi-star text-gray-300'} w-3 h-3 sm:w-4 sm:h-4 mr-1`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-6 max-h-[80vh] overflow-y-auto">
-            {sortedReviews.map((review) => (
-              <div key={review.id} className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold">
-                  {review.user.charAt(0)}
-                </div>
-                <div className="flex-1 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-semibold">{review.user}</span>
-                    <span className="text-sm text-gray-500">{review.date}</span>
+          {/* Main Content Section */}
+          <div className="lg:col-span-2 mt-2 sm:mt-4">
+            <div className="space-y-3 sm:space-y-6">
+              {filteredReviews.map(review => (
+                <div key={review.id} className="bg-white rounded-lg shadow-sm p-3 sm:p-6 border border-gray-200">
+                  <div className="flex items-start">
+                    <img
+                      src={review.avatar}
+                      alt={review.name}
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover mr-2 sm:mr-4"
+                    />
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
+                        <div>
+                          <h4 className="text-sm sm:text-base font-bold text-gray-900">{review.name}</h4>
+                          <p className="text-xs sm:text-sm text-gray-600">{review.date} • {review.stayInfo}</p>
+                        </div>
+                        <div className="flex">
+                          {[1,2,3,4,5].map(star => (
+                            <i
+                              key={star}
+                              className={`bi ${star <= review.rating ? 'bi-star-fill text-blue-900' : 'bi-star text-gray-300'} w-3 h-3 sm:w-4 sm:h-4 mr-1`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{review.text}</p>
+                    </div>
                   </div>
-                  <div className="flex space-x-1">{renderStars(review.rating)}</div>
-                  <p className="text-gray-700 leading-relaxed">{review.text}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+
+              {filteredReviews.length === 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-4 sm:p-8 text-center">
+                  <p className="text-sm sm:text-base text-gray-500">No reviews found matching your search.</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -171,4 +295,4 @@ const ReviewsPage = () => {
   );
 };
 
-export default ReviewsPage;
+export default ReviewPage;

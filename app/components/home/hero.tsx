@@ -165,18 +165,18 @@ const Hero: React.FC = () => {
       <div className="absolute inset-0" style={{ backgroundColor: overlayColor }}></div>
       
       {/* Content */}
-      <div className="relative z-10 pt-16 sm:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
+      <div className="relative z-10 pt-16 xs:pt-4 sm:pt-8 md:pt-5 lg:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
+        <h1 className="text-xl mb-4 md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
           Discover your place to live
         </h1>
-        <p className="text-sm sm:text-base lg:text-lg mb-8 md:mb-12 opacity-90">
+        <p className=" text-sm max-w-[200px] sm:max-w-full sm:block  mx-auto lg:text-lg mb-8 md:mb-12 opacity-90">
           Let us help you make the right move today!
         </p>
         
         {/* Enhanced Search Container */}
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="sm:bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Tab Section */}
-          <div className="bg-gray-50 px-4 md:px-8 py-4 border-b border-gray-200">
+          <div className="sm:bg-gray-50 px-4 md:px-8 py-4 border-b border-gray-200">
             <div className="flex gap-2 md:gap-4 justify-center flex-wrap">
               {tabs.map((tab) => (
                 <button
@@ -221,7 +221,7 @@ const Hero: React.FC = () => {
                         setShowLocationSuggestions(true);
                       }
                     }}
-                    className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-gray-700 text-base transition-colors duration-200"
+                    className={`w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-700 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : ''}`}
                   />
                 </div>
                 
@@ -265,7 +265,7 @@ const Hero: React.FC = () => {
                         setShowSearchSuggestions(true);
                       }
                     }}
-                    className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-pink-500 text-gray-700 text-base transition-colors duration-200"
+                     className={`w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-700 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : '' }`}
                   />
                 </div>
                 

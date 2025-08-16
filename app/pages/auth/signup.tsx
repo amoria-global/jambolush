@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Google Auth Page Component
 function GoogleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (provider: string, userData: any) => void }) {
@@ -37,7 +37,7 @@ function GoogleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: 
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Email</label>
               <input
                 type="email"
                 value={email}
@@ -58,7 +58,7 @@ function GoogleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: 
             <div className="text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                className="text-blue-600 hover:text-blue-700 text-base font-medium"
               >
                 {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
               </button>
@@ -68,7 +68,7 @@ function GoogleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <button
               onClick={onBack}
-              className="w-full text-gray-600 hover:text-gray-800 py-2 text-sm font-medium transition-colors duration-200"
+              className="w-full text-gray-600 hover:text-gray-800 py-2 text-base font-medium transition-colors duration-200"
             >
               ← Back to JamboLush
             </button>
@@ -112,7 +112,7 @@ function AppleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Apple ID</label>
+              <label className="block text-base font-medium text-gray-300 mb-2">Apple ID</label>
               <input
                 type="email"
                 value={email}
@@ -123,7 +123,7 @@ function AppleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <label className="block text-base font-medium text-gray-300 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
@@ -144,7 +144,7 @@ function AppleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (
             <div className="text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-400 hover:text-blue-300 text-sm font-medium"
+                className="text-blue-400 hover:text-blue-300 text-base font-medium"
               >
                 {isSignUp ? 'Already have an Apple ID? Sign in' : "Don't have an Apple ID? Create one"}
               </button>
@@ -154,7 +154,7 @@ function AppleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (
           <div className="mt-6 pt-6 border-t border-gray-800">
             <button
               onClick={onBack}
-              className="w-full text-gray-400 hover:text-gray-200 py-2 text-sm font-medium transition-colors duration-200"
+              className="w-full text-gray-400 hover:text-gray-200 py-2 text-base font-medium transition-colors duration-200"
             >
               ← Back to JamboLush
             </button>
@@ -198,7 +198,7 @@ function FacebookAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email or phone number</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Email or phone number</label>
               <input
                 type="email"
                 value={email}
@@ -209,7 +209,7 @@ function FacebookAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
@@ -230,9 +230,9 @@ function FacebookAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess
             <div className="text-center">
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-[#1877F2] hover:text-[#166FE5] text-sm font-medium"
+                className="text-[#1877F2] hover:text-[#166FE5] text-base font-medium"
               >
-                {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
+                {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Create one"}
               </button>
             </div>
           </div>
@@ -240,7 +240,7 @@ function FacebookAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess
           <div className="mt-6 pt-6 border-t border-gray-200">
             <button
               onClick={onBack}
-              className="w-full text-gray-600 hover:text-gray-800 py-2 text-sm font-medium transition-colors duration-200"
+              className="w-full text-gray-600 hover:text-gray-800 py-2 text-base font-medium transition-colors duration-200"
             >
               ← Back to JamboLush
             </button>
@@ -269,7 +269,7 @@ function SuccessPage({ provider, userData, onContinue }: { provider?: string | u
           </p>
           
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600">Account created for:</p>
+            <p className="text-base text-gray-600">Account created for:</p>
             <p className="font-medium text-gray-900">{userData.email}</p>
           </div>
           
@@ -312,6 +312,30 @@ function SignupPage({
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    return () => window.removeEventListener('resize', checkMobileView);
+  }, []);
+
+  useEffect(() => {
+    if (!isLangOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+        setIsLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isLangOpen, setIsLangOpen]);
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -340,20 +364,121 @@ function SignupPage({
     }
   };
 
+  if (isMobileView) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#083A85] flex flex-col relative font-['Inter',sans-serif] antialiased">
+        {/* Language Selector - Mobile */}
+        <div ref={langDropdownRef} className="absolute top-4 right-4 z-20">
+          <button
+            onClick={() => setIsLangOpen(!isLangOpen)}
+            className="flex items-center space-x-1 px-2 py-1.5 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+          >
+            <span className="text-base">{getCurrentLanguage()?.flag}</span>
+            <span className="text-base font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
+            <svg className={`w-3 h-3 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {isLangOpen && (
+            <div className="absolute top-full right-0 mt-2 w-32 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg shadow-xl py-1">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setCurrentLang(lang.code);
+                    setIsLangOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-base text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
+                >
+                  <span>{lang.flag}</span>
+                  <span>{lang.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Header */}
+        <div className="pt-12 pb-6 px-6 text-center">
+            <div className="inline-block mb-4">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden">
+                    <img src="/favicon.ico" alt="JamboLush Logo" className="w-full h-full object-cover"/>
+                </div>
+            </div>
+            <h1 className="text-white text-2xl font-bold mb-1">
+                Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Your Journey</span>
+            </h1>
+            <h2 className="text-white/90 text-2xl font-bold mb-2">
+                Create <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Memories</span>
+            </h2>
+        </div>
+
+        {/* Mobile Form */}
+        <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-t-3xl border-t border-white/20 px-6 pt-6 overflow-y-auto">
+            <div className="max-w-sm mx-auto">
+                <h3 className="text-white text-lg font-bold mb-1 text-center">Create Account</h3>
+                <p className="text-white/70 text-base mb-6 text-center">Join JamboLush and start your adventure</p>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-white/90 text-base font-medium mb-1.5">First Name</label>
+                            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
+                        </div>
+                        <div>
+                            <label className="block text-white/90 text-base font-medium mb-1.5">Last Name</label>
+                            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Doe" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">Email Address</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
+                    </div>
+                    <div>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">Password</label>
+                        <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
+                    </div>
+                    <div>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">Confirm Password</label>
+                        <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm your password" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
+                         {password && confirmPassword && password !== confirmPassword && (
+                            <p className="text-red-300 text-base mt-1">Passwords do not match</p>
+                        )}
+                    </div>
+                    <div className="flex items-start space-x-2">
+                        <input type="checkbox" id="terms-mobile" checked={agreeToTerms} onChange={(e) => setAgreeToTerms(e.target.checked)} className="w-3.5 h-3.5 mt-0.5 text-blue-400 bg-white/10 border-white/30 rounded focus:ring-blue-400 focus:ring-1" />
+                        <label htmlFor="terms-mobile" className="text-white/80 text-base">I agree to the <button className="text-blue-300 underline">Terms</button> & <button className="text-blue-300 underline">Policy</button></label>
+                    </div>
+                    <button type="button" onClick={handleSubmit} disabled={!isFormValid} className={`w-full py-2.5 px-4 rounded-lg font-semibold text-base transition-all duration-300 ${ isFormValid ? 'bg-gradient-to-r from-white to-gray-100 text-gray-800' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60' }`}>Create Account</button>
+                    <div className="text-center text-base"><span className="text-white/70">Already have an account? </span><a href="/all/login" className="text-blue-300 hover:text-blue-200 font-medium">Sign in</a></div>
+                    <div className="relative my-4"><div className="flex items-center"><div className="flex-1 border-t border-white/20"></div><span className="px-3 text-white/60 text-base">Or sign up with</span><div className="flex-1 border-t border-white/20"></div></div></div>
+                    <div className="grid grid-cols-3 gap-2">
+                        <button type="button" onClick={() => onSocialLogin('google')} className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-2 rounded-lg flex items-center justify-center"><svg className="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
+                        <button type="button" onClick={() => onSocialLogin('apple')} className="bg-black hover:bg-gray-900 border border-gray-800 text-white py-2.5 px-2 rounded-lg flex items-center justify-center"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></button>
+                        <button type="button" onClick={() => onSocialLogin('facebook')} className="bg-[#1877F2] border border-[#1877F2] text-white py-2.5 px-2 rounded-lg flex items-center justify-center hover:bg-[#166FE5]"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
+                    </div>
+                </div>
+                <div className="pb-20"></div>
+            </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex font-['Inter',sans-serif] antialiased">
       {/* Left Side - Brand Section */}
-      <div className="flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] flex items-center justify-center p-4 min-h-screen relative overflow-hidden">
+      <div className="hidden md:flex flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] items-center justify-center p-4 min-h-screen relative overflow-hidden">
         
         {/* Language Dropdown - Top Left */}
         <div className="absolute top-6 left-6 z-20">
-          <div className="relative">
+          <div ref={langDropdownRef} className="relative">
             <button
               onClick={() => setIsLangOpen(!isLangOpen)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+              className="flex items-center cursor-pointer space-x-2 px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
             >
-              <span className="text-sm">{getCurrentLanguage()?.flag}</span>
-              <span className="text-sm font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
+              <span className="text-base">{getCurrentLanguage()?.flag}</span>
+              <span className="text-base font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
               <svg className={`w-3 h-3 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
@@ -368,7 +493,7 @@ function SignupPage({
                       setCurrentLang(lang.code);
                       setIsLangOpen(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
+                    className="w-full text-left cursor-pointer px-4 py-2 text-base text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
                   >
                     <span>{lang.flag}</span>
                     <span>{lang.name}</span>
@@ -390,15 +515,11 @@ function SignupPage({
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-white/10 rounded-3xl blur-xl"></div>
               <div className="w-48 h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-3xl flex items-center justify-center relative z-10 drop-shadow-2xl overflow-hidden">
-                {/* Option 1: Replace with your image */}
                 <img 
                   src="/favicon.ico" 
                   alt="JamboLush Logo" 
                   className="w-full h-full object-cover"
                 />
-                
-                {/* Option 2: Keep text as fallback (comment out the img above and uncomment this) */}
-                {/* <span className="text-white text-4xl font-bold">JL</span> */}
               </div>
             </div>
           </div>
@@ -418,24 +539,24 @@ function SignupPage({
       </div>
 
       {/* Right Side - Signup Form */}
-      <div className="flex-1 bg-gradient-to-bl from-[#083A85] via-[#0A4694] to-[#083A85] flex items-center justify-center p-4 min-h-screen relative">
+      <div className="flex-1 bg-gradient-to-bl from-[#083A85] via-[#0A4694] to-[#083A85] flex items-center justify-center p-4 min-h-screen relative overflow-y-auto">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-24 right-20 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-24 left-20 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         </div>
 
-        <div className="w-full max-w-md relative z-10">
+        <div className="w-full max-w-md relative z-10 py-8">
           <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
               <h3 className="text-white text-2xl font-bold mb-2">Create Account</h3>
-              <p className="text-white/70 text-sm">Join JamboLush and start your adventure</p>
+              <p className="text-white/70 text-base">Join JamboLush and start your adventure</p>
             </div>
 
-            <div className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleSubmit}>
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="firstName" className="block text-white/90 text-sm font-medium">
+                  <label htmlFor="firstName" className="block text-white/90 text-base font-medium">
                     First Name
                   </label>
                   <input
@@ -450,7 +571,7 @@ function SignupPage({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="lastName" className="block text-white/90 text-sm font-medium">
+                  <label htmlFor="lastName" className="block text-white/90 text-base font-medium">
                     Last Name
                   </label>
                   <input
@@ -468,7 +589,7 @@ function SignupPage({
 
               {/* Email Field */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-white/90 text-sm font-medium">
+                <label htmlFor="email" className="block text-white/90 text-base font-medium">
                   Email Address
                 </label>
                 <div className="relative">
@@ -487,7 +608,7 @@ function SignupPage({
 
               {/* Password Field */}
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-white/90 text-sm font-medium">
+                <label htmlFor="password" className="block text-white/90 text-base font-medium">
                   Password
                 </label>
                 <div className="relative">
@@ -523,7 +644,7 @@ function SignupPage({
 
               {/* Confirm Password Field */}
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-white/90 text-sm font-medium">
+                <label htmlFor="confirmPassword" className="block text-white/90 text-base font-medium">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -556,7 +677,7 @@ function SignupPage({
                   </button>
                 </div>
                 {password && confirmPassword && password !== confirmPassword && (
-                  <p className="text-red-300 text-xs mt-1">Passwords do not match</p>
+                  <p className="text-red-300 text-base mt-1">Passwords do not match</p>
                 )}
               </div>
 
@@ -570,13 +691,13 @@ function SignupPage({
                   onChange={(e) => setAgreeToTerms(e.target.checked)}
                   className="w-4 h-4 mt-0.5 text-blue-400 bg-white/10 border-white/30 rounded focus:ring-blue-400 focus:ring-2 cursor-pointer"
                 />
-                <label htmlFor="terms" className="text-white/80 text-sm cursor-pointer select-none leading-relaxed">
+                <label htmlFor="terms" className="text-white/80 text-base cursor-pointer select-none leading-relaxed">
                   I agree to the{' '}
-                  <button className="text-blue-300 hover:text-blue-200 underline">
+                  <button type="button" className="text-blue-300 hover:text-blue-200 underline">
                     Terms of Service
                   </button>{' '}
                   and{' '}
-                  <button className="text-blue-300 hover:text-blue-200 underline">
+                  <button type="button" className="text-blue-300 hover:text-blue-200 underline">
                     Privacy Policy
                   </button>
                 </label>
@@ -584,8 +705,7 @@ function SignupPage({
 
               {/* Create Account Button */}
               <button
-                type="button"
-                onClick={handleSubmit}
+                type="submit"
                 disabled={!isFormValid}
                 className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg transform ${
                   isFormValid
@@ -595,13 +715,14 @@ function SignupPage({
               >
                 Create Account
               </button>
-
+              </form>
+              
               {/* Sign In Link */}
               <div className="text-center">
-                <span className="text-white/70 text-sm">Already have an account? </span>
+                <span className="text-white/70 text-base">Already have an account? </span>
                 <a 
                   href="/all/login" 
-                  className="group text-blue-300 text-sm hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
+                  className="group text-blue-300 text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
                 >
                   <span className="relative">Sign in</span>
                   <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 group-hover:w-full transition-all duration-300"></div>
@@ -612,7 +733,7 @@ function SignupPage({
               <div className="relative my-6">
                 <div className="flex items-center">
                   <div className="flex-1 border-t border-white/20"></div>
-                  <span className="px-4 text-white/60 text-sm">
+                  <span className="px-4 text-white/60 text-base">
                     Or sign up with
                   </span>
                   <div className="flex-1 border-t border-white/20"></div>
@@ -621,46 +742,10 @@ function SignupPage({
 
               {/* Social Login Buttons */}
               <div className="grid grid-cols-3 gap-3">
-                {/* Google Button */}
-                <button
-                  type="button"
-                  onClick={() => onSocialLogin('google')}
-                  aria-label="Sign up with Google"
-                  className="group bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                  </svg>
-                </button>
-
-                {/* Apple Button */}
-                <button
-                  type="button"
-                  onClick={() => onSocialLogin('apple')}
-                  aria-label="Sign up with Apple"
-                  className="group bg-black hover:bg-gray-900 border border-gray-800 hover:border-gray-700 text-white py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                </button>
-
-                {/* Facebook Button */}
-                <button
-                  type="button"
-                  onClick={() => onSocialLogin('facebook')}
-                  aria-label="Sign up with Facebook"
-                  className="group bg-[#1877F2] border border-[#1877F2] text-white py-3 px-3 rounded-xl font-medium hover:bg-[#166FE5] hover:border-[#166FE5] transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                </button>
+                <button type="button" onClick={() => onSocialLogin('google')} aria-label="Sign up with Google" className="group bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
+                <button type="button" onClick={() => onSocialLogin('apple')} aria-label="Sign up with Apple" className="group bg-black hover:bg-gray-900 border border-gray-800 hover:border-gray-700 text-white py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></button>
+                <button type="button" onClick={() => onSocialLogin('facebook')} aria-label="Sign up with Facebook" className="group bg-[#1877F2] border border-[#1877F2] text-white py-3 px-3 rounded-xl font-medium hover:bg-[#166FE5] hover:border-[#166FE5] transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
               </div>
-            </div>
           </div>
         </div>
       </div>
@@ -669,7 +754,6 @@ function SignupPage({
 }
 
 // Main Signup App Component - matches the structure of your login page
- // Main Signup App Component - matches the structure of your login page
 export default function SignupApp() {
   const [currentPage, setCurrentPage] = useState('signup');
   const [authData, setAuthData] = useState<{ email: string; provider: string } | null>(null);

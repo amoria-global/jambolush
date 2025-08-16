@@ -118,15 +118,15 @@ const BecomeHost = () => {
   const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
     <div 
       onClick={() => onClick(role)}
-      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-4 sm:p-6 hover:shadow-md group"
+      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
     >
       <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
           <i className={`${icon} text-white text-lg sm:text-xl`}></i>
         </div>
         <div className="space-y-2">
-          <h3 className="text-base sm:text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
-          <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{description}</p>
+          <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
+          <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
         </div>
       </div>
     </div>
@@ -143,7 +143,7 @@ const BecomeHost = () => {
 
   const FormField: React.FC<FormFieldProps> = ({ label, type = 'text', value, onChange, placeholder, required = true }) => (
     <div className="space-y-1.5">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-base font-medium text-gray-700">
         {label} {required && <span className="text-[#F20C8F]">*</span>}
       </label>
       {type === 'select' ? (
@@ -180,7 +180,7 @@ const BecomeHost = () => {
 
   const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, options, selectedOptions, onChange }) => (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-base font-medium text-gray-700">
         {title} <span className="text-[#F20C8F]">*</span>
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -192,7 +192,7 @@ const BecomeHost = () => {
               onChange={() => onChange(option)}
               className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
             />
-            <span className="text-xs sm:text-sm text-gray-700">{option}</span>
+            <span className="text-sm text-gray-700">{option}</span>
           </label>
         ))}
       </div>
@@ -201,12 +201,14 @@ const BecomeHost = () => {
 
   if (currentStep === 'role-selection') {
     return (
-      <div className="bg-gray-50  pt-8">
+      <div className="bg-gray-50">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+        
         {/* Header Section */}
-        <div className="px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto py-12 sm:py-16 lg:py-20">
-            <div className="text-center space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-xs sm:text-sm font-medium rounded-full">
+        <div className="">
+          <div className="max-w-4xl mx-auto px-6 py-20">
+            <div className="text-center space-y-3">
+              <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-sm font-medium rounded-full">
                 Join Our Platform
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Host</h1>
@@ -253,8 +255,8 @@ const BecomeHost = () => {
     return (
       <div className="min-h-screen bg-gray-50 pt-10">
         {/* Header */}
-        <div className="border-gray-200 pt-5">
-          <div className="max-w-4xl mx-auto px-2 sm:px-6 py-4 sm:py-6">
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-3xl mx-auto px-6 py-6">
             <div className="flex items-center space-x-3">
               <button 
                 onClick={goBack} 
@@ -268,16 +270,16 @@ const BecomeHost = () => {
                   {selectedRole === 'field-agent' && 'Field Agent Registration'}
                   {selectedRole === 'tour-guide' && 'Tour Guide Registration'}
                 </h2>
-                <p className="text-xs sm:text-sm text-gray-600">Please fill in your details to get started</p>
+                <p className="text-sm text-gray-600">Please fill in your details to get started</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Form */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-            <div className="space-y-6 sm:space-y-8">
+        <div className="max-w-3xl mx-auto px-6 py-8">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="space-y-6">
               {/* Personal Information Section */}
               <div className="space-y-4 sm:space-y-6">
                 <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
@@ -426,20 +428,20 @@ const BecomeHost = () => {
               >
                 <i className="bi bi-chevron-left text-lg"></i>
               </button>
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-[#083A85]">Terms & Agreement</h2>
-                <p className="text-xs sm:text-sm text-gray-600">Please review and accept our terms of service</p>
+              <div>
+                <h2 className="text-xl font-bold text-[#083A85]">Terms & Agreement</h2>
+                <p className="text-sm text-gray-600">Please review and accept our terms of service</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-            <div className="space-y-6 sm:space-y-8">
-              <div className="bg-blue-50 border border-blue-200 p-4 sm:p-6 rounded-lg">
-                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] mb-3 sm:mb-4">Service Agreement</h3>
-                <div className="space-y-3 text-gray-700 text-xs sm:text-sm leading-relaxed">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-[#083A85] mb-4">Service Agreement</h3>
+                <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
                   <p>
                     This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : 'tour guide'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
                   </p>
@@ -453,30 +455,30 @@ const BecomeHost = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Service obligations and responsibilities</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Service obligations and responsibilities</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Commission structure and payment terms</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Commission structure and payment terms</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Quality standards and performance metrics</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Quality standards and performance metrics</span>
                       </div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Liability and insurance requirements</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Liability and insurance requirements</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Termination conditions</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Termination conditions</span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full flex-shrink-0"></div>
-                        <span className="text-xs sm:text-sm text-gray-700">Dispute resolution procedures</span>
+                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                        <span className="text-sm text-gray-700">Dispute resolution procedures</span>
                       </div>
                     </div>
                   </div>
@@ -490,7 +492,7 @@ const BecomeHost = () => {
                   className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] mt-0.5 flex-shrink-0"
                   required
                 />
-                <label htmlFor="agreement" className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                <label htmlFor="agreement" className="text-sm text-gray-700 leading-relaxed">
                   I have carefully read, understood, and agree to abide by all the terms and conditions outlined in this service agreement. I acknowledge that this agreement is legally binding.
                 </label>
               </div>
@@ -529,29 +531,29 @@ const BecomeHost = () => {
               >
                 <i className="bi bi-chevron-left text-lg"></i>
               </button>
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-[#083A85]">Field Agent Assessment</h2>
-                <p className="text-xs sm:text-sm text-gray-600">Complete your knowledge assessment to proceed</p>
+              <div>
+                <h2 className="text-xl font-bold text-[#083A85]">Field Agent Assessment</h2>
+                <p className="text-sm text-gray-600">Complete your knowledge assessment to proceed</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-            <div className="space-y-6 sm:space-y-8">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="space-y-6">
               {/* Assessment Overview */}
               <div className="bg-[#083A85] text-white p-4 sm:p-6 rounded-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-4">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <i className="bi bi-clipboard-check text-base sm:text-lg"></i>
                   </div>
-                  <div className="min-w-0">
-                    <h3 className="text-base sm:text-lg font-semibold">Assessment Overview</h3>
-                    <p className="text-blue-100 text-xs sm:text-sm">Evaluate your expertise in real estate and property management</p>
+                  <div>
+                    <h3 className="text-lg font-semibold">Assessment Overview</h3>
+                    <p className="text-blue-100 text-sm">Evaluate your expertise in real estate and property management</p>
                   </div>
                 </div>
-                <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
+                <p className="text-blue-100 text-sm leading-relaxed">
                   This comprehensive assessment consists of 30 carefully crafted questions designed to evaluate your knowledge, skills, and experience in real estate and property management. Your performance will help us understand your expertise level and assign appropriate opportunities.
                 </p>
               </div>
@@ -561,17 +563,17 @@ const BecomeHost = () => {
                 <div className="space-y-4">
                   <h4 className="text-sm sm:text-base font-semibold text-[#083A85]">Assessment Categories</h4>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Real Estate Market Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">8 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Real Estate Market Knowledge</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">8 questions</span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Property Valuation Techniques</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">6 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Property Valuation Techniques</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">6 questions</span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Client Relations & Communication</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">5 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Client Relations & Communication</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">5 questions</span>
                     </div>
                   </div>
                 </div>
@@ -579,17 +581,17 @@ const BecomeHost = () => {
                 <div className="space-y-4">
                   <h4 className="text-sm sm:text-base font-semibold text-[#083A85]">Additional Areas</h4>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Legal & Regulatory Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">6 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Legal & Regulatory Knowledge</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">6 questions</span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Sales & Negotiation Skills</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">3 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Sales & Negotiation Skills</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">3 questions</span>
                     </div>
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-md">
-                      <span className="text-xs sm:text-sm font-medium text-gray-800">Technology & Tools Proficiency</span>
-                      <span className="bg-[#F20C8F] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2">2 questions</span>
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                      <span className="text-sm font-medium text-gray-800">Technology & Tools Proficiency</span>
+                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-xs font-medium">2 questions</span>
                     </div>
                   </div>
                 </div>
@@ -601,9 +603,9 @@ const BecomeHost = () => {
                   <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
                     <i className="bi bi-info-circle text-sm sm:text-base"></i>
                   </div>
-                  <div className="space-y-2 text-center sm:text-left">
-                    <h4 className="font-medium text-amber-800 text-sm sm:text-base">Assessment Instructions</h4>
-                    <div className="space-y-1 text-xs sm:text-sm text-amber-700">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-amber-800">Assessment Instructions</h4>
+                    <div className="space-y-1 text-sm text-amber-700">
                       <p>• You will have <strong>45 minutes</strong> to complete all 30 questions</p>
                       <p>• Each question has multiple choice answers with one correct option</p>
                       <p>• A minimum score of <strong>70%</strong> is required to proceed with your application</p>
@@ -637,10 +639,10 @@ const BecomeHost = () => {
 
   if (currentStep === 'success') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 sm:px-6">
-        <div className="w-full max-w-lg mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8 text-center">
-            <div className="space-y-4 sm:space-y-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="max-w-lg mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+            <div className="space-y-6">
               {/* Success Icon */}
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto">
                 <i className="bi bi-check-circle text-xl sm:text-2xl"></i>
@@ -655,14 +657,14 @@ const BecomeHost = () => {
               </div>
 
               {/* Next Steps */}
-              <div className="bg-blue-50 border border-blue-200 p-3 sm:p-4 rounded-lg text-left">
-                <div className="flex flex-col sm:flex-row sm:items-start space-y-2 sm:space-y-0 sm:space-x-3">
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0 sm:mt-0.5">
-                    <i className="bi bi-clock text-xs sm:text-sm"></i>
+              <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i className="bi bi-clock text-sm"></i>
                   </div>
-                  <div className="text-center sm:text-left">
-                    <h4 className="font-medium text-blue-900 mb-1 text-sm sm:text-base">What Happens Next?</h4>
-                    <p className="text-blue-700 text-xs sm:text-sm leading-relaxed">
+                  <div className="text-left">
+                    <h4 className="font-medium text-blue-900 mb-1">What Happens Next?</h4>
+                    <p className="text-blue-700 text-sm leading-relaxed">
                       You will receive a confirmation email within 24 hours with detailed next steps and account activation instructions. Our team will review your application and contact you shortly.
                     </p>
                   </div>

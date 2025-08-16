@@ -353,7 +353,7 @@ const Navbar = () => {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      router.push('/all/signup');
+                      router.push('/all/signup'); 
                     }}
                     className="w-full  px-3 py-2 bg-[#083A85] text-white text-sm font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                   >

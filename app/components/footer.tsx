@@ -36,6 +36,11 @@ export default function Footer() {
                     </Link >
                   </li>
                   <li>
+                    <Link href="/all/about" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">About</span>
+                    </Link >
+                  </li>
+                  <li>
                     <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
                     </Link>

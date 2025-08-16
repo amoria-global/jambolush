@@ -23,7 +23,7 @@ const AccountVerificationPage = () => {
             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
           </svg>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+        <h1 className="text-3xl md:text-2xl font-extrabold text-white mb-4">
           Verify Your Account
         </h1>
         <p className="text-base md:text-lg text-gray-400 mb-6">
@@ -41,7 +41,7 @@ const AccountVerificationPage = () => {
           <button
             onClick={handleResendEmail}
             disabled={loading}
-            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:bg-gray-500 disabled:cursor-not-allowed"
+            className="inline-flex items-center cursor-pointer justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-[#083A85] hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             {loading ? (
               <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

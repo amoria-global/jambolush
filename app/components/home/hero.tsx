@@ -166,10 +166,10 @@ const Hero: React.FC = () => {
       
       {/* Content */}
       <div className="relative z-10 pt-16 sm:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
-        <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
           Discover your place to live
         </h1>
-        <p className="text-xs md:text-base lg:text-lg mb-8 md:mb-12 opacity-90">
+        <p className="text-sm sm:text-base lg:text-lg mb-8 md:mb-12 opacity-90">
           Let us help you make the right move today!
         </p>
         

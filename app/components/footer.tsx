@@ -31,17 +31,12 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/all/how-it-works" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/how-it-works" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">How It Works</span>
                     </Link >
                   </li>
                   <li>
-                    <Link href="/all/about" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">About</span>
-                    </Link >
-                  </li>
-                  <li>
-                    <Link href="#" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
                     </Link>
                   </li>
@@ -53,7 +48,7 @@ export default function Footer() {
                 <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">LEGAL</h3>
                 <ul className="space-y-3">
                   <li>
-                    <Link href="#" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Terms & Conditions</span>
                     </Link>
                   </li>
@@ -63,7 +58,7 @@ export default function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Agreements</span>
                     </Link>
                   </li>
@@ -158,10 +153,10 @@ export default function Footer() {
                   <input
                     type="email"
                     placeholder="Enter your email address"
-                    className="px-6 py-3 bg-white text-gray-800 rounded-full text-base focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full sm:w-80 placeholder:text-gray-500"
+                    className="px-6 py-3 bg-white text-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full sm:w-80 placeholder:text-gray-500"
                   />
-                  <button
-                    className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-base rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
+                  <button 
+                    className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-sm rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
                     onClick={() => console.log('Subscribe clicked')}
                   >
                     Subscribe Free
@@ -178,6 +173,9 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
               <p className="text-base text-white/60">
                 © 2025 JamboLush. All rights reserved.
+              </p>
+              <p className="text-sm text-white/60">
+                Powered by Amoria Global tech.
               </p>
               <div className="flex items-center gap-6">
                 <Link href="#" className="text-base text-white/60 hover:text-white transition-colors duration-200">

@@ -87,7 +87,7 @@ const Navbar = () => {
               <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
             <span className={`font-bold text-xl transition-colors duration-300 ${
-              isScrolled ? 'text-[#083A85]' : 'text-slate-500'
+              isScrolled ? 'text-[#083A85]' : 'text-white'
             }`}>
               JamboLush
             </span>
@@ -214,8 +214,8 @@ const Navbar = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 rounded-lg transition-colors duration-300 ${
-                isScrolled
-                  ? 'text-gray-700 hover:bg-gray-100'
+                isScrolled 
+                  ? 'text-gray-700 hover:bg-gray-100' 
                   : 'text-white hover:bg-white/10'
               }`}
             >
@@ -326,7 +326,7 @@ const Navbar = () => {
                       setIsLoggedIn(false);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full text-left flex items-center px-6 py-2 text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
+                    className="w-full text-left flex items-center px-6 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
                   >
                     <i className="bi bi-box-arrow-right mr-3"></i>
                     Sign out
@@ -336,12 +336,11 @@ const Navbar = () => {
                 <div className="space-y-2">
                   <button
                     onClick={() => {
-                      setIsLoggedIn(true);
                       setIsMobileMenuOpen(false);
                     }}
-                    className={`w-full text-left cursor-pointer px-3 py-2 text-base font-medium rounded-lg transition-colors duration-300 ${
-                      isScrolled
-                        ? 'text-[#083A85] hover:bg-gray-100'
+                    className={`w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
+                      isScrolled 
+                        ? 'text-[#083A85] hover:bg-gray-100' 
                         : 'text-white hover:bg-white/10'
                     }`}
                   >
@@ -349,10 +348,9 @@ const Navbar = () => {
                   </button>
                   <button
                     onClick={() => {
-                      setIsLoggedIn(true);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full text-left cursor-pointer px-3 py-2 bg-[#083A85] text-white text-base font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
+                    className="w-full text-left px-3 py-2 bg-[#083A85] text-white text-sm font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                   >
                     Sign up
                   </button>

@@ -1,20 +1,33 @@
 "use client";
+import AddReviewForm from '@/app/components/forms/add-review-home';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 
 interface HousePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function HousePage({ params }: HousePageProps) {
+  const resolvedParams = use(params);
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(0);
   const [dateError, setDateError] = useState('');
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
+  const reviewsMocked = [
+    { id: 1, name: 'Sarah Johnson', date: 'January 2025', rating: 5, comment: 'Amazing stay! The house was exactly as described and the location was perfect. The host was very responsive and helpful throughout our stay.' },
+    { id: 2, name: 'Mike Chen', date: 'December 2024', rating: 4, comment: 'Great property with beautiful views. Minor issues with WiFi but overall excellent. Would definitely recommend to friends and family.' },
+    { id: 3, name: 'Emily Davis', date: 'December 2024', rating: 5, comment: 'Absolutely loved our stay! Clean, spacious, and perfect for our family vacation. The amenities were top-notch.' },
+    { id: 4, name: 'Robert Wilson', date: 'November 2024', rating: 5, comment: 'Stunning property! Everything was perfect from check-in to check-out. The views are breathtaking.' },
+    { id: 5, name: 'Lisa Anderson', date: 'November 2024', rating: 4, comment: 'Very nice place, well-maintained and comfortable. Location is great for accessing local attractions.' }
+  ];
+  const [reviews, setReviews] = useState(reviewsMocked);
   const router = useRouter();
+  
   // Sample occupied dates (these would come from your database)
   const occupiedDates = [
     { start: '2025-01-15', end: '2025-01-18' },
@@ -57,13 +70,7 @@ export default function HousePage({ params }: HousePageProps) {
     ratingCounts: { 5: 120, 4: 28, 3: 6, 2: 2, 1: 0 }
   };
 
-  const reviews = [
-    { id: 1, name: 'Sarah Johnson', date: 'January 2025', rating: 5, comment: 'Amazing stay! The house was exactly as described and the location was perfect. The host was very responsive and helpful throughout our stay.' },
-    { id: 2, name: 'Mike Chen', date: 'December 2024', rating: 4, comment: 'Great property with beautiful views. Minor issues with WiFi but overall excellent. Would definitely recommend to friends and family.' },
-    { id: 3, name: 'Emily Davis', date: 'December 2024', rating: 5, comment: 'Absolutely loved our stay! Clean, spacious, and perfect for our family vacation. The amenities were top-notch.' },
-    { id: 4, name: 'Robert Wilson', date: 'November 2024', rating: 5, comment: 'Stunning property! Everything was perfect from check-in to check-out. The views are breathtaking.' },
-    { id: 5, name: 'Lisa Anderson', date: 'November 2024', rating: 4, comment: 'Very nice place, well-maintained and comfortable. Location is great for accessing local attractions.' }
-  ];
+ 
 
   // Helper function to check if a single date is occupied
   const isDateInOccupiedRange = (date: string) => {
@@ -141,7 +148,7 @@ export default function HousePage({ params }: HousePageProps) {
       alert('Check-out date must be after check-in date');
       return;
     }
-    console.log('Reserving:', { checkInDate, checkOutDate, houseId: params.id });
+    console.log('Reserving:', { checkInDate, checkOutDate, houseId: resolvedParams.id });
     alert(`Reservation confirmed!\nCheck-in: ${checkInDate}\nCheck-out: ${checkOutDate}\nTotal: $${calculateTotal()}`);
   };
 
@@ -153,76 +160,236 @@ export default function HousePage({ params }: HousePageProps) {
     return 0;
   };
 
+  const handleUpdateReviewArray = (newReview: any) => {
+    setReviews(prev => [...prev, newReview]);
+    setShowAllReviews(true);
+  };
+
   return (
-    <div className="mt-14 bg-white">
-      <div className="mx-auto px-4 sm:px-8 lg:px-12 py-8">
+    <div className="mt-14 bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         
         {/* Title Section */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#083A85] mb-4">{house.title}</h1>
-          <div className="flex flex-wrap gap-6 text-gray-700">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#083A85] mb-3 sm:mb-4 leading-tight">
+            {house.title}
+          </h1>
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-sm sm:text-base text-gray-700">
             <span className="flex items-center gap-2">
-              <i className="bi bi-door-open text-[#F20C8F] text-xl"></i>
+              <i className="bi bi-door-open text-[#F20C8F] text-lg sm:text-xl"></i>
               <span className="font-medium">{house.bedrooms} Bedrooms</span>
             </span>
             <span className="flex items-center gap-2">
-              <i className="bi bi-droplet text-[#F20C8F] text-xl"></i>
+              <i className="bi bi-droplet text-[#F20C8F] text-lg sm:text-xl"></i>
               <span className="font-medium">{house.bathrooms} Bathrooms</span>
             </span>
             <span className="flex items-center gap-2">
-              <i className="bi bi-house-door text-[#F20C8F] text-xl"></i>
+              <i className="bi bi-house-door text-[#F20C8F] text-lg sm:text-xl"></i>
               <span className="font-medium">{house.kitchen} Kitchen</span>
             </span>
             <span className="flex items-center gap-2">
-              <i className="bi bi-people text-[#F20C8F] text-xl"></i>
+              <i className="bi bi-people text-[#F20C8F] text-lg sm:text-xl"></i>
               <span className="font-medium">Up to {house.guests} Guests</span>
             </span>
           </div>
         </div>
 
         {/* Photos Section */}
-        <div className="mb-12">
-          <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
-            <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setSelectedPhoto(0)}>
+        <div className="mb-8 sm:mb-12">
+          {/* Mobile: Single large image with carousel */}
+          <div className="block sm:hidden">
+            <div className="relative h-64 rounded-xl overflow-hidden">
               <img 
-                src={house.photos[0]}
-                alt="Primary house view"
+                src={house.photos[selectedPhoto]}
+                alt={`House view ${selectedPhoto + 1}`}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            </div>
-            {house.photos.slice(1).map((photo, idx) => (
-              <div 
-                key={idx} 
-                className="relative group cursor-pointer overflow-hidden"
-                onClick={() => setSelectedPhoto(idx + 1)}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {house.photos.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedPhoto(idx)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      idx === selectedPhoto ? 'bg-white' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+              <button 
+                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-sm font-medium"
+                onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
               >
+                <i className="bi bi-grid-3x3-gap mr-1"></i>
+                All photos
+              </button>
+            </div>
+          </div>
+
+          {/* Tablet: 2x2 grid */}
+          <div className="hidden sm:block lg:hidden">
+            <div className="grid grid-cols-2 gap-2 h-[400px] rounded-xl overflow-hidden relative">
+              {house.photos.slice(0, 4).map((photo, idx) => (
+                <div 
+                  key={idx} 
+                  className="relative group cursor-pointer overflow-hidden"
+                  onClick={() => setSelectedPhoto(idx)}
+                >
+                  <img 
+                    src={photo}
+                    alt={`House view ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+              ))}
+              <button 
+                className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-sm font-medium"
+                onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
+              >
+                <i className="bi bi-grid-3x3-gap"></i>
+                Show all photos
+              </button>
+            </div>
+          </div>
+
+          {/* Desktop: Original 4x4 grid */}
+          <div className="hidden lg:block">
+            <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
+              <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setSelectedPhoto(0)}>
                 <img 
-                  src={photo}
-                  alt={`House view ${idx + 2}`}
+                  src={house.photos[0]}
+                  alt="Primary house view"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </div>
-            ))}
-            <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer" onClick={() => router.push(`/all/property/${params.id}/photos`)}>
-              <i className="bi bi-grid-3x3-gap"></i>
-              <span className="text-sm font-medium">Show all photos</span>
-            </button>
+              {house.photos.slice(1).map((photo, idx) => (
+                <div 
+                  key={idx} 
+                  className="relative group cursor-pointer overflow-hidden"
+                  onClick={() => setSelectedPhoto(idx + 1)}
+                >
+                  <img 
+                    src={photo}
+                    alt={`House view ${idx + 2}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+              ))}
+              <button 
+                className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer"
+                onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
+              >
+                <i className="bi bi-grid-3x3-gap"></i>
+                <span className="text-sm font-medium">Show all photos</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Address & Booking Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        {/* Mobile Booking Section - Above location */}
+        <div className="block lg:hidden mb-8">
+          <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
+            <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
+            <div className="mb-6">
+              <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house.price}</p>
+              <p className="text-gray-600 text-sm sm:text-base">per night</p>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <i className="bi bi-calendar-check mr-1"></i>
+                    Check-in Date
+                  </label>
+                  <input
+                    type="date"
+                    min={today}
+                    value={checkInDate}
+                    onChange={handleCheckInChange}
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-sm sm:text-base"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <i className="bi bi-calendar-x mr-1"></i>
+                    Check-out Date
+                  </label>
+                  <input
+                    type="date"
+                    min={checkInDate || today}
+                    value={checkOutDate}
+                    onChange={handleCheckOutChange}
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-sm sm:text-base"
+                  />
+                </div>
+              </div>
+
+              {dateError && (
+                <div className="bg-red-50 border border-red-300 rounded-lg p-3">
+                  <p className="text-red-600 text-sm font-medium">
+                    <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                    {dateError}
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="font-semibold text-sm mb-2 text-gray-700">Unavailable Dates:</p>
+                <div className="space-y-1">
+                  {occupiedDates.map((period, idx) => (
+                    <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
+                      <i className="bi bi-calendar-x-fill text-xs"></i>
+                      <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {checkInDate && checkOutDate && (
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Nights:</span>
+                    <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span className="text-[#F20C8F]">${calculateTotal()}</span>
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={handleReserve}
+                disabled={!checkInDate || !checkOutDate || !!dateError}
+                className={`w-full py-3 rounded-lg font-semibold transition text-sm sm:text-base ${
+                  (!checkInDate || !checkOutDate || !!dateError)
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                    : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl'
+                }`}
+              >
+                <i className="bi bi-calendar-heart mr-2"></i>
+                Reserve Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Address & Map Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-12">
           
           {/* Address & Map */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-semibold text-[#083A85] mb-4">Location</h2>
-            <div className="flex items-center gap-2 mb-4">
-              <i className="bi bi-geo-alt-fill text-[#F20C8F] text-xl"></i>
-              <p className="text-gray-700 font-medium">{house.address}</p>
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">Location</h2>
+            <div className="flex items-start gap-2 mb-4">
+              <i className="bi bi-geo-alt-fill text-[#F20C8F] text-lg sm:text-xl mt-0.5 flex-shrink-0"></i>
+              <p className="text-gray-700 font-medium text-sm sm:text-base leading-relaxed">{house.address}</p>
             </div>
-            <div className="w-full h-[400px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
+            <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
               <iframe
                 width="100%"
                 height="100%"
@@ -233,10 +400,16 @@ export default function HousePage({ params }: HousePageProps) {
                 className="w-full h-full"
               ></iframe>
             </div>
+            
+            {/* Description moved here for mobile */}
+            <div className="mt-6 lg:hidden">
+              <h3 className="text-lg font-semibold text-[#083A85] mb-3">About This Place</h3>
+              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{house.description}</p>
+            </div>
           </div>
 
-          {/* Booking Window */}
-          <div className="lg:col-span-1">
+          {/* Desktop Booking Window */}
+          <div className="hidden lg:block lg:col-span-1">
             <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl sticky top-8">
               <h3 className="text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
               <div className="mb-6">
@@ -329,9 +502,9 @@ export default function HousePage({ params }: HousePageProps) {
         </div>
 
         {/* 3D Video Preview */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-[#083A85] mb-4">3D Virtual Tour</h2>
-          <div className="w-full h-[500px] rounded-xl overflow-hidden shadow-xl">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">3D Virtual Tour</h2>
+          <div className="w-full h-[250px] sm:h-[350px] lg:h-[500px] rounded-xl overflow-hidden shadow-xl">
             <iframe
               width="100%"
               height="100%"
@@ -346,35 +519,35 @@ export default function HousePage({ params }: HousePageProps) {
         </div>
 
         {/* Ratings Section */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-[#083A85] mb-6">Guest Ratings & Reviews</h2>
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4 sm:mb-6">Guest Ratings & Reviews</h2>
           
           {/* Overall Rating */}
-          <div className="bg-gray-50 rounded-xl p-6 mb-8">
-            <div className="flex items-center gap-6 mb-6">
-              <div className="text-center">
-                <span className="text-5xl font-bold text-[#083A85]">{house.ratings.overall}</span>
-                <div className="flex gap-1 mt-2 justify-center">
+          <div className="bg-gray-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <div className="text-center sm:text-left">
+                <span className="text-4xl sm:text-5xl font-bold text-[#083A85]">{house.ratings.overall}</span>
+                <div className="flex gap-1 mt-2 justify-center sm:justify-start">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <i key={star} className={`bi bi-star-fill text-[#F20C8F] text-lg`}></i>
+                    <i key={star} className={`bi bi-star-fill text-[#F20C8F] text-base sm:text-lg`}></i>
                   ))}
                 </div>
-                <p className="text-gray-600 font-medium mt-1">{house.totalReviews} reviews</p>
+                <p className="text-gray-600 font-medium mt-1 text-sm sm:text-base">{house.totalReviews} reviews</p>
               </div>
               
               {/* Rating Distribution */}
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center gap-3 mb-2">
+                  <div key={rating} className="flex items-center gap-2 sm:gap-3 mb-2">
                     <span className="w-4 text-sm font-medium">{rating}</span>
                     <i className="bi bi-star-fill text-[#F20C8F] text-sm"></i>
-                    <div className="flex-1 bg-gray-200 rounded-full h-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 sm:h-3">
                       <div 
-                        className="bg-[#F20C8F] h-3 rounded-full transition-all duration-500"
+                        className="bg-[#F20C8F] h-2 sm:h-3 rounded-full transition-all duration-500"
                         style={{ width: `${(house.ratingCounts[rating as keyof typeof house.ratingCounts] / house.totalReviews) * 100}%` }}
                       ></div>
                     </div>
-                    <span className="text-sm text-gray-600 w-12 text-right">{house.ratingCounts[rating as keyof typeof house.ratingCounts]}</span>
+                    <span className="text-xs sm:text-sm text-gray-600 w-8 sm:w-12 text-right">{house.ratingCounts[rating as keyof typeof house.ratingCounts]}</span>
                   </div>
                 ))}
               </div>
@@ -382,7 +555,7 @@ export default function HousePage({ params }: HousePageProps) {
           </div>
 
           {/* Rating Categories */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
             {Object.entries({
               accuracy: { icon: 'bi-check-circle-fill', label: 'Accuracy' },
               cleanliness: { icon: 'bi-stars', label: 'Cleanliness' },
@@ -391,10 +564,10 @@ export default function HousePage({ params }: HousePageProps) {
               location: { icon: 'bi-geo-alt-fill', label: 'Location' },
               value: { icon: 'bi-tag-fill', label: 'Value' }
             }).map(([key, { icon, label }]) => (
-              <div key={key} className="bg-white border-2 border-gray-100 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
-                <i className={`bi ${icon} text-2xl text-[#083A85] mb-2`}></i>
-                <p className="text-sm font-semibold text-gray-700">{label}</p>
-                <p className="text-xl font-bold text-[#F20C8F] mt-1">
+              <div key={key} className="bg-white border-2 border-gray-100 rounded-xl p-3 sm:p-4 text-center hover:shadow-lg transition-shadow">
+                <i className={`bi ${icon} text-xl sm:text-2xl text-[#083A85] mb-2`}></i>
+                <p className="text-xs sm:text-sm font-semibold text-gray-700">{label}</p>
+                <p className="text-lg sm:text-xl font-bold text-[#F20C8F] mt-1">
                   {house.ratings[key as keyof typeof house.ratings]}
                 </p>
               </div>
@@ -402,22 +575,23 @@ export default function HousePage({ params }: HousePageProps) {
           </div>
 
           {/* Reviews Summary */}
-          <div className="border-t pt-8">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-[#083A85]">Guest Reviews</h3>
-              <button className="px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all">
+          <div className="border-t pt-6 sm:pt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-semibold text-[#083A85]">Guest Reviews</h3>
+              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-sm sm:text-base"
+                      onClick={() => setShowReviewModal(true)}>
                 <i className="bi bi-plus-circle mr-2"></i>
                 Add Review
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {reviews.slice(0, showAllReviews ? reviews.length : 3).map((review) => (
-                <div key={review.id} className="bg-white rounded-lg p-5 border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-3">
+                <div key={review.id} className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200 hover:shadow-md transition-shadow">
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
                     <div>
-                      <p className="font-semibold text-[#083A85]">{review.name}</p>
-                      <p className="text-sm text-gray-500">{review.date}</p>
+                      <p className="font-semibold text-[#083A85] text-sm sm:text-base">{review.name}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">{review.date}</p>
                     </div>
                     <div className="flex gap-1">
                       {[...Array(5)].map((_, i) => (
@@ -425,15 +599,15 @@ export default function HousePage({ params }: HousePageProps) {
                       ))}
                     </div>
                   </div>
-                  <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{review.comment}</p>
                 </div>
               ))}
             </div>
 
-            <div className="text-center mt-8">
+            <div className="text-center mt-6 sm:mt-8">
               <button 
                 onClick={() => setShowAllReviews(!showAllReviews)}
-                className="px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-sm sm:text-base"
               >
                 <i className={`bi bi-${showAllReviews ? 'chevron-up' : 'chevron-down'} mr-2`}></i>
                 {showAllReviews ? 'Show Less Reviews' : `See All ${house.totalReviews} Reviews`}
@@ -441,6 +615,9 @@ export default function HousePage({ params }: HousePageProps) {
             </div>
           </div>
         </div>
+
+        {/* Add Review Modal */}
+        {showReviewModal && ( <AddReviewForm onClose={() => setShowReviewModal(false)} onAddReview={handleUpdateReviewArray} /> )}
 
       </div>
     </div>

@@ -78,7 +78,7 @@ const AboutUsPage = () => {
               improving our platform, adopting the latest technology, and creating creative solutions that 
               anticipate and meet the evolving needs of our users. We embrace new ideas, experiment with bold
                approaches, and adapt quickly to provide experiences that are both efficient and inspiring.</p>
-            <Link href="" className="text-[#F20C8F] text-sm font-semibold hover:underline">
+            <Link href="/all/explore-more" className="text-[#F20C8F] text-sm font-semibold hover:underline">
               Explore more →
             </Link>
           </div>
@@ -94,7 +94,7 @@ const AboutUsPage = () => {
             We prioritize transparency in all our interactions, ensure secure and reliable processes, 
             and maintain integrity in every decision we make. Our goal is to create a dependable platform where 
             users feel confident booking, sharing, and engaging with spaces.</p>
-            <Link href="" className="text-[#F20C8F] text-sm font-semibold hover:underline">
+            <Link href="all/case-study" className="text-[#F20C8F] text-sm font-semibold hover:underline">
               Case study →
             </Link>
           </div>
@@ -111,7 +111,7 @@ const AboutUsPage = () => {
               We believe in the power of connections. Jambolush fosters collaboration and meaningful interactions 
               among individuals, teams, and organizations. By encouraging shared experiences, supporting local networks,
                and nurturing a sense of belonging, we help our users create value together and build stronger communities.</p>
-            <Link href="" className="text-[#F20C8F] text-sm font-semibold hover:underline">
+            <Link href="/all/learn-more" className="text-[#F20C8F] text-sm font-semibold hover:underline">
               Learn more →
             </Link>
           </div>
@@ -127,7 +127,7 @@ const AboutUsPage = () => {
               deliver the highest standards in every aspect of our platform, from the quality of spaces
                listed to the responsiveness of our support. Our commitment to excellence ensures that every 
                interaction with Jambolush is seamless, professional, and satisfying.</p>
-            <Link href="/discover" className="text-[#F20C8F] text-sm font-semibold hover:underline">
+            <Link href="/all/discover" className="text-[#F20C8F] text-sm font-semibold hover:underline">
               Discover how →
             </Link>
           </div>
@@ -146,7 +146,7 @@ const AboutUsPage = () => {
               maintaining accountability, we build trust with our users and partners, allowing them to make informed decisions with confidence. 
               Transparency also guides our internal operations, fostering a culture of integrity, fairness, and collaboration across the entire team.
               </p>
-            <Link href="" className="text-[#F20C8F] text-sm font-semibold hover:underline">
+            <Link href="/all/learn-more" className="text-[#F20C8F] text-sm font-semibold hover:underline">
               Learn more →
             </Link>
           </div>

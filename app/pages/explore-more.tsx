@@ -28,7 +28,7 @@ const ExploreMorePage = () => {
         </div>
         <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
           <img
-            src="https://media.istockphoto.com/id/2193122069/photo/close-up-of-a-new-shoot-of-plant-in-dry-cracked-clay-mud-in-dried-up-lake-bed-riverbed-during.jpg?s=612x612&w=0&k=20&c=VdhJkil7SMv9pfGAVst9QRrVO4o8SL7qNBD77HQhB_E="
+            src="https://media.istockphoto.com/id/1322925863/photo/young-woman-practices-yoga-in-grassy-meadow-at-sunrise.webp?a=1&b=1&s=612x612&w=0&k=20&c=P_MnJ_ov2Ol1rUlYMsUcxf_lBCLqPfbNGwbAbScSJFc="
             alt="Flexible Spaces"
             className="w-full h-full object-cover rounded-lg"
           />

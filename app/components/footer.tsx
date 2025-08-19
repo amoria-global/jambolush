@@ -15,7 +15,7 @@ export default function Footer() {
                 <div className="w-25 h-23 bg-white/0.05 backdrop-blur-sm rounded-l flex items-center justify-center border border-white/10 mb-4">
                   <img src="/favicon.ico" className="w-22 h-19" alt="Jambolush Logo" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">JamboLush</h3>
+                <h3 className="text-xl font-bold mb-2">JamboLush</h3>
                 <p className="text-sm text-white/80 leading-relaxed">
                   Book Unique.<br />Stay Inspired.
                 </p>
@@ -180,10 +180,11 @@ export default function Footer() {
                 © 2025 JamboLush. All rights reserved.
               </p>
               <p className="text-sm text-white/60">
-                Powered by Amoria Global tech.
-              </p>
+                  Powered by <span className='text-pink-500'>Amoria Global tech</span>
+                </p>
+
               <div className="flex items-center gap-6">
-                <Link href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+                <Link href="/all/cookies" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
                   Cookies Policy
                 </Link>
                 <Link href="#" className="text-sm text-white/60 hover:text-white transition-colors duration-200">

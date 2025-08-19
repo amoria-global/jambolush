@@ -27,8 +27,7 @@ const LearnMorePage = () => {
         </div>
         <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
           <img
-            src="https://media.istockphoto.com/id/2193122069/photo/close-up-of-a-new-shoot-of-plant-in-dry-cracked-clay-mud-in-dried-up-lake-bed-riverbed-during.jpg?s=612x612&w=0&k=20&c=VdhJkil7SMv9pfGAVst9QRrVO4o8SL7qNBD77HQhB_E="
-            alt="Flexible Solutions"
+            src="https://officebanao.com/wp-content/uploads/2023/10/Modern-Offices_459.jpg"
             className="w-full h-full object-cover rounded-lg"
           />
         </div>
@@ -47,7 +46,7 @@ const LearnMorePage = () => {
         </div>
         <div className="w-full h-64 md:h-80 rounded-lg overflow-hidden">
           <img
-            src="https://images.unsplash.com/photo-1710279749852-bae70877e5d2?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src="https://officebanao.com/wp-content/uploads/2023/10/Modern-Offices_939.webp"
             alt="Inspiring Environments"
             className="w-full h-full object-cover rounded-lg"
           />

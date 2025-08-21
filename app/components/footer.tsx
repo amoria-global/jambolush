@@ -199,7 +199,11 @@ export default function Footer() {
 
                   Cookies Policy
                 </Link>
+
+                <Link href="/all/site-map" className="text-sm text-white/60 hover:text-white transition-colors duration-200">
+
                 <Link href="#" className="text-base text-white/60 hover:text-white transition-colors duration-200">
+
                   Sitemap
                 </Link>
               </div>

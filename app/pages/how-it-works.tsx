@@ -48,10 +48,10 @@ export default function HowItWorksPage() {
     <div className="min-h-screen bg-white mt-16 py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Header Section */}
       <div className={`max-w-7xl mx-auto text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold text-[#083A85] mb-6">
           Our Secret Sauce
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p className="text-xl text-black max-w-3xl mx-auto">
           Find, Book, Move in — It's That Simple
         </p>
       </div>
@@ -90,10 +90,10 @@ export default function HowItWorksPage() {
                       {step.number}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-semibold text-gray-900 mb-3">
+                      <h3 className="text-2xl font-semibold text-[#083A85] mb-3">
                         {step.title}
                       </h3>
-                      <p className={`text-gray-600 leading-relaxed transition-all duration-300 ${
+                      <p className={`text-black leading-relaxed transition-all duration-300 ${
                         activeStep === index ? 'opacity-100' : 'opacity-70'
                       }`}>
                         {step.description}
@@ -223,11 +223,11 @@ export default function HowItWorksPage() {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
         <div className="bg-gradient-to-r from-[#083A85]/30 to-[#083A85]/30 rounded-3xl p-12 border border-[#083A85]/20">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-[#083A85] mb-4">
             Ready to get started?
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Join thousands of satisfied users who have found their perfect place with JambiSlash
+          <p className="text-lg text-black mb-8">
+            Join thousands of satisfied users who have found their perfect place with JamboLush
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="px-8 py-4 bg-[#083A85] text-white font-semibold rounded-xl hover:bg-[#06295e] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">

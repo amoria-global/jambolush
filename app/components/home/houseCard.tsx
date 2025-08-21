@@ -37,7 +37,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         
         {/* Category Badge - Professional Style */}
         <div className="absolute top-2 left-2">
-          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-xs font-semibold shadow-lg">
+          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
             {house.category}
           </span>
         </div>
@@ -78,23 +78,23 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         </h3>
         
         {/* Location with Icon */}
-        <div className="flex items-center mb-2 text-xs text-blue-100">
-          <i className="bi bi-geo-alt-fill mr-1 text-xs"></i>
+        <div className="flex items-center mb-2 text-sm text-blue-100">
+          <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
           <p className="truncate">{house.location}</p>
         </div>
         
         {/* Property Details - Compact Grid */}
-        <div className="grid grid-cols-3 gap-1 text-xs text-blue-100 mb-2">
-          <div className="flex items-center justify-center bg-white/10 rounded px-1 py-0.5 backdrop-blur-sm">
+        <div className="grid grid-cols-3 gap-2 text-xs text-white mb-2">
+          <div className="flex items-center justify-center bg-black/50 rounded px-1 py-1 backdrop-blur-xl">
             <i className="bi bi-house-door mr-1"></i>
             <span>{house.beds} beds</span>
           </div>
-          <div className="flex items-center justify-center bg-white/10 rounded px-1 py-0.5 backdrop-blur-sm">
+          <div className="flex items-center justify-center bg-black/50 rounded px-1 py-0.5 backdrop-blur-xl">
             <i className="bi bi-droplet mr-1"></i>
             <span>{house.baths} baths</span>
           </div>
           {house.rating && (
-            <div className="flex items-center justify-center bg-white/10 rounded px-1 py-0.5 backdrop-blur-sm">
+            <div className="flex items-center justify-center bg-black/50 rounded px-1 py-0.5 backdrop-blur-xl">
               <i className="bi bi-star-fill mr-1 text-yellow-300"></i>
               <span>{house.rating}</span>
             </div>
@@ -102,7 +102,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         </div>
 
         {/* Host and Availability Info */}
-        <div className="flex justify-between items-center text-xs text-blue-100">
+        <div className="flex justify-between items-center text-sm text-blue-100">
           {house.hostName && (
             <span className="truncate">Host: {house.hostName}</span>
           )}

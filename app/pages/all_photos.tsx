@@ -131,13 +131,13 @@ const App: React.FC = () => {
       <div className="font-sans bg-gray-50 min-h-screen mt-20 mb-8 mx-4 sm:mx-6 lg:mx-12 p-4 sm:p-6 lg:p-8 max-w-screen-xl mx-auto rounded-lg shadow-sm">
         {/* Back Button Container - Positioned to the top left */}
         <div className="absolute top-0 left-0 p-4 z-10">
-          <a
-            href=""
-            className="flex items-center text-sm font-semibold text-gray-700 hover:text-gray-900"
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center text-xl font-bold text-[#083A85] cursor-pointer ml-17 underline"
           >
-            <i className="bi bi-arrow-left ml-10 text-base"></i>
+            <i className="bi bi-arrow-left mr-2 cursor-pointer"></i>
             Back
-          </a>
+          </button>
         </div>
         {/* Page Title */}
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#083A85] mb-6 text-center">

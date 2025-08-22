@@ -176,20 +176,19 @@ const AboutUsPage = () => {
       {/* Become One of Us Section */}
       <section className="container mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div>
-          <p className="uppercase tracking-wide text-gray-500 text-xs mb-2">Careers / All Open Positions</p>
-          <h2 className="text-3xl font-bold mb-4">Become one of us</h2>
+          <p className="uppercase tracking-wide text-gray-500 text-xs mb-2">Careers / Open Roles</p>
+          <h2 className="text-3xl font-bold mb-4">Be Part of Jambolush</h2>
           <p className="text-gray-600 mb-6">
-            Do you want to join our team and work remotely from anywhere you'd like? 
-            We can’t wait to hear from you!
+           At Jambolush, we believe in creating more than just a platform we're building a community that connects people with places. 
+           Want to be part of our journey? Join the Jambolush team and enjoy the freedom to work remotely from anywhere in the world. 
+           We're excited to hear from you!
           </p>
+         <Link href="/all/contact-us"className="bg-pink-500 text-white px-3 py-2 rounded text-xs font-medium hover:bg-pink-700 flex items-center gap-1 inline-flex">
+            <i className="bi bi-telephone-fill text-sm"></i>
+            Contact Us
+       </Link>
 
-          <Link
-          href="/contact-us"
-          className="bg-pink-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-pink-700 flex items-center gap-2"
-        >
-          <i className="bi bi-envelope-fill"></i>
-          CONTACT US
-        </Link>
+
         </div>
       </section>
     </div>

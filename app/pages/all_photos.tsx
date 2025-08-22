@@ -127,66 +127,76 @@ const App: React.FC = () => {
   ];
 
   return (
-    
+    <div className="relative">
       <div className="font-sans bg-gray-50 min-h-screen mt-20 mb-8 mx-4 sm:mx-6 lg:mx-12 p-4 sm:p-6 lg:p-8 max-w-screen-xl mx-auto rounded-lg shadow-sm">
-  
-      {/* Page Title */}
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#083A85] mb-6 text-center">
-        Photo Tours
-      </h1>
-
-      {/* Room Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-10">
-        {roomPhotos.map((room, index) => (
+        {/* Back Button Container - Positioned to the top left */}
+        <div className="absolute top-0 left-0 p-4 z-10">
           <a
-            key={index}
-            href={`#${room.label.replace(/\s+/g, "-").toLowerCase()}`}
-            className="group block relative rounded-xl overflow-hidden shadow hover:shadow-lg transition duration-300"
+            href=""
+            className="flex items-center text-sm font-semibold text-gray-700 hover:text-gray-900"
           >
-            <div className="w-full h-28 sm:h-36 md:h-40">
-              <img
-                src={room.photos[0].url}
-                alt={room.label}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            {/*text color */}
-            <div className="absolute inset-0 group-hover:bg-opacity-50 flex items-end p-2 sm:p-3">
-              <span className="text-sm sm:text-sm md:text-sm font-bold text-black bg-white bg-opacity-800 rounded-lg px-3 shadow "> 
-                {room.label}
-              </span>
-            </div>
+            <i className="bi bi-arrow-left ml-10 text-base"></i>
+            Back
           </a>
-        ))}
-      </div>
+        </div>
+        {/* Page Title */}
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#083A85] mb-6 text-center">
+          Photo Tours
+        </h1>
 
-      {/* Photo Sections */}
-      <div className="space-y-10">
-        {roomPhotos.map((room, roomIndex) => (
-          <section
-            key={roomIndex}
-            id={room.label.replace(/\s+/g, "-").toLowerCase()}
-            className="pt-2"
-          >
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#083A85] mb-4 border-b border-gray-200 pb-2">
-              {room.label}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {room.photos.map((photo, photoIndex) => (
-                <div
-                  key={photoIndex}
-                  className="w-full rounded-lg overflow-hidden shadow"
-                >
-                  <img
-                    src={photo.url}
-                    alt={photo.alt}
-                    className="w-full h-48 sm:h-56 md:h-64 object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+        {/* Room Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 mb-10">
+          {roomPhotos.map((room, index) => (
+            <a
+              key={index}
+              href={`#${room.label.replace(/\s+/g, "-").toLowerCase()}`}
+              className="group block relative rounded-xl overflow-hidden shadow hover:shadow-lg transition duration-300"
+            >
+              <div className="w-full h-28 sm:h-36 md:h-40">
+                <img
+                  src={room.photos[0].url}
+                  alt={room.label}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              {/*text color */}
+              <div className="absolute inset-0 group-hover:bg-opacity-50 flex items-end p-2 sm:p-3">
+                <span className="text-sm sm:text-sm md:text-sm font-bold text-black bg-white bg-opacity-800 rounded-lg px-3 shadow ">
+                  {room.label}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* Photo Sections */}
+        <div className="space-y-10">
+          {roomPhotos.map((room, roomIndex) => (
+            <section
+              key={roomIndex}
+              id={room.label.replace(/\s+/g, "-").toLowerCase()}
+              className="pt-2"
+            >
+              <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#083A85] mb-4 border-b border-gray-200 pb-2">
+                {room.label}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {room.photos.map((photo, photoIndex) => (
+                  <div
+                    key={photoIndex}
+                    className="w-full rounded-lg overflow-hidden shadow"
+                  >
+                    <img
+                      src={photo.url}
+                      alt={photo.alt}
+                      className="w-full h-48 sm:h-56 md:h-64 object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ export default function Footer() {
                     </Link >
                   </li>
                   <li>
-                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/contact-us" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
                     </Link>
                   </li>
@@ -53,17 +53,17 @@ export default function Footer() {
                 <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">LEGAL</h3>
                 <ul className="space-y-3">
                   <li>
-                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/terms-and-condition" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Terms & Conditions</span>
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/privacy-policy" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Privacy Policy</span>
                     </Link>
                   </li>
                   <li>
-                    <Link href="#" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
+                    <Link href="/all/Agreement" className="text-sm text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">Agreements</span>
                     </Link>
                   </li>
@@ -155,18 +155,21 @@ export default function Footer() {
 
                 {/* Newsletter Form */}
                 <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email address"
-                    className="px-6 py-3 bg-white text-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full sm:w-80 placeholder:text-gray-500"
-                  />
-                  <button 
-                    className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-sm rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
-                    onClick={() => console.log('Subscribe clicked')}
-                  >
-                    Subscribe Free
-                  </button>
-                </div>
+              <div className="relative w-full sm:w-80">
+                <i className="bi bi-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="pl-12 pr-6 py-3 bg-white text-gray-800 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full placeholder:text-gray-500"
+                />
+              </div>
+              <button 
+                className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-sm rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer flex items-center gap-2 justify-center"
+                onClick={() => console.log('Subscribe clicked')}
+              >
+                Subscribe Free
+              </button>
+            </div>
               </div>
             </div>
           </div>
@@ -179,14 +182,17 @@ export default function Footer() {
               <p className="text-base text-white/60">
                 © 2025 JamboLush. All rights reserved.
               </p>
-              <p className="text-sm text-white/60">
-                Powered by Amoria Global tech.
-              </p>
+
+              <p className="text-sm font-medium bg-gradient-to-r from-[#E5E5E5] via-[#C0C0C0] to-[#A9A9A9] bg-clip-text text-transparent">
+              Powered by Amoria Global Tech.
+            </p>
+
+
               <div className="flex items-center gap-6">
-                <Link href="#" className="text-base text-white/60 hover:text-white transition-colors duration-200">
+                <Link href="/all/cookies" className="text-base text-white/60 hover:text-white transition-colors duration-200">
                   Cookies Policy
                 </Link>
-                <Link href="#" className="text-base text-white/60 hover:text-white transition-colors duration-200">
+                <Link href="/all/site-map" className="text-base text-white/60 hover:text-white transition-colors duration-200">
                   Sitemap
                 </Link>
               </div>

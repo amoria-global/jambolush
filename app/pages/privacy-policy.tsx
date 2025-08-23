@@ -25,7 +25,7 @@ const sections: Section[] = [
   {
     id: 'lawful-basis',
     title: '2. Lawful Basis for Processing',
-    content: `We process personal data only when permitted by law, including:\n- Consent: where you explicitly agree to processing (e.g., marketing, cookies);\n- Contract: where processing is necessary to fulfill bookings and payments;\n- Legal obligation: where we must comply with tax, financial, or regulatory duties;\n- Legitimate interest: where processing supports platform security, fraud prevention, or service improvement.`,
+    content: `We process personal data only when permitted by law, including:\n- Consent: where you explicitly agree to processing i.e., marketing, cookies;\n- Contract: where processing is necessary to fulfill bookings and payments;\n- Legal obligation: where we must comply with tax, financial, or regulatory duties;\n- Legitimate interest: where processing supports platform security, fraud prevention, or service improvement.`,
   },
   {
     id: 'data-collected',

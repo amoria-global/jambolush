@@ -78,7 +78,7 @@ const sections = [
   {
     id: 'force',
     title: '12. Force Majeure',
-    content: `Neither party is liable for delays or failures caused by events outside reasonable control (e.g., natural disasters, pandemics, strikes, or internet outages).`
+    content: `Neither party is liable for delays or failures caused by events outside reasonable control i.e natural disasters, pandemics, strikes, or internet outages.`
   },
   {
     id: 'disputes',

@@ -4,165 +4,120 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const sections = [
   {
-    id: 'eligibility',
-    title: '1. Eligibility and Acceptance of Terms',
-    content: `1.1 Minimum Age Requirement
-You must be at least 18 years old (or the legal age of majority in your jurisdiction) to use Jambolush. By registering for an account, you represent and warrant that you meet this requirement. If you do not, you are prohibited from creating an account or using our Services.
-
-1.2 Use on Behalf of an Entity
-If you are using Jambolush on behalf of a business, company, or organization, you represent that you are duly authorized to bind that entity to this Agreement. In such cases, the term “you” will also refer to that entity.
-
-1.3 Acceptance of Terms
-By accessing or using the Services, you acknowledge that you have read, understood, and agreed to be bound by this Agreement. Continued use of Jambolush after updates to these Terms constitutes acceptance of the revised version.`
+    id: 'Our Agreement',
+    title: 'Jambolus Agreement',
+    content: `This Agreement governs the relationship between JamboLush by Amoria Global Tech Ltd (Reg. No. 141275771) and any individual or entity using the JamboLush platform. By accessing or using our services, you agree to the following terms:`
   },
   {
-    id: 'use',
-    title: '2. Use of Services',
-    content: `2.1 Lawful Use Only
-You agree to use Jambolush strictly for lawful purposes and in compliance with all applicable laws, regulations, and policies.
-
-2.2 Prohibited Conduct
-Prohibited uses of the Services include but are not limited to:
-
-Uploading, posting, or transmitting false, misleading, or harmful information.
-
-Attempting to hack, disrupt, or gain unauthorized access to our systems or networks.
-
-Engaging in activities that exploit, harm, or threaten others.
-
-Posting or transmitting content that is defamatory, obscene, discriminatory, or otherwise offensive.
-
-Using Jambolush for fraudulent transactions, illegal activities, or unauthorized advertising.
-
-2.3 Enforcement
-Jambolush reserves the right to monitor activity, remove content, suspend, or terminate accounts that violate these Terms or otherwise misuse the Services.`
+    id: 'introduction',
+    title: '1. Introduction',
+    content: `This Agreement establishes the legal framework for using JamboLush’s platform and services.`
   },
   {
-    id: 'accounts',
-    title: '3. User Accounts',
-    content: `3.1 Account Creation
-To access certain features, you must create an account and provide accurate, complete, and up-to-date information. Providing false information may result in suspension or termination.
-
-3.2 Account Security
-You are solely responsible for maintaining the confidentiality of your login credentials (username, password, etc.) and for restricting access to your account.
-
-3.3 Responsibility for Use
-Any activity performed under your account, whether by you or someone else, will be considered your responsibility. If you suspect unauthorized use, you must notify Jambolush immediately.
-
-3.4 Limitation of Liability
-Jambolush shall not be liable for losses or damages caused by unauthorized account use unless such access is due to our negligence.`
+    id: 'definitions',
+    title: '2. Definitions',
+    content: `- Platform: JamboLush’s website, mobile application, and related systems.
+- Host: A property or service provider listing on the platform.
+- Guest: A user booking a property or service.
+- Tour Operator: A business providing travel or tour-related services.
+- Field Agent: A local representative assisting in property verification and onboarding.
+- Partner: Any authorized third-party collaborator.
+- Approved Payment Gateway: Officially integrated payment service providers.`
   },
   {
-    id: 'bookings',
-    title: '4. Bookings and Payments',
-    content: `4.1 Booking Accuracy
-All bookings made through Jambolush must be accurate and truthful. Any misuse such as duplicate bookings, false reservations, or fraudulent activity may result in account suspension.
-
-4.2 Payment Processing
-Payments are handled through trusted third-party payment providers. By making a payment, you agree to their terms and conditions in addition to ours.
-
-4.3 Fees and Taxes
-Service fees, applicable taxes, and charges will be displayed at checkout. Users are responsible for reviewing and understanding these charges before confirming a booking.
-
-4.4 Refunds and Cancellations
-Refunds and cancellations are governed by the cancellation policies presented at the time of booking. Jambolush may mediate disputes but is not responsible for final outcomes unless required by law.
-
-4.5 Price Adjustments
-We reserve the right to update or change fees and pricing structures at any time. Users will be notified of such changes in advance where applicable.`
+    id: 'scope',
+    title: '3. Scope',
+    content: `This Agreement covers account creation, listings, bookings, payments, cancellations, conduct, and compliance obligations for all users.`
   },
   {
-    id: 'content',
-    title: '5. Content Ownership and License',
-    content: `5.1 User-Generated Content
-Users retain ownership of the content they upload, such as photos, descriptions, and reviews.
-
-5.2 License Granted to Jambolush
-By submitting content, you grant Jambolush a worldwide, royalty-free, non-exclusive, transferable license to use, reproduce, modify, distribute, and display your content in connection with the Services.
-
-5.3 Prohibited Content
-You may not post or share content that is unlawful, harmful, offensive, infringes on intellectual property rights, or violates community standards.
-
-5.4 Moderation Rights
-Jambolush reserves the right to monitor, remove, or restrict access to content at its sole discretion.`
+    id: 'registration',
+    title: '4. Registration',
+    content: `Users must be at least 18 years old and provide accurate, verifiable information.`
   },
   {
-    id: 'responsibilities',
-    title: '6. Responsibilities of Hosts and Guests',
-    content: `6.1 Host Responsibilities
-Hosts must ensure that spaces listed are safe, accurate, and compliant with local laws, building codes, and health and safety regulations.
-
-6.2 Guest Responsibilities
-Guests agree to use spaces responsibly, follow the host's rules, and respect property and community standards.
-
-6.3 Good Faith Conduct
-Both hosts and guests agree to communicate honestly, avoid fraudulent activities, and work to resolve disputes in good faith.
-
-6.4 Dispute Mediation
-While Jambolush may assist in dispute resolution, we do not guarantee final outcomes or responsibility for conflicts between users.`
+    id: 'listings',
+    title: '5. Listings & Bookings',
+    content: `- Hosts and Operators must ensure that listings are accurate and lawful.
+- Guests must comply with property or service rules during their stay or activity.`
   },
   {
-    id: 'termination',
-    title: '7. Termination and Suspension',
-    content: `7.1 Grounds for Suspension
-Jambolush may suspend or terminate accounts if users:
-
-Violate this Agreement.
-
-Engage in fraudulent, abusive, or harmful behavior.
-
-Fail to comply with payment or booking obligations.
-
-7.2 User-Initiated Termination
-Users may close their accounts at any time, but obligations related to pending bookings or payments will remain in effect.
-
-7.3 Data Retention
-Jambolush may retain user data as required by law or for legitimate business purposes even after account termination.`
+    id: 'payments',
+    title: '6. Payments',
+    content: `- All transactions must be processed through Approved Payment Gateways.
+- JamboLush applies service fees and commissions as disclosed at booking.
+- Off-platform payments to bypass JamboLush fees are prohibited.`
   },
   {
-    id: 'liability',
-    title: '8. Limitation of Liability',
-    content: `8.1 Disclaimer of Warranties
-Jambolush provides Services “as is” and “as available,” without warranties of any kind.
-
-8.2 Exclusion of Damages
-To the fullest extent permitted by law, Jambolush is not liable for indirect, incidental, special, or consequential damages, including loss of data, profits, or opportunities.
-
-8.3 Liability Cap
-Our maximum liability shall not exceed the total amount paid by you to Jambolush in the 12 months preceding the claim.`
+    id: 'cancellations',
+    title: '7. Cancellations & Refunds',
+    content: `Cancellations follow the Minimum Refund Policy displayed on each listing.`
+  },
+  {
+    id: 'fieldagents',
+    title: '8. Field Agent Services',
+    content: `Field Agents assist with property onboarding, verification, and local support. They must act professionally, ethically, and maintain confidentiality.`
+  },
+  {
+    id: 'conduct',
+    title: '9. User Conduct',
+    content: `Fraudulent, illegal, abusive, or discriminatory activity is strictly prohibited.`
   },
   {
     id: 'privacy',
-    title: '9. Privacy and Data Protection',
-    content: `9.1 Privacy Policy
-Your use of Jambolush is subject to our Privacy Policy, which explains how we collect, use, and safeguard your information.
-
-9.2 Consent to Data Use
-By using Jambolush, you consent to the processing and use of your personal data as described in our Privacy Policy.
-
-9.3 Security Measures
-Jambolush uses industry-standard security practices to protect user data but cannot guarantee complete protection against cyber threats.`
+    title: '10. Data Privacy',
+    content: `JamboLush complies with Rwanda’s data protection framework, GDPR (Europe), CCPA (California), and other applicable international data privacy laws.`
   },
   {
-    id: 'changes',
-    title: '10. Changes to Agreement',
-    content: `10.1 Updates
-We may revise this Agreement periodically. Updates will be posted on the platform with a new “Last Updated” date.
-
-10.2 Notification of Changes
-Significant changes will be communicated via email or in-platform notification.
-
-10.3 Continued Use
-By continuing to use the Services after updates, you agree to the revised terms.`
+    id: 'liability',
+    title: '11. Liability & Indemnification',
+    content: `- JamboLush acts as an intermediary, not the provider of listed services.
+- Hosts and Operators remain fully responsible for service delivery and must hold appropriate insurance.
+- To the fullest extent permitted by law, JamboLush limits liability for indirect, incidental, or consequential damages.
+- Users agree to indemnify JamboLush against losses from misuse of the platform.`
+  },
+  {
+    id: 'force',
+    title: '12. Force Majeure',
+    content: `Neither party is liable for delays or failures caused by events outside reasonable control (e.g., natural disasters, pandemics, strikes, or internet outages).`
+  },
+  {
+    id: 'disputes',
+    title: '13. Dispute Resolution',
+    content: `- All disputes must first be addressed through good-faith internal mediation.
+- If unresolved, disputes will be referred to the Arbitration Center of Rwanda (ACR) in Kigali, Rwanda.
+- The decision of the arbitration panel is final and binding.`
   },
   {
     id: 'law',
-    title: '11. Governing Law and Dispute Resolution',
-    content: `11.1 Governing Law
-This Agreement will be governed by the laws of RWANDA.
-
-11.2 Dispute Resolution
-Users agree to attempt to resolve disputes amicably. If unresolved, disputes may be referred to arbitration or a competent court in Nyarugenge.`
-  }
+    title: '14. Governing Law',
+    content: `This Agreement is governed by the laws of Rwanda, aligned with international commercial principles.`
+  },
+  {
+    id: 'intellectual',
+    title: '15. Intellectual Property',
+    content: `All JamboLush trademarks, logos, software, and content are legally protected. Unauthorized use is prohibited.`
+  },
+  {
+    id: 'modifications',
+    title: '16. Modifications',
+    content: `JamboLush may update this Agreement with 30 days’ notice before changes take effect.`
+  },
+  {
+    id: 'antidiscrimination',
+    title: '17. Anti-Discrimination',
+    content: `Discrimination based on race, religion, gender, disability, or any other protected status is strictly forbidden.`
+  },
+  {
+    id: 'termination',
+    title: '18. Termination',
+    content: `Either JamboLush or the user may terminate this Agreement with reasonable notice.`
+  },
+  {
+    id: 'security',
+    title: '19. Security & Fraud Protection',
+    content: `JamboLush maintains industry-standard security measures (SSL, PCI DSS compliance, fraud monitoring). Users must also safeguard their accounts.`
+  },
+ 
 ];
 
 const AgreementPage: React.FC = () => {
@@ -183,36 +138,60 @@ const AgreementPage: React.FC = () => {
     const handleScroll = () => {
       if (!mainRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = mainRef.current;
+      // Enable button when scrolled to the very bottom
       if (scrollTop + clientHeight >= scrollHeight - 10) {
         setButtonEnabled(true);
+      } else {
+        setButtonEnabled(false);
       }
     };
     const current = mainRef.current;
-    if (current) current.addEventListener('scroll', handleScroll);
-    return () => current?.removeEventListener('scroll', handleScroll);
+    if (current) {
+      current.addEventListener('scroll', handleScroll);
+    }
+    return () => {
+      current?.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col sm:flex-row font-sans">
-
-     {/* Mobile Top Bar */}
-      <div className="sm:hidden flex justify-between items-center bg-[#0C2D62] text-white p-4 relative top-16 left-0 right-0 z-10">
-        <h2 className="text-lg font-semibold">Sections</h2>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white text-2xl font-bold">
+      {/* Mobile Top Bar */}
+      <div className="sm:hidden flex justify-between items-center bg-[#0C2D62] text-white p-4 fixed top-16 left-0 right-0 z-10">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-white text-2xl font-bold"
+        >
           ☰
         </button>
+        <h2 className="text-lg font-semibold">Sections</h2>
       </div>
-
 
       {/* Sidebar */}
       <aside
-        className={`bg-[#0C2D62] text-white w-full sm:w-64 p-4 flex-shrink-0 sm:block mt-16  ml-10 mb-5 ${sidebarOpen ? 'block' : 'hidden'} sm:block`}
+        className={`bg-[#0C2D62] text-white w-[90%] max-w-sm p-4 flex-shrink-0
+          mt-20 mb-5 rounded-xl shadow-lg
+          fixed top-0 left-1/2 -translate-x-1/2 h-[85%] z-20 overflow-y-auto
+          transform transition-transform duration-300
+          ${sidebarOpen ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"}
+          sm:static sm:translate-x-0 sm:opacity-100 sm:scale-100 sm:pointer-events-auto sm:w-64 sm:mt-8 sm:ml-8 sm:mb-8 sm:rounded-xl sm:shadow-lg sm:h-auto`}
       >
-        <ul className="space-y-2 text-sm sm:text-base font-sans">
+        <div className="flex justify-between items-center mb-4 sm:hidden">
+          <h2 className="text-lg font-semibold">Sections</h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="text-white text-2xl font-bold hover:text-pink-400"
+          >
+            ✕
+          </button>
+        </div>
+
+        <ul className="space-y-2 text-sm sm:text-base">
           {sections.map((section) => (
             <li
               key={section.id}
-              className="cursor-pointer px-3 py-2 rounded hover:bg-[#F20C8F] transition-colors duration-200"
+              className="cursor-pointer px-3 py-2 rounded transition-colors duration-200
+                hover:bg-[#F20C8F] hover:text-white"
               onClick={() => scrollToSection(section.id)}
             >
               {section.title}
@@ -224,18 +203,20 @@ const AgreementPage: React.FC = () => {
       {/* Main Content */}
       <main
         ref={mainRef}
-        className="flex-1 overflow-auto p-6 sm:p-8 bg-white rounded-xl shadow-lg mt-24 sm:mt-8 font-sans text-sm sm:text-base leading-relaxed"
-        style={{ maxHeight: 'calc(100vh - 2rem)' }}
+        className="flex-1 overflow-auto p-6 sm:p-8 bg-white rounded-xl shadow-lg mt-32 sm:mt-8 sm:mr-8 sm:mb-8 font-sans text-sm sm:text-base leading-relaxed"
+        style={{ maxHeight: 'calc(100vh - 4rem)' }}
       >
         {sections.map((section) => (
-          
-            <section key={section.id}ref={(el) => { sectionRefs.current[section.id] = el as HTMLDivElement | null }}className="mb-8">
+          <section
+            key={section.id}
+            ref={(el) => { sectionRefs.current[section.id] = el as HTMLDivElement | null }}
+            className="mb-8"
+          >
             <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-3">{section.title}</h2>
             <p className="text-gray-700 font-normal whitespace-pre-wrap">{section.content}</p>
           </section>
         ))}
 
-        {/* Agreement button */}
         <div className="mt-8 flex justify-center">
           <button
             onClick={() => alert('You have agreed to the terms!')}

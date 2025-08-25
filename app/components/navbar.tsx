@@ -138,6 +138,12 @@ const Navbar = () => {
               Become a Host
             </button>
 
+            {/* find a tour button*/}
+             <button onClick={() => {router.push('/all/tour-page');}} className="px-4 py-2 bg-[#F20C8F] text-white text-sm cursor-pointer font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300">
+            <i className="bi bi-binoculars mr-2"></i>
+
+                 Find a Tour
+             </button>
             {/* Profile Section */}
             {isLoggedIn ? (
               <div className="relative" ref={profileDropdownRef}>
@@ -207,6 +213,7 @@ const Navbar = () => {
                 >
                   Sign up
                 </button>
+                
               </div>
             )}
           </div>

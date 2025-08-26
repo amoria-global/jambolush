@@ -175,7 +175,7 @@ export default function HousePage({ params }: HousePageProps) {
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#083A85] mb-3 sm:mb-4 leading-tight">
             {house.title}
           </h1>
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-sm sm:text-base text-gray-700">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-base sm:text-base text-gray-700">
             <span className="flex items-center gap-2">
               <i className="bi bi-door-open text-[#F20C8F] text-lg sm:text-xl"></i>
               <span className="font-medium">{house.bedrooms} Bedrooms</span>
@@ -218,7 +218,7 @@ export default function HousePage({ params }: HousePageProps) {
                 ))}
               </div>
               <button 
-                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-sm font-medium"
+                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-base font-medium"
                 onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
               >
                 <i className="bi bi-grid-3x3-gap mr-1"></i>
@@ -245,7 +245,7 @@ export default function HousePage({ params }: HousePageProps) {
                 </div>
               ))}
               <button 
-                className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-sm font-medium"
+                className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-base font-medium"
                 onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
               >
                 <i className="bi bi-grid-3x3-gap"></i>
@@ -284,7 +284,7 @@ export default function HousePage({ params }: HousePageProps) {
                 onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
               >
                 <i className="bi bi-grid-3x3-gap"></i>
-                <span className="text-sm font-medium">Show all photos</span>
+                <span className="text-base font-medium">Show all photos</span>
               </button>
             </div>
           </div>
@@ -296,13 +296,13 @@ export default function HousePage({ params }: HousePageProps) {
             <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
             <div className="mb-6">
               <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house.price}</p>
-              <p className="text-gray-600 text-sm sm:text-base">per night</p>
+              <p className="text-gray-600 text-base sm:text-base">per night</p>
             </div>
             
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-gray-700 mb-2">
                     <i className="bi bi-calendar-check mr-1"></i>
                     Check-in Date
                   </label>
@@ -311,12 +311,12 @@ export default function HousePage({ params }: HousePageProps) {
                     min={today}
                     value={checkInDate}
                     onChange={handleCheckInChange}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-sm sm:text-base"
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-gray-700 mb-2">
                     <i className="bi bi-calendar-x mr-1"></i>
                     Check-out Date
                   </label>
@@ -325,14 +325,14 @@ export default function HousePage({ params }: HousePageProps) {
                     min={checkInDate || today}
                     value={checkOutDate}
                     onChange={handleCheckOutChange}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-sm sm:text-base"
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base"
                   />
                 </div>
               </div>
 
               {dateError && (
                 <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                  <p className="text-red-600 text-sm font-medium">
+                  <p className="text-red-600 text-base font-medium">
                     <i className="bi bi-exclamation-triangle-fill mr-2"></i>
                     {dateError}
                   </p>
@@ -340,7 +340,7 @@ export default function HousePage({ params }: HousePageProps) {
               )}
 
               <div className="bg-gray-50 rounded-lg p-3">
-                <p className="font-semibold text-sm mb-2 text-gray-700">Unavailable Dates:</p>
+                <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
                 <div className="space-y-1">
                   {occupiedDates.map((period, idx) => (
                     <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
@@ -353,7 +353,7 @@ export default function HousePage({ params }: HousePageProps) {
 
               {checkInDate && checkOutDate && (
                 <div className="border-t pt-4">
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-base mb-2">
                     <span>Nights:</span>
                     <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
                   </div>
@@ -367,7 +367,7 @@ export default function HousePage({ params }: HousePageProps) {
               <button
                 onClick={handleReserve}
                 disabled={!checkInDate || !checkOutDate || !!dateError}
-                className={`w-full py-3 rounded-lg font-semibold transition text-sm sm:text-base ${
+                className={`w-full py-3 rounded-lg font-semibold transition text-base sm:text-base ${
                   (!checkInDate || !checkOutDate || !!dateError)
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                     : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl'
@@ -388,7 +388,7 @@ export default function HousePage({ params }: HousePageProps) {
             <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">Location</h2>
             <div className="flex items-start gap-2 mb-4">
               <i className="bi bi-geo-alt-fill text-[#F20C8F] text-lg sm:text-xl mt-0.5 flex-shrink-0"></i>
-              <p className="text-gray-700 font-medium text-sm sm:text-base leading-relaxed">{house.address}</p>
+              <p className="text-gray-700 font-medium text-base sm:text-base leading-relaxed">{house.address}</p>
             </div>
             <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
               <iframe
@@ -405,7 +405,7 @@ export default function HousePage({ params }: HousePageProps) {
             {/* Description moved here for mobile */}
             <div className="mt-6 lg:hidden">
               <h3 className="text-lg font-semibold text-[#083A85] mb-3">About This Place</h3>
-              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">{house.description}</p>
+              <p className="text-gray-700 text-base sm:text-base leading-relaxed">{house.description}</p>
             </div>
           </div>
 
@@ -420,7 +420,7 @@ export default function HousePage({ params }: HousePageProps) {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-gray-700 mb-2">
                     <i className="bi bi-calendar-check mr-1"></i>
                     Check-in Date
                   </label>
@@ -434,7 +434,7 @@ export default function HousePage({ params }: HousePageProps) {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-gray-700 mb-2">
                     <i className="bi bi-calendar-x mr-1"></i>
                     Check-out Date
                   </label>
@@ -449,7 +449,7 @@ export default function HousePage({ params }: HousePageProps) {
 
                 {dateError && (
                   <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                    <p className="text-red-600 text-sm font-medium">
+                    <p className="text-red-600 text-base font-medium">
                       <i className="bi bi-exclamation-triangle-fill mr-2"></i>
                       {dateError}
                     </p>
@@ -457,7 +457,7 @@ export default function HousePage({ params }: HousePageProps) {
                 )}
 
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="font-semibold text-sm mb-2 text-gray-700">Unavailable Dates:</p>
+                  <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
                   <div className="space-y-1">
                     {occupiedDates.map((period, idx) => (
                       <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
@@ -470,7 +470,7 @@ export default function HousePage({ params }: HousePageProps) {
 
                 {checkInDate && checkOutDate && (
                   <div className="border-t pt-4">
-                    <div className="flex justify-between text-sm mb-2">
+                    <div className="flex justify-between text-base mb-2">
                       <span>Nights:</span>
                       <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
                     </div>
@@ -495,7 +495,7 @@ export default function HousePage({ params }: HousePageProps) {
                 </button>
 
                 <div className="pt-4 border-t">
-                  <p className="text-sm text-gray-600 leading-relaxed">{house.description}</p>
+                  <p className="text-base text-gray-600 leading-relaxed">{house.description}</p>
                 </div>
               </div>
             </div>
@@ -533,22 +533,22 @@ export default function HousePage({ params }: HousePageProps) {
                     <i key={star} className={`bi bi-star-fill text-[#F20C8F] text-base sm:text-lg`}></i>
                   ))}
                 </div>
-                <p className="text-gray-600 font-medium mt-1 text-sm sm:text-base">{house.totalReviews} reviews</p>
+                <p className="text-gray-600 font-medium mt-1 text-base sm:text-base">{house.totalReviews} reviews</p>
               </div>
               
               {/* Rating Distribution */}
               <div className="flex-1 w-full">
                 {[5, 4, 3, 2, 1].map((rating) => (
                   <div key={rating} className="flex items-center gap-2 sm:gap-3 mb-2">
-                    <span className="w-4 text-sm font-medium">{rating}</span>
-                    <i className="bi bi-star-fill text-[#F20C8F] text-sm"></i>
+                    <span className="w-4 text-base font-medium">{rating}</span>
+                    <i className="bi bi-star-fill text-[#F20C8F] text-base"></i>
                     <div className="flex-1 bg-gray-200 rounded-full h-2 sm:h-3">
                       <div 
                         className="bg-[#F20C8F] h-2 sm:h-3 rounded-full transition-all duration-500"
                         style={{ width: `${(house.ratingCounts[rating as keyof typeof house.ratingCounts] / house.totalReviews) * 100}%` }}
                       ></div>
                     </div>
-                    <span className="text-xs sm:text-sm text-gray-600 w-8 sm:w-12 text-right">{house.ratingCounts[rating as keyof typeof house.ratingCounts]}</span>
+                    <span className="text-xs sm:text-base text-gray-600 w-8 sm:w-12 text-right">{house.ratingCounts[rating as keyof typeof house.ratingCounts]}</span>
                   </div>
                 ))}
               </div>
@@ -567,7 +567,7 @@ export default function HousePage({ params }: HousePageProps) {
             }).map(([key, { icon, label }]) => (
               <div key={key} className="bg-white border-2 border-gray-100 rounded-xl p-3 sm:p-4 text-center hover:shadow-lg transition-shadow">
                 <i className={`bi ${icon} text-xl sm:text-2xl text-[#083A85] mb-2`}></i>
-                <p className="text-xs sm:text-sm font-semibold text-gray-700">{label}</p>
+                <p className="text-xs sm:text-base font-semibold text-gray-700">{label}</p>
                 <p className="text-lg sm:text-xl font-bold text-[#F20C8F] mt-1">
                   {house.ratings[key as keyof typeof house.ratings]}
                 </p>
@@ -579,7 +579,7 @@ export default function HousePage({ params }: HousePageProps) {
           <div className="border-t pt-6 sm:pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <h3 className="text-lg sm:text-xl font-semibold text-[#083A85]">Guest Reviews</h3>
-              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-sm sm:text-base"
+              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-base sm:text-base"
                       onClick={() => setShowReviewModal(true)}>
                 <i className="bi bi-plus-circle mr-2"></i>
                 Add Review
@@ -591,16 +591,16 @@ export default function HousePage({ params }: HousePageProps) {
                 <div key={review.id} className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
                     <div>
-                      <p className="font-semibold text-[#083A85] text-sm sm:text-base">{review.name}</p>
-                      <p className="text-xs sm:text-sm text-gray-500">{review.date}</p>
+                      <p className="font-semibold text-[#083A85] text-base sm:text-base">{review.name}</p>
+                      <p className="text-xs sm:text-base text-gray-500">{review.date}</p>
                     </div>
                     <div className="flex gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <i key={i} className={`bi bi-star-fill text-sm ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}></i>
+                        <i key={i} className={`bi bi-star-fill text-base ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}></i>
                       ))}
                     </div>
                   </div>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">{review.comment}</p>
+                  <p className="text-gray-700 leading-relaxed text-base sm:text-base">{review.comment}</p>
                 </div>
               ))}
             </div>
@@ -608,7 +608,7 @@ export default function HousePage({ params }: HousePageProps) {
             <div className="text-center mt-6 sm:mt-8">
               <button 
                 onClick={() => setShowAllReviews(!showAllReviews)}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-sm sm:text-base"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-base sm:text-base"
               >
                 <i className={`bi bi-${showAllReviews ? 'chevron-up' : 'chevron-down'} mr-2`}></i>
                 {showAllReviews ? 'Show Less Reviews' : `See All ${house.totalReviews} Reviews`}

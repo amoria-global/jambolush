@@ -93,7 +93,7 @@ export default function HowItWorksPage() {
                       <h3 className="text-2xl font-semibold text-[#083A85] mb-3">
                         {step.title}
                       </h3>
-                      <p className={`text-black leading-relaxed transition-all duration-300 ${
+                      <p className={`text-black text-lg leading-relaxed transition-all duration-300 ${
                         activeStep === index ? 'opacity-100' : 'opacity-70'
                       }`}>
                         {step.description}

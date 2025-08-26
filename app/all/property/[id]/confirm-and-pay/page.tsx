@@ -116,7 +116,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             {/* Step 1: Payment Timing - Always visible */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium text-white mr-3"
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
                   style={{ backgroundColor: '#F20C8F' }}>
                   1
                 </div>
@@ -139,7 +139,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   />
                   <div className="flex-1">
                     <div className="font-medium">Pay now</div>
-                    <div className="text-sm text-gray-500">Complete payment immediately</div>
+                    <div className="text-base text-gray-500">Complete payment immediately</div>
                   </div>
                 </label>
                 
@@ -156,7 +156,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   />
                   <div className="flex-1">
                     <div className="font-medium">Pay at property</div>
-                    <div className="text-sm text-gray-500">Pay when you arrive</div>
+                    <div className="text-base text-gray-500">Pay when you arrive</div>
                   </div>
                 </label>
               </div>
@@ -167,7 +167,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             {canShowPaymentMethods && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium text-white mr-3"
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
                     style={{ backgroundColor: '#F20C8F' }}>
                     2
                   </div>
@@ -191,7 +191,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <i className="bi bi-credit-card mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Credit/Debit Card</div>
-                      <div className="text-sm text-gray-500">Visa, Mastercard, Amex</div>
+                      <div className="text-base text-gray-500">Visa, Mastercard, Amex</div>
                     </div>
                   </label>
                   
@@ -209,7 +209,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Mobile Money (MoMo)</div>
-                      <div className="text-sm text-gray-500">MTN Mobile Money</div>
+                      <div className="text-base text-gray-500">MTN Mobile Money</div>
                     </div>
                   </label>
                   
@@ -227,7 +227,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Airtel Money</div>
-                      <div className="text-sm text-gray-500">Airtel Mobile Money</div>
+                      <div className="text-base text-gray-500">Airtel Mobile Money</div>
                     </div>
                   </label>
                   
@@ -245,7 +245,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <i className="bi bi-cash mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">M-Pesa</div>
-                      <div className="text-sm text-gray-500">Safaricom M-Pesa</div>
+                      <div className="text-base text-gray-500">Safaricom M-Pesa</div>
                     </div>
                   </label>
                 </div>
@@ -257,7 +257,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             {canShowPaymentForm && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium text-white mr-3"
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
                     style={{ backgroundColor: '#F20C8F' }}>
                     3
                   </div>
@@ -269,49 +269,49 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 {paymentMethod === 'card' && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Card Number *</label>
+                      <label className="block text-base font-medium mb-2">Card Number *</label>
                       <input
                         type="text"
                         placeholder="1234 5678 9012 3456"
                         value={cardData.cardNumber}
                         onChange={(e) => handleCardInputChange('cardNumber', e.target.value)}
-                        className={`w-full p-3 border rounded-lg text-sm ${errors.cardNumber ? 'error-input' : 'border-gray-300'}`}
+                        className={`w-full p-3 border rounded-lg text-base ${errors.cardNumber ? 'error-input' : 'border-gray-300'}`}
                       />
                       {errors.cardNumber && <p className="error-message">{errors.cardNumber}</p>}
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium mb-2">Cardholder Name *</label>
+                      <label className="block text-base font-medium mb-2">Cardholder Name *</label>
                       <input
                         type="text"
                         placeholder="John Doe"
                         value={cardData.cardholderName}
                         onChange={(e) => handleCardInputChange('cardholderName', e.target.value)}
-                        className={`w-full p-3 border rounded-lg text-sm ${errors.cardholderName ? 'error-input' : 'border-gray-300'}`}
+                        className={`w-full p-3 border rounded-lg text-base ${errors.cardholderName ? 'error-input' : 'border-gray-300'}`}
                       />
                       {errors.cardholderName && <p className="error-message">{errors.cardholderName}</p>}
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Expiry Date *</label>
+                        <label className="block text-base font-medium mb-2">Expiry Date *</label>
                         <input
                           type="text"
                           placeholder="MM/YY"
                           value={cardData.expiryDate}
                           onChange={(e) => handleCardInputChange('expiryDate', e.target.value)}
-                          className={`w-full p-3 border rounded-lg text-sm ${errors.expiryDate ? 'error-input' : 'border-gray-300'}`}
+                          className={`w-full p-3 border rounded-lg text-base ${errors.expiryDate ? 'error-input' : 'border-gray-300'}`}
                         />
                         {errors.expiryDate && <p className="error-message">{errors.expiryDate}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">CVV *</label>
+                        <label className="block text-base font-medium mb-2">CVV *</label>
                         <input
                           type="text"
                           placeholder="123"
                           value={cardData.cvv}
                           onChange={(e) => handleCardInputChange('cvv', e.target.value)}
-                          className={`w-full p-3 border rounded-lg text-sm ${errors.cvv ? 'error-input' : 'border-gray-300'}`}
+                          className={`w-full p-3 border rounded-lg text-base ${errors.cvv ? 'error-input' : 'border-gray-300'}`}
                         />
                         {errors.cvv && <p className="error-message">{errors.cvv}</p>}
                       </div>
@@ -321,7 +321,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
                 {(paymentMethod === 'momo' || paymentMethod === 'airtel' || paymentMethod === 'mpesa') && (
                   <div>
-                    <label className="block text-sm font-medium mb-2">Phone Number *</label>
+                    <label className="block text-base font-medium mb-2">Phone Number *</label>
                     <input
                       type="tel"
                       placeholder={
@@ -330,10 +330,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       }
                       value={mobileData.phoneNumber}
                       onChange={(e) => handleMobileInputChange(e.target.value)}
-                      className={`w-full p-3 border rounded-lg text-sm ${errors.phoneNumber ? 'error-input' : 'border-gray-300'}`}
+                      className={`w-full p-3 border rounded-lg text-base ${errors.phoneNumber ? 'error-input' : 'border-gray-300'}`}
                     />
                     {errors.phoneNumber && <p className="error-message">{errors.phoneNumber}</p>}
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-base text-gray-500 mt-2">
                       {paymentMethod === 'momo' ? 'Enter your MTN Mobile Money number' :
                        paymentMethod === 'airtel' ? 'Enter your Airtel Money number' : 'Enter your M-Pesa number'}
                     </p>
@@ -350,15 +350,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 </h2>
                 
                 <div className="space-y-3 mb-6">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-gray-600">Property (3 nights)</span>
                     <span className="font-medium">$450.00</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-gray-600">Cleaning fee</span>
                     <span className="font-medium">$35.00</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-gray-600">Service fee</span>
                     <span className="font-medium">$25.00</span>
                   </div>
@@ -375,7 +375,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   {paymentTiming === 'now' ? 'Complete Payment' : 'Confirm Reservation'}
                 </button>
                 
-                <p className="text-xs text-gray-500 mt-4 text-center">
+                <p className="text-base text-gray-500 mt-4 text-center">
                   By proceeding, you agree to our Terms of Service and Privacy Policy
                 </p>
               </div>
@@ -400,7 +400,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <h3 className="font-semibold text-lg" style={{ color: '#083A85' }}>
                   Luxury Villa with Ocean View
                 </h3>
-                <div className="flex items-center mt-1 text-sm text-gray-600">
+                <div className="flex items-center mt-1 text-base text-gray-600">
                   <i className="bi bi-geo-alt mr-1"></i>
                   Malibu, California
                 </div>
@@ -410,24 +410,24 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               <div className="p-4 border-b">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">CHECK-IN</div>
-                    <div className="font-medium text-sm">Dec 24, 2024</div>
-                    <div className="text-xs text-gray-500">3:00 PM</div>
+                    <div className="text-base text-gray-500 mb-1">CHECK-IN</div>
+                    <div className="font-medium text-base">Dec 24, 2024</div>
+                    <div className="text-base text-gray-500">3:00 PM</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">CHECK-OUT</div>
-                    <div className="font-medium text-sm">Dec 27, 2024</div>
-                    <div className="text-xs text-gray-500">11:00 AM</div>
+                    <div className="text-base text-gray-500 mb-1">CHECK-OUT</div>
+                    <div className="font-medium text-base">Dec 27, 2024</div>
+                    <div className="text-base text-gray-500">11:00 AM</div>
                   </div>
                 </div>
               </div>
               
               {/* Amenities List */}
               <div className="p-4 border-b">
-                <h4 className="font-medium text-sm mb-3" style={{ color: '#083A85' }}>
+                <h4 className="font-medium text-base mb-3" style={{ color: '#083A85' }}>
                   Property Features
                 </h4>
-                <ul className="space-y-2 text-sm">
+                <ul className="space-y-2 text-base">
                   <li className="flex items-center">
                     <i className="bi bi-house-door mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                     <span>Spacious Living Room</span>
@@ -457,11 +457,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               
               {/* Closing Text */}
               <div className="p-4 text-center">
-                <p className="text-xs text-gray-500">
+                <p className="text-base text-gray-500">
                   <i className="bi bi-shield-check mr-1" style={{ color: '#F20C8F' }}></i>
                   Your booking is protected by our guarantee
                 </p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-base text-gray-400 mt-2">
                   Need help? Contact support 24/7
                 </p>
               </div>

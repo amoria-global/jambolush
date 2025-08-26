@@ -166,10 +166,10 @@ const Hero: React.FC = () => {
       
       {/* Content */}
       <div className="relative z-10 pt-16 xs:pt-4 sm:pt-8 md:pt-5 lg:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
-        <h1 className="text-xl mb-4 md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-4">
+        <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-4">
           Discover your place to live
         </h1>
-        <p className=" text-sm max-w-[200px] sm:max-w-full sm:block  mx-auto lg:text-lg mb-8 md:mb-12 opacity-90">
+        <p className=" text-base max-w-[200px] sm:max-w-full sm:block  mx-auto lg:text-lg mb-8 md:mb-12 opacity-90">
           Let us help you make the right move today!
         </p>
         
@@ -182,7 +182,7 @@ const Hero: React.FC = () => {
                 <button
                   key={tab.value}
                   onClick={() => setSelectedTab(tab.value)}
-                  className={`px-4 md:px-6 py-2 md:py-2.5 rounded-lg text-sm md:text-base font-medium flex items-center gap-2 transition-all duration-200 ${
+                  className={`px-4 md:px-6 py-2 cursor-pointer md:py-2.5 rounded-lg text-base md:text-base font-medium flex items-center gap-2 transition-all duration-200 ${
                     selectedTab === tab.value
                       ? 'text-white shadow-lg transform scale-105'
                       : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
@@ -235,7 +235,7 @@ const Hero: React.FC = () => {
                           e.stopPropagation();
                           handleLocationSelect(suggestion);
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 text-gray-700 text-sm transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-blue-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
                       >
                         <i className="bi bi-geo-alt text-gray-400"></i>
                         {suggestion}
@@ -279,7 +279,7 @@ const Hero: React.FC = () => {
                           e.stopPropagation();
                           handleSearchSelect(suggestion);
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-pink-50 text-gray-700 text-sm transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-pink-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
                       >
                         <i className="bi bi-search text-gray-400"></i>
                         {suggestion}
@@ -292,7 +292,7 @@ const Hero: React.FC = () => {
               {/* Search Button */}
               <button 
                 onClick={handleSearch}
-                className="text-white px-6 md:px-10 py-3 md:py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:transform hover:scale-105 flex items-center justify-center gap-2 text-base"
+                className="text-white px-6 md:px-10 py-3 cursor-pointer md:py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:transform hover:scale-105 flex items-center justify-center gap-2 text-base"
                 style={{ backgroundColor: primaryPink }}
               >
                 <i className="bi bi-search"></i>
@@ -303,12 +303,12 @@ const Hero: React.FC = () => {
             {/* Quick Filters */}
             <div className="mt-6 pt-6 border-t border-gray-200 hidden sm:block">
               <div className="hidden sm:flex flex-wrap gap-2 items-center">
-                <span className="text-sm text-gray-500 mr-2">Quick filters:</span>
+                <span className="text-base text-gray-500 mr-2">Quick filters:</span>
                 {['Under $500', 'Pet Friendly', 'Parking', 'Furnished', 'Near Metro'].map((filter, index) => (
                   <button
                     key={index}
                     onClick={() => setSearchKeyword(filter)}
-                    className="px-3 py-1.5 text-xs font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors duration-150"
+                    className="px-3 py-1.5 cursor-pointer text-base font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors duration-150"
                   >
                     {filter}
                   </button>
@@ -322,15 +322,15 @@ const Hero: React.FC = () => {
         <div className="mt-4 sm:mt-8 flex flex-wrap justify-center gap-6 md:gap-12 text-white">
           <div className="flex items-center gap-2">
             <i className="bi bi-shield-check text-xl"></i>
-            <span className="text-sm md:text-base">Verified Listings</span>
+            <span className="text-base md:text-base">Verified Listings</span>
           </div>
           <div className="flex items-center gap-2">
             <i className="bi bi-headset text-xl"></i>
-            <span className="text-sm md:text-base">24/7 Support</span>
+            <span className="text-base md:text-base">24/7 Support</span>
           </div>
           <div className="flex items-center gap-2">
             <i className="bi bi-cash-stack text-xl"></i>
-            <span className="text-sm md:text-base">Best Prices</span>
+            <span className="text-base md:text-base">Best Prices</span>
           </div>
         </div>
       </div>

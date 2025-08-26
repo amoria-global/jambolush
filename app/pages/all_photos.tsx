@@ -128,7 +128,7 @@ const App: React.FC = () => {
 
   return (
     <div className="relative">
-      <div className="font-sans bg-gray-50 min-h-screen mt-20 mb-8 mx-4 sm:mx-6 lg:mx-12 p-4 sm:p-6 lg:p-8 max-w-screen-xl mx-auto rounded-lg shadow-sm">
+      <div className="font-sans bg-gray-50 min-h-screen mt-20 mb-8 sm:mx-6 lg:mx-12 p-4 sm:p-6 lg:p-8 max-w-screen-xl mx-auto rounded-lg shadow-sm">
         {/* Back Button Container - Positioned to the top left */}
         <div className="absolute top-0 left-0 p-4 z-10">
           <button
@@ -160,8 +160,8 @@ const App: React.FC = () => {
                 />
               </div>
               {/*text color */}
-              <div className="absolute inset-0 group-hover:bg-opacity-50 flex items-end p-2 sm:p-3">
-                <span className="text-sm sm:text-sm md:text-sm font-bold text-black bg-white bg-opacity-800 rounded-lg px-3 shadow ">
+              <div className="absolute inset-1 group-hover:bg-opacity-50 flex items-end p-2 sm:p-3">
+                <span className="text-base sm:text-base md:text-base font-medium text-black bg-white bg-opacity-800 rounded-lg px-3 shadow ">
                   {room.label}
                 </span>
               </div>
@@ -175,9 +175,9 @@ const App: React.FC = () => {
             <section
               key={roomIndex}
               id={room.label.replace(/\s+/g, "-").toLowerCase()}
-              className="pt-2"
+              className="pt-5"
             >
-              <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#083A85] mb-4 border-b border-gray-200 pb-2">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#083A85] mb-4 border-b border-gray-200 pb-2">
                 {room.label}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">

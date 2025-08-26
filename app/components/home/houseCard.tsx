@@ -37,7 +37,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         
         {/* Category Badge - Professional Style */}
         <div className="absolute top-2 left-2">
-          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
+          <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-base font-semibold shadow-lg">
             {house.category}
           </span>
         </div>
@@ -64,7 +64,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
 
         {/* Price Per Night Overlay */}
         <div className="absolute bottom-2 left-2">
-          <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
+          <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-base font-bold shadow-lg">
             {house.pricePerNight}/night
           </span>
         </div>
@@ -73,13 +73,13 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
       {/* Compact Content Section */}
       <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-3 text-white h-full">
         {/* Title - Compact */}
-        <h3 className="text-sm font-bold mb-1 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
+        <h3 className="text-base font-bold mb-1 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
           {house.title}
         </h3>
         
         {/* Location with Icon */}
-        <div className="flex items-center mb-2 text-sm text-blue-100">
-          <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
+        <div className="flex items-center mb-2 text-base text-blue-100">
+          <i className="bi bi-geo-alt-fill mr-1 text-base"></i>
           <p className="truncate">{house.location}</p>
         </div>
         
@@ -102,7 +102,7 @@ const HouseCard: React.FC<HouseProps> = ({ house }) => {
         </div>
 
         {/* Host and Availability Info */}
-        <div className="flex justify-between items-center text-sm text-blue-100">
+        <div className="flex justify-between items-center text-base text-blue-100">
           {house.hostName && (
             <span className="truncate">Host: {house.hostName}</span>
           )}

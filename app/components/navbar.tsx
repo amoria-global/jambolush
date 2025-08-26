@@ -168,26 +168,26 @@ const Navbar = () => {
 
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
-                    <a href="#dashboard" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="#dashboard" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
                       <i className="bi bi-speedometer2 mr-3"></i>
                       Dashboard
                     </a>
-                    <a href="#profile" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="#profile" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
                       <i className="bi bi-person mr-3"></i>
                       Profile
                     </a>
-                    <a href="#status" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="#status" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
                       <i className="bi bi-activity mr-3"></i>
                       Status
                     </a>
-                    <a href="#settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="#settings" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
                       <i className="bi bi-gear mr-3"></i>
                       Settings
                     </a>
                     <hr className="my-1" />
                     <button 
                       onClick={() => setIsLoggedIn(false)}
-                      className="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      className="w-full text-left flex items-center px-4 py-2 text-base text-red-600 hover:bg-red-50"
                     >
                       <i className="bi bi-box-arrow-right mr-3"></i>
                       Sign out
@@ -199,7 +199,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => {router.push('/all/login');}}
-                  className={`px-4 py-2 text-sm cursor-pointer font-medium rounded-lg transition-colors duration-300 ${
+                  className={`px-4 py-2 text-base cursor-pointer font-medium rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-[#083A85] hover:bg-gray-100' 
                       : 'text-slate-300 hover:bg-white/10'
@@ -209,7 +209,7 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => {router.push('/all/signup');}}
-                  className="px-4 py-2 bg-[#083A85] text-white text-sm cursor-pointer font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
+                  className="px-4 py-2 bg-[#083A85] text-white text-base cursor-pointer font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
                   Sign up
                 </button>
@@ -266,7 +266,7 @@ const Navbar = () => {
                           setCurrentLang(lang.code);
                           setIsLangOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors duration-300 flex items-center space-x-2 ${
+                        className={`w-full text-left px-3 py-2 text-base rounded-lg transition-colors duration-300 flex items-center space-x-2 ${
                           isScrolled 
                             ? 'text-gray-600 hover:bg-gray-100' 
                             : 'text-white/80 hover:bg-white/10'
@@ -281,7 +281,7 @@ const Navbar = () => {
               </div>
 
               {/* Become a Host Mobile */}
-              <button className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-sm font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300">
+              <button className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300">
                 <i className="bi bi-house-add mr-2"></i>
                 Become a Host
               </button>
@@ -298,7 +298,7 @@ const Navbar = () => {
                     <span className="text-base font-medium">{user.name}</span>
                   </div>
                   
-                  <a href="#dashboard" className={`flex items-center px-6 py-2 text-sm rounded-lg transition-colors duration-300 ${
+                  <a href="#dashboard" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-gray-600 hover:bg-gray-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -306,7 +306,7 @@ const Navbar = () => {
                     <i className="bi bi-speedometer2 mr-3"></i>
                     Dashboard
                   </a>
-                  <a href="#profile" className={`flex items-center px-6 py-2 text-sm rounded-lg transition-colors duration-300 ${
+                  <a href="#profile" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-gray-600 hover:bg-gray-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -314,7 +314,7 @@ const Navbar = () => {
                     <i className="bi bi-person mr-3"></i>
                     Profile
                   </a>
-                  <a href="#status" className={`flex items-center px-6 py-2 text-sm rounded-lg transition-colors duration-300 ${
+                  <a href="#status" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-gray-600 hover:bg-gray-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -322,7 +322,7 @@ const Navbar = () => {
                     <i className="bi bi-activity mr-3"></i>
                     Status
                   </a>
-                  <a href="#settings" className={`flex items-center px-6 py-2 text-sm rounded-lg transition-colors duration-300 ${
+                  <a href="#settings" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-gray-600 hover:bg-gray-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -336,7 +336,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       router.push('/all/logout');
                     }}
-                    className="w-full text-left flex items-center px-6 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
+                    className="w-full text-left flex items-center px-6 py-2 text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
                   >
                     <i className="bi bi-box-arrow-right mr-3"></i>
                     Sign out
@@ -349,7 +349,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       router.push('/all/login');
                     }}
-                    className={`w-full  px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-300 text-center border border-slate-300 ${
+                    className={`w-full  px-3 py-2 text-base font-medium rounded-lg transition-colors duration-300 text-center border border-slate-300 ${
                       isScrolled 
                         ? 'text-[#083A85] hover:bg-gray-100' 
                         : 'text-white hover:bg-white/10'
@@ -362,7 +362,7 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       router.push('/all/signup'); 
                     }}
-                    className="w-full  px-3 py-2 bg-[#083A85] text-white text-sm font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
+                    className="w-full  px-3 py-2 bg-[#083A85] text-white text-base font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                   >
                     Sign up
                   </button>

@@ -358,12 +358,19 @@ const JambolushChatbot: React.FC = () => {
       <div className="fixed bottom-6 right-6 z-50">
         <button
           onClick={() => setIsMinimized(false)}
-          className="text-white p-5 rounded-full shadow-xl hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer flex items-center justify-center"
-          style={{ backgroundColor: '#e91e63' }}
+          className="relative p-4 rounded-full shadow-xl hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer flex items-center justify-center"
+          style={{ backgroundColor: '#083693ff' }} // blue circle
         >
-          {/* Chat icon */}
-        <i className="bi bi-chat" style={{ color: '#083A85' }}></i>
+          {/* Chat Icon */}
+          <i className="bi bi-chat-dots-fill" style={{ fontSize: '1.8rem', color: '#fff' }}></i>
+
+          {/* Online Status Dot */}
+          <span
+            className="absolute top-2 right-2 w-4 h-4 rounded-full border-2 border-white"
+            style={{ backgroundColor: '#2ecc71' }} // green dot
+          ></span>
         </button>
+
       </div>
     );
   }
@@ -372,7 +379,7 @@ const JambolushChatbot: React.FC = () => {
     <div
       className="fixed bottom-6 right-6 z-50 w-full max-w-sm h-[80vh] max-h-[600px] bg-gray-950 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-300 transform scale-100"
       style={{
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('https://i.pinimg.com/736x/5e/ea/e4/5eeae467d9f730729a786e0da9678de9.jpg')`,
+        backgroundImage: `linear-gradient(rgba(37, 37, 37, 0.7), rgba(44, 44, 44, 0.7)), url('https://images.stockcake.com/public/9/4/d/94dce4db-7571-41c0-b98f-5e67852fd988_large/elephant-river-crossing-stockcake.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
@@ -396,7 +403,7 @@ const JambolushChatbot: React.FC = () => {
         </div>
         <button
           onClick={() => setIsMinimized(true)}
-          className="text-white hover:text-gray-300 transition-colors"
+          className="text-white hover:text-gray-300 transition-colors cursor-pointer"
         >
           <i className="bi bi-x-lg text-xl"></i>
         </button>

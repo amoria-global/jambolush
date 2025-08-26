@@ -7,6 +7,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import Preloader from "./components/Preloader"; // Import the Preloader component
+import JambolushChatbot from "./components/chatbot"; // Corrected import path and casing
 
 export default function RootLayout({
   children,
@@ -43,6 +44,7 @@ export default function RootLayout({
             {!shouldHideNavbarFooter && <Navbar />}
             {children}
             {!shouldHideNavbarFooter && <Footer />}
+            {!shouldHideNavbarFooter && <JambolushChatbot />} {/* Add this line */}
           </>
         )}
       </body>

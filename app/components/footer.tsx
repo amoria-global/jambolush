@@ -183,9 +183,16 @@ export default function Footer() {
                 © 2025 JamboLush. All rights reserved.
               </p>
 
+
               <p className="text-base font-medium bg-gradient-to-r from-[#E5E5E5] via-[#C0C0C0] to-[#C0C0C0] bg-clip-text text-transparent">
               Powered by Amoria Global Tech.
+
+             <p className="text-base font-semibold">
+              Powered by <span className="bg-gradient-to-r from-[#00A9E0] via-[#33BBE6] to-[#66CCED] bg-clip-text text-transparent font-bold text-lg">Amoria Global Tech.</span>
+
             </p>
+
+            
 
 
               <div className="flex items-center gap-6">

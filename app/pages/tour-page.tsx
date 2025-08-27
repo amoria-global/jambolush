@@ -4,6 +4,28 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+// --- HELPER HOOK (NEW) ---
+// This custom hook delays updating a value until a certain amount of time has passed without it changing.
+// This prevents the search function from running on every single keystroke.
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    // Set up a timer to update the debounced value after the specified delay
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    // Clean up the timer if the value changes before the delay has passed
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
+
 // 1. Updated TypeScript Interface
 interface Tour {
   id: string;
@@ -267,9 +289,8 @@ const allTours: Tour[] = [
     isBestseller: true,
     category: 'Luxury',
 },
-
   {
-    id: '12',
+    id: '23', // Note: Corrected duplicate ID from 12 to 23
     title: 'Nyandungu great Kigali City Tour',
     location: 'Rwanda, Kigali(City)',
     rating: 4.7,
@@ -280,12 +301,9 @@ const allTours: Tour[] = [
     isBestseller: true,
     category: 'City Tours',
   },
-
-
-
-  ];
-
-// Helper Icons - Updated with consistent sizing
+];
+  
+// Helper Icons
 const StarIcon = () => (
   <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -316,7 +334,7 @@ const CheckIcon = () => (
   </svg>
 );
 
-// Updated TourCard with consistent typography and responsiveness
+// TourCard component (unchanged)
 const TourCard = ({
   tour,
   isFavorite,
@@ -328,15 +346,11 @@ const TourCard = ({
 }) => (
   <Link href={`/all/tour/${tour.id}`} legacyBehavior>
     <a className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
-      {/* Image Section - Consistent with HouseCard height */}
       <div 
         className="relative h-48 bg-cover bg-center bg-gray-200"
         style={{ backgroundImage: `url(${tour.image})` }}
       >
-        {/* Gradient Overlay for better text visibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
-        
-        {/* Bestseller Badge - Professional Style matching HouseCard */}
         {tour.isBestseller && (
           <div className="absolute top-2 left-2">
             <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
@@ -344,8 +358,6 @@ const TourCard = ({
             </span>
           </div>
         )}
-        
-        {/* Heart Icon - Consistent with HouseCard styling */}
         <div className="absolute top-2 right-2 z-10">
           <div
             onClick={(e) => {
@@ -358,36 +370,25 @@ const TourCard = ({
             <HeartIcon active={isFavorite} />
           </div>
         </div>
-        
-        {/* Price Overlay - Consistent styling */}
         <div className="absolute bottom-2 left-2">
           <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
             ${tour.price}/person
           </span>
         </div>
       </div>
-
-      {/* Content Section - Matching HouseCard gradient and typography */}
       <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
-        {/* Rating - Compact layout */}
         <div className="flex items-center mb-2">
           <StarIcon />
           <span className="text-sm font-bold ml-1">{tour.rating}</span>
           <span className="text-sm text-blue-100 ml-1.5">({tour.reviews})</span>
         </div>
-        
-        {/* Title - Consistent typography */}
         <h3 className="text-sm font-bold mb-2 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
           {tour.title}
         </h3>
-        
-        {/* Location with Icon - Matching HouseCard pattern */}
         <div className="flex items-center mb-3 text-sm text-blue-100">
           <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
           <p className="truncate">{tour.location}</p>
         </div>
-        
-        {/* Tour Details - Grid layout similar to HouseCard */}
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
             <ClockIcon />
@@ -398,8 +399,6 @@ const TourCard = ({
             <span className="text-xs text-white">Free cancellation</span>
           </div>
         </div>
-
-        {/* Category - Additional info */}
         <div className="flex justify-between items-center text-xs text-blue-100">
           <span className="truncate">{tour.category}</span>
           <span className="text-green-300">Available</span>
@@ -409,6 +408,7 @@ const TourCard = ({
   </Link>
 );
 
+
 export default function BrowseToursPage() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [sortOption, setSortOption] = useState('Featured');
@@ -417,26 +417,43 @@ export default function BrowseToursPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const toursPerPage = 8;
 
+  // --- MODIFICATION 1: Use the debounced value for filtering ---
+  // We use the custom hook to create a debounced version of the search query.
+  // The filtering logic will only run when this value changes (300ms after the user stops typing).
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
   const [displayedTours, setDisplayedTours] = useState<Tour[]>(allTours);
 
   const filterCategories = ['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury'];
 
-  // Filtering + sorting + search
+  // --- MODIFICATION 2: Update useEffect and search logic ---
   useEffect(() => {
     let filtered = allTours;
 
+    // 1. Category filter (unchanged)
     if (activeFilter !== 'All') {
       filtered = filtered.filter((tour) => tour.category === activeFilter);
     }
 
-    if (searchQuery.trim() !== '') {
-      filtered = filtered.filter(
-        (tour) =>
-          tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          tour.location.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+    // 2. Search filter (IMPROVED LOGIC)
+    if (debouncedSearchQuery.trim() !== '') {
+      // Split the search query into individual words (tokens)
+      const searchTerms = debouncedSearchQuery.toLowerCase().split(' ').filter(term => term);
+
+      filtered = filtered.filter((tour) => {
+        // Combine all searchable text fields from the tour into one string
+        const searchableText = `
+          ${tour.title} 
+          ${tour.location} 
+          ${tour.category}
+        `.toLowerCase();
+        
+        // Check if the searchable text includes EVERY term from the search query
+        return searchTerms.every(term => searchableText.includes(term));
+      });
     }
 
+    // 3. Sorting logic (unchanged)
     let sorted = [...filtered];
     switch (sortOption) {
       case 'Price (low to high)':
@@ -446,15 +463,16 @@ export default function BrowseToursPage() {
         sorted.sort((a, b) => b.rating - a.rating);
         break;
       default:
+        // Featured sort can remain as is, or you could add another metric like reviews
         sorted.sort((a, b) => (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0));
         break;
     }
 
     setDisplayedTours(sorted);
-    setCurrentPage(1);
-  }, [activeFilter, sortOption, searchQuery]);
+    setCurrentPage(1); // Reset to first page after any filter/sort change
+  }, [activeFilter, sortOption, debouncedSearchQuery]); // --- DEPEND ON DEBOUNCED VALUE ---
 
-  // Pagination logic
+  // Pagination logic (unchanged)
   const indexOfLastTour = currentPage * toursPerPage;
   const indexOfFirstTour = indexOfLastTour - toursPerPage;
   const currentTours = displayedTours.slice(indexOfFirstTour, indexOfLastTour);
@@ -466,16 +484,14 @@ export default function BrowseToursPage() {
     );
   };
 
+  // JSX/Return statement (unchanged)
   return (
     <div className="bg-white min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 py-8 mt-10">
-        {/* Header Section - Improved Typography */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-            Explore Our Exciting Tours
+            Unforgettable Journeys Await; Explore With Our Passionate 
           </h1>
-
-          {/* Filter Categories - Responsive Design */}
           <div className="flex flex-wrap gap-2 mb-4">
             {filterCategories.map((category) => (
               <button
@@ -491,12 +507,10 @@ export default function BrowseToursPage() {
               </button>
             ))}
           </div>
-
-          {/* Search Input - Improved Styling */}
           <div className="relative">
             <input
               type="text"
-              placeholder="Search by favorite hobby or location..."
+              placeholder="Search for tours, locations, or categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full sm:w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition-all duration-200"
@@ -504,8 +518,6 @@ export default function BrowseToursPage() {
             <i className="bi bi-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 sm:right-auto sm:left-[45%]"></i>
           </div>
         </div>
-
-        {/* Results and Sort Section - Improved Layout */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <span className="text-sm font-semibold text-gray-700">
             {displayedTours.length} results found
@@ -520,11 +532,8 @@ export default function BrowseToursPage() {
             <option value="Rating">Sort by: Rating</option>
           </select>
         </div>
-
-        {/* Tours Grid or No Results */}
         {currentTours.length > 0 ? (
           <>
-            {/* Tours Grid - Responsive Layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {currentTours.map((tour) => (
                 <TourCard
@@ -535,8 +544,6 @@ export default function BrowseToursPage() {
                 />
               ))}
             </div>
-
-            {/* Pagination Controls - Improved Styling */}
             <div className="flex flex-col sm:flex-row justify-center items-center mt-12 gap-4">
               <div className="flex items-center space-x-2">
                 <button
@@ -546,7 +553,6 @@ export default function BrowseToursPage() {
                 >
                   Previous
                 </button>
-                
                 <div className="flex space-x-1">
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
@@ -562,7 +568,6 @@ export default function BrowseToursPage() {
                     </button>
                   ))}
                 </div>
-                
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
@@ -571,15 +576,12 @@ export default function BrowseToursPage() {
                   Next
                 </button>
               </div>
-              
-              {/* Page Info */}
               <div className="text-sm text-gray-600">
                 Page {currentPage} of {totalPages}
               </div>
             </div>
           </>
         ) : (
-          /* No Results State - Enhanced Styling */
           <div className="text-center py-20">
             <div className="max-w-md mx-auto">
               <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>

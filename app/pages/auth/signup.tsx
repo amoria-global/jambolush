@@ -1,5 +1,7 @@
 "use client";
 
+import api from '@/app/api/apiService';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 // Google Auth Page Component
@@ -314,6 +316,7 @@ function SignupPage({
   const [isFormValid, setIsFormValid] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const checkMobileView = () => {
@@ -357,10 +360,86 @@ function SignupPage({
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (isFormValid) {
-      console.log('Creating account with:', { firstName, lastName, email, password });
+    
+    if (!isFormValid) {
+      alert("Please fill in all required fields correctly.");
+      return;
+    }
+
+    try {
+      const response = await api.post('/auth/register', {
+        firstName,
+        lastName,
+        email,
+        password,
+        phone: '+250781121117',
+        provider: 'manual',
+        phoneCountryCode: "RW",
+        country: 'Rwanda',
+        userType: 'guest'
+      });
+
+      // Success case
+      alert("Registration successful! Please log in.");
+      router.push('/all/login');
+
+    } catch (error: any) {
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      // Debug logging to see the actual error structure
+      console.log("Full error object:", error);
+      console.log("Error status:", error.status);
+      console.log("Error data:", error.data);
+
+      if (error.status) {
+        // Server responded with error status (4xx, 5xx)
+        const { status, data } = error;
+        
+        if (data?.message) {
+          // API returned specific error message
+          errorMessage = data.message;
+        } else if (data?.error) {
+          // Alternative error field
+          errorMessage = data.error;
+        } else if (data?.errors && Array.isArray(data.errors)) {
+          // Multiple validation errors
+          errorMessage = data.errors.join(', ');
+        } else if (data?.details) {
+          // Some APIs return validation details
+          errorMessage = data.details;
+        } else if (typeof data === 'string') {
+          // Sometimes the entire response is just a string
+          errorMessage = data;
+        } else {
+          // Fallback based on status code
+          switch (status) {
+            case 400:
+              errorMessage = "Invalid registration data. Please check your inputs.";
+              break;
+            case 409:
+              errorMessage = "Email already exists. Please use a different email.";
+              break;
+            case 422:
+              errorMessage = "Registration data is invalid. Please check all fields.";
+              break;
+            case 500:
+              errorMessage = "Server error. Please try again later.";
+              break;
+            default:
+              errorMessage = `Registration failed (Error ${status}). Please try again.`;
+          }
+        }
+      } else if (error.name === 'AbortError' || error.message?.includes('timeout')) {
+        // Request timeout
+        errorMessage = "Request timed out. Please try again.";
+      } else {
+        // Network or other error
+        errorMessage = error.message || "Registration failed. Please try again.";
+      }
+
+      alert(`Registration failed: ${errorMessage}`);
     }
   };
 

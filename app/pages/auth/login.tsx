@@ -1,5 +1,7 @@
 "use client";
 
+import api from '@/app/api/apiService';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 export default function Login() {
@@ -83,6 +85,7 @@ function MainLoginPage({
   const [isFormValid, setIsFormValid] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const checkMobileView = () => {
@@ -119,11 +122,28 @@ function MainLoginPage({
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (isFormValid) {
-      console.log('Signing in with:', { email, password });
-      // Here you would handle the email/password sign-in logic
+      try {
+        const response = await api.post('/auth/login', { email, password });
+        console.log('Login successful:', response);
+        
+        // Alert success message
+        alert(response.data?.message || 'Login successful!: ' + response.data?.user.userType);
+        setTimeout(() => {
+          router.push("https://dash.jambolush.com?token=" + response.data?.accessToken);
+        }, 3000);
+        
+      } catch (error: any) {
+        console.error('Login failed:', error);
+        
+        // Alert error message from server
+        const errorMessage = error.response?.data?.message || 
+                            error.response?.data?.error || 
+                            'Login failed. Please try again.';
+        alert(errorMessage);
+      }
     }
   };
   

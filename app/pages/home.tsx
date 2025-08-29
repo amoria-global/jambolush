@@ -301,7 +301,9 @@ const houses = [
 ];
     return (
       <div>
-        <Hero />
+        <Hero onSearch={function (filters: any): void {
+          throw new Error("Function not implemented.");
+        } } />
         <div className="listings-container px-4 sm:px-6 lg:px-8 py-12 max-w-[1600px] mx-auto">
           {/* 7-column grid with proper responsive breakpoints */}
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 auto-rows-fr">

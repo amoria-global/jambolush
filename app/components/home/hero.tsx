@@ -1,12 +1,5 @@
-// In hero.tsx
-
 "use client";
 import React, { useState, useEffect } from 'react';
-
-// ADDED: An interface to define the props this component accepts
-interface HeroProps {
-  onSearch: (filters: any) => void;
-}
 
 interface Tab {
   value: string;
@@ -18,7 +11,6 @@ interface SearchSuggestion {
   [key: string]: string[];
 }
 
-
 interface SearchFilters {
   type: string;
   location: string;
@@ -28,9 +20,6 @@ interface SearchFilters {
 interface HeroProps {
   onSearch?: (searchData: SearchFilters) => void;
 }
-
-
-// UPDATED: The component now accepts the 'onSearch' prop
 
 const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [selectedTab, setSelectedTab] = useState<string>('all');
@@ -47,30 +36,81 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   ];
 
   const allLocations: string[] = [
-    'Kigali, Rwanda', 'Kimironko, Kigali', 'Nyamirambo, Kigali', 'Remera, Kigali',
-    'Kicukiro, Kigali', 'Gasabo, Kigali', 'Musanze, Rwanda', 'Huye, Rwanda',
-    'Rubavu, Rwanda', 'Rusizi, Rwanda', 'Nairobi, Kenya', 'Westlands, Nairobi',
-    'Kilimani, Nairobi', 'Karen, Nairobi', 'Lavington, Nairobi', 'Mombasa, Kenya',
-    'Kisumu, Kenya', 'Nakuru, Kenya', 'Eldoret, Kenya', 'Malindi, Kenya', 'Kampala, Uganda',
-    'Kololo, Kampala', 'Nakasero, Kampala', 'Bugolobi, Kampala', 'Muyenga, Kampala',
-    'Entebbe, Uganda', 'Jinja, Uganda', 'Mbarara, Uganda', 'Gulu, Uganda',
-    'Dar es Salaam, Tanzania', 'Masaki, Dar es Salaam', 'Oyster Bay, Dar es Salaam',
-    'Mikocheni, Dar es Salaam', 'Arusha, Tanzania', 'Moshi, Tanzania', 'Dodoma, Tanzania',
-    'Zanzibar, Tanzania', 'Mwanza, Tanzania', 'Addis Ababa, Ethiopia', 'Bole, Addis Ababa',
-    'Kazanchis, Addis Ababa', 'Old Airport, Addis Ababa', 'Bahir Dar, Ethiopia', 'Hawassa, Ethiopia',
-    'Gondar, Ethiopia', 'Bujumbura, Burundi', 'Kiriri, Bujumbura', 'Rohero, Bujumbura',
+     // Rwanda
+    'Kigali, Rwanda',
+    'Kimironko, Kigali',
+    'Nyamirambo, Kigali',
+    'Remera, Kigali',
+    'Kicukiro, Kigali',
+    'Gasabo, Kigali',
+    'Musanze, Rwanda',
+    'Huye, Rwanda',
+    'Rubavu, Rwanda',
+    'Rusizi, Rwanda',
+    
+    // Kenya
+    'Nairobi, Kenya',
+    'Westlands, Nairobi',
+    'Kilimani, Nairobi',
+    'Karen, Nairobi',
+    'Lavington, Nairobi',
+    'Mombasa, Kenya',
+    'Kisumu, Kenya',
+    'Nakuru, Kenya',
+    'Eldoret, Kenya',
+    'Malindi, Kenya',
+    
+    // Uganda
+    'Kampala, Uganda',
+    'Kololo, Kampala',
+    'Nakasero, Kampala',
+    'Bugolobi, Kampala',
+    'Muyenga, Kampala',
+    'Entebbe, Uganda',
+    'Jinja, Uganda',
+    'Mbarara, Uganda',
+    'Gulu, Uganda',
+    
+    // Tanzania
+    'Dar es Salaam, Tanzania',
+    'Masaki, Dar es Salaam',
+    'Oyster Bay, Dar es Salaam',
+    'Mikocheni, Dar es Salaam',
+    'Arusha, Tanzania',
+    'Moshi, Tanzania',
+    'Dodoma, Tanzania',
+    'Zanzibar, Tanzania',
+    'Mwanza, Tanzania',
+    
+    // Ethiopia
+    'Addis Ababa, Ethiopia',
+    'Bole, Addis Ababa',
+    'Kazanchis, Addis Ababa',
+    'Old Airport, Addis Ababa',
+    'Bahir Dar, Ethiopia',
+    'Hawassa, Ethiopia',
+    'Gondar, Ethiopia',
+    
+    // Burundi
+    'Bujumbura, Burundi',
+    'Kiriri, Bujumbura',
+    'Rohero, Bujumbura',
     'Gitega, Burundi'
   ];
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const locationSuggestions = location.length > 0
-    ? allLocations.filter(loc => loc.toLowerCase().includes(location.toLowerCase())).slice(0, 8)
+  const locationSuggestions = location.length > 0 
+    ? allLocations.filter(loc => 
+        loc.toLowerCase().includes(location.toLowerCase())
+      ).slice(0, 8)
     : [];
 
   const getSearchSuggestions = (): string[] => {
@@ -79,8 +119,12 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
       spot: ['office space', 'meeting room', 'coworking desk', 'event venue', 'conference hall'],
       stay: ['vacation rental', 'guest house', 'hotel apartment', 'serviced apartment', 'short-term rental']
     };
+    
     if (!searchKeyword) return [];
-    return (baseSuggestions[selectedTab] || []).filter(s => s.toLowerCase().includes(searchKeyword.toLowerCase()));
+    
+    return baseSuggestions[selectedTab].filter(
+      (suggestion: string) => suggestion.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
   };
 
   const handleLocationSelect = (suggestion: string): void => {
@@ -93,9 +137,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     setShowSearchSuggestions(false);
   };
 
-  // UPDATED: This function no longer logs to the console. It calls the onSearch prop.
   const handleSearch = (): void => {
-
     const searchPayload: SearchFilters = {
       type: selectedTab,
       location: location,
@@ -130,14 +172,6 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
         keyword: ''
       });
     }
-
-    const filters = {
-      category: selectedTab !== 'all' ? selectedTab : undefined,
-      location: location || undefined,
-      search: searchKeyword || undefined,
-    };
-    onSearch(filters); // Pass the filters up to the parent component
-
   };
 
   useEffect(() => {
@@ -145,6 +179,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
       setShowLocationSuggestions(false);
       setShowSearchSuggestions(false);
     };
+
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
@@ -154,7 +189,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const overlayColor = 'rgba(8, 58, 133, 0.2)';
 
   return (
-    <div
+    <div 
       className="min-h-screen flex items-center justify-center relative"
       style={{
         backgroundImage: 'url("/hero/dbb0er.jpg")',
@@ -163,7 +198,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
         backgroundRepeat: 'no-repeat'
       }}
     >
+      {/* Dark overlay */}
       <div className="absolute inset-0" style={{ backgroundColor: overlayColor }}></div>
+      
+      {/* Content */}
       <div className="relative z-10 pt-16 xs:pt-4 sm:pt-8 md:pt-5 lg:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
         <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-4">
           Discover your place to live
@@ -171,7 +209,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
         <p className=" text-base max-w-[200px] sm:max-w-full sm:block  mx-auto lg:text-lg mb-8 md:mb-12 opacity-90">
           Let us help you make the right move today!
         </p>
+        
+        {/* Enhanced Search Container */}
         <div className="sm:bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Tab Section */}
           <div className="sm:bg-gray-50 px-4 md:px-8 py-4 border-b border-gray-200">
             <div className="flex gap-2 md:gap-4 justify-center flex-wrap">
               {tabs.map((tab) => (
@@ -193,15 +234,18 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
               ))}
             </div>
           </div>
+          
+          {/* Search Fields Container */}
           <div className="p-4 md:p-8">
             <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'md:flex-row'}`}>
+              {/* Location Field */}
               <div className="relative flex-1 md:flex-none md:w-1/3">
                 <div className="relative">
-                  <i
+                  <i 
                     className="bi bi-geo-alt absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"
                   ></i>
-                  <input
-                    type="text"
+                  <input 
+                    type="text" 
                     placeholder="Browse location"
                     value={location}
                     onChange={(e) => {
@@ -218,6 +262,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                     className={`w-full pl-12 pr-4 py-3 md:py-4 border-3 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-800 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : ''}`}
                   />
                 </div>
+                
+                {/* Location Suggestions Dropdown */}
                 {showLocationSuggestions && locationSuggestions.length > 0 && (
                   <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-20 max-h-64 overflow-y-auto">
                     {locationSuggestions.map((suggestion, index) => (
@@ -236,20 +282,16 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                   </div>
                 )}
               </div>
+              
+              {/* Search Field */}
               <div className="relative flex-1">
                 <div className="relative">
-                  <i
+                  <i 
                     className="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"
                   ></i>
-
                   <input 
                     type="text" 
                     placeholder="Search properties, keywords..."
-
-                  <input
-                    type="text"
-                    placeholder="Search keyword"
-
                     value={searchKeyword}
                     onChange={(e) => {
                       setSearchKeyword(e.target.value);
@@ -265,6 +307,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                      className={`w-full pl-12 pr-4 py-3 md:py-4 border-3 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-800 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : '' }`}
                   />
                 </div>
+                
+                {/* Search Suggestions Dropdown */}
                 {showSearchSuggestions && getSearchSuggestions().length > 0 && (
                   <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-20">
                     {getSearchSuggestions().map((suggestion, index) => (
@@ -283,7 +327,9 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                   </div>
                 )}
               </div>
-              <button
+              
+              {/* Search Button */}
+              <button 
                 onClick={handleSearch}
                 className="text-white px-6 md:px-10 py-3 cursor-pointer md:py-4 rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:transform hover:scale-105 flex items-center justify-center gap-2 text-base"
                 style={{ backgroundColor: primaryPink }}
@@ -292,7 +338,6 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                 <span>Search</span>
               </button>
             </div>
-
             
             {/* Clear Search Button (only show when there are active filters) */}
             {(location || searchKeyword || selectedTab !== 'all') && (
@@ -307,7 +352,6 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             )}
             
             {/* Quick Filters */}
-
             <div className="mt-6 pt-6 border-t border-gray-200 hidden sm:block">
               <div className="hidden sm:flex flex-wrap gap-2 items-center">
                 <span className="text-base text-gray-500 mr-2">Quick filters:</span>
@@ -327,6 +371,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             </div>
           </div>
         </div>
+        
+        {/* Trust Indicators */}
         <div className="mt-4 sm:mt-8 flex flex-wrap justify-center gap-6 md:gap-12 text-white">
           <div className="flex items-center gap-2">
             <i className="bi bi-shield-check text-xl"></i>

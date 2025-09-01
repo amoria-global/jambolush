@@ -43,7 +43,7 @@ export default function Page() {
               </g>
             </pattern>
           </defs>
-          <rect width="100" height="100" fill="url(#housePattern)" /> 
+          <rect width="100" height="100" fill="#04092C" /> 
           
           {twinklePositions.map((pos, index) => (
             <motion.g
@@ -130,32 +130,32 @@ export default function Page() {
                   initial={{ y: -150, opacity: 0 }}
                   animate={{ y: 0, opacity: 10 }}
                   transition={{ 
-                    delay: 1.0,
+                    delay: 1.3,
                     duration: 1.0,
                     type: "spring",
                     stiffness: 50,
-                    damping: 9
+                    damping: 7,
                   }}
                 >
                   <svg width="150" height="75" viewBox="0 0 100 50" fill="none">
                     <path d="M50 0 L0 25 L10 25 L10 50 L40 50 L40 35 L60 35 L60 50 L90 50 L90 25 L100 25 Z" fill="#ffffff"/>
                     {/* Windows */}
-                    <rect x="20" y="30" width="15" height="10" fill="white"/>
-                    <rect x="65" y="30" width="15" height="10" fill="white"/>
+                    <rect x="20" y="30" width="15" height="10" fill="#04092C"/>
+                    <rect x="65" y="30" width="15" height="10" fill="#04092C"/>
                   </svg>
                 </motion.div>
 
                 {/* Step 3: Elephant */}
                 <motion.div
                   className="absolute"
-                  style={{ left: '130px', top: '130px' }}
+                  style={{ left: '120px', top: '130px' }}
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 10, opacity: 1 }}
-                  transition={{ delay: 1.8, duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
+                  transition={{ delay: 2.3, duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
                 >
                   <motion.div
                     animate={{ y: [0, -30, 0] }}
-                    transition={{ delay: 1.0, duration: 0.8, ease: "easeInOut" }}
+                    transition={{ delay: 1.3, duration: 0.8, ease: "easeInOut" }}
                   >
                     <Image
                       src="/eleh.png"
@@ -179,10 +179,10 @@ export default function Page() {
                     rotate: 0,
                   }}
                   transition={{ 
-                    delay: 2.9,
+                    delay: 3.2,
                     duration: 1.2,
-                    y: { type: "spring", stiffness: 150, damping: 5, delay: 3.2 },
-                    rotate: { duration: 0.1, delay: 3.2 },
+                    y: { type: "spring", stiffness: 150, damping: 5, delay: 3.6 },
+                    rotate: { duration: 0.1, delay: 3.9 },
                     scale: { ease: "backOut", duration: 0.5 },
                   }}
                 >

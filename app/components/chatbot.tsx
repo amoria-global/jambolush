@@ -169,8 +169,8 @@ const JambolushChatbot: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-4 left-4 right-4 flex flex-col backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300 
-                 sm:left-auto sm:w-full sm:max-w-sm h-[85vh] max-h-[650px] z-50"
+      className="fixed bottom-2 left-4 right-4 flex flex-col backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300 
+                 sm:left-auto sm:w-full sm:max-w-sm h-[85vh] max-h-[550px] z-50"
       style={{
         backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.stockcake.com/public/9/4/d/94dce4db-7571-41c0-b98f-5e67852fd988_large/elephant-river-crossing-stockcake.jpg')`,
         backgroundSize: 'cover',
@@ -181,7 +181,7 @@ const JambolushChatbot: React.FC = () => {
       <div className="flex-shrink-0 p-4 text-white flex items-center justify-between border-b border-white/10">
         <div className="flex items-center space-x-3">
           <div className="relative w-12 h-12">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-500/20">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-800">
               <i className="bi bi-robot text-white text-2xl"></i>
             </div>
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900"></div>
@@ -204,7 +204,7 @@ const JambolushChatbot: React.FC = () => {
         {messages.length === 1 ? (
           <div>
             <div className="flex justify-start">
-               <div className="max-w-xs lg:max-w-md p-3 rounded-xl shadow-md bg-gray-800/80 text-white rounded-bl-none">
+               <div className="max-w-xs lg:max-w-md p-3 rounded-xl shadow-md bg-gray-500/50 text-white rounded-bl-none">
                  <p className="text-sm whitespace-pre-line break-words">{messages[0].text}</p>
               </div>
             </div>
@@ -214,7 +214,7 @@ const JambolushChatbot: React.FC = () => {
                 <button 
                   key={i}
                   onClick={() => handleQuickQuestionClick(q)}
-                  className="w-full text-left p-3 border border-blue-500/50 text-blue-300 rounded-lg text-sm hover:bg-blue-500/20 transition-colors"
+                  className="w-full text-left p-3 cursor-pointer border border-blue-500/50 text-blue-300 rounded-lg text-sm hover:bg-blue-500/20 transition-colors"
                 >
                   {q}
                 </button>

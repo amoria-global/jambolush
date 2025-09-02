@@ -847,7 +847,7 @@ export default function HousePage({ params }: HousePageProps) {
         </div>
 
         {/* Add Review Modal */}
-        {showReviewModal && ( <AddReviewForm onClose={() => setShowReviewModal(false)} onAddReview={handleUpdateReviewArray} /> )}
+        {showReviewModal && ( <AddReviewForm propertyId={parseInt(resolvedParams.id, 10)} onClose={() => setShowReviewModal(false)} onAddReview={handleUpdateReviewArray} /> )}
       </div>
     </div>
   );

@@ -527,6 +527,8 @@ class FrontendAPIService {
     return this.get<BackendResponse<any[]>>(`/bookings/property/${propertyId}`);
   }
 
+
+  
   // ============ PROPERTY API METHODS ============
 
   /**
@@ -632,25 +634,149 @@ class FrontendAPIService {
     return this.delete<BackendResponse<any>>(`/properties/${propertyId}`);
   }
 
-  /**
-   * Get property reviews
-   */
-  async getPropertyReviews(propertyId: number, page: number = 1, limit: number = 10): Promise<APIResponse<BackendResponse<any>>> {
-    return this.get<BackendResponse<any>>(`/properties/${propertyId}/reviews`, {
-      params: { page, limit }
-    });
-  }
+// Updated Review-related methods for apiService.ts
+// Add these methods to your existing FrontendAPIService class
 
-  /**
-   * Add property review
-   */
-  async addPropertyReview(propertyId: number, reviewData: {
+// ============ REVIEW API METHODS ============
+
+/**
+ * Create a new review for a property
+ */
+async addPropertyReview(
+  propertyId: number,
+  reviewData: {
     rating: number;
     comment: string;
     images?: string[];
-  }): Promise<APIResponse<BackendResponse<any>>> {
-    return this.post<BackendResponse<any>>(`/properties/${propertyId}/reviews`, reviewData);
   }
+): Promise<APIResponse<BackendResponse<any>>> {
+  return this.post<BackendResponse<any>>(
+    `/properties/${propertyId}/reviews`,
+    reviewData
+  );
+}
+
+/**
+ * Get all reviews for a specific property (with pagination)
+ */
+async getPropertyReviews(
+  propertyId: number,
+  page: number = 1,
+  limit: number = 10
+): Promise<
+  APIResponse<
+    BackendResponse<{
+      reviews: any[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>
+  >
+> {
+  return this.get<
+    BackendResponse<{
+      reviews: any[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>
+  >(`/properties/${propertyId}/reviews`, {
+    params: { page, limit },
+  });
+}
+
+/**
+ * Get all reviews written by a specific user (with pagination)
+ */
+async getUserReviews(
+  userId: number,
+  page: number = 1,
+  limit: number = 10
+): Promise<
+  APIResponse<
+    BackendResponse<{
+      reviews: any[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>
+  >
+> {
+  return this.get<
+    BackendResponse<{
+      reviews: any[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>
+  >(`/reviews/user/${userId}`, {
+    params: { page, limit },
+  });
+}
+
+/**
+ * Update an existing review (owner only)
+ */
+async updateReview(
+  reviewId: string,
+  updateData: {
+    rating?: number;
+    comment?: string;
+    images?: string[];
+  }
+): Promise<APIResponse<BackendResponse<any>>> {
+  return this.put<BackendResponse<any>>(`/reviews/${reviewId}`, updateData);
+}
+
+/**
+ * Delete a review (owner only)
+ */
+async deleteReview(
+  reviewId: string
+): Promise<APIResponse<BackendResponse<any>>> {
+  return this.delete<BackendResponse<any>>(`/reviews/${reviewId}`);
+}
+
+// ============ REVIEW HELPER METHODS ============
+
+/**
+ * Check if user can review a property (has completed booking)
+ */
+async canUserReviewProperty(
+  propertyId: number
+): Promise<APIResponse<BackendResponse<{ canReview: boolean; reason?: string }>>> {
+  return this.get<BackendResponse<{ canReview: boolean; reason?: string }>>(
+    `/properties/${propertyId}/can-review`
+  );
+}
+
+/**
+ * Get review statistics for a property
+ */
+async getPropertyReviewStats(
+  propertyId: number
+): Promise<
+  APIResponse<
+    BackendResponse<{
+      averageRating: number;
+      totalReviews: number;
+      ratingDistribution: { [key: number]: number };
+    }>
+  >
+> {
+  return this.get<
+    BackendResponse<{
+      averageRating: number;
+      totalReviews: number;
+      ratingDistribution: { [key: number]: number };
+    }>
+  >(`/properties/${propertyId}/review-stats`);
+}
+
 
   // ============ PAYMENT METHODS ============
 

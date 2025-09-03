@@ -11,7 +11,17 @@ interface SearchSuggestion {
   [key: string]: string[];
 }
 
-const Hero: React.FC = () => {
+interface SearchFilters {
+  type: string;
+  location: string;
+  keyword: string;
+}
+
+interface HeroProps {
+  onSearch?: (searchData: SearchFilters) => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [location, setLocation] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -128,13 +138,40 @@ const Hero: React.FC = () => {
   };
 
   const handleSearch = (): void => {
-    const searchPayload = {
+    const searchPayload: SearchFilters = {
       type: selectedTab,
       location: location,
-      keyword: searchKeyword,
-      timestamp: new Date().toISOString()
+      keyword: searchKeyword
     };
+
     console.log('Search payload for API:', searchPayload);
+    
+    // Call the parent's onSearch handler if provided
+    if (onSearch) {
+      onSearch(searchPayload);
+    }
+  };
+
+  // Handle Enter key press in inputs
+  const handleKeyPress = (e: React.KeyboardEvent): void => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Clear search functionality
+  const clearSearch = (): void => {
+    setLocation('');
+    setSearchKeyword('');
+    setSelectedTab('all');
+    
+    if (onSearch) {
+      onSearch({
+        type: 'all',
+        location: '',
+        keyword: ''
+      });
+    }
   };
 
   useEffect(() => {
@@ -215,13 +252,14 @@ const Hero: React.FC = () => {
                       setLocation(e.target.value);
                       setShowLocationSuggestions(e.target.value.length > 0);
                     }}
+                    onKeyPress={handleKeyPress}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (location.length > 0) {
                         setShowLocationSuggestions(true);
                       }
                     }}
-                    className={`w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-700 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : ''}`}
+                    className={`w-full pl-12 pr-4 py-3 md:py-4 border-3 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-800 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : ''}`}
                   />
                 </div>
                 
@@ -253,19 +291,20 @@ const Hero: React.FC = () => {
                   ></i>
                   <input 
                     type="text" 
-                    placeholder="Search keyword"
+                    placeholder="Search properties, keywords..."
                     value={searchKeyword}
                     onChange={(e) => {
                       setSearchKeyword(e.target.value);
                       setShowSearchSuggestions(e.target.value.length > 0);
                     }}
+                    onKeyPress={handleKeyPress}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (searchKeyword.length > 0) {
                         setShowSearchSuggestions(true);
                       }
                     }}
-                     className={`w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-700 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : '' }`}
+                     className={`w-full pl-12 pr-4 py-3 md:py-4 border-3 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 sm:text-gray-800 text-base transition-colors duration-200 text-gray-200 ${isMobile ? 'placeholder:text-gray-300' : '' }`}
                   />
                 </div>
                 
@@ -300,6 +339,18 @@ const Hero: React.FC = () => {
               </button>
             </div>
             
+            {/* Clear Search Button (only show when there are active filters) */}
+            {(location || searchKeyword || selectedTab !== 'all') && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={clearSearch}
+                  className="text-gray-600 hover:text-gray-800 underline text-sm"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
+            
             {/* Quick Filters */}
             <div className="mt-6 pt-6 border-t border-gray-200 hidden sm:block">
               <div className="hidden sm:flex flex-wrap gap-2 items-center">
@@ -307,7 +358,10 @@ const Hero: React.FC = () => {
                 {['Under $500', 'Pet Friendly', 'Parking', 'Furnished', 'Near Metro'].map((filter, index) => (
                   <button
                     key={index}
-                    onClick={() => setSearchKeyword(filter)}
+                    onClick={() => {
+                      setSearchKeyword(filter);
+                      handleSearch();
+                    }}
                     className="px-3 py-1.5 cursor-pointer text-base font-medium bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors duration-150"
                   >
                     {filter}

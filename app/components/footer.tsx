@@ -1,7 +1,11 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Link from 'next/link';
 
-export default function Footer() {
+interface FooterProps {
+  onOpenCookieModal?: () => void;
+}
+
+export default function Footer({ onOpenCookieModal }: FooterProps) {
   return (
     <footer className="bg-[#0C2D62] text-white">
       <div className="w-full">
@@ -80,8 +84,8 @@ export default function Footer() {
                   </div>
                   <div className="flex items-start gap-2">
                     <i className="bi bi-envelope text-white/50 text-base mt-0.5"></i>
-                    <Link href="mailto:support@jambolush.com" className="text-base text-white/70 hover:text-white transition-colors duration-200 break-all">
-                      support@jambolush.com
+                    <Link href="mailto:Info@jambolush.com" className="text-base text-white/70 hover:text-white transition-colors duration-200 break-all">
+                      Info@jambolush.com
                     </Link>
                   </div>
                   <div className="flex items-start gap-2">
@@ -98,21 +102,21 @@ export default function Footer() {
                 <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">FOLLOW US</h3>
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    href="#"
+                    href="https://www.facebook.com/profile.php?id=61580242676397"
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-[#1877F2] transition-all duration-300 group border border-white/10"
                     aria-label="Facebook"
                   >
                     <i className="bi bi-facebook text-white/70 group-hover:text-white transition-colors"></i>
                   </Link>
                   <Link
-                    href="#"
+                    href="https://www.instagram.com/jambolush/"
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-gradient-to-br hover:from-[#405DE6] hover:via-[#C13584] hover:to-[#F56040] transition-all duration-300 group border border-white/10"
                     aria-label="Instagram"
                   >
                     <i className="bi bi-instagram text-white/70 group-hover:text-white transition-colors"></i>
                   </Link>
                   <Link
-                    href="#"
+                    href="https://x.com/jambolushcom"
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
                     aria-label="Twitter/X"
                   >
@@ -126,7 +130,7 @@ export default function Footer() {
                     <i className="bi bi-linkedin text-white/70 group-hover:text-white transition-colors"></i>
                   </Link>
                   <Link
-                    href="#"
+                    href="https://www.tiktok.com/@jambolush?lang=en-GB"
                     className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center hover:bg-black transition-all duration-300 group border border-white/10"
                     aria-label="TikTok"
                   >
@@ -187,11 +191,14 @@ export default function Footer() {
               Powered by Amoria Global Tech.
             </p>
 
-
               <div className="flex items-center gap-6">
-                <Link href="/all/cookies" className="text-base text-white/60 hover:text-white transition-colors duration-200">
+                {/* Changed from Link to button to trigger modal */}
+                <button 
+                  onClick={onOpenCookieModal}
+                  className="text-base text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
+                >
                   Cookies Policy
-                </Link>
+                </button>
                 <Link href="/all/site-map" className="text-base text-white/60 hover:text-white transition-colors duration-200">
                   Sitemap
                 </Link>

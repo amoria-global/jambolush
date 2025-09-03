@@ -1,295 +1,14 @@
 "use client";
 
-import api from '@/app/api/apiService';
+import api from '@/app/api/api-conn';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
-// Google Auth Page Component
-function GoogleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (provider: string, userData: any) => void }) {
-  const [email, setEmail] = useState('');
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const handleAuth = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onSuccess('google', { email, provider: 'Google' });
-    }, 2000);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center mb-4">
-              <svg className="w-8 h-8" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {isSignUp ? 'Create your Google Account' : 'Sign in with Google'}
-            </h2>
-            <p className="text-gray-600">Use your Google account to continue to JamboLush</p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <button
-              onClick={handleAuth}
-              disabled={loading || !email}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-            >
-              {loading ? 'Creating Account...' : (isSignUp ? 'Sign Up' : 'Sign In')}
-            </button>
-
-            <div className="text-center">
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-600 hover:text-blue-700 text-base font-medium"
-              >
-                {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <button
-              onClick={onBack}
-              className="w-full text-gray-600 hover:text-gray-800 py-2 text-base font-medium transition-colors duration-200"
-            >
-              ← Back to JamboLush
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Apple Auth Page Component
-function AppleAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (provider: string, userData: any) => void }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const handleAuth = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onSuccess('apple', { email, provider: 'Apple' });
-    }, 2000);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-800">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-black rounded-full shadow-lg flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {isSignUp ? 'Create Apple ID' : 'Sign in with Apple ID'}
-            </h2>
-            <p className="text-gray-400">Use your Apple ID to continue to JamboLush</p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-base font-medium text-gray-300 mb-2">Apple ID</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your Apple ID"
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-base font-medium text-gray-300 mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <button
-              onClick={handleAuth}
-              disabled={loading || !email || !password}
-              className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-            >
-              {loading ? 'Creating Account...' : (isSignUp ? 'Create Apple ID' : 'Sign In')}
-            </button>
-
-            <div className="text-center">
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-400 hover:text-blue-300 text-base font-medium"
-              >
-                {isSignUp ? 'Already have an Apple ID? Sign in' : "Don't have an Apple ID? Create one"}
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-800">
-            <button
-              onClick={onBack}
-              className="w-full text-gray-400 hover:text-gray-200 py-2 text-base font-medium transition-colors duration-200"
-            >
-              ← Back to JamboLush
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Facebook Auth Page Component
-function FacebookAuthPage({ onBack, onSuccess }: { onBack: () => void; onSuccess: (provider: string, userData: any) => void }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  const handleAuth = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onSuccess('facebook', { email, provider: 'Facebook' });
-    }, 2000);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-16 h-16 bg-[#1877F2] rounded-full shadow-lg flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {isSignUp ? 'Create Facebook Account' : 'Log in to Facebook'}
-            </h2>
-            <p className="text-gray-600">Connect with friends and the world around you on Facebook</p>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Email or phone number</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email or phone number"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <button
-              onClick={handleAuth}
-              disabled={loading || !email || !password}
-              className="w-full bg-[#1877F2] text-white py-3 rounded-lg font-medium hover:bg-[#166FE5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-            >
-              {loading ? 'Creating Account...' : (isSignUp ? 'Sign Up' : 'Log In')}
-            </button>
-
-            <div className="text-center">
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-[#1877F2] hover:text-[#166FE5] text-base font-medium"
-              >
-                {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Create one"}
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <button
-              onClick={onBack}
-              className="w-full text-gray-600 hover:text-gray-800 py-2 text-base font-medium transition-colors duration-200"
-            >
-              ← Back to JamboLush
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Success Page Component
-function SuccessPage({ provider, userData, onContinue }: { provider?: string | undefined; userData: any; onContinue: () => void }) {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to JamboLush!</h2>
-          <p className="text-gray-600 mb-6">
-            Successfully created your account{provider ? ` with ${provider}` : ''}
-          </p>
-          
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-base text-gray-600">Account created for:</p>
-            <p className="font-medium text-gray-900">{userData.email}</p>
-          </div>
-          
-          <button
-            onClick={onContinue}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
-          >
-            Continue to JamboLush
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+// Google OAuth Configuration
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID_HERE';
 
 // Main Signup Page Component
 function SignupPage({ 
-  onSocialLogin, 
   isLangOpen, 
   setIsLangOpen, 
   currentLang, 
@@ -297,7 +16,6 @@ function SignupPage({
   languages, 
   getCurrentLanguage 
 }: { 
-  onSocialLogin: (provider: string) => void;
   isLangOpen: boolean;
   setIsLangOpen: (open: boolean) => void;
   currentLang: string;
@@ -315,8 +33,106 @@ function SignupPage({
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Initialize Google Sign-In
+  useEffect(() => {
+    const loadGoogleScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+
+      script.onload = () => {
+        if (window.google) {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleCallback,
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+        }
+      };
+    };
+
+    loadGoogleScript();
+
+    return () => {
+      const scripts = document.querySelectorAll('script[src="https://accounts.google.com/gsi/client"]');
+      scripts.forEach(script => script.remove());
+    };
+  }, []);
+
+  // Handle Google OAuth callback
+  const handleGoogleCallback = async (response: any) => {
+    setGoogleLoading(true);
+    
+    try {
+      // The response contains the ID token from Google
+      const result = await api.post('/auth/google', {
+        token: response.credential,
+      });
+
+      // Success - store token and redirect
+      if (result.data?.accessToken) {
+        localStorage.setItem('authToken', result.data.accessToken);
+        if (result.data.refreshToken) {
+          localStorage.setItem('refreshToken', result.data.refreshToken);
+        }
+        alert("Successfully signed up with Google!");
+        router.push('/dashboard'); // Or wherever you want to redirect after signup
+      }
+    } catch (error: any) {
+      console.error('Google auth error:', error);
+      
+      let errorMessage = "Google authentication failed. Please try again.";
+      
+      if (error.data?.message) {
+        errorMessage = error.data.message;
+      } else if (error.status === 409) {
+        errorMessage = "An account with this email already exists.";
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  // Trigger Google Sign-In
+  const handleGoogleSignIn = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // If the prompt can't be displayed, try the popup method
+          const googleLoginDiv = document.createElement('div');
+          document.body.appendChild(googleLoginDiv);
+          
+          window.google.accounts.id.renderButton(googleLoginDiv, {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large',
+            click_listener: () => {},
+          });
+          
+          // Programmatically click the rendered button
+          const googleButton = googleLoginDiv.querySelector('[role="button"]') as HTMLElement;
+          if (googleButton) {
+            googleButton.click();
+          }
+          
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(googleLoginDiv);
+          }, 100);
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     const checkMobileView = () => {
@@ -368,6 +184,8 @@ function SignupPage({
       return;
     }
 
+    setLoading(true);
+
     try {
       const response = await api.post('/auth/register', {
         firstName,
@@ -388,32 +206,22 @@ function SignupPage({
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
 
-      // Debug logging to see the actual error structure
       console.log("Full error object:", error);
-      console.log("Error status:", error.status);
-      console.log("Error data:", error.data);
 
       if (error.status) {
-        // Server responded with error status (4xx, 5xx)
         const { status, data } = error;
         
         if (data?.message) {
-          // API returned specific error message
           errorMessage = data.message;
         } else if (data?.error) {
-          // Alternative error field
           errorMessage = data.error;
         } else if (data?.errors && Array.isArray(data.errors)) {
-          // Multiple validation errors
           errorMessage = data.errors.join(', ');
         } else if (data?.details) {
-          // Some APIs return validation details
           errorMessage = data.details;
         } else if (typeof data === 'string') {
-          // Sometimes the entire response is just a string
           errorMessage = data;
         } else {
-          // Fallback based on status code
           switch (status) {
             case 400:
               errorMessage = "Invalid registration data. Please check your inputs.";
@@ -432,14 +240,14 @@ function SignupPage({
           }
         }
       } else if (error.name === 'AbortError' || error.message?.includes('timeout')) {
-        // Request timeout
         errorMessage = "Request timed out. Please try again.";
       } else {
-        // Network or other error
         errorMessage = error.message || "Registration failed. Please try again.";
       }
 
       alert(`Registration failed: ${errorMessage}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -528,14 +336,25 @@ function SignupPage({
                         <input type="checkbox" id="terms-mobile" checked={agreeToTerms} onChange={(e) => setAgreeToTerms(e.target.checked)} className="w-3.5 h-3.5 mt-0.5 text-blue-400 bg-white/10 border-white/30 rounded focus:ring-blue-400 focus:ring-1" />
                         <label htmlFor="terms-mobile" className="text-white/80 text-base">I agree to the <button className="text-blue-300 underline">Terms</button> & <button className="text-blue-300 underline">Policy</button></label>
                     </div>
-                    <button type="button" onClick={handleSubmit} disabled={!isFormValid} className={`w-full py-2.5 px-4 rounded-lg font-semibold text-base transition-all duration-300 ${ isFormValid ? 'bg-gradient-to-r from-white to-gray-100 text-gray-800' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60' }`}>Create Account</button>
+                    <button type="button" onClick={handleSubmit} disabled={!isFormValid || loading} className={`w-full py-2.5 px-4 rounded-lg font-semibold text-base transition-all duration-300 ${ isFormValid && !loading ? 'bg-gradient-to-r from-white to-gray-100 text-gray-800' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60' }`}>
+                        {loading ? 'Creating Account...' : 'Create Account'}
+                    </button>
                     <div className="text-center text-base"><span className="text-white/70">Already have an account? </span><a href="/all/login" className="text-blue-300 hover:text-blue-200 font-medium">Sign in</a></div>
                     <div className="relative my-4"><div className="flex items-center"><div className="flex-1 border-t border-white/20"></div><span className="px-3 text-white/60 text-base">Or sign up with</span><div className="flex-1 border-t border-white/20"></div></div></div>
-                    <div className="grid grid-cols-3 gap-2">
-                        <button type="button" onClick={() => onSocialLogin('google')} className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-2 rounded-lg flex items-center justify-center"><svg className="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
-                        <button type="button" onClick={() => onSocialLogin('apple')} className="bg-black hover:bg-gray-900 border border-gray-800 text-white py-2.5 px-2 rounded-lg flex items-center justify-center"><svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></button>
-                        <button type="button" onClick={() => onSocialLogin('facebook')} className="bg-[#1877F2] border border-[#1877F2] text-white py-2.5 px-2 rounded-lg flex items-center justify-center hover:bg-[#166FE5]"><svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
-                    </div>
+                    <button 
+                        type="button" 
+                        onClick={handleGoogleSignIn} 
+                        disabled={googleLoading}
+                        className="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-lg flex items-center justify-center space-x-3 transition-all duration-300"
+                    >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span className="font-medium">{googleLoading ? 'Signing up...' : 'Sign up with Google'}</span>
+                    </button>
                 </div>
                 <div className="pb-20"></div>
             </div>
@@ -785,14 +604,14 @@ function SignupPage({
               {/* Create Account Button */}
               <button
                 type="submit"
-                disabled={!isFormValid}
+                disabled={!isFormValid || loading}
                 className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 shadow-lg transform ${
-                  isFormValid
+                  isFormValid && !loading
                     ? 'bg-gradient-to-r from-white to-gray-100 text-gray-800 hover:from-gray-100 hover:to-white hover:scale-[1.02] hover:shadow-xl cursor-pointer'
                     : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60'
                 }`}
               >
-                Create Account
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
               </form>
               
@@ -819,12 +638,22 @@ function SignupPage({
                 </div>
               </div>
 
-              {/* Social Login Buttons */}
-              <div className="grid grid-cols-3 gap-3">
-                <button type="button" onClick={() => onSocialLogin('google')} aria-label="Sign up with Google" className="group bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
-                <button type="button" onClick={() => onSocialLogin('apple')} aria-label="Sign up with Apple" className="group bg-black hover:bg-gray-900 border border-gray-800 hover:border-gray-700 text-white py-3 px-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg></button>
-                <button type="button" onClick={() => onSocialLogin('facebook')} aria-label="Sign up with Facebook" className="group bg-[#1877F2] border border-[#1877F2] text-white py-3 px-3 rounded-xl font-medium hover:bg-[#166FE5] hover:border-[#166FE5] transition-all duration-300 flex items-center justify-center transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"><svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
-              </div>
+              {/* Google Sign-In Button */}
+              <button 
+                type="button" 
+                onClick={handleGoogleSignIn} 
+                disabled={googleLoading}
+                aria-label="Sign up with Google" 
+                className="group w-full bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-3 transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>{googleLoading ? 'Signing up...' : 'Sign up with Google'}</span>
+              </button>
           </div>
         </div>
       </div>
@@ -832,12 +661,15 @@ function SignupPage({
   );
 }
 
-// Main Signup App Component - matches the structure of your login page
+// Declare Google types
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
+// Main Signup App Component
 export default function SignupApp() {
-  const [currentPage, setCurrentPage] = useState('signup');
-  const [authData, setAuthData] = useState<{ email: string; provider: string } | null>(null);
-  
-  // Add language state
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
 
@@ -852,43 +684,14 @@ export default function SignupApp() {
     return languages.find(lang => lang.code === currentLang);
   };
 
-  const handleSocialLogin = (provider: string) => {
-    setCurrentPage(provider);
-  };
-
-  const handleBack = () => {
-    setCurrentPage('signup');
-  };
-
-  const handleAuthSuccess = (provider: string, userData: any) => {
-    setAuthData(userData);
-    setCurrentPage('success');
-  };
-
-  const handleContinue = () => {
-    alert('Redirecting to JamboLush dashboard...');
-  };
-
-  switch (currentPage) {
-    case 'google':
-      return <GoogleAuthPage onBack={handleBack} onSuccess={handleAuthSuccess} />;
-    case 'apple':
-      return <AppleAuthPage onBack={handleBack} onSuccess={handleAuthSuccess} />;
-    case 'facebook':
-      return <FacebookAuthPage onBack={handleBack} onSuccess={handleAuthSuccess} />;
-    case 'success':
-      return <SuccessPage provider={authData?.provider} userData={authData} onContinue={handleContinue} />;
-    default:
-      return (
-        <SignupPage 
-          onSocialLogin={handleSocialLogin}
-          isLangOpen={isLangOpen}
-          setIsLangOpen={setIsLangOpen}
-          currentLang={currentLang}
-          setCurrentLang={setCurrentLang}
-          languages={languages}
-          getCurrentLanguage={getCurrentLanguage}
-        />
-      );
-  }
+  return (
+    <SignupPage 
+      isLangOpen={isLangOpen}
+      setIsLangOpen={setIsLangOpen}
+      currentLang={currentLang}
+      setCurrentLang={setCurrentLang}
+      languages={languages}
+      getCurrentLanguage={getCurrentLanguage}
+    />
+  );
 }

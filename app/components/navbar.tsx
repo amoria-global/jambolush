@@ -253,6 +253,7 @@ const Navbar = () => {
               Find a Tour
             </button>
 
+
             {/* Profile Section */}
             {isLoading ? (
               <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse"></div>

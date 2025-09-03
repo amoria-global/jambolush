@@ -1,12 +1,59 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const CookiesConsent = () => {
+interface CookiesConsentProps {
+  onClose?: () => void;
+}
+
+const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
   const [activeTab, setActiveTab] = useState<"cookies" | "privacy">("cookies");
   const [strictlyNecessary, setStrictlyNecessary] = useState(true);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const [showBanner, setShowBanner] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Load existing cookie preferences if they exist
+  useEffect(() => {
+    const cookieChoice = localStorage.getItem('cookieConsent');
+    if (cookieChoice) {
+      try {
+        const settings = JSON.parse(cookieChoice);
+        setStrictlyNecessary(settings.strictlyNecessary ?? true);
+        setAnalytics(settings.analytics ?? false);
+        setMarketing(settings.marketing ?? false);
+      } catch (error) {
+        console.error('Error parsing cookie preferences:', error);
+      }
+    }
+  }, []); // Empty dependency array ensures this only runs once on mount
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isVisible) {
+      // Store original styles
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      
+      // Apply modal styles
+      document.body.style.overflow = 'hidden';
+      
+      // Cleanup function
+      return () => {
+        // Restore original styles
+        document.body.style.overflow = originalOverflow || '';
+        document.body.style.position = originalPosition || '';
+      };
+    }
+  }, [isVisible]);
+
+  // Additional cleanup when component unmounts
+  useEffect(() => {
+    return () => {
+      // Ensure styles are reset when component unmounts
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+    };
+  }, []);
 
   // Enable all cookies
   const handleEnableAll = () => {
@@ -17,122 +64,178 @@ const CookiesConsent = () => {
 
   // Save settings (simulate with console.log + close banner)
   const handleSaveSettings = () => {
-    console.log("Cookie Preferences Saved:", {
+    const cookieSettings = {
       strictlyNecessary,
       analytics,
       marketing,
-    });
-    setShowBanner(false);
+    };
+    console.log("Cookie Preferences Saved:", cookieSettings);
+    localStorage.setItem('cookieConsent', JSON.stringify(cookieSettings));
+    closeModal();
   };
 
   // Agree and Close (Enable all + close banner)
   const handleAgreeAndClose = () => {
     handleEnableAll();
-    // Also log the action for simulation purposes
+    const cookieSettings = {
+      strictlyNecessary: true,
+      analytics: true,
+      marketing: true,
+    };
     console.log("Agreed to all cookies and closed banner.");
-    setShowBanner(false);
+    localStorage.setItem('cookieConsent', JSON.stringify(cookieSettings));
+    closeModal();
   };
 
-  if (!showBanner) return null;
+  // Close modal
+  const closeModal = () => {
+    setIsVisible(false);
+    
+    // Immediately restore body styles to ensure page is scrollable
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    
+    // Call parent onClose callback if provided
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  // Handle backdrop click to close modal
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  // Don't render anything if modal should not show
+  if (!isVisible) return null;
 
   return (
-    // MODIFIED: Container is now a full-screen overlay that positions the banner at the bottom.
-    <div className="fixed inset-0 flex items-end justify-center bg-opacity-60 backdrop-blur-sm z-50 p-4">
-      {/* The banner content itself remains the same */}
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-4 sm:p-6">
-        {/* Simplified the top bar text */}
-        <div className="flex justify-between items-center border-b pb-3">
-          <p className="text-gray-800 text-sm sm:text-base flex items-center gap-2">
+    // Portal-like overlay that sits on top of everything
+    <div 
+      className="fixed inset-0 flex items-center justify-center bg-white/5 backdrop-blur-xs z-[9999] p-4"
+      onClick={handleBackdropClick}
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999
+      }}
+    >
+      {/* Modal container */}
+      <div 
+        className="bg-gray-200 w-[60%] h-[60%] max-w-6xl max-h-[80vh] min-w-[320px] min-h-[400px] rounded-2xl shadow-2xl overflow-hidden flex flex-col relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        
+        {/* Close button with red hover */}
+        <button
+          onClick={closeModal}
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-500 hover:text-white transition-colors duration-200 cursor-pointer"
+          aria-label="Close modal"
+        >
+          <i className="bi bi-x text-xl"></i>
+        </button>
+
+        {/* Header - maintaining original simple style */}
+        <div className="flex justify-between items-center border-b p-4 sm:p-6 pr-16">
+          <p className="text-gray-800 text-base sm:text-base flex items-center gap-2">
             <i className="bi bi-cookie text-pink-600 text-lg"></i>
             We use cookies to improve your experience. You can customize your settings below.
           </p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mt-4 border-b">
-          <button
-            className={`px-4 py-2 text-sm font-medium ${
-              activeTab === "cookies"
-                ? "border-b-2 border-pink-600 text-pink-600"
-                : "text-gray-600"
-            }`}
-            onClick={() => setActiveTab("cookies")}
-          >
-            Manage Cookies
-          </button>
-          <button
-            className={`px-4 py-2 text-sm font-medium ${
-              activeTab === "privacy"
-                ? "border-b-2 border-pink-600 text-pink-600"
-                : "text-gray-600"
-            }`}
-            onClick={() => setActiveTab("privacy")}
-          >
-            Privacy Overview
-          </button>
-        </div>
+        {/* Content area - scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Tabs - maintaining original styling */}
+          <div className="flex gap-2 mt-4 px-4 sm:px-6 border-b">
+            <button
+              className={`px-4 py-2 text-base font-medium cursor-pointer transition-colors ${
+                activeTab === "cookies"
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "text-gray-600 hover:text-gray-800"
+              }`}
+              onClick={() => setActiveTab("cookies")}
+            >
+              Manage Cookies
+            </button>
+            <button
+              className={`px-4 py-2 text-base font-medium cursor-pointer transition-colors ${
+                activeTab === "privacy"
+                  ? "border-b-2 border-pink-600 text-pink-600"
+                  : "text-gray-600 hover:text-gray-800"
+              }`}
+              onClick={() => setActiveTab("privacy")}
+            >
+              Privacy Overview
+            </button>
+          </div>
 
-        {/* Tab Content */}
-        <div className="mt-4">
-          {activeTab === "cookies" ? (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Cookie Preferences</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                These cookies should always be enabled so that we can save your preferences.
-              </p>
+          {/* Tab Content - maintaining original structure */}
+          <div className="mt-4 p-4 sm:p-6">
+            {activeTab === "cookies" ? (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Cookie Preferences</h3>
+                <p className="text-gray-600 text-base mb-4">
+                  These cookies should always be enabled so that we can save your preferences.
+                </p>
 
-              {/* Toggles */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <Toggle
-                  label="Strictly Necessary"
-                  enabled={strictlyNecessary}
-                  setEnabled={setStrictlyNecessary}
-                />
-                <Toggle
-                  label="Analytics Cookies"
-                  enabled={analytics}
-                  setEnabled={setAnalytics}
-                />
-                <Toggle
-                  label="Marketing Cookies"
-                  enabled={marketing}
-                  setEnabled={setMarketing}
-                />
+                {/* Toggles - maintaining original grid layout */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Toggle
+                    label="Strictly Necessary"
+                    enabled={strictlyNecessary}
+                    setEnabled={setStrictlyNecessary}
+                  />
+                  <Toggle
+                    label="Analytics Cookies"
+                    enabled={analytics}
+                    setEnabled={setAnalytics}
+                  />
+                  <Toggle
+                    label="Marketing Cookies"
+                    enabled={marketing}
+                    setEnabled={setMarketing}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Privacy Overview</h3>
-              <p className="text-gray-600 text-sm mb-3">
-                This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.{" "}
-                <a
-                  href="/all/privacy-policy"
-                  className="text-pink-600 underline cursor-pointer"
-                >
-                  Privacy Policy
-                </a>
-              </p>
-            </div>
-          )}
+            ) : (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Privacy Overview</h3>
+                <p className="text-gray-600 text-base mb-3">
+                  This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.{" "}
+                  <a
+                    href="/all/privacy-policy"
+                    className="text-pink-600 underline cursor-pointer hover:text-pink-700 transition-colors"
+                  >
+                    Privacy Policy
+                  </a>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Updated button layout and styles */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 border-t pt-4">
+        {/* Footer - maintaining original button layout and styles */}
+        <div className="flex flex-col sm:flex-row justify-end gap-3 border-t pt-4 p-4 sm:p-6">
           <button
             onClick={handleEnableAll}
-            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200 transition"
+            className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200 transition cursor-pointer"
           >
             Enable All
           </button>
           <button
             onClick={handleSaveSettings}
-            className="px-4 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-sm hover:bg-gray-300 transition"
+            className="px-4 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-sm hover:bg-gray-300 transition cursor-pointer"
           >
             Save Settings
           </button>
           <button
             onClick={handleAgreeAndClose}
-            className="px-6 py-2 rounded-xl bg-pink-600 text-white shadow-lg hover:bg-pink-700 transition font-semibold"
+            className="px-6 py-2 rounded-xl bg-pink-600 text-white shadow-lg hover:bg-pink-700 transition font-semibold cursor-pointer"
           >
             Agree and Close
           </button>
@@ -142,7 +245,7 @@ const CookiesConsent = () => {
   );
 };
 
-// Reusable Toggle Component (No changes needed)
+// Toggle Component - maintaining original styling with cursor-pointer added
 const Toggle = ({
   label,
   enabled,
@@ -163,7 +266,7 @@ const Toggle = ({
         }}
         className={`w-12 h-6 flex items-center rounded-full p-1 transition ${
           enabled ? "bg-pink-600" : "bg-gray-300"
-        } ${label === "Strictly Necessary" ? "cursor-not-allowed opacity-50" : ""}`}
+        } ${label === "Strictly Necessary" ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
         disabled={label === "Strictly Necessary"}
       >
         <div
@@ -172,7 +275,7 @@ const Toggle = ({
           }`}
         />
       </button>
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-base font-medium">{label}</span>
     </div>
   );
 };

@@ -7,9 +7,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 const SitemapPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
-      <div className="w-full max-w-7xl px-4 md:px-12 py-10">
+      <div className="w-full max-w-7xl px-4 md:px-12 py-13">
         {/* Page Title */}
-        <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4 mt-6 text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-12 mt-6 text-center">
           <i className="bi bi-sitemap mr-2"></i>
           Sitemap
         </h1>
@@ -19,11 +19,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Home / Company */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-house-door-fill text-pink-500 mr-2"></i>
               Home
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="/" className="hover:text-blue-900">Main Page</Link></li>
               <li><Link href="/all/about" className="hover:text-blue-900">About Us</Link></li>
               <li><Link href="/" className="hover:text-blue-900">Careers</Link></li>
@@ -35,11 +35,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Account / User */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-person-fill text-pink-500 mr-2"></i>
               Account
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="/" className="hover:text-blue-900">Login</Link></li>
               <li><Link href="/" className="hover:text-blue-900">Sign Up</Link></li>
               <li><Link href="/" className="hover:text-blue-900">Profile</Link></li>
@@ -52,11 +52,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Destinations */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-geo-alt-fill text-pink-500 mr-2"></i>
               Destinations
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">USA</Link></li>
               <li><Link href="" className="hover:text-blue-900">Europe</Link></li>
               <li><Link href="" className="hover:text-blue-900">Asia</Link></li>
@@ -68,11 +68,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Experiences */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-calendar-event-fill text-pink-500 mr-2"></i>
               Experiences
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">Online Experiences</Link></li>
               <li><Link href="" className="hover:text-blue-900">Local Experiences</Link></li>
               <li><Link href="" className="hover:text-blue-900">Adventure</Link></li>
@@ -83,11 +83,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Support / Community */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-question-circle-fill text-pink-500 mr-2"></i>
               Support & Community
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">Help Center</Link></li>
               <li><Link href="" className="hover:text-blue-900">FAQ</Link></li>
               <li><Link href="" className="hover:text-blue-900">Contact Support</Link></li>
@@ -100,11 +100,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Policies / Legal */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-shield-lock-fill text-pink-500 mr-2"></i>
                  Policies & Legal
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">Terms & Conditions</Link></li>
               <li><Link href="" className="hover:text-blue-900">Privacy Policy</Link></li>
               <li><Link href="" className="hover:text-blue-900">Cookies Policy</Link></li>
@@ -118,11 +118,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Hosting */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-building text-pink-500 mr-2"></i>
               Hosting
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">Become a Host</Link></li>
               <li><Link href="" className="hover:text-blue-900">Hosting Tools</Link></li>
               <li><Link href="" className="hover:text-blue-900">Resources</Link></li>
@@ -134,11 +134,11 @@ const SitemapPage: React.FC = () => {
 
           {/* Mobile Apps */}
           <div>
-            <h2 className="text-sm font-semibold text-navy-800 mb-3 flex items-center">
+            <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-phone-fill text-pink-500 mr-2"></i>
               Mobile Apps
             </h2>
-            <ul className="space-y-2 text-gray-600 text-sm">
+            <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">iOS App</Link></li>
               <li><Link href="" className="hover:text-blue-900">Android App</Link></li>
               <li><Link href="" className="hover:text-blue-900">Mobile Web</Link></li>

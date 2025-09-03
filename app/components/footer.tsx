@@ -1,7 +1,11 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Link from 'next/link';
 
-export default function Footer() {
+interface FooterProps {
+  onOpenCookieModal?: () => void;
+}
+
+export default function Footer({ onOpenCookieModal }: FooterProps) {
   return (
     <footer className="bg-[#0C2D62] text-white">
       <div className="w-full">
@@ -187,11 +191,14 @@ export default function Footer() {
               Powered by Amoria Global Tech.
             </p>
 
-
               <div className="flex items-center gap-6">
-                <Link href="/all/cookies" className="text-base text-white/60 hover:text-white transition-colors duration-200">
+                {/* Changed from Link to button to trigger modal */}
+                <button 
+                  onClick={onOpenCookieModal}
+                  className="text-base text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
+                >
                   Cookies Policy
-                </Link>
+                </button>
                 <Link href="/all/site-map" className="text-base text-white/60 hover:text-white transition-colors duration-200">
                   Sitemap
                 </Link>

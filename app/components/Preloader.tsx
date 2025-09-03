@@ -71,7 +71,7 @@ export default function Page() {
                    L${pos.x - 0.2 * pos.scale} ${pos.y - 0.25 * pos.scale} Z`}
                 fill="#ffffff"
                 stroke="#cccccc"
-                strokeWidth="0.03"
+                strokeWidth="0.00005"
               />
               {/* Inner glow effect */}
               <circle

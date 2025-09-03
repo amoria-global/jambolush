@@ -221,7 +221,7 @@ const AgreementPage: React.FC = () => {
           <button
             onClick={() => alert('You have agreed to the terms!')}
             disabled={!buttonEnabled}
-            className={`px-4 py-2 bg-[#F20C8F] text-white text-lg sm:text-lg font-medium rounded-lg transition-colors duration-300 ${
+            className={`px-4 py-2 bg-[#F20C8F] cursor-pointer text-white text-lg sm:text-lg font-medium rounded-lg transition-colors duration-300 ${
               buttonEnabled ? 'hover:bg-[#F20C8F]/90' : 'opacity-50 cursor-not-allowed'
             }`}
           >

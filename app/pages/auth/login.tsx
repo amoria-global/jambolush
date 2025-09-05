@@ -97,7 +97,7 @@ function LoginContent() {
     }
     
     // Default redirect with token
-    return token ? `app.jambolush.com?token=${token}` : 'app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}` : 'https://app.jambolush.com';
   };
 
   // Helper function to perform redirect

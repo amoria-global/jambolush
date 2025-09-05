@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import api from '@/app/api/api-conn';
 
 // Define the type for form data
 interface FormData {
@@ -17,13 +18,37 @@ interface FormData {
   services: string[];
 }
 
+// API request interface
+interface ServiceProviderApplicationRequest {
+  names: string;
+  email: string;
+  phone: string;
+  country: string;
+  state: string;
+  district: string;
+  sector?: string;
+  village?: string;
+  companyName?: string;
+  experienceLevel?: string;
+  propertyCategories?: string[];
+  services?: string[];
+  userType: 'host' | 'tour-guide' | 'field-agent';
+}
+
 // Define types for fields that accept string values vs array values
 type StringFields = 'names' | 'email' | 'phone' | 'country' | 'state' | 'district' | 'sector' | 'village' | 'companyName' | 'experienceLevel';
 type ArrayFields = 'propertyCategories' | 'services';
 
+// Toast notification types
+interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+}
+
 const BecomeHost = () => {
   const [currentStep, setCurrentStep] = useState('role-selection');
-  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedRole, setSelectedRole] = useState<'host' | 'tour-guide' | 'field-agent' | ''>('');
   const [formData, setFormData] = useState<FormData>({
     names: '',
     email: '',
@@ -38,6 +63,10 @@ const BecomeHost = () => {
     propertyCategories: [],
     services: []
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [applicationId, setApplicationId] = useState<string>('');
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const propertyCategories = [
     'Residential Houses',
@@ -69,11 +98,172 @@ const BecomeHost = () => {
     'Expert (10+ years)'
   ];
 
+  // Toast notification functions
+  const addToast = (type: Toast['type'], message: string) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    const toast: Toast = { id, type, message };
+    setToasts(prev => [...prev, toast]);
+    
+    // Auto remove toast after 5 seconds
+    setTimeout(() => {
+      removeToast(id);
+    }, 5000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  // Toast component
+  const ToastContainer = () => (
+    <div className="fixed top-4 right-4 z-50 space-y-2">
+      {toasts.map((toast) => (
+        <div
+          key={toast.id}
+          className={`max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 transform transition-all duration-300 ease-in-out ${
+            toast.type === 'success' ? 'border-l-4 border-green-400' :
+            toast.type === 'error' ? 'border-l-4 border-red-400' :
+            toast.type === 'warning' ? 'border-l-4 border-yellow-400' :
+            'border-l-4 border-blue-400'
+          }`}
+        >
+          <div className="flex-1 w-0 p-4">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {toast.type === 'success' && (
+                  <div className="w-6 h-6 text-green-400">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+                {toast.type === 'error' && (
+                  <div className="w-6 h-6 text-red-400">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+                {toast.type === 'warning' && (
+                  <div className="w-6 h-6 text-yellow-400">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+                {toast.type === 'info' && (
+                  <div className="w-6 h-6 text-blue-400">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="ml-3 w-0 flex-1 pt-0.5">
+                <p className="text-sm font-medium text-gray-900">{toast.message}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex border-l border-gray-200">
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Handle API errors with toast notifications
+  const handleApiError = (error: any, defaultMessage: string = "An error occurred") => {
+    let errorMessage = defaultMessage;
+    
+    if (error.response?.data) {
+      const { data } = error.response;
+      
+      if (data.message) {
+        errorMessage = data.message;
+      } else if (data.error) {
+        errorMessage = data.error;
+      } else if (typeof data === 'string') {
+        errorMessage = data;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    addToast('error', errorMessage);
+  };
+
+  // Validate form
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    
+    // Basic validation
+    if (!formData.names.trim()) {
+      errors.names = 'Full name is required';
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    if (!formData.phone.trim()) {
+      errors.phone = 'Phone number is required';
+    }
+    
+    if (!formData.country.trim()) {
+      errors.country = 'Country is required';
+    }
+    
+    if (!formData.state.trim()) {
+      errors.state = 'State/Province is required';
+    }
+    
+    if (!formData.district.trim()) {
+      errors.district = 'District is required';
+    }
+    
+    // Role-specific validation
+    if (selectedRole === 'field-agent' && !formData.experienceLevel) {
+      errors.experienceLevel = 'Experience level is required for field agents';
+    }
+    
+    if ((selectedRole === 'host' || selectedRole === 'field-agent') && 
+        formData.propertyCategories.length === 0) {
+      errors.propertyCategories = 'At least one property category must be selected';
+    }
+    
+    if (selectedRole === 'tour-guide' && formData.services.length === 0) {
+      errors.services = 'At least one service must be selected';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleInputChange = (field: StringFields, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+    
+    // Clear field error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   const handleCheckboxChange = (field: ArrayFields, value: string) => {
@@ -83,18 +273,81 @@ const BecomeHost = () => {
         ? prev[field].filter(item => item !== value)
         : [...prev[field], value]
     }));
+    
+    // Clear field error when user makes selection
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
-  const handleRoleSelection = (role: string) => {
+  const handleRoleSelection = (role: 'host' | 'tour-guide' | 'field-agent') => {
     setSelectedRole(role);
     setCurrentStep(`${role}-form`);
+    setFormErrors({});
   };
 
-  const handleFormSubmit = () => {
-    if (selectedRole === 'host' || selectedRole === 'tour-guide') {
-      setCurrentStep('agreement');
-    } else if (selectedRole === 'field-agent') {
-      setCurrentStep('questions');
+  const handleFormSubmit = async () => {
+    if (!validateForm()) {
+      addToast('warning', 'Please fill in all required fields correctly.');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      // Prepare application data
+      const applicationData: ServiceProviderApplicationRequest = {
+        names: formData.names.trim(),
+        email: formData.email.trim().toLowerCase(),
+        phone: formData.phone.trim(),
+        country: formData.country.trim(),
+        state: formData.state.trim(),
+        district: formData.district.trim(),
+        userType: selectedRole as 'host' | 'tour-guide' | 'field-agent',
+        ...(formData.sector && { sector: formData.sector.trim() }),
+        ...(formData.village && { village: formData.village.trim() }),
+        ...(formData.companyName && { companyName: formData.companyName.trim() }),
+        ...(formData.experienceLevel && { experienceLevel: formData.experienceLevel }),
+        ...(formData.propertyCategories.length > 0 && { propertyCategories: formData.propertyCategories }),
+        ...(formData.services.length > 0 && { services: formData.services })
+      };
+
+      // Submit application
+      const response = await api.post('/auth/register', applicationData);
+      
+      if (response.data?.applicationId) {
+        setApplicationId(response.data.applicationId);
+        addToast('success', 'Application submitted successfully!');
+        
+        // Move to next step based on role
+        if (selectedRole === 'host' || selectedRole === 'tour-guide') {
+          setCurrentStep('agreement');
+        } else if (selectedRole === 'field-agent') {
+          setCurrentStep('questions');
+        }
+      }
+
+    } catch (error: any) {
+      console.error('Application submission error:', error);
+      handleApiError(error, 'Failed to submit application. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFinalSubmission = async () => {
+    // This would be called after agreement or questions step
+    try {
+      // For now, just show success
+      // In a real implementation, you might submit additional data
+      addToast('success', 'Application completed successfully!');
+      setCurrentStep('success');
+    } catch (error: any) {
+      handleApiError(error, 'Failed to complete application. Please try again.');
     }
   };
 
@@ -102,17 +355,18 @@ const BecomeHost = () => {
     if (currentStep.includes('-form')) {
       setCurrentStep('role-selection');
       setSelectedRole('');
+      setFormErrors({});
     } else if (currentStep === 'agreement' || currentStep === 'questions') {
       setCurrentStep(`${selectedRole}-form`);
     }
   };
 
   interface RoleCardProps {
-    role: string;
+    role: 'host' | 'tour-guide' | 'field-agent';
     icon: string;
     title: string;
     description: string;
-    onClick: (role: string) => void;
+    onClick: (role: 'host' | 'tour-guide' | 'field-agent') => void;
   }
 
   const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
@@ -139,9 +393,18 @@ const BecomeHost = () => {
     onChange: (value: string) => void;
     placeholder: string;
     required?: boolean;
+    error?: string;
   }
 
-  const FormField: React.FC<FormFieldProps> = ({ label, type = 'text', value, onChange, placeholder, required = true }) => (
+  const FormField: React.FC<FormFieldProps> = ({ 
+    label, 
+    type = 'text', 
+    value, 
+    onChange, 
+    placeholder, 
+    required = true,
+    error 
+  }) => (
     <div className="space-y-1.5">
       <label className="block text-base font-medium text-gray-700">
         {label} {required && <span className="text-[#F20C8F]">*</span>}
@@ -150,7 +413,9 @@ const BecomeHost = () => {
         <select 
           value={value} 
           onChange={(e) => onChange(e.target.value)}
-          className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base"
+          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
           required={required}
         >
           <option value="">{placeholder}</option>
@@ -164,9 +429,14 @@ const BecomeHost = () => {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full p-2.5 sm:p-3 border border-gray-300 rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base"
+          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
           required={required}
         />
+      )}
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
       )}
     </div>
   );
@@ -176,9 +446,16 @@ const BecomeHost = () => {
     options: string[];
     selectedOptions: string[];
     onChange: (option: string) => void;
+    error?: string;
   }
 
-  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ title, options, selectedOptions, onChange }) => (
+  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ 
+    title, 
+    options, 
+    selectedOptions, 
+    onChange, 
+    error 
+  }) => (
     <div className="space-y-3">
       <label className="block text-base font-medium text-gray-700">
         {title} <span className="text-[#F20C8F]">*</span>
@@ -196,512 +473,541 @@ const BecomeHost = () => {
           </label>
         ))}
       </div>
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
     </div>
   );
 
-  if (currentStep === 'role-selection') {
-    return (
-      <div className="bg-gray-50">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
-        
-        {/* Header Section */}
-        <div className="">
-          <div className="max-w-4xl mx-auto px-6 py-20">
-            <div className="text-center space-y-3">
-              <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-base font-medium rounded-full">
-                Join Our Platform
-              </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Host</h1>
-              <p className="text-base sm:text-base text-gray-600 max-w-lg mx-auto px-4">
-                Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Role Selection Cards */}
-        <div className="px-4 sm:px-6 pb-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              <RoleCard
-                role="host"
-                icon="bi bi-house-door"
-                title="Property Owner"
-                description="List your properties, connect with potential buyers or renters, and manage your real estate portfolio."
-                onClick={handleRoleSelection}
-              />
-              <RoleCard
-                role="field-agent"
-                icon="bi bi-people"
-                title="Field Agent"
-                description="Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
-                onClick={handleRoleSelection}
-              />
-              <RoleCard
-                role="tour-guide"
-                icon="bi bi-geo-alt"
-                title="Tour Guide"
-                description="Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
-                onClick={handleRoleSelection}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep.includes('-form')) {
-    return (
-      <div className="min-h-screen bg-gray-50 pt-10">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-3xl mx-auto px-6 py-6">
-            <div className="flex items-center space-x-3">
-              <button 
-                onClick={goBack} 
-                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
-              >
-                <i className="bi bi-chevron-left text-lg"></i>
-              </button>
-              <div className="min-w-0">
-                <h2 className="text-lg sm:text-xl font-bold text-[#083A85] truncate">
-                  {selectedRole === 'host' && 'Property Owner Registration'}
-                  {selectedRole === 'field-agent' && 'Field Agent Registration'}
-                  {selectedRole === 'tour-guide' && 'Tour Guide Registration'}
-                </h2>
-                <p className="text-base text-gray-600">Please fill in your details to get started</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <div className="max-w-3xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="space-y-6">
-              {/* Personal Information Section */}
-              <div className="space-y-4 sm:space-y-6">
-                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
-                  Personal Information
-                </h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FormField
-                    label="Full Name"
-                    value={formData.names}
-                    onChange={(value) => handleInputChange('names', value)}
-                    placeholder="Enter your full name"
-                  />
-                  <FormField
-                    label="Email Address"
-                    type="email"
-                    value={formData.email}
-                    onChange={(value) => handleInputChange('email', value)}
-                    placeholder="Enter your email address"
-                  />
+  return (
+    <>
+      <ToastContainer />
+      
+      {currentStep === 'role-selection' && (
+        <div className="bg-gray-50">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+          
+          {/* Header Section */}
+          <div className="">
+            <div className="max-w-4xl mx-auto px-6 py-20">
+              <div className="text-center space-y-3">
+                <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-base font-medium rounded-full">
+                  Join Our Platform
                 </div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Host</h1>
+                <p className="text-base sm:text-base text-gray-600 max-w-lg mx-auto px-4">
+                  Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.
+                </p>
+              </div>
+            </div>
+          </div>
 
-                <FormField
-                  label="Phone Number"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(value) => handleInputChange('phone', value)}
-                  placeholder="Enter your phone number"
+          {/* Role Selection Cards */}
+          <div className="px-4 sm:px-6 pb-12">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <RoleCard
+                  role="host"
+                  icon="bi bi-house-door"
+                  title="Property Owner"
+                  description="List your properties, connect with potential buyers or renters, and manage your real estate portfolio."
+                  onClick={handleRoleSelection}
+                />
+                <RoleCard
+                  role="field-agent"
+                  icon="bi bi-people"
+                  title="Field Agent"
+                  description="Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
+                  onClick={handleRoleSelection}
+                />
+                <RoleCard
+                  role="tour-guide"
+                  icon="bi bi-geo-alt"
+                  title="Tour Guide"
+                  description="Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
+                  onClick={handleRoleSelection}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-              {/* Location Information Section */}
-              <div className="space-y-4 sm:space-y-6">
-                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
-                  Location Information
-                </h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FormField
-                    label="Country"
-                    value={formData.country}
-                    onChange={(value) => handleInputChange('country', value)}
-                    placeholder="Enter your country"
-                  />
-                  <FormField
-                    label="State/Province"
-                    value={formData.state}
-                    onChange={(value) => handleInputChange('state', value)}
-                    placeholder="Enter your state/province"
-                  />
+      {currentStep.includes('-form') && (
+        <div className="min-h-screen bg-gray-50 pt-10">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-3xl mx-auto px-6 py-6">
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={goBack} 
+                  className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
+                  disabled={loading}
+                >
+                  <i className="bi bi-chevron-left text-lg"></i>
+                </button>
+                <div className="min-w-0">
+                  <h2 className="text-lg sm:text-xl font-bold text-[#083A85] truncate">
+                    {selectedRole === 'host' && 'Property Owner Application'}
+                    {selectedRole === 'field-agent' && 'Field Agent Application'}
+                    {selectedRole === 'tour-guide' && 'Tour Guide Application'}
+                  </h2>
+                  <p className="text-base text-gray-600">Please fill in your details to get started</p>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FormField
-                    label="District"
-                    value={formData.district}
-                    onChange={(value) => handleInputChange('district', value)}
-                    placeholder="Enter your district"
-                  />
-                  <FormField
-                    label="Sector"
-                    value={formData.sector}
-                    onChange={(value) => handleInputChange('sector', value)}
-                    placeholder="Enter your sector"
-                  />
-                </div>
-
-                <FormField
-                  label="Village"
-                  value={formData.village}
-                  onChange={(value) => handleInputChange('village', value)}
-                  placeholder="Enter your village"
-                />
               </div>
+            </div>
+          </div>
 
-              {/* Role-specific Information */}
-              <div className="space-y-4 sm:space-y-6">
-                <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
-                  Professional Information
-                </h3>
+          {/* Form */}
+          <div className="max-w-3xl mx-auto px-6 py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="space-y-6">
+                {/* Personal Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+                    Personal Information
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      label="Full Name"
+                      value={formData.names}
+                      onChange={(value) => handleInputChange('names', value)}
+                      placeholder="Enter your full name"
+                      error={formErrors.names}
+                    />
+                    <FormField
+                      label="Email Address"
+                      type="email"
+                      value={formData.email}
+                      onChange={(value) => handleInputChange('email', value)}
+                      placeholder="Enter your email address"
+                      error={formErrors.email}
+                    />
+                  </div>
 
-                {selectedRole === 'host' && (
                   <FormField
-                    label="Company Name"
-                    value={formData.companyName}
-                    onChange={(value) => handleInputChange('companyName', value)}
-                    placeholder="Enter your company name (optional)"
+                    label="Phone Number"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(value) => handleInputChange('phone', value)}
+                    placeholder="Enter your phone number"
+                    error={formErrors.phone}
+                  />
+                </div>
+
+                {/* Location Information Section */}
+                <div className="space-y-4 sm:space-y-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+                    Location Information
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      label="Country"
+                      value={formData.country}
+                      onChange={(value) => handleInputChange('country', value)}
+                      placeholder="Enter your country"
+                      error={formErrors.country}
+                    />
+                    <FormField
+                      label="State/Province"
+                      value={formData.state}
+                      onChange={(value) => handleInputChange('state', value)}
+                      placeholder="Enter your state/province"
+                      error={formErrors.state}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                      label="District"
+                      value={formData.district}
+                      onChange={(value) => handleInputChange('district', value)}
+                      placeholder="Enter your district"
+                      error={formErrors.district}
+                    />
+                    <FormField
+                      label="Sector"
+                      value={formData.sector}
+                      onChange={(value) => handleInputChange('sector', value)}
+                      placeholder="Enter your sector"
+                      required={false}
+                    />
+                  </div>
+
+                  <FormField
+                    label="Village"
+                    value={formData.village}
+                    onChange={(value) => handleInputChange('village', value)}
+                    placeholder="Enter your village"
                     required={false}
                   />
-                )}
-
-                {selectedRole === 'field-agent' && (
-                  <FormField
-                    label="Experience Level"
-                    type="select"
-                    value={formData.experienceLevel}
-                    onChange={(value) => handleInputChange('experienceLevel', value)}
-                    placeholder="Select your experience level"
-                  />
-                )}
-
-                {(selectedRole === 'host' || selectedRole === 'field-agent') && (
-                  <CheckboxGroup
-                    title="Property Categories"
-                    options={propertyCategories}
-                    selectedOptions={formData.propertyCategories}
-                    onChange={(option) => handleCheckboxChange('propertyCategories', option)}
-                  />
-                )}
-
-                {selectedRole === 'tour-guide' && (
-                  <CheckboxGroup
-                    title="Services Offered"
-                    options={tourServices}
-                    selectedOptions={formData.services}
-                    onChange={(option) => handleCheckboxChange('services', option)}
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0">
-              <button
-                onClick={handleFormSubmit}
-                className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
-              >
-                Continue Registration
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 'agreement') {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-            <div className="flex items-center space-x-3">
-              <button 
-                onClick={goBack} 
-                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
-              >
-                <i className="bi bi-chevron-left text-lg"></i>
-              </button>
-              <div>
-                <h2 className="text-xl font-bold text-[#083A85]">Terms & Agreement</h2>
-                <p className="text-base text-gray-600">Please review and accept our terms of service</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-[#083A85] mb-4">Service Agreement</h3>
-                <div className="space-y-3 text-gray-700 text-base leading-relaxed">
-                  <p>
-                    This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : 'tour guide'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
-                  </p>
-                  <p>
-                    This agreement covers all aspects of your engagement with our platform, ensuring transparency and mutual benefit for all parties involved.
-                  </p>
                 </div>
 
-                <div className="mt-4 sm:mt-6">
-                  <h4 className="font-medium text-[#083A85] mb-3 text-base sm:text-base">Key Areas Covered:</h4>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Service obligations and responsibilities</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Commission structure and payment terms</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Quality standards and performance metrics</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Liability and insurance requirements</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Termination conditions</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
-                        <span className="text-base text-gray-700">Dispute resolution procedures</span>
-                      </div>
-                    </div>
-                  </div>
+                {/* Role-specific Information */}
+                <div className="space-y-4 sm:space-y-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#083A85] pb-2 border-b border-gray-200">
+                    Professional Information
+                  </h3>
+
+                  {selectedRole === 'host' && (
+                    <FormField
+                      label="Company Name"
+                      value={formData.companyName}
+                      onChange={(value) => handleInputChange('companyName', value)}
+                      placeholder="Enter your company name (optional)"
+                      required={false}
+                    />
+                  )}
+
+                  {selectedRole === 'field-agent' && (
+                    <FormField
+                      label="Experience Level"
+                      type="select"
+                      value={formData.experienceLevel}
+                      onChange={(value) => handleInputChange('experienceLevel', value)}
+                      placeholder="Select your experience level"
+                      error={formErrors.experienceLevel}
+                    />
+                  )}
+
+                  {(selectedRole === 'host' || selectedRole === 'field-agent') && (
+                    <CheckboxGroup
+                      title="Property Categories"
+                      options={propertyCategories}
+                      selectedOptions={formData.propertyCategories}
+                      onChange={(option) => handleCheckboxChange('propertyCategories', option)}
+                      error={formErrors.propertyCategories}
+                    />
+                  )}
+
+                  {selectedRole === 'tour-guide' && (
+                    <CheckboxGroup
+                      title="Services Offered"
+                      options={tourServices}
+                      selectedOptions={formData.services}
+                      onChange={(option) => handleCheckboxChange('services', option)}
+                      error={formErrors.services}
+                    />
+                  )}
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
-                <input
-                  type="checkbox"
-                  id="agreement"
-                  className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] mt-0.5 flex-shrink-0"
-                  required
-                />
-                <label htmlFor="agreement" className="text-base text-gray-700 leading-relaxed">
-                  I have carefully read, understood, and agree to abide by all the terms and conditions outlined in this service agreement. I acknowledge that this agreement is legally binding.
-                </label>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col sm:flex-row sm:justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0">
                 <button
-                  onClick={goBack}
-                  className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  onClick={handleFormSubmit}
+                  disabled={loading}
+                  className={`w-full sm:w-auto font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base ${
+                    loading 
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-[#F20C8F] hover:bg-[#d10b7a] text-white'
+                  }`}
                 >
-                  Go Back
-                </button>
-                <button
-                  onClick={() => setCurrentStep('success')}
-                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
-                >
-                  Accept & Complete Registration
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Submitting...
+                    </div>
+                  ) : (
+                    'Continue Application'
+                  )}
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  if (currentStep === 'questions') {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-            <div className="flex items-center space-x-3">
-              <button 
-                onClick={goBack} 
-                className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
-              >
-                <i className="bi bi-chevron-left text-lg"></i>
-              </button>
-              <div>
-                <h2 className="text-xl font-bold text-[#083A85]">Field Agent Assessment</h2>
-                <p className="text-base text-gray-600">Complete your knowledge assessment to proceed</p>
+      {currentStep === 'agreement' && (
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={goBack} 
+                  className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
+                >
+                  <i className="bi bi-chevron-left text-lg"></i>
+                </button>
+                <div>
+                  <h2 className="text-xl font-bold text-[#083A85]">Terms & Agreement</h2>
+                  <p className="text-base text-gray-600">Please review and accept our terms of service</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="max-w-4xl mx-auto px-6 py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="space-y-6">
-              {/* Assessment Overview */}
-              <div className="bg-[#083A85] text-white p-4 sm:p-6 rounded-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-4">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <i className="bi bi-clipboard-check text-base sm:text-lg"></i>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Assessment Overview</h3>
-                    <p className="text-blue-100 text-base">Evaluate your expertise in real estate and property management</p>
-                  </div>
-                </div>
-                <p className="text-blue-100 text-base leading-relaxed">
-                  This comprehensive assessment consists of 30 carefully crafted questions designed to evaluate your knowledge, skills, and experience in real estate and property management. Your performance will help us understand your expertise level and assign appropriate opportunities.
-                </p>
-              </div>
-
-              {/* Categories Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                <div className="space-y-4">
-                  <h4 className="text-base sm:text-base font-semibold text-[#083A85]">Assessment Categories</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Real Estate Market Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">8 questions</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Property Valuation Techniques</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Client Relations & Communication</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">5 questions</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="text-base sm:text-base font-semibold text-[#083A85]">Additional Areas</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Legal & Regulatory Knowledge</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Sales & Negotiation Skills</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">3 questions</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                      <span className="text-base font-medium text-gray-800">Technology & Tools Proficiency</span>
-                      <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">2 questions</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Instructions */}
-              <div className="bg-amber-50 border border-amber-200 p-3 sm:p-4 rounded-lg">
-                <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-3">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
-                    <i className="bi bi-info-circle text-base sm:text-base"></i>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-amber-800">Assessment Instructions</h4>
-                    <div className="space-y-1 text-base text-amber-700">
-                      <p>• You will have <strong>45 minutes</strong> to complete all 30 questions</p>
-                      <p>• Each question has multiple choice answers with one correct option</p>
-                      <p>• A minimum score of <strong>70%</strong> is required to proceed with your application</p>
-                      <p>• You can retake the assessment <strong>once</strong> if you don't meet the minimum score</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
-                <button
-                  onClick={goBack}
-                  className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
-                >
-                  Go Back
-                </button>
-                <button
-                  onClick={() => setCurrentStep('success')}
-                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 flex items-center justify-center space-x-2 text-base sm:text-base"
-                >
-                  <span>Start Assessment</span>
-                  <i className="bi bi-arrow-right"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (currentStep === 'success') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="max-w-lg mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
-            <div className="space-y-6">
-              {/* Success Icon */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto">
-                <i className="bi bi-check-circle text-xl sm:text-2xl"></i>
-              </div>
-
-              {/* Success Message */}
-              <div className="space-y-2 sm:space-y-3">
-                <h2 className="text-xl sm:text-2xl font-bold text-[#083A85]">Registration Complete!</h2>
-                <p className="text-base sm:text-base text-gray-600 leading-relaxed px-2">
-                  Congratulations! Your application has been submitted successfully and is now under review by our team.
-                </p>
-              </div>
-
-              {/* Next Steps */}
-              <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <i className="bi bi-clock text-base"></i>
-                  </div>
-                  <div className="text-left">
-                    <h4 className="font-medium text-blue-900 mb-1">What Happens Next?</h4>
-                    <p className="text-blue-700 text-base leading-relaxed">
-                      You will receive a confirmation email within 24 hours with detailed next steps and account activation instructions. Our team will review your application and contact you shortly.
+          <div className="max-w-4xl mx-auto px-6 py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-[#083A85] mb-4">Service Agreement</h3>
+                  <div className="space-y-3 text-gray-700 text-base leading-relaxed">
+                    <p>
+                      This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : selectedRole === 'tour-guide' ? 'tour guide' : 'field agent'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
+                    </p>
+                    <p>
+                      This agreement covers all aspects of your engagement with our platform, ensuring transparency and mutual benefit for all parties involved.
                     </p>
                   </div>
+
+                  <div className="mt-4 sm:mt-6">
+                    <h4 className="font-medium text-[#083A85] mb-3 text-base sm:text-base">Key Areas Covered:</h4>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Service obligations and responsibilities</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Commission structure and payment terms</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Quality standards and performance metrics</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Liability and insurance requirements</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Termination conditions</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-1.5 h-1.5 bg-[#F20C8F] rounded-full"></div>
+                          <span className="text-base text-gray-700">Dispute resolution procedures</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="agreement"
+                    className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] mt-0.5 flex-shrink-0"
+                    required
+                  />
+                  <label htmlFor="agreement" className="text-base text-gray-700 leading-relaxed">
+                    I have carefully read, understood, and agree to abide by all the terms and conditions outlined in this service agreement. I acknowledge that this agreement is legally binding.
+                  </label>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
+                  <button
+                    onClick={goBack}
+                    className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  >
+                    Go Back
+                  </button>
+                  <button
+                    onClick={handleFinalSubmission}
+                    className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  >
+                    Accept & Complete Application
+                  </button>
                 </div>
               </div>
-
-              {/* Action Button */}
-              <button
-                onClick={() => {
-                  setCurrentStep('role-selection');
-                  setSelectedRole('');
-                  setFormData({
-                    names: '',
-                    email: '',
-                    phone: '',
-                    country: '',
-                    state: '',
-                    district: '',
-                    sector: '',
-                    village: '',
-                    companyName: '',
-                    experienceLevel: '',
-                    propertyCategories: [],
-                    services: []
-                  });
-                }}
-                className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
-              >
-                Go To Home
-              </button>
             </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  return null;
+      {currentStep === 'questions' && (
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <div className="bg-white border-b border-gray-200">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+              <div className="flex items-center space-x-3">
+                <button 
+                  onClick={goBack} 
+                  className="p-1.5 sm:p-2 text-[#083A85] hover:bg-gray-100 rounded-md transition-colors duration-200 flex-shrink-0"
+                >
+                  <i className="bi bi-chevron-left text-lg"></i>
+                </button>
+                <div>
+                  <h2 className="text-xl font-bold text-[#083A85]">Field Agent Assessment</h2>
+                  <p className="text-base text-gray-600">Complete your knowledge assessment to proceed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto px-6 py-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="space-y-6">
+                {/* Assessment Overview */}
+                <div className="bg-[#083A85] text-white p-4 sm:p-6 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3 mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <i className="bi bi-clipboard-check text-base sm:text-lg"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Assessment Overview</h3>
+                      <p className="text-blue-100 text-base">Evaluate your expertise in real estate and property management</p>
+                    </div>
+                  </div>
+                  <p className="text-blue-100 text-base leading-relaxed">
+                    This comprehensive assessment consists of 30 carefully crafted questions designed to evaluate your knowledge, skills, and experience in real estate and property management. Your performance will help us understand your expertise level and assign appropriate opportunities.
+                  </p>
+                </div>
+
+                {/* Categories Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                  <div className="space-y-4">
+                    <h4 className="text-base sm:text-base font-semibold text-[#083A85]">Assessment Categories</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Real Estate Market Knowledge</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">8 questions</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Property Valuation Techniques</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Client Relations & Communication</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">5 questions</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-base sm:text-base font-semibold text-[#083A85]">Additional Areas</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Legal & Regulatory Knowledge</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">6 questions</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Sales & Negotiation Skills</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">3 questions</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                        <span className="text-base font-medium text-gray-800">Technology & Tools Proficiency</span>
+                        <span className="bg-[#F20C8F] text-white px-2 py-1 rounded-full text-base font-medium">2 questions</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-amber-50 border border-amber-200 p-3 sm:p-4 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-3">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
+                      <i className="bi bi-info-circle text-base sm:text-base"></i>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-amber-800">Assessment Instructions</h4>
+                      <div className="space-y-1 text-base text-amber-700">
+                        <p>• You will have <strong>45 minutes</strong> to complete all 30 questions</p>
+                        <p>• Each question has multiple choice answers with one correct option</p>
+                        <p>• A minimum score of <strong>70%</strong> is required to proceed with your application</p>
+                        <p>• You can retake the assessment <strong>once</strong> if you don't meet the minimum score</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:justify-between pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-4">
+                  <button
+                    onClick={goBack}
+                    className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  >
+                    Go Back
+                  </button>
+                  <button
+                    onClick={handleFinalSubmission}
+                    className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-md transition-colors duration-200 flex items-center justify-center space-x-2 text-base sm:text-base"
+                  >
+                    <span>Start Assessment</span>
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {currentStep === 'success' && (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+          <div className="max-w-lg mx-auto">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
+              <div className="space-y-6">
+                {/* Success Icon */}
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mx-auto">
+                  <i className="bi bi-check-circle text-xl sm:text-2xl"></i>
+                </div>
+
+                {/* Success Message */}
+                <div className="space-y-2 sm:space-y-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#083A85]">Application Submitted!</h2>
+                  <p className="text-base sm:text-base text-gray-600 leading-relaxed px-2">
+                    Congratulations! Your {selectedRole === 'host' ? 'Property Owner' : selectedRole === 'tour-guide' ? 'Tour Guide' : 'Field Agent'} application has been submitted successfully and is now under review by our team.
+                  </p>
+                  {applicationId && (
+                    <p className="text-sm text-gray-500">
+                      Application ID: <span className="font-mono font-medium">{applicationId}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* Next Steps */}
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i className="bi bi-clock text-base"></i>
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-medium text-blue-900 mb-1">What Happens Next?</h4>
+                      <p className="text-blue-700 text-base leading-relaxed">
+                        You will receive a confirmation email within 24 hours with detailed next steps. Our team will review your application and contact you within 3-5 business days regarding approval and account activation.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => {
+                    setCurrentStep('role-selection');
+                    setSelectedRole('');
+                    setFormData({
+                      names: '',
+                      email: '',
+                      phone: '',
+                      country: '',
+                      state: '',
+                      district: '',
+                      sector: '',
+                      village: '',
+                      companyName: '',
+                      experienceLevel: '',
+                      propertyCategories: [],
+                      services: []
+                    });
+                    setApplicationId('');
+                    setFormErrors({});
+                  }}
+                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
+                >
+                  Return to Home
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
+
 export default BecomeHost;

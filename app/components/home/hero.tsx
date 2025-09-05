@@ -22,6 +22,7 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onSearch }) => {
+  // Fix: Initialize selectedTab with 'all' instead of empty string
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [location, setLocation] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -30,7 +31,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const tabs: Tab[] = [
-    { value: 'all', label: 'All', icon: 'bi-grid' },
+    { value: '', label: 'All', icon: 'bi-grid' },
     { value: 'spot', label: 'Spot', icon: 'bi-geo-alt' },
     { value: 'stay', label: 'Stay', icon: 'bi-calendar-check' },
   ];
@@ -122,7 +123,11 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     
     if (!searchKeyword) return [];
     
-    return baseSuggestions[selectedTab].filter(
+    // Fix: Add safety check to ensure selectedTab exists in baseSuggestions
+    const suggestions = baseSuggestions[selectedTab];
+    if (!suggestions) return [];
+    
+    return suggestions.filter(
       (suggestion: string) => suggestion.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   };
@@ -145,6 +150,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     };
 
     console.log('Search payload for API:', searchPayload);
+    console.log('selectedTab current value:', selectedTab);
+    console.log('selectedTab is empty string:', selectedTab === '');
     
     // Call the parent's onSearch handler if provided
     if (onSearch) {
@@ -163,11 +170,11 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const clearSearch = (): void => {
     setLocation('');
     setSearchKeyword('');
-    setSelectedTab('all');
+    setSelectedTab('');
     
     if (onSearch) {
       onSearch({
-        type: 'all',
+        type: '',
         location: '',
         keyword: ''
       });
@@ -340,7 +347,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             </div>
             
             {/* Clear Search Button (only show when there are active filters) */}
-            {(location || searchKeyword || selectedTab !== 'all') && (
+            {(location || searchKeyword || selectedTab !== '') && (
               <div className="mt-4 text-center">
                 <button
                   onClick={clearSearch}

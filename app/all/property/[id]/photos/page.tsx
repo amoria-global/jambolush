@@ -1,4 +1,3 @@
-// app/pages/AllPhotosPage.tsx
 
 'use client';
 import React from 'react';

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import api from '@/app/api/api-conn';
 
 // Define the type for form data
@@ -9,10 +9,15 @@ interface FormData {
   phone: string;
   country: string;
   state: string;
-  district: string;
-  sector: string;
-  village: string;
-  companyName: string;
+  city: string;
+  street: string;
+  province: string;
+  zipCode: string;
+  postalCode: string;
+  postcode: string;
+  pinCode: string;
+  eircode: string;
+  cep: string;
   experienceLevel: string;
   propertyCategories: string[];
   services: string[];
@@ -24,19 +29,24 @@ interface ServiceProviderApplicationRequest {
   email: string;
   phone: string;
   country: string;
-  state: string;
-  district: string;
-  sector?: string;
-  village?: string;
-  companyName?: string;
+  state?: string;
+  province?: string;
+  city?: string;
+  street?: string;
+  zipCode?: string;
+  postalCode?: string;
+  postcode?: string;
+  pinCode?: string;
+  eircode?: string;
+  cep?: string;
   experienceLevel?: string;
   propertyCategories?: string[];
   services?: string[];
-  userType: 'host' | 'tour-guide' | 'field-agent';
+  userType: 'host' | 'tourguide' | 'agent';
 }
 
 // Define types for fields that accept string values vs array values
-type StringFields = 'names' | 'email' | 'phone' | 'country' | 'state' | 'district' | 'sector' | 'village' | 'companyName' | 'experienceLevel';
+type StringFields = 'names' | 'email' | 'phone' | 'country' | 'state' | 'province' | 'city' | 'street' | 'zipCode' | 'postalCode' | 'postcode' | 'pinCode' | 'eircode' | 'cep' | 'experienceLevel';
 type ArrayFields = 'propertyCategories' | 'services';
 
 // Toast notification types
@@ -46,19 +56,151 @@ interface Toast {
   message: string;
 }
 
+  interface RoleCardProps {
+    role: 'host' | 'tourguide' | 'agent';
+    icon: string;
+    title: string;
+    description: string;
+    onClick: (role: 'host' | 'tourguide' | 'agent') => void;
+  }
+
+  const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
+    <div 
+      onClick={() => onClick(role)}
+      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
+    >
+      <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
+        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
+          <i className={`${icon} text-white text-lg sm:text-xl`}></i>
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
+          <p className="text-base text-gray-600 leading-relaxed">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  interface FormFieldProps {
+    label: string;
+    type?: string;
+    value: string;
+    onChange: (value: string) => void;
+    placeholder: string;
+    required?: boolean;
+    error?: string;
+  }
+
+  const experienceLevels = [
+    'Entry Level (0-1 years)',
+    'Junior (1-3 years)',
+    'Mid-Level (3-5 years)',
+    'Senior (5-10 years)',
+    'Expert (10+ years)'
+  ];
+
+  const FormField: React.FC<FormFieldProps> = ({ 
+    label, 
+    type = 'text', 
+    value, 
+    onChange, 
+    placeholder, 
+    required = false,
+    error 
+  }) => (
+    <div className="space-y-1.5">
+      <label className="block text-base font-medium text-gray-700">
+        {label} {required && <span className="text-[#F20C8F]">*</span>}
+      </label>
+      {type === 'select' ? (
+        <select 
+          value={value} 
+          onChange={(e) => onChange(e.target.value)}
+          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
+          required={required}
+        >
+          <option value="">{placeholder}</option>
+          {experienceLevels.map(level => (
+            <option key={level} value={level}>{level}</option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+            error ? 'border-red-500' : 'border-gray-300'
+          }`}
+          required={required}
+        />
+      )}
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+
+  interface CheckboxGroupProps {
+    title: string;
+    options: string[];
+    selectedOptions: string[];
+    onChange: (option: string) => void;
+    error?: string;
+  }
+
+  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ 
+    title, 
+    options, 
+    selectedOptions, 
+    onChange, 
+    error 
+  }) => (
+    <div className="space-y-3">
+      <label className="block text-base font-medium text-gray-700">
+        {title} <span className="text-[#F20C8F]">*</span>
+      </label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {options.map(option => (
+          <label key={option} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors duration-200">
+            <input
+              type="checkbox"
+              checked={selectedOptions.includes(option)}
+              onChange={() => onChange(option)}
+              className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
+            />
+            <span className="text-base text-gray-700">{option}</span>
+          </label>
+        ))}
+      </div>
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+
+
 const BecomeHost = () => {
   const [currentStep, setCurrentStep] = useState('role-selection');
-  const [selectedRole, setSelectedRole] = useState<'host' | 'tour-guide' | 'field-agent' | ''>('');
+  const [selectedRole, setSelectedRole] = useState<'host' | 'tourguide' | 'agent' | ''>('');
   const [formData, setFormData] = useState<FormData>({
     names: '',
     email: '',
     phone: '',
     country: '',
     state: '',
-    district: '',
-    sector: '',
-    village: '',
-    companyName: '',
+    province: '',
+    city: '',
+    street: '',
+    zipCode: '',
+    postalCode: '',
+    postcode: '',
+    pinCode: '',
+    eircode: '',
+    cep: '',
     experienceLevel: '',
     propertyCategories: [],
     services: []
@@ -90,13 +232,7 @@ const BecomeHost = () => {
     'Custom Tours'
   ];
 
-  const experienceLevels = [
-    'Entry Level (0-1 years)',
-    'Junior (1-3 years)',
-    'Mid-Level (3-5 years)',
-    'Senior (5-10 years)',
-    'Expert (10+ years)'
-  ];
+
 
   // Toast notification functions
   const addToast = (type: Toast['type'], message: string) => {
@@ -224,25 +360,17 @@ const BecomeHost = () => {
       errors.country = 'Country is required';
     }
     
-    if (!formData.state.trim()) {
-      errors.state = 'State/Province is required';
-    }
-    
-    if (!formData.district.trim()) {
-      errors.district = 'District is required';
-    }
-    
     // Role-specific validation
-    if (selectedRole === 'field-agent' && !formData.experienceLevel) {
+    if (selectedRole === 'agent' && !formData.experienceLevel) {
       errors.experienceLevel = 'Experience level is required for field agents';
     }
     
-    if ((selectedRole === 'host' || selectedRole === 'field-agent') && 
+    if ((selectedRole === 'host' || selectedRole === 'agent') && 
         formData.propertyCategories.length === 0) {
       errors.propertyCategories = 'At least one property category must be selected';
     }
     
-    if (selectedRole === 'tour-guide' && formData.services.length === 0) {
+    if (selectedRole === 'tourguide' && formData.services.length === 0) {
       errors.services = 'At least one service must be selected';
     }
     
@@ -250,41 +378,48 @@ const BecomeHost = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleInputChange = (field: StringFields, value: string) => {
+  const handleInputChange = useCallback((field: StringFields, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
     
-    // Clear field error when user starts typing
-    if (formErrors[field]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev };
+    // Use functional update to avoid dependency on formErrors
+    setFormErrors(prevErrors => {
+      if (prevErrors[field]) {
+        const newErrors = { ...prevErrors };
         delete newErrors[field];
         return newErrors;
-      });
-    }
-  };
+      }
+      return prevErrors; // Return previous state if no change is needed
+    });
+  }, []); // <-- Empty dependency array makes the function stable
 
-  const handleCheckboxChange = (field: ArrayFields, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].includes(value)
-        ? prev[field].filter(item => item !== value)
-        : [...prev[field], value]
-    }));
-    
-    // Clear field error when user makes selection
-    if (formErrors[field]) {
-      setFormErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
+    const handleCheckboxChange = useCallback((field: ArrayFields, value: string) => {
+      setFormData(prev => {
+        const currentArray = prev[field];
+        const newArray = currentArray.includes(value)
+          ? currentArray.filter(item => item !== value)
+          : [...currentArray, value];
+        
+        return {
+          ...prev,
+          [field]: newArray
+        };
       });
-    }
-  };
+      
+      // Use functional update here as well
+      setFormErrors(prevErrors => {
+        if (prevErrors[field]) {
+          const newErrors = { ...prevErrors };
+          delete newErrors[field];
+          return newErrors;
+        }
+        return prevErrors;
+      });
+    }, []); // <-- Empty dependency array
 
-  const handleRoleSelection = (role: 'host' | 'tour-guide' | 'field-agent') => {
+  const handleRoleSelection = (role: 'host' | 'tourguide' | 'agent') => {
     setSelectedRole(role);
     setCurrentStep(`${role}-form`);
     setFormErrors({});
@@ -305,12 +440,17 @@ const BecomeHost = () => {
         email: formData.email.trim().toLowerCase(),
         phone: formData.phone.trim(),
         country: formData.country.trim(),
-        state: formData.state.trim(),
-        district: formData.district.trim(),
-        userType: selectedRole as 'host' | 'tour-guide' | 'field-agent',
-        ...(formData.sector && { sector: formData.sector.trim() }),
-        ...(formData.village && { village: formData.village.trim() }),
-        ...(formData.companyName && { companyName: formData.companyName.trim() }),
+        userType: selectedRole as 'host' | 'tourguide' | 'agent',
+        ...(formData.state && { state: formData.state.trim() }),
+        ...(formData.province && { province: formData.province.trim() }),
+        ...(formData.city && { city: formData.city.trim() }),
+        ...(formData.street && { street: formData.street.trim() }),
+        ...(formData.zipCode && { zipCode: formData.zipCode.trim() }),
+        ...(formData.postalCode && { postalCode: formData.postalCode.trim() }),
+        ...(formData.postcode && { postcode: formData.postcode.trim() }),
+        ...(formData.pinCode && { pinCode: formData.pinCode.trim() }),
+        ...(formData.eircode && { eircode: formData.eircode.trim() }),
+        ...(formData.cep && { cep: formData.cep.trim() }),
         ...(formData.experienceLevel && { experienceLevel: formData.experienceLevel }),
         ...(formData.propertyCategories.length > 0 && { propertyCategories: formData.propertyCategories }),
         ...(formData.services.length > 0 && { services: formData.services })
@@ -324,9 +464,9 @@ const BecomeHost = () => {
         addToast('success', 'Application submitted successfully!');
         
         // Move to next step based on role
-        if (selectedRole === 'host' || selectedRole === 'tour-guide') {
+        if (selectedRole === 'host' || selectedRole === 'tourguide') {
           setCurrentStep('agreement');
-        } else if (selectedRole === 'field-agent') {
+        } else if (selectedRole === 'agent') {
           setCurrentStep('questions');
         }
       }
@@ -361,124 +501,8 @@ const BecomeHost = () => {
     }
   };
 
-  interface RoleCardProps {
-    role: 'host' | 'tour-guide' | 'field-agent';
-    icon: string;
-    title: string;
-    description: string;
-    onClick: (role: 'host' | 'tour-guide' | 'field-agent') => void;
-  }
 
-  const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
-    <div 
-      onClick={() => onClick(role)}
-      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
-    >
-      <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
-          <i className={`${icon} text-white text-lg sm:text-xl`}></i>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
-          <p className="text-base text-gray-600 leading-relaxed">{description}</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  interface FormFieldProps {
-    label: string;
-    type?: string;
-    value: string;
-    onChange: (value: string) => void;
-    placeholder: string;
-    required?: boolean;
-    error?: string;
-  }
-
-  const FormField: React.FC<FormFieldProps> = ({ 
-    label, 
-    type = 'text', 
-    value, 
-    onChange, 
-    placeholder, 
-    required = true,
-    error 
-  }) => (
-    <div className="space-y-1.5">
-      <label className="block text-base font-medium text-gray-700">
-        {label} {required && <span className="text-[#F20C8F]">*</span>}
-      </label>
-      {type === 'select' ? (
-        <select 
-          value={value} 
-          onChange={(e) => onChange(e.target.value)}
-          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          required={required}
-        >
-          <option value="">{placeholder}</option>
-          {experienceLevels.map(level => (
-            <option key={level} value={level}>{level}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          required={required}
-        />
-      )}
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
-    </div>
-  );
-
-  interface CheckboxGroupProps {
-    title: string;
-    options: string[];
-    selectedOptions: string[];
-    onChange: (option: string) => void;
-    error?: string;
-  }
-
-  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ 
-    title, 
-    options, 
-    selectedOptions, 
-    onChange, 
-    error 
-  }) => (
-    <div className="space-y-3">
-      <label className="block text-base font-medium text-gray-700">
-        {title} <span className="text-[#F20C8F]">*</span>
-      </label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {options.map(option => (
-          <label key={option} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors duration-200">
-            <input
-              type="checkbox"
-              checked={selectedOptions.includes(option)}
-              onChange={() => onChange(option)}
-              className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
-            />
-            <span className="text-base text-gray-700">{option}</span>
-          </label>
-        ))}
-      </div>
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
-    </div>
-  );
-
+  
   return (
     <>
       <ToastContainer />
@@ -494,7 +518,7 @@ const BecomeHost = () => {
                 <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-base font-medium rounded-full">
                   Join Our Platform
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Host</h1>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Service Provider</h1>
                 <p className="text-base sm:text-base text-gray-600 max-w-lg mx-auto px-4">
                   Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.
                 </p>
@@ -514,14 +538,14 @@ const BecomeHost = () => {
                   onClick={handleRoleSelection}
                 />
                 <RoleCard
-                  role="field-agent"
+                  role="agent"
                   icon="bi bi-people"
                   title="Field Agent"
                   description="Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
                   onClick={handleRoleSelection}
                 />
                 <RoleCard
-                  role="tour-guide"
+                  role="tourguide"
                   icon="bi bi-geo-alt"
                   title="Tour Guide"
                   description="Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
@@ -549,8 +573,8 @@ const BecomeHost = () => {
                 <div className="min-w-0">
                   <h2 className="text-lg sm:text-xl font-bold text-[#083A85] truncate">
                     {selectedRole === 'host' && 'Property Owner Application'}
-                    {selectedRole === 'field-agent' && 'Field Agent Application'}
-                    {selectedRole === 'tour-guide' && 'Tour Guide Application'}
+                    {selectedRole === 'agent' && 'Field Agent Application'}
+                    {selectedRole === 'tourguide' && 'Tour Guide Application'}
                   </h2>
                   <p className="text-base text-gray-600">Please fill in your details to get started</p>
                 </div>
@@ -568,32 +592,35 @@ const BecomeHost = () => {
                     Personal Information
                   </h3>
                   
+                  <FormField
+                    label="Full Name"
+                    value={formData.names}
+                    onChange={(value) => handleInputChange('names', value)}
+                    placeholder="Enter your full name"
+                    required
+                    error={formErrors.names}
+                  />
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      label="Full Name"
-                      value={formData.names}
-                      onChange={(value) => handleInputChange('names', value)}
-                      placeholder="Enter your full name"
-                      error={formErrors.names}
-                    />
                     <FormField
                       label="Email Address"
                       type="email"
                       value={formData.email}
                       onChange={(value) => handleInputChange('email', value)}
                       placeholder="Enter your email address"
+                      required
                       error={formErrors.email}
                     />
+                    <FormField
+                      label="Phone Number"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(value) => handleInputChange('phone', value)}
+                      placeholder="Enter your phone number"
+                      required
+                      error={formErrors.phone}
+                    />
                   </div>
-
-                  <FormField
-                    label="Phone Number"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(value) => handleInputChange('phone', value)}
-                    placeholder="Enter your phone number"
-                    error={formErrors.phone}
-                  />
                 </div>
 
                 {/* Location Information Section */}
@@ -602,47 +629,65 @@ const BecomeHost = () => {
                     Location Information
                   </h3>
                   
+                  <FormField
+                    label="Country"
+                    value={formData.country}
+                    onChange={(value) => handleInputChange('country', value)}
+                    placeholder="Enter your country"
+                    required
+                    error={formErrors.country}
+                  />
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
-                      label="Country"
-                      value={formData.country}
-                      onChange={(value) => handleInputChange('country', value)}
-                      placeholder="Enter your country"
-                      error={formErrors.country}
-                    />
-                    <FormField
-                      label="State/Province"
+                      label="State"
                       value={formData.state}
                       onChange={(value) => handleInputChange('state', value)}
-                      placeholder="Enter your state/province"
-                      error={formErrors.state}
+                      placeholder="Enter your state"
+                    />
+                    <FormField
+                      label="Province"
+                      value={formData.province}
+                      onChange={(value) => handleInputChange('province', value)}
+                      placeholder="Enter your province"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
-                      label="District"
-                      value={formData.district}
-                      onChange={(value) => handleInputChange('district', value)}
-                      placeholder="Enter your district"
-                      error={formErrors.district}
+                      label="City"
+                      value={formData.city}
+                      onChange={(value) => handleInputChange('city', value)}
+                      placeholder="Enter your city"
                     />
                     <FormField
-                      label="Sector"
-                      value={formData.sector}
-                      onChange={(value) => handleInputChange('sector', value)}
-                      placeholder="Enter your sector"
-                      required={false}
+                      label="Street Address"
+                      value={formData.street}
+                      onChange={(value) => handleInputChange('street', value)}
+                      placeholder="Enter your street address"
                     />
                   </div>
 
-                  <FormField
-                    label="Village"
-                    value={formData.village}
-                    onChange={(value) => handleInputChange('village', value)}
-                    placeholder="Enter your village"
-                    required={false}
-                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <FormField
+                      label="ZIP Code"
+                      value={formData.zipCode}
+                      onChange={(value) => handleInputChange('zipCode', value)}
+                      placeholder="ZIP Code"
+                    />
+                    <FormField
+                      label="Postal Code"
+                      value={formData.postalCode}
+                      onChange={(value) => handleInputChange('postalCode', value)}
+                      placeholder="Postal Code"
+                    />
+                    <FormField
+                      label="Postcode"
+                      value={formData.postcode}
+                      onChange={(value) => handleInputChange('postcode', value)}
+                      placeholder="Postcode"
+                    />
+                  </div>
                 </div>
 
                 {/* Role-specific Information */}
@@ -651,28 +696,19 @@ const BecomeHost = () => {
                     Professional Information
                   </h3>
 
-                  {selectedRole === 'host' && (
-                    <FormField
-                      label="Company Name"
-                      value={formData.companyName}
-                      onChange={(value) => handleInputChange('companyName', value)}
-                      placeholder="Enter your company name (optional)"
-                      required={false}
-                    />
-                  )}
-
-                  {selectedRole === 'field-agent' && (
+                  {selectedRole === 'agent' && (
                     <FormField
                       label="Experience Level"
                       type="select"
                       value={formData.experienceLevel}
                       onChange={(value) => handleInputChange('experienceLevel', value)}
                       placeholder="Select your experience level"
+                      required
                       error={formErrors.experienceLevel}
                     />
                   )}
 
-                  {(selectedRole === 'host' || selectedRole === 'field-agent') && (
+                  {(selectedRole === 'host' || selectedRole === 'agent') && (
                     <CheckboxGroup
                       title="Property Categories"
                       options={propertyCategories}
@@ -682,7 +718,7 @@ const BecomeHost = () => {
                     />
                   )}
 
-                  {selectedRole === 'tour-guide' && (
+                  {selectedRole === 'tourguide' && (
                     <CheckboxGroup
                       title="Services Offered"
                       options={tourServices}
@@ -746,7 +782,7 @@ const BecomeHost = () => {
                   <h3 className="text-lg font-semibold text-[#083A85] mb-4">Service Agreement</h3>
                   <div className="space-y-3 text-gray-700 text-base leading-relaxed">
                     <p>
-                      This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : selectedRole === 'tour-guide' ? 'tour guide' : 'field agent'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
+                      This comprehensive service agreement governs the relationship between our platform and you as a {selectedRole === 'host' ? 'property owner' : selectedRole === 'tourguide' ? 'tour guide' : 'field agent'}. By accepting these terms, you agree to provide quality services while adhering to our platform standards.
                     </p>
                     <p>
                       This agreement covers all aspects of your engagement with our platform, ensuring transparency and mutual benefit for all parties involved.
@@ -951,7 +987,7 @@ const BecomeHost = () => {
                 <div className="space-y-2 sm:space-y-3">
                   <h2 className="text-xl sm:text-2xl font-bold text-[#083A85]">Application Submitted!</h2>
                   <p className="text-base sm:text-base text-gray-600 leading-relaxed px-2">
-                    Congratulations! Your {selectedRole === 'host' ? 'Property Owner' : selectedRole === 'tour-guide' ? 'Tour Guide' : 'Field Agent'} application has been submitted successfully and is now under review by our team.
+                    Congratulations! Your {selectedRole === 'host' ? 'Property Owner' : selectedRole === 'tourguide' ? 'Tour Guide' : 'Field Agent'} application has been submitted successfully and is now under review by our team.
                   </p>
                   {applicationId && (
                     <p className="text-sm text-gray-500">
@@ -986,10 +1022,15 @@ const BecomeHost = () => {
                       phone: '',
                       country: '',
                       state: '',
-                      district: '',
-                      sector: '',
-                      village: '',
-                      companyName: '',
+                      province: '',
+                      city: '',
+                      street: '',
+                      zipCode: '',
+                      postalCode: '',
+                      postcode: '',
+                      pinCode: '',
+                      eircode: '',
+                      cep: '',
                       experienceLevel: '',
                       propertyCategories: [],
                       services: []

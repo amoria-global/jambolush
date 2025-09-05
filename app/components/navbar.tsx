@@ -186,7 +186,7 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled
-        ? 'bg-white shadow-sm border-b border-gray-200'
+        ? 'bg-white shadow-sm border-b border-silver-200'
         : 'bg-transparent '
     }`}>
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -213,8 +213,8 @@ const Navbar = () => {
                 onClick={() => setIsLangOpen(!isLangOpen)}
                 className={`flex items-center cursor-pointer space-x-1 px-3 py-2 rounded-lg transition-colors duration-300 ${
                   isScrolled
-                    ? 'text-gray-700 hover:bg-gray-100'
-                    : 'text-slate-300 hover:bg-white/10'
+                    ? 'text-silver-700 hover:bg-silver-100'
+                    : 'text-silver-300 hover:bg-white/10'
                 }`}
               >
                 <span className="text-base">{getCurrentLanguage()?.flag}</span>
@@ -223,7 +223,7 @@ const Navbar = () => {
               </button>
 
               {isLangOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-silver-200 py-1">
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
@@ -231,7 +231,7 @@ const Navbar = () => {
                         setCurrentLang(lang.code);
                         setIsLangOpen(false);
                       }}
-                      className="w-full text-left cursor-pointer px-4 py-2 text-base text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      className="w-full text-left cursor-pointer px-4 py-2 text-base text-silver-700 hover:bg-silver-100 flex items-center space-x-2"
                     >
                       <span>{lang.flag}</span>
                       <span>{lang.name}</span>
@@ -241,29 +241,32 @@ const Navbar = () => {
               )}
             </div>
 
+            {/* Book a Tour Button - Prominent positioning */}
+            <button 
+              onClick={() => router.push('/all/tours')} 
+              className="px-4 py-2 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
+            >
+              <i className="bi bi-binoculars mr-2"></i>
+              Find a Tour
+            </button>
+
             {/* Become a Host Button */}
             <button className="px-4 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer" onClick={() => router.push('/all/become-host')}>
               <i className="bi bi-house-add mr-2"></i>
               Become a Host
             </button>
 
-            {/* Find a tour button */}
-            <button onClick={() => {router.push('/all/tour-page');}} className="px-4 py-2 bg-[#F20C8F] text-white text-base cursor-pointer font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300">
-              <i className="bi bi-binoculars mr-2"></i>
-              Find a Tour
-            </button>
-
 
             {/* Profile Section */}
             {isLoading ? (
-              <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse"></div>
+              <div className="w-8 h-8 rounded-full bg-silver-300 animate-pulse"></div>
             ) : isLoggedIn && user ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-300 ${
                     isScrolled
-                      ? 'text-gray-700 hover:bg-gray-100'
+                      ? 'text-silver-700 hover:bg-silver-100'
                       : 'text-white hover:bg-white/10'
                   }`}
                 >
@@ -279,25 +282,25 @@ const Navbar = () => {
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1">
-                    <div className="px-4 py-2 border-b border-gray-200">
-                      <p className="text-sm font-semibold text-gray-900">{getUserDisplayName()}</p>
-                      <p className="text-xs text-gray-600">{user.email}</p>
-                      <p className="text-xs text-gray-500 capitalize">{user.status} • {user.userType}</p>
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-silver-200 py-1">
+                    <div className="px-4 py-2 border-b border-silver-200">
+                      <p className="text-sm font-semibold text-silver-900">{getUserDisplayName()}</p>
+                      <p className="text-xs text-silver-600">{user.email}</p>
+                      <p className="text-xs text-silver-500 capitalize">{user.status} • {user.userType}</p>
                     </div>
-                    <a href="#dashboard" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
+                    <a href="#dashboard" className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-speedometer2 mr-3"></i>
                       Dashboard
                     </a>
-                    <a href="#profile" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
+                    <a href="#profile" className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-person mr-3"></i>
                       Profile
                     </a>
-                    <a href="#status" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
+                    <a href="#status" className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-activity mr-3"></i>
                       Status
                     </a>
-                    <a href="#settings" className="flex items-center px-4 py-2 text-base text-gray-700 hover:bg-gray-100">
+                    <a href="#settings" className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-gear mr-3"></i>
                       Settings
                     </a>
@@ -318,8 +321,8 @@ const Navbar = () => {
                   onClick={() => {router.push('/all/login');}}
                   className={`px-4 py-2 text-base cursor-pointer font-medium rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-[#083A85] hover:bg-gray-100' 
-                      : 'text-slate-300 hover:bg-white/10'
+                      ? 'text-[#083A85] hover:bg-silver-100' 
+                      : 'text-silver-300 hover:bg-white/10'
                   }`}
                 >
                   Sign in
@@ -340,7 +343,7 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 cursor-pointer rounded-lg transition-colors duration-300 ${
                 isScrolled 
-                  ? 'text-gray-700 hover:bg-gray-100' 
+                  ? 'text-silver-700 hover:bg-silver-100' 
                   : 'text-white hover:bg-white/10'
               }`}
             >
@@ -352,9 +355,21 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className={`md:hidden border-t transition-colors duration-300 ${
-            isScrolled ? 'border-gray-200 bg-white' : 'border-white/20 bg-black/20 backdrop-blur-sm'
+            isScrolled ? 'border-silver-200 bg-white' : 'border-white/20 bg-black/20 backdrop-blur-sm'
           }`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
+
+              {/* Book a Tour Mobile - First item for prominence */}
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  router.push('/all/tours');
+                }}
+                className="w-full flex items-center px-3 py-3 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                 <i className="bi bi-binoculars mr-2"></i>
+                  Find a Tour
+              </button>
 
               {/* Language Switcher Mobile */}
               <div className="relative" ref={mobileLangDropdownRef}>
@@ -362,7 +377,7 @@ const Navbar = () => {
                   onClick={() => setIsLangOpen(!isLangOpen)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-gray-700 hover:bg-gray-100' 
+                      ? 'text-silver-700 hover:bg-silver-100' 
                       : 'text-white hover:bg-white/10'
                   }`}
                 >
@@ -384,7 +399,7 @@ const Navbar = () => {
                         }}
                         className={`w-full text-left px-3 py-2 text-base rounded-lg transition-colors duration-300 flex items-center space-x-2 ${
                           isScrolled 
-                            ? 'text-gray-600 hover:bg-gray-100' 
+                            ? 'text-silver-600 hover:bg-silver-100' 
                             : 'text-white/80 hover:bg-white/10'
                         }`}
                       >
@@ -408,28 +423,18 @@ const Navbar = () => {
                 Become a Host
               </button>
 
-              {/* Find a tour Mobile */}
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  router.push('/all/tour-page');
-                }}
-                className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
-              >
-                <i className="bi bi-binoculars mr-2"></i>
-                Find a Tour
-              </button>
+             
 
               {/* Profile Section Mobile */}
               {isLoading ? (
                 <div className="flex items-center px-3 py-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse mr-3"></div>
-                  <div className="h-4 bg-gray-300 rounded animate-pulse w-24"></div>
+                  <div className="w-8 h-8 rounded-full bg-silver-300 animate-pulse mr-3"></div>
+                  <div className="h-4 bg-silver-300 rounded animate-pulse w-24"></div>
                 </div>
               ) : isLoggedIn && user ? (
                 <div className="space-y-1">
                   <div className={`flex items-center px-3 py-2 ${
-                    isScrolled ? 'text-gray-700' : 'text-white'
+                    isScrolled ? 'text-silver-700' : 'text-white'
                   }`}>
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center mr-3">
                       {user.profile ? (
@@ -446,7 +451,7 @@ const Navbar = () => {
                   
                   <a href="#dashboard" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-gray-600 hover:bg-gray-100' 
+                      ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-speedometer2 mr-3"></i>
@@ -454,7 +459,7 @@ const Navbar = () => {
                   </a>
                   <a href="#profile" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-gray-600 hover:bg-gray-100' 
+                      ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-person mr-3"></i>
@@ -462,7 +467,7 @@ const Navbar = () => {
                   </a>
                   <a href="#status" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-gray-600 hover:bg-gray-100' 
+                      ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-activity mr-3"></i>
@@ -470,7 +475,7 @@ const Navbar = () => {
                   </a>
                   <a href="#settings" className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
-                      ? 'text-gray-600 hover:bg-gray-100' 
+                      ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-gear mr-3"></i>
@@ -491,9 +496,9 @@ const Navbar = () => {
                       setIsMobileMenuOpen(false);
                       router.push('/all/login');
                     }}
-                    className={`w-full px-3 py-2 text-base font-medium rounded-lg transition-colors duration-300 text-center border border-slate-300 ${
+                    className={`w-full px-3 py-2 text-base font-medium rounded-lg transition-colors duration-300 text-center border border-silver-300 ${
                       isScrolled 
-                        ? 'text-[#083A85] hover:bg-gray-100' 
+                        ? 'text-[#083A85] hover:bg-silver-100' 
                         : 'text-white hover:bg-white/10'
                     }`}
                   >

@@ -1,7 +1,7 @@
 //app/all/property/%5Bid%5D/page.tsx
 "use client";
 import AddReviewForm from '@/app/components/forms/add-review-home';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
 
@@ -9,6 +9,43 @@ interface HousePageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+// Booking interfaces
+interface CreatePropertyBookingDto {
+  propertyId: number;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  message?: string;
+  specialRequests?: string;
+  totalPrice: number;
+}
+
+interface BookingResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    id: string;
+    propertyId: number;
+    checkIn: string;
+    checkOut: string;
+    guests: number;
+    totalPrice: number;
+    status: string;
+    createdAt: string;
+    message?: string;
+  };
+  errors?: string[];
+}
+
+// Review interface
+interface Review {
+  id: number;
+  name: string;
+  date: string;
+  rating: number;
+  comment: string;
 }
 
 // Transform backend PropertyImages to frontend photos array
@@ -59,7 +96,7 @@ const transformPropertyData = (backendProperty: PropertyInfo) => {
       'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
       'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop'
     ],
-    videoUrl: backendProperty.video3D || 'https://www.youtube.com/embed/0VEizu_6XGw',
+    videoUrl: backendProperty.video3D || '',
     ratings: {
       overall: backendProperty.rating,
       accuracy: 4.9,
@@ -76,7 +113,10 @@ const transformPropertyData = (backendProperty: PropertyInfo) => {
       3: Math.floor(backendProperty.reviewsCount * 0.03), 
       2: Math.floor(backendProperty.reviewsCount * 0.02), 
       1: 0 
-    }
+    },
+    // Use real blocked dates from availability
+    blockedDates: backendProperty.availability?.blockedDates || [],
+    availability: backendProperty.availability
   };
 };
 
@@ -92,26 +132,18 @@ export default function HousePage({ params }: HousePageProps) {
   
   // Backend integration state
   const [house, setHouse] = useState<any>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [createdBooking, setCreatedBooking] = useState<any>(null);
+  const [occupiedDates, setOccupiedDates] = useState<{start: string, end: string}[]>([]);
 
-  const reviewsMocked = [
-    { id: 1, name: 'Sarah Johnson', date: 'January 2025', rating: 5, comment: 'Amazing stay! The house was exactly as described and the location was perfect. The host was very responsive and helpful throughout our stay.' },
-    { id: 2, name: 'Mike Chen', date: 'December 2024', rating: 4, comment: 'Great property with beautiful views. Minor issues with WiFi but overall excellent. Would definitely recommend to friends and family.' },
-    { id: 3, name: 'Emily Davis', date: 'December 2024', rating: 5, comment: 'Absolutely loved our stay! Clean, spacious, and perfect for our family vacation. The amenities were top-notch.' },
-    { id: 4, name: 'Robert Wilson', date: 'November 2024', rating: 5, comment: 'Stunning property! Everything was perfect from check-in to check-out. The views are breathtaking.' },
-    { id: 5, name: 'Lisa Anderson', date: 'November 2024', rating: 4, comment: 'Very nice place, well-maintained and comfortable. Location is great for accessing local attractions.' }
-  ];
-  const [reviews, setReviews] = useState(reviewsMocked);
   const router = useRouter();
-  
-  // Sample occupied dates (these would come from your database)
-  const occupiedDates = [
-    { start: '2025-01-15', end: '2025-01-18' },
-    { start: '2025-08-20', end: '2025-08-22' },
-    { start: '2025-09-25', end: '2025-09-27' }
-  ];
+  const pathname = usePathname();
   
   // Get today's date for min date attribute
   const today = new Date().toISOString().split('T')[0];
@@ -128,6 +160,13 @@ export default function HousePage({ params }: HousePageProps) {
         if (response.data.success) {
           const transformedHouse = transformPropertyData(response.data.data);
           setHouse(transformedHouse);
+          
+          // Convert blocked dates to occupied dates format
+          const blocked = response.data.data.availability?.blockedDates || [];
+          setOccupiedDates(blocked.map((dateRange: any) => ({
+            start: dateRange.start || dateRange.startDate,
+            end: dateRange.end || dateRange.endDate
+          })));
         } else {
           throw new Error(response.data.message || 'Failed to fetch property');
         }
@@ -146,8 +185,8 @@ export default function HousePage({ params }: HousePageProps) {
           address: 'Address not available',
           coordinates: { lat: 25.7617, lng: -80.1918 },
           description: 'Property data could not be loaded.',
-          photos: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop'],
-          videoUrl: 'https://www.youtube.com/embed/0VEizu_6XGw',
+          photos: [],
+          videoUrl: '',
           ratings: { overall: 0, accuracy: 0, cleanliness: 0, checkin: 0, communication: 0, location: 0, value: 0 },
           totalReviews: 0,
           ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
@@ -160,6 +199,41 @@ export default function HousePage({ params }: HousePageProps) {
     if (resolvedParams.id) {
       fetchPropertyData();
     }
+  }, [resolvedParams.id]);
+
+  // Fetch reviews from API
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!resolvedParams.id) return;
+      
+      try {
+        setReviewsLoading(true);
+        const response = await api.get(`/properties/${resolvedParams.id}/reviews`);
+        
+        if (response.data.success) {
+          // Transform backend review data to frontend format
+          const transformedReviews = response.data.data.map((review: any) => ({
+            id: review.id,
+            name: review.userName || review.guestName || 'Anonymous',
+            date: new Date(review.createdAt).toLocaleDateString('en-US', { 
+              month: 'long', 
+              year: 'numeric' 
+            }),
+            rating: review.rating,
+            comment: review.comment || review.reviewText || ''
+          }));
+          setReviews(transformedReviews);
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch reviews:', err);
+        // Keep reviews empty if fetch fails
+        setReviews([]);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
   }, [resolvedParams.id]);
 
   // Helper function to check if a single date is occupied
@@ -201,6 +275,7 @@ export default function HousePage({ params }: HousePageProps) {
     
     setCheckInDate(newDate);
     setDateError('');
+    setBookingError(null);
     
     // If check-out is set and creates an occupied range, clear it
     if (checkOutDate && isRangeOccupied(newDate, checkOutDate)) {
@@ -227,7 +302,12 @@ export default function HousePage({ params }: HousePageProps) {
     
     setCheckOutDate(newDate);
     setDateError('');
+    setBookingError(null);
   };
+
+  // Create property booking via API
+// Replace the error handling section in your handleReserve function
+// Around line 372 in your page.tsx file
 
   const handleReserve = async () => {
     if (!checkInDate || !checkOutDate) {
@@ -244,31 +324,128 @@ export default function HousePage({ params }: HousePageProps) {
 
     try {
       setBookingLoading(true);
+      setBookingError(null);
+      setBookingSuccess(false);
       
-      // Validate booking before proceeding
-      const validation = await api.validateBooking(
-        parseInt(resolvedParams.id),
-        checkInDate,
-        checkOutDate,
-        guests
-      );
-
-      if (validation.data.success) {
-        // Navigate to payment page with booking data as URL params
-        const params = new URLSearchParams({
-          propertyId: resolvedParams.id,
-          checkIn: checkInDate,
-          checkOut: checkOutDate,
-          guests: guests.toString()
-        });
-        
-        router.push(`/all/property/${resolvedParams.id}/confirm-and-pay?${params.toString()}`);
-      } else {
-        setDateError(validation.data.message || 'Booking validation failed');
+      // Get auth token
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setBookingError('Please log in to make a booking');
+        router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+        return;
       }
+
+      // Prepare booking data
+      const bookingData: CreatePropertyBookingDto = {
+        propertyId: parseInt(resolvedParams.id),
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
+        guests: guests,
+        message: 'Booking request from property page',
+        specialRequests: '',
+        totalPrice: calculateTotal(),
+      };
+
+      // Make API call to create booking
+      api.setAuth(token);
+      const response = await api.post('/properties/bookings', bookingData);
+      
+      // Parse the response
+      const result: BookingResponse = response.data;
+
+      // Handle different response scenarios
+      if (response.ok && result.success && result.data) {
+        // Success case
+        setBookingSuccess(true);
+        setCreatedBooking(result.data);
+        
+        setTimeout(() => {
+          router.push(`${usePathname()}/confirm-and-pay?booking=${result.data?.id}`);
+        }, 2000);
+        
+      } else {
+        // Handle API errors with user-friendly messages
+        let errorMessage = 'Something went wrong. Please try again.';
+        
+        if (result.data?.message) {
+          // Use the specific error message from the API
+          errorMessage = result.data.message;
+        } else if (result.message) {
+          // Fallback to the top-level message
+          errorMessage = result.message;
+        }
+        
+        // Categorize the error for better UX
+        if (errorMessage.toLowerCase().includes('not available') || 
+            errorMessage.toLowerCase().includes('dates')) {
+          setDateError(errorMessage);
+        } else if (errorMessage.toLowerCase().includes('login') || 
+                  errorMessage.toLowerCase().includes('auth')) {
+          setBookingError('Please log in to continue');
+          router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+        } else {
+          setBookingError(errorMessage);
+        }
+      }
+
     } catch (error: any) {
-      console.error('Booking validation error:', error);
-      setDateError(error?.message || 'Failed to validate booking. Please try again.');
+      console.error('Booking creation error:', error);
+      
+      // Handle network and parsing errors
+      let userMessage = 'Unable to process your booking. Please check your connection and try again.';
+      
+      if (error.response) {
+        // Server responded with error status
+        const statusCode = error.response.status;
+        const responseData = error.data;
+        
+        switch (statusCode) {
+          case 400:
+            if (responseData?.data?.message) {
+              userMessage = responseData.data.message;
+            } else if (responseData?.message) {
+              userMessage = responseData.message;
+            } else {
+              userMessage = 'Invalid booking details. Please check your dates and try again.';
+            }
+            break;
+          case 401:
+            userMessage = 'Please log in to make a booking';
+            router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+            break;
+          case 403:
+            userMessage = 'You do not have permission to make this booking';
+            break;
+          case 404:
+            userMessage = 'Property not found. Please refresh the page and try again.';
+            break;
+          case 409:
+            userMessage = 'These dates are no longer available. Please select different dates.';
+            break;
+          case 500:
+            userMessage = 'Server error. Please try again in a few minutes.';
+            break;
+          default:
+            userMessage = 'Something went wrong. Please try again.';
+        }
+        
+        // Categorize error for display
+        if (userMessage.toLowerCase().includes('dates') || 
+            userMessage.toLowerCase().includes('available')) {
+          setDateError(userMessage);
+        } else if (statusCode === 401) {
+          setBookingError('Please log in to continue');
+        } else {
+          setBookingError(userMessage);
+        }
+        
+      } else if (error.request) {
+        // Network error
+        setBookingError('Network error. Please check your connection and try again.');
+      } else {
+        // Other error
+        setBookingError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setBookingLoading(false);
     }
@@ -286,6 +463,13 @@ export default function HousePage({ params }: HousePageProps) {
     setReviews(prev => [...prev, newReview]);
     setShowAllReviews(true);
   };
+
+  // Reset booking states when dates change
+  useEffect(() => {
+    setBookingSuccess(false);
+    setBookingError(null);
+    setCreatedBooking(null);
+  }, [checkInDate, checkOutDate, guests]);
 
   // Loading state
   if (loading) {
@@ -344,6 +528,10 @@ export default function HousePage({ params }: HousePageProps) {
   }
 
   return (
+    <>
+    <head>
+      <title>{house?.title}</title>
+    </head>
     <div className="mt-14 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         
@@ -353,6 +541,20 @@ export default function HousePage({ params }: HousePageProps) {
             <div className="flex items-center text-yellow-800">
               <i className="bi bi-exclamation-triangle-fill mr-2"></i>
               <span className="text-sm">Some property data could not be loaded. Showing limited information.</span>
+            </div>
+          </div>
+        )}
+
+        {/* Booking Success Message */}
+        {bookingSuccess && createdBooking && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-center text-green-800">
+              <i className="bi bi-check-circle-fill mr-2 text-xl"></i>
+              <div>
+                <p className="font-semibold">Booking Created Successfully!</p>
+                <p className="text-sm">Booking ID: {(createdBooking.id).toUpperCase()} | Status: {createdBooking.status}</p>
+                <p className="text-sm">Redirecting payment...</p>
+              </div>
             </div>
           </div>
         )}
@@ -502,7 +704,8 @@ export default function HousePage({ params }: HousePageProps) {
                     min={today}
                     value={checkInDate}
                     onChange={handleCheckInChange}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base"
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
                 
@@ -516,7 +719,8 @@ export default function HousePage({ params }: HousePageProps) {
                     min={checkInDate || today}
                     value={checkOutDate}
                     onChange={handleCheckOutChange}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base"
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -529,7 +733,8 @@ export default function HousePage({ params }: HousePageProps) {
                 <select
                   value={guests}
                   onChange={(e) => setGuests(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base"
+                  disabled={bookingLoading || bookingSuccess}
+                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
                     <option key={num} value={num}>
@@ -548,17 +753,28 @@ export default function HousePage({ params }: HousePageProps) {
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-lg p-3">
-                <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
-                <div className="space-y-1">
-                  {occupiedDates.map((period, idx) => (
-                    <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
-                      <i className="bi bi-calendar-x-fill text-xs"></i>
-                      <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
-                    </div>
-                  ))}
+              {bookingError && (
+                <div className="bg-red-50 border border-red-300 rounded-lg p-3">
+                  <p className="text-red-600 text-base font-medium">
+                    <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                    {bookingError}
+                  </p>
                 </div>
-              </div>
+              )}
+
+              {occupiedDates.length > 0 && (
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
+                  <div className="space-y-1">
+                    {occupiedDates.map((period, idx) => (
+                      <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
+                        <i className="bi bi-calendar-x-fill text-xs"></i>
+                        <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {checkInDate && checkOutDate && (
                 <div className="border-t pt-4">
@@ -575,15 +791,29 @@ export default function HousePage({ params }: HousePageProps) {
 
               <button
                 onClick={handleReserve}
-                disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading}
+                disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
                 className={`w-full py-3 rounded-lg font-semibold transition text-base sm:text-base ${
-                  (!checkInDate || !checkOutDate || !!dateError || bookingLoading)
+                  (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                     : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
                 }`}
               >
-                <i className="bi bi-calendar-heart mr-2"></i>
-                {bookingLoading ? 'Validating...' : 'Reserve Now'}
+                {bookingLoading ? (
+                  <>
+                    <i className="bi bi-arrow-clockwise spin mr-2"></i>
+                    Creating Booking...
+                  </>
+                ) : bookingSuccess ? (
+                  <>
+                    <i className="bi bi-check-circle-fill mr-2"></i>
+                    Booking Created!
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-calendar-heart mr-2"></i>
+                    Reserve Now
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -603,7 +833,7 @@ export default function HousePage({ params }: HousePageProps) {
                 height="100%"
                 frameBorder="0"
                 style={{ border: 0 }}
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=-80.20778656005861%2C25.74851931365115%2C-80.17581343994142%2C25.774881107545406&layer=mapnik&marker=${house?.coordinates?.lat}%2C${house?.coordinates?.lng}`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(house?.address || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                 allowFullScreen
                 className="w-full h-full"
               ></iframe>
@@ -636,7 +866,8 @@ export default function HousePage({ params }: HousePageProps) {
                     min={today}
                     value={checkInDate}
                     onChange={handleCheckInChange}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition"
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
                 
@@ -650,7 +881,8 @@ export default function HousePage({ params }: HousePageProps) {
                     min={checkInDate || today}
                     value={checkOutDate}
                     onChange={handleCheckOutChange}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition"
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -662,7 +894,8 @@ export default function HousePage({ params }: HousePageProps) {
                   <select
                     value={guests}
                     onChange={(e) => setGuests(parseInt(e.target.value))}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition"
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
                       <option key={num} value={num}>
@@ -681,17 +914,28 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 )}
 
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
-                  <div className="space-y-1">
-                    {occupiedDates.map((period, idx) => (
-                      <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
-                        <i className="bi bi-calendar-x-fill text-xs"></i>
-                        <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
-                      </div>
-                    ))}
+                {bookingError && (
+                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
+                    <p className="text-red-600 text-base font-medium">
+                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                      {bookingError}
+                    </p>
                   </div>
-                </div>
+                )}
+
+                {occupiedDates.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
+                    <div className="space-y-1">
+                      {occupiedDates.map((period, idx) => (
+                        <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
+                          <i className="bi bi-calendar-x-fill text-xs"></i>
+                          <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {checkInDate && checkOutDate && (
                   <div className="border-t pt-4">
@@ -708,15 +952,29 @@ export default function HousePage({ params }: HousePageProps) {
 
                 <button
                   onClick={handleReserve}
-                  disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading}
+                  disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
                   className={`w-full py-3 rounded-lg font-semibold transition ${
-                    (!checkInDate || !checkOutDate || !!dateError || bookingLoading)
+                    (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                       : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
                   }`}
                 >
-                  <i className="bi bi-calendar-heart mr-2"></i>
-                  {bookingLoading ? 'Validating...' : 'Reserve Now'}
+                  {bookingLoading ? (
+                    <>
+                      <i className="bi bi-arrow-clockwise spin mr-2"></i>
+                      Creating Booking...
+                    </>
+                  ) : bookingSuccess ? (
+                    <>
+                      <i className="bi bi-check-circle-fill mr-2"></i>
+                      Booking Created!
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-calendar-heart mr-2"></i>
+                      Reserve Now
+                    </>
+                  )}
                 </button>
 
                 <div className="pt-4 border-t">
@@ -732,16 +990,31 @@ export default function HousePage({ params }: HousePageProps) {
           <div className="mb-8 sm:mb-12">
             <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">3D Virtual Tour</h2>
             <div className="w-full h-[250px] sm:h-[350px] lg:h-[500px] rounded-xl overflow-hidden shadow-xl">
-              <iframe
-                width="100%"
-                height="100%"
-                src={house.videoUrl}
-                title="Property Virtual Tour"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
+              {house.videoUrl.includes('youtube.com') || house.videoUrl.includes('youtu.be') ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`${house.videoUrl}${house.videoUrl.includes('?') ? '&' : '?'}autoplay=1&mute=1`}
+                  title="Property Virtual Tour"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              ) : (
+                <video
+                  width="100%"
+                  height="100%"
+                  autoPlay
+                  muted
+                  loop
+                  controls
+                  className="w-full h-full object-cover"
+                >
+                  <source src={house.videoUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
             </div>
           </div>
         )}
@@ -815,34 +1088,49 @@ export default function HousePage({ params }: HousePageProps) {
               </button>
             </div>
 
-            <div className="space-y-4 sm:space-y-6">
-              {reviews.slice(0, showAllReviews ? reviews.length : 3).map((review) => (
-                <div key={review.id} className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
-                    <div>
-                      <p className="font-semibold text-[#083A85] text-base sm:text-base">{review.name}</p>
-                      <p className="text-xs sm:text-base text-gray-500">{review.date}</p>
+            {reviewsLoading ? (
+              <div className="text-center py-8">
+                <i className="bi bi-arrow-clockwise spin text-2xl text-[#083A85] mb-2"></i>
+                <p className="text-gray-600">Loading reviews...</p>
+              </div>
+            ) : reviews.length === 0 ? (
+              <div className="text-center py-8">
+                <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
+                <p className="text-gray-600 text-lg">No reviews yet</p>
+                <p className="text-gray-500 text-sm">Be the first to share your experience!</p>
+              </div>
+            ) : (
+              <div className="space-y-4 sm:space-y-6">
+                {reviews.slice(0, showAllReviews ? reviews.length : 3).map((review) => (
+                  <div key={review.id} className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200 hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
+                      <div>
+                        <p className="font-semibold text-[#083A85] text-base sm:text-base">{review.name}</p>
+                        <p className="text-xs sm:text-base text-gray-500">{review.date}</p>
+                      </div>
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <i key={i} className={`bi bi-star-fill text-base ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}></i>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <i key={i} className={`bi bi-star-fill text-base ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}></i>
-                      ))}
-                    </div>
+                    <p className="text-gray-700 leading-relaxed text-base sm:text-base">{review.comment}</p>
                   </div>
-                  <p className="text-gray-700 leading-relaxed text-base sm:text-base">{review.comment}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
-            <div className="text-center mt-6 sm:mt-8">
-              <button 
-                onClick={() => setShowAllReviews(!showAllReviews)}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-base sm:text-base"
-              >
-                <i className={`bi bi-${showAllReviews ? 'chevron-up' : 'chevron-down'} mr-2`}></i>
-                {showAllReviews ? 'Show Less Reviews' : `See All ${house?.totalReviews || 0} Reviews`}
-              </button>
-            </div>
+            {reviews.length > 3 && (
+              <div className="text-center mt-6 sm:mt-8">
+                <button 
+                  onClick={() => setShowAllReviews(!showAllReviews)}
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-base sm:text-base"
+                >
+                  <i className={`bi bi-${showAllReviews ? 'chevron-up' : 'chevron-down'} mr-2`}></i>
+                  {showAllReviews ? 'Show Less Reviews' : `See All ${reviews.length} Reviews`}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -850,5 +1138,18 @@ export default function HousePage({ params }: HousePageProps) {
         {showReviewModal && ( <AddReviewForm propertyId={parseInt(resolvedParams.id, 10)} onClose={() => setShowReviewModal(false)} onAddReview={handleUpdateReviewArray} /> )}
       </div>
     </div>
+
+    {/* Add some CSS for the spinner animation */}
+    <style jsx>{`
+      .spin {
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
+    </>
   );
 }

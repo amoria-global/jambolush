@@ -1,7 +1,7 @@
 "use client";
 
 import api from '@/app/api/apiService';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
 // Google OAuth Configuration
@@ -26,6 +26,7 @@ export default function Login() {
   const [currentLang, setCurrentLang] = useState('en');
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -35,6 +36,76 @@ export default function Login() {
   ];
 
   const getCurrentLanguage = () => languages.find(lang => lang.code === currentLang);
+
+  // Helper function to handle redirects
+  const getRedirectUrl = (token?: string) => {
+    const redirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+    
+    if (redirect) {
+      try {
+        // Decode the redirect URL in case it's encoded
+        const decodedRedirect = decodeURIComponent(redirect);
+        
+        // Security check: ensure the redirect URL is safe
+        const url = new URL(decodedRedirect, window.location.origin);
+        
+        // Allow same origin redirects
+        if (url.origin === window.location.origin) {
+          // Add token to query params if provided
+          if (token) {
+            url.searchParams.set('token', token);
+          }
+          return url.toString();
+        }
+        
+        // Allow specific trusted domains (add your trusted domains here)
+        const trustedDomains = [
+          'localhost:3001',
+          'localhost:3000',
+          // Add your production domains here
+          // 'yourdomain.com',
+          // 'app.yourdomain.com'
+        ];
+        
+        if (trustedDomains.some(domain => url.host === domain)) {
+          if (token) {
+            url.searchParams.set('token', token);
+          }
+          return url.toString();
+        }
+        
+        // If not a trusted domain, log the attempt and fall back to default
+        console.warn('Redirect to untrusted domain blocked:', url.origin);
+      } catch (error) {
+        // Invalid URL, log and fall back to default
+        console.warn('Invalid redirect URL:', redirect, error);
+      }
+    }
+    
+    // Default redirect with token
+    return token ? `app.jambolush.com?token=${token}` : 'app.jambolush.com';
+  };
+
+  // Helper function to perform redirect
+  const performRedirect = (token?: string) => {
+    const redirectUrl = getRedirectUrl(token);
+    
+    // Check if it's an external redirect (different origin)
+    try {
+      const url = new URL(redirectUrl);
+      if (url.origin !== window.location.origin) {
+        // External redirect - use window.location
+        window.location.href = redirectUrl;
+        return;
+      }
+    } catch (error) {
+      // If URL parsing fails, treat as internal redirect
+    }
+    
+    // Internal redirect - use Next.js router
+    const path = redirectUrl.replace(window.location.origin, '');
+    router.push(path);
+  };
 
   // Initialize Google Sign-In
   useEffect(() => {
@@ -82,11 +153,11 @@ export default function Login() {
         if (result.data.refreshToken) {
           localStorage.setItem('refreshToken', result.data.refreshToken);
         }
-        alert("Successfully signed in with Google!");
+       // alert("Successfully signed in with Google!");
         
-        // Redirect to dashboard with token
+        // Redirect using the redirect handler
         setTimeout(() => {
-          router.push(`http://localhost:3001?token=${token}`);
+          performRedirect(token);
         }, 1000);
       }
     } catch (error: any) {
@@ -191,12 +262,12 @@ export default function Login() {
         }
         
         // Alert success message
-        alert(response.data?.message || `Login successful! User type: ${response.data?.user?.userType}`);
+        //alert(response.data?.message || `Login successful! User type: ${response.data?.user?.userType}`);
         
-        // Redirect to dashboard
+        // Redirect using the redirect handler
         setTimeout(() => {
           const token = response.data?.accessToken || response.data?.token;
-          router.push(`http://localhost:3001?token=${token}`);
+          performRedirect(token);
         }, 1000);
         
       } catch (error: any) {
@@ -213,6 +284,9 @@ export default function Login() {
       }
     }
   };
+
+  // Show redirect info if present (for debugging/user awareness)
+  const redirectInfo = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
   
   // Mobile View
   if (isMobileView) {
@@ -270,6 +344,17 @@ export default function Login() {
           <p className="text-white/60 text-xs px-4">
             Discover extraordinary places and create unforgettable memories
           </p>
+          
+          {/* Redirect info for mobile */}
+          {redirectInfo && (
+            <div className="mt-3 mx-4">
+              <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-3 py-2">
+                <p className="text-blue-200 text-xs">
+                  <span className="font-medium">Redirecting after login</span>
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Mobile Form */}
@@ -532,6 +617,17 @@ export default function Login() {
             <div className="text-center mb-6 lg:mb-8">
               <h3 className="text-white text-xl lg:text-2xl font-bold mb-2">Welcome Back</h3>
               <p className="text-white/70 text-sm lg:text-base">Sign in to your account to continue</p>
+              
+              {/* Redirect info for desktop */}
+              {redirectInfo && (
+                <div className="mt-4">
+                  <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-4 py-2">
+                    <p className="text-blue-200 text-sm">
+                      <span className="font-medium">Redirecting after login</span>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5 lg:space-y-6">

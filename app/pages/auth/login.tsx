@@ -2,7 +2,7 @@
 
 import api from '@/app/api/apiService';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -14,7 +14,21 @@ declare global {
   }
 }
 
-export default function Login() {
+// Loading component for Suspense fallback
+function LoginSkeleton() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#083A85] flex items-center justify-center">
+      <div className="animate-pulse">
+        <div className="w-20 h-20 bg-white/20 rounded-2xl mx-auto mb-4"></div>
+        <div className="h-4 bg-white/20 rounded w-32 mx-auto mb-2"></div>
+        <div className="h-4 bg-white/20 rounded w-24 mx-auto"></div>
+      </div>
+    </div>
+  );
+}
+
+// Main Login Component (without useSearchParams)
+function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -765,5 +779,14 @@ export default function Login() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense wrapper
+export default function Login() {
+  return (
+    <Suspense fallback={<LoginSkeleton />}>
+      <LoginContent />
+    </Suspense>
   );
 }

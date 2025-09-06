@@ -3,9 +3,10 @@
 import api from '@/app/api/api-conn';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import AlertNotification from '@/app/components/notify'; // Update this import path
 
 // Google OAuth Configuration
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID_HERE';
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
 
 // Main Signup Page Component
 function SignupPage({ 
@@ -36,6 +37,7 @@ function SignupPage({
   const [isFormValid, setIsFormValid] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -85,21 +87,19 @@ function SignupPage({
         if (result.data.refreshToken) {
           localStorage.setItem('refreshToken', result.data.refreshToken);
         }
-        alert("Successfully signed up with Google!");
-        router.push('/dashboard'); // Or wherever you want to redirect after signup
+        setNotify({type: "success", message: "Successfully signed up with Google!"});
+        setTimeout(() => router.push('https://app.jambolush.com?token=' + result.data.accessToken), 2000); // Delay to show success message
       }
     } catch (error: any) {
       console.error('Google auth error:', error);
       
-      let errorMessage = "Google authentication failed. Please try again.";
-      
       if (error.data?.message) {
-        errorMessage = error.data.message;
+        setNotify({type: "error", message: error.data.message});
       } else if (error.status === 409) {
-        errorMessage = "An account with this email already exists.";
+        setNotify({type: "error", message: "An account with this email already exists."});
+      } else {
+        setNotify({type: "error", message: "Failed to sign up with Google. Please try again."});
       }
-      
-      alert(errorMessage);
     } finally {
       setGoogleLoading(false);
     }
@@ -182,7 +182,7 @@ function SignupPage({
     e?.preventDefault();
     
     if (!isFormValid) {
-      alert("Please fill in all required fields correctly.");
+      setNotify({type: "warning", message: "Please fill in all required fields correctly."});
       return;
     }
 
@@ -198,56 +198,79 @@ function SignupPage({
         provider: 'manual',
         phoneCountryCode: country ? getCountryCode(country) : 'US',
         country: country || undefined,
-        userType: 'guest' // Regular signup is always for guests
+        userType: 'guest'
       });
 
-      // Success case
-      alert("Registration successful! Please log in.");
-      router.push('/all/login');
+      // Check if the response indicates an error even if it didn't throw
+      if (response.status && response.status >= 400) {
+        throw {
+          status: response.status,
+          data: response.data
+        };
+      }
+
+      // Check if response data contains error indicators
+      if (response.data?.message === 'User already exists' || 
+          response.data?.error || 
+          (response.data?.message && !response.data?.accessToken)) {
+        throw {
+          status: 409,
+          data: response.data
+        };
+      }
+
+      // Success case - only if we have a valid response
+      if (response.data?.accessToken || response.status === 200 || response.status === 201) {
+        setNotify({type: "success", message: "Registration successful! Redirecting to login..."});
+        setTimeout(() => router.push('/all/login'), 2000);
+      } else {
+        // Unexpected response format
+        throw {
+          status: response.status || 500,
+          data: response.data || { message: "Unexpected response format" }
+        };
+      }
 
     } catch (error: any) {
-      let errorMessage = "An unexpected error occurred. Please try again.";
-
       console.log("Full error object:", error);
 
       if (error.status) {
         const { status, data } = error;
         
         if (data?.message) {
-          errorMessage = data.message;
+          setNotify({type: "error", message: data.message});
         } else if (data?.error) {
-          errorMessage = data.error;
+          setNotify({type: "error", message: data.error});
         } else if (data?.errors && Array.isArray(data.errors)) {
-          errorMessage = data.errors.join(', ');
+          setNotify({type: "error", message: data.errors.join(', ')});
         } else if (data?.details) {
-          errorMessage = data.details;
+          setNotify({type: "warning", message: data.details});
         } else if (typeof data === 'string') {
-          errorMessage = data;
+          setNotify({type: "error", message: data});
         } else {
           switch (status) {
             case 400:
-              errorMessage = "Invalid registration data. Please check your inputs.";
+              setNotify({type: "error", message: "Invalid registration data. Please check your inputs."});
               break;
             case 409:
-              errorMessage = "Email already exists. Please use a different email.";
+              setNotify({type: "error", message: "Email already exists. Please use a different email."});
               break;
             case 422:
-              errorMessage = "Registration data is invalid. Please check all fields.";
+              setNotify({type: "error", message: "Registration data is invalid. Please check all fields."});
               break;
             case 500:
-              errorMessage = "Server error. Please try again later.";
+              setNotify({type: "error", message: "Server error. Please try again later."});
               break;
             default:
-              errorMessage = `Registration failed (Error ${status}). Please try again.`;
+              setNotify({type: "error", message: `Registration failed (Error ${status}). Please try again.`});
           }
         }
       } else if (error.name === 'AbortError' || error.message?.includes('timeout')) {
-        errorMessage = "Request timed out. Please try again.";
+        setNotify({type: "error", message: "Request timed out. Please try again."});
       } else {
-        errorMessage = error.message || "Registration failed. Please try again.";
+        const errorMessage = error.message || "Registration failed. Please try again.";
+        setNotify({type: "error", message: errorMessage});
       }
-
-      alert(`Registration failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -278,9 +301,28 @@ function SignupPage({
     return countryCodes[countryName] || 'US';
   };
 
+  // Function to handle notification close
+  const handleNotificationClose = () => {
+    setNotify(null);
+  };
+
   if (isMobileView) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#083A85] flex flex-col relative font-['Inter',sans-serif] antialiased">
+        {/* Alert Notifications */}
+        {notify && (
+          <AlertNotification
+            message={notify.message}
+            type={notify.type}
+            position="top-center"
+            duration={5000}
+            size="md"
+            showProgress={true}
+            autoHide={true}
+            onClose={handleNotificationClose}
+          />
+        )}
+
         {/* Language Selector - Mobile */}
         <div ref={langDropdownRef} className="absolute top-4 right-4 z-20">
           <button
@@ -413,6 +455,20 @@ function SignupPage({
 
   return (
     <div className="min-h-screen flex font-['Inter',sans-serif] antialiased">
+      {/* Alert Notifications */}
+      {notify && (
+        <AlertNotification
+          message={notify.message}
+          type={notify.type}
+          position="top-center"
+          duration={5000}
+          size="md"
+          showProgress={true}
+          autoHide={true}
+          onClose={handleNotificationClose}
+        />
+      )}
+
       {/* Left Side - Brand Section */}
       <div className="hidden md:flex flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] items-center justify-center p-4 min-h-screen relative overflow-hidden">
         
@@ -781,13 +837,15 @@ export default function SignupApp() {
   };
 
   return (
-    <SignupPage 
-      isLangOpen={isLangOpen}
-      setIsLangOpen={setIsLangOpen}
-      currentLang={currentLang}
-      setCurrentLang={setCurrentLang}
-      languages={languages}
-      getCurrentLanguage={getCurrentLanguage}
-    />
+    <>
+      <SignupPage 
+        isLangOpen={isLangOpen}
+        setIsLangOpen={setIsLangOpen}
+        currentLang={currentLang}
+        setCurrentLang={setCurrentLang}
+        languages={languages}
+        getCurrentLanguage={getCurrentLanguage}
+      />
+    </>
   );
 }

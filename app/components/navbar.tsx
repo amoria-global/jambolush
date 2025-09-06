@@ -186,7 +186,7 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled
-        ? 'bg-white shadow-sm border-b border-silver-200'
+        ? 'bg-white shadow-sm'
         : 'bg-transparent '
     }`}>
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-12">
@@ -202,6 +202,20 @@ const Navbar = () => {
             }`}>
               JamboLush
             </span>
+          </div>
+
+          {/* Mobile List Icon - Only visible on mobile, positioned after JamboLush */}
+          <div className="md:hidden flex items-center space-x-3">
+            <button
+              onClick={() => router.push('/all/tours')}
+              className={`p-2 rounded-lg transition-colors duration-300 ${
+                isScrolled 
+                  ? 'text-[#083A85] hover:bg-silver-100' 
+                  : 'text-black/40 hover:bg-white/10'
+              }`}
+            >
+              <i className="bi bi-list text-lg"></i>
+            </button>
           </div>
 
           {/* Desktop Navigation */}
@@ -255,7 +269,6 @@ const Navbar = () => {
               <i className="bi bi-house-add mr-2"></i>
               Become a Host
             </button>
-
 
             {/* Profile Section */}
             {isLoading ? (
@@ -339,6 +352,19 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
+            
+             {/* Book a Tour Mobile - First item for prominence */}
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  router.push('/all/tours');
+                }}
+                className="w-full flex items-center px-3 py-3 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                 <i className="bi bi-binoculars mr-2"></i>
+                  Find a Tour
+              </button>
+
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 cursor-pointer rounded-lg transition-colors duration-300 ${
@@ -359,18 +385,7 @@ const Navbar = () => {
           }`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
 
-              {/* Book a Tour Mobile - First item for prominence */}
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  router.push('/all/tours');
-                }}
-                className="w-full flex items-center px-3 py-3 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                 <i className="bi bi-binoculars mr-2"></i>
-                  Find a Tour
-              </button>
-
+             
               {/* Language Switcher Mobile */}
               <div className="relative" ref={mobileLangDropdownRef}>
                 <button
@@ -422,8 +437,6 @@ const Navbar = () => {
                 <i className="bi bi-house-add mr-2"></i>
                 Become a Host
               </button>
-
-             
 
               {/* Profile Section Mobile */}
               {isLoading ? (

@@ -3,9 +3,10 @@
 import api from '@/app/api/apiService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef, Suspense } from 'react';
+import AlertNotification from '@/app/components/notify'; // Update this import path
 
 // Google OAuth Configuration
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
 
 // Declare Google types
 declare global {
@@ -38,6 +39,7 @@ function LoginContent() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState('en');
+  const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,6 +52,11 @@ function LoginContent() {
   ];
 
   const getCurrentLanguage = () => languages.find(lang => lang.code === currentLang);
+
+  // Function to handle notification close
+  const handleNotificationClose = () => {
+    setNotify(null);
+  };
 
   // Helper function to handle redirects
   const getRedirectUrl = (token?: string) => {
@@ -76,6 +83,9 @@ function LoginContent() {
         const trustedDomains = [
           'localhost:3001',
           'localhost:3000',
+          'https://app.jambolush.com',
+          'https://jambolush.com',
+          'http://jambolush.com'
           // Add your production domains here
           // 'yourdomain.com',
           // 'app.yourdomain.com'
@@ -167,12 +177,13 @@ function LoginContent() {
         if (result.data.refreshToken) {
           localStorage.setItem('refreshToken', result.data.refreshToken);
         }
-       // alert("Successfully signed in with Google!");
+        
+        setNotify({type: "success", message: "Successfully signed in with Google!"});
         
         // Redirect using the redirect handler
         setTimeout(() => {
           performRedirect(token);
-        }, 1000);
+        }, 2000);
       }
     } catch (error: any) {
       console.error('Google auth error:', error);
@@ -187,7 +198,7 @@ function LoginContent() {
         errorMessage = "Account not found. Please sign up first.";
       }
       
-      alert(errorMessage);
+      setNotify({type: "error", message: errorMessage});
     } finally {
       setGoogleLoading(false);
     }
@@ -261,41 +272,45 @@ function LoginContent() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (isFormValid) {
-      setLoading(true);
-      try {
-        const response = await api.post('/auth/login', { email, password });
-        console.log('Login successful:', response);
-        
-        // Store tokens
-        if (response.data?.accessToken) {
-          localStorage.setItem('authToken', response.data.accessToken);
-          if (response.data.refreshToken) {
-            localStorage.setItem('refreshToken', response.data.refreshToken);
-          }
+    
+    if (!isFormValid) {
+      setNotify({type: "warning", message: "Please enter a valid email and password (minimum 6 characters)."});
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      console.log('Login successful:', response);
+      
+      // Store tokens
+      if (response.data?.accessToken) {
+        localStorage.setItem('authToken', response.data.accessToken);
+        if (response.data.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.refreshToken);
         }
-        
-        // Alert success message
-        //alert(response.data?.message || `Login successful! User type: ${response.data?.user?.userType}`);
-        
-        // Redirect using the redirect handler
-        setTimeout(() => {
-          const token = response.data?.accessToken || response.data?.token;
-          performRedirect(token);
-        }, 1000);
-        
-      } catch (error: any) {
-        console.error('Login failed:', error);
-        
-        // Alert error message from server
-        const errorMessage = error.response?.data?.message || 
-                            error.response?.data?.error || 
-                            error.data?.message ||
-                            'Login failed. Please try again.';
-        alert(errorMessage);
-      } finally {
-        setLoading(false);
       }
+      
+      // Show success message
+      setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting..."});
+      
+      // Redirect using the redirect handler
+      setTimeout(() => {
+        const token = response.data?.accessToken || response.data?.token;
+        performRedirect(token);
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      
+      // Show error message from server
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.data?.message ||
+                          'Login failed. Please try again.';
+      setNotify({type: "error", message: errorMessage});
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -306,6 +321,20 @@ function LoginContent() {
   if (isMobileView) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#083A85] flex flex-col relative">
+        {/* Alert Notifications */}
+        {notify && (
+          <AlertNotification
+            message={notify.message}
+            type={notify.type}
+            position="top-center"
+            duration={5000}
+            size="md"
+            showProgress={true}
+            autoHide={true}
+            onClose={handleNotificationClose}
+          />
+        )}
+
         {/* Language Selector - Mobile */}
         <div ref={langDropdownRef} className="absolute top-4 right-4 z-20">
           <button
@@ -502,6 +531,20 @@ function LoginContent() {
   // Desktop/Tablet View
   return (
     <div className="h-screen flex font-['Inter',sans-serif] antialiased overflow-hidden">
+      {/* Alert Notifications */}
+      {notify && (
+        <AlertNotification
+          message={notify.message}
+          type={notify.type}
+          position="top-center"
+          duration={5000}
+          size="md"
+          showProgress={true}
+          autoHide={true}
+          onClose={handleNotificationClose}
+        />
+      )}
+
       {/* Left Side - Brand Section */}
       <div className="hidden md:flex flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] items-center justify-center p-8 relative overflow-hidden">
         

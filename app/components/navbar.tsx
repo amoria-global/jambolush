@@ -204,19 +204,6 @@ const Navbar = () => {
             </span>
           </div>
 
-          {/* Mobile List Icon - Only visible on mobile, positioned after JamboLush */}
-          <div className="md:hidden flex items-center space-x-3">
-            <button
-              onClick={() => router.push('/all/tours')}
-              className={`p-2 rounded-lg transition-colors duration-300 ${
-                isScrolled 
-                  ? 'text-[#083A85] hover:bg-silver-100' 
-                  : 'text-black/40 hover:bg-white/10'
-              }`}
-            >
-              <i className="bi bi-list text-lg"></i>
-            </button>
-          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
@@ -351,15 +338,15 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            
+          <div className="md:hidden flex items-center space-x-2">
+
              {/* Book a Tour Mobile - First item for prominence */}
               <button 
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   router.push('/all/tours');
                 }}
-                className="w-full flex items-center px-3 py-3 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="w-full flex items-center px-2 py-1 bg-gradient-to-r from-[#083A85]/70 to-[#F20C8F] text-white text-sm font-medium rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
               >
                  <i className="bi bi-binoculars mr-2"></i>
                   Find a Tour

@@ -107,7 +107,7 @@ function LoginContent() {
     }
     
     // Default redirect with token
-    return token ? `https://app.jambolush.com?token=${token}` : 'https://app.jambolush.com';
+    return token ? `http://localhost:3001?token=${token}` : 'https://app.jambolush.com';
   };
 
   // Helper function to perform redirect
@@ -160,7 +160,7 @@ function LoginContent() {
     };
   }, []);
 
-  // Handle Google OAuth callback
+  // Also update the Google auth callback:
   const handleGoogleCallback = async (response: any) => {
     setGoogleLoading(true);
     
@@ -192,13 +192,41 @@ function LoginContent() {
       
       if (error.data?.message) {
         errorMessage = error.data.message;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       } else if (error.status === 401) {
         errorMessage = "Authentication failed. Please check your credentials.";
       } else if (error.status === 404) {
         errorMessage = "Account not found. Please sign up first.";
       }
       
-      setNotify({type: "error", message: errorMessage});
+      // Check if user needs to set up password first (even for Google auth)
+      if (errorMessage.includes('Please set up your password first') || 
+          errorMessage.includes('Check your email for instructions')) {
+        
+        // For Google auth, we might not have the email, so check if it's in the token
+        try {
+          const tokenData = JSON.parse(atob(response.credential.split('.')[1]));
+          if (tokenData.email) {
+            localStorage.setItem('pendingVerificationEmail', tokenData.email);
+          }
+        } catch (e) {
+          console.log('Could not extract email from Google token');
+        }
+        
+        setNotify({type: "info", message: "Please check your email to set up your password first."});
+        
+        setTimeout(() => {
+          const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+          const verificationUrl = currentRedirect 
+            ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
+            : '/all/account-verification';
+          router.push(verificationUrl);
+        }, 2000);
+        
+      } else {
+        setNotify({type: "error", message: errorMessage});
+      }
     } finally {
       setGoogleLoading(false);
     }
@@ -270,49 +298,72 @@ function LoginContent() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    
-    if (!isFormValid) {
-      setNotify({type: "warning", message: "Please enter a valid email and password (minimum 6 characters)."});
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      console.log('Login successful:', response);
+  // Handle form submission
+    const handleSubmit = async (e?: React.FormEvent) => {
+      e?.preventDefault();
       
-      // Store tokens
-      if (response.data?.accessToken) {
-        localStorage.setItem('authToken', response.data.accessToken);
-        if (response.data.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.refreshToken);
-        }
+      if (!isFormValid) {
+        setNotify({type: "warning", message: "Please enter a valid email and password (minimum 6 characters)."});
+        return;
       }
-      
-      // Show success message
-      setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting..."});
-      
-      // Redirect using the redirect handler
-      setTimeout(() => {
-        const token = response.data?.accessToken || response.data?.token;
-        performRedirect(token);
-      }, 2000);
-      
-    } catch (error: any) {
-      console.error('Login failed:', error);
-      
-      // Show error message from server
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.data?.message ||
-                          'Login failed. Please try again.';
-      setNotify({type: "error", message: errorMessage});
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      setLoading(true);
+      try {
+        const response = await api.post('/auth/login', { email, password });
+        console.log('Login successful:', response);
+        
+        // Store tokens
+        if (response.data?.accessToken) {
+          localStorage.setItem('authToken', response.data.accessToken);
+          if (response.data.refreshToken) {
+            localStorage.setItem('refreshToken', response.data.refreshToken);
+          }
+        }
+        
+        // Show success message
+        setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting..."});
+        
+        // Redirect using the redirect handler
+        setTimeout(() => {
+          const token = response.data?.accessToken || response.data?.token;
+          performRedirect(token);
+        }, 2000);
+        
+      } catch (error: any) {
+        console.error('Login failed:', error);
+        
+        // Get error message from server
+        const errorMessage = error.response?.data?.message || 
+                            error.response?.data?.error || 
+                            error.data?.message ||
+                            'Login failed. Please try again.';
+        
+        // Check if user needs to set up password first
+        if (errorMessage.includes('Please set up your password first') || 
+            errorMessage.includes('Check your email for instructions')) {
+          
+          // Store email for verification page
+          localStorage.setItem('pendingVerificationEmail', email);
+          
+          // Show info message and redirect to verification
+          setNotify({type: "info", message: "Please check your email to set up your password first."});
+          
+          setTimeout(() => {
+            const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+            const verificationUrl = currentRedirect 
+              ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
+              : '/all/account-verification';
+            router.push(verificationUrl);
+          }, 2000);
+          
+        } else {
+          // Show regular error message
+          setNotify({type: "error", message: errorMessage});
+        }
+      } finally {
+        setLoading(false);
+      }
+};
 
   // Show redirect info if present (for debugging/user awareness)
   const redirectInfo = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');

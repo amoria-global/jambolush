@@ -198,7 +198,7 @@ function SignupPage({
         provider: 'manual',
         phoneCountryCode: country ? getCountryCode(country) : 'US',
         country: country || undefined,
-        userType: 'guest'
+        userType: 'admin'
       });
 
       // Check if the response indicates an error even if it didn't throw
@@ -422,7 +422,7 @@ function SignupPage({
                     </div>
                     <div className="text-center text-base">
                       <span className="text-white/70">Want to become a service provider? </span>
-                      <a href="/hosts/become" className="text-blue-300 hover:text-blue-200 font-medium">Join as Host</a>
+                      <a href="/become-host" className="text-blue-300 hover:text-blue-200 font-medium">Join as Host</a>
                     </div>
                     <div className="relative my-4">
                       <div className="flex items-center">

@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useState } from 'react';
 import api from '@/app/api/api-conn';
+import AlertNotification from '@/app/components/notify'; // Update this import path
 
 // Define the type for form data
 interface FormData {
@@ -49,139 +50,131 @@ interface ServiceProviderApplicationRequest {
 type StringFields = 'names' | 'email' | 'phone' | 'country' | 'state' | 'province' | 'city' | 'street' | 'zipCode' | 'postalCode' | 'postcode' | 'pinCode' | 'eircode' | 'cep' | 'experienceLevel';
 type ArrayFields = 'propertyCategories' | 'services';
 
-// Toast notification types
-interface Toast {
-  id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
-  message: string;
+interface RoleCardProps {
+  role: 'host' | 'tourguide' | 'agent';
+  icon: string;
+  title: string;
+  description: string;
+  onClick: (role: 'host' | 'tourguide' | 'agent') => void;
 }
 
-  interface RoleCardProps {
-    role: 'host' | 'tourguide' | 'agent';
-    icon: string;
-    title: string;
-    description: string;
-    onClick: (role: 'host' | 'tourguide' | 'agent') => void;
-  }
-
-  const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
-    <div 
-      onClick={() => onClick(role)}
-      className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
-    >
-      <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
-          <i className={`${icon} text-white text-lg sm:text-xl`}></i>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
-          <p className="text-base text-gray-600 leading-relaxed">{description}</p>
-        </div>
+const RoleCard: React.FC<RoleCardProps> = ({ role, icon, title, description, onClick }) => (
+  <div 
+    onClick={() => onClick(role)}
+    className="bg-white rounded-lg border border-gray-200 hover:border-[#F20C8F] cursor-pointer transition-all duration-200 p-6 hover:shadow-md group"
+  >
+    <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
+      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#083A85] rounded-lg flex items-center justify-center group-hover:bg-[#F20C8F] transition-colors duration-200">
+        <i className={`${icon} text-white text-lg sm:text-xl`}></i>
+      </div>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-[#083A85] group-hover:text-[#F20C8F] transition-colors duration-200">{title}</h3>
+        <p className="text-base text-gray-600 leading-relaxed">{description}</p>
       </div>
     </div>
-  );
+  </div>
+);
 
-  interface FormFieldProps {
-    label: string;
-    type?: string;
-    value: string;
-    onChange: (value: string) => void;
-    placeholder: string;
-    required?: boolean;
-    error?: string;
-  }
+interface FormFieldProps {
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  required?: boolean;
+  error?: string;
+}
 
-  const experienceLevels = [
-    'Entry Level (0-1 years)',
-    'Junior (1-3 years)',
-    'Mid-Level (3-5 years)',
-    'Senior (5-10 years)',
-    'Expert (10+ years)'
-  ];
+const experienceLevels = [
+  'Entry Level (0-1 years)',
+  'Junior (1-3 years)',
+  'Mid-Level (3-5 years)',
+  'Senior (5-10 years)',
+  'Expert (10+ years)'
+];
 
-  const FormField: React.FC<FormFieldProps> = ({ 
-    label, 
-    type = 'text', 
-    value, 
-    onChange, 
-    placeholder, 
-    required = false,
-    error 
-  }) => (
-    <div className="space-y-1.5">
-      <label className="block text-base font-medium text-gray-700">
-        {label} {required && <span className="text-[#F20C8F]">*</span>}
-      </label>
-      {type === 'select' ? (
-        <select 
-          value={value} 
-          onChange={(e) => onChange(e.target.value)}
-          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          required={required}
-        >
-          <option value="">{placeholder}</option>
-          {experienceLevels.map(level => (
-            <option key={level} value={level}>{level}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          required={required}
-        />
-      )}
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
-    </div>
-  );
-
-  interface CheckboxGroupProps {
-    title: string;
-    options: string[];
-    selectedOptions: string[];
-    onChange: (option: string) => void;
-    error?: string;
-  }
-
-  const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ 
-    title, 
-    options, 
-    selectedOptions, 
-    onChange, 
-    error 
-  }) => (
-    <div className="space-y-3">
-      <label className="block text-base font-medium text-gray-700">
-        {title} <span className="text-[#F20C8F]">*</span>
-      </label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {options.map(option => (
-          <label key={option} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors duration-200">
-            <input
-              type="checkbox"
-              checked={selectedOptions.includes(option)}
-              onChange={() => onChange(option)}
-              className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
-            />
-            <span className="text-base text-gray-700">{option}</span>
-          </label>
+const FormField: React.FC<FormFieldProps> = ({ 
+  label, 
+  type = 'text', 
+  value, 
+  onChange, 
+  placeholder, 
+  required = false,
+  error 
+}) => (
+  <div className="space-y-1.5">
+    <label className="block text-base font-medium text-gray-700">
+      {label} {required && <span className="text-[#F20C8F]">*</span>}
+    </label>
+    {type === 'select' ? (
+      <select 
+        value={value} 
+        onChange={(e) => onChange(e.target.value)}
+        className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+          error ? 'border-red-500' : 'border-gray-300'
+        }`}
+        required={required}
+      >
+        <option value="">{placeholder}</option>
+        {experienceLevels.map(level => (
+          <option key={level} value={level}>{level}</option>
         ))}
-      </div>
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
-    </div>
-  );
+      </select>
+    ) : (
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`w-full p-2.5 sm:p-3 border rounded-md focus:border-[#F20C8F] focus:ring-1 focus:ring-[#F20C8F] focus:outline-none transition-colors duration-200 text-base sm:text-base ${
+          error ? 'border-red-500' : 'border-gray-300'
+        }`}
+        required={required}
+      />
+    )}
+    {error && (
+      <p className="text-sm text-red-600">{error}</p>
+    )}
+  </div>
+);
 
+interface CheckboxGroupProps {
+  title: string;
+  options: string[];
+  selectedOptions: string[];
+  onChange: (option: string) => void;
+  error?: string;
+}
+
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ 
+  title, 
+  options, 
+  selectedOptions, 
+  onChange, 
+  error 
+}) => (
+  <div className="space-y-3">
+    <label className="block text-base font-medium text-gray-700">
+      {title} <span className="text-[#F20C8F]">*</span>
+    </label>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      {options.map(option => (
+        <label key={option} className="flex items-center space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors duration-200">
+          <input
+            type="checkbox"
+            checked={selectedOptions.includes(option)}
+            onChange={() => onChange(option)}
+            className="w-4 h-4 text-[#F20C8F] border-gray-300 rounded focus:ring-[#F20C8F] flex-shrink-0"
+          />
+          <span className="text-base text-gray-700">{option}</span>
+        </label>
+      ))}
+    </div>
+    {error && (
+      <p className="text-sm text-red-600">{error}</p>
+    )}
+  </div>
+);
 
 const BecomeHost = () => {
   const [currentStep, setCurrentStep] = useState('role-selection');
@@ -208,7 +201,7 @@ const BecomeHost = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [applicationId, setApplicationId] = useState<string>('');
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
 
   const propertyCategories = [
     'Residential Houses',
@@ -232,90 +225,7 @@ const BecomeHost = () => {
     'Custom Tours'
   ];
 
-
-
-  // Toast notification functions
-  const addToast = (type: Toast['type'], message: string) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const toast: Toast = { id, type, message };
-    setToasts(prev => [...prev, toast]);
-    
-    // Auto remove toast after 5 seconds
-    setTimeout(() => {
-      removeToast(id);
-    }, 5000);
-  };
-
-  const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
-
-  // Toast component
-  const ToastContainer = () => (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={`max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 transform transition-all duration-300 ease-in-out ${
-            toast.type === 'success' ? 'border-l-4 border-green-400' :
-            toast.type === 'error' ? 'border-l-4 border-red-400' :
-            toast.type === 'warning' ? 'border-l-4 border-yellow-400' :
-            'border-l-4 border-blue-400'
-          }`}
-        >
-          <div className="flex-1 w-0 p-4">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                {toast.type === 'success' && (
-                  <div className="w-6 h-6 text-green-400">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-                {toast.type === 'error' && (
-                  <div className="w-6 h-6 text-red-400">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-                {toast.type === 'warning' && (
-                  <div className="w-6 h-6 text-yellow-400">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-                {toast.type === 'info' && (
-                  <div className="w-6 h-6 text-blue-400">
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              <div className="ml-3 w-0 flex-1 pt-0.5">
-                <p className="text-sm font-medium text-gray-900">{toast.message}</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex border-l border-gray-200">
-            <button
-              onClick={() => removeToast(toast.id)}
-              className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-gray-600 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  // Handle API errors with toast notifications
+  // Handle API errors with notifications
   const handleApiError = (error: any, defaultMessage: string = "An error occurred") => {
     let errorMessage = defaultMessage;
     
@@ -333,7 +243,7 @@ const BecomeHost = () => {
       errorMessage = error.message;
     }
     
-    addToast('error', errorMessage);
+    setNotify({ type: 'error', message: errorMessage });
   };
 
   // Validate form
@@ -395,29 +305,29 @@ const BecomeHost = () => {
     });
   }, []); // <-- Empty dependency array makes the function stable
 
-    const handleCheckboxChange = useCallback((field: ArrayFields, value: string) => {
-      setFormData(prev => {
-        const currentArray = prev[field];
-        const newArray = currentArray.includes(value)
-          ? currentArray.filter(item => item !== value)
-          : [...currentArray, value];
-        
-        return {
-          ...prev,
-          [field]: newArray
-        };
-      });
+  const handleCheckboxChange = useCallback((field: ArrayFields, value: string) => {
+    setFormData(prev => {
+      const currentArray = prev[field];
+      const newArray = currentArray.includes(value)
+        ? currentArray.filter(item => item !== value)
+        : [...currentArray, value];
       
-      // Use functional update here as well
-      setFormErrors(prevErrors => {
-        if (prevErrors[field]) {
-          const newErrors = { ...prevErrors };
-          delete newErrors[field];
-          return newErrors;
-        }
-        return prevErrors;
-      });
-    }, []); // <-- Empty dependency array
+      return {
+        ...prev,
+        [field]: newArray
+      };
+    });
+    
+    // Use functional update here as well
+    setFormErrors(prevErrors => {
+      if (prevErrors[field]) {
+        const newErrors = { ...prevErrors };
+        delete newErrors[field];
+        return newErrors;
+      }
+      return prevErrors;
+    });
+  }, []); // <-- Empty dependency array
 
   const handleRoleSelection = (role: 'host' | 'tourguide' | 'agent') => {
     setSelectedRole(role);
@@ -425,66 +335,132 @@ const BecomeHost = () => {
     setFormErrors({});
   };
 
-  const handleFormSubmit = async () => {
-    if (!validateForm()) {
-      addToast('warning', 'Please fill in all required fields correctly.');
+const handleFormSubmit = async () => {
+  if (!validateForm()) {
+    setNotify({ type: 'warning', message: 'Please fill in all required fields correctly.' });
+    return;
+  }
+
+  setLoading(true);
+  
+  try {
+    // Prepare application data
+    const applicationData: ServiceProviderApplicationRequest = {
+      names: formData.names.trim(),
+      email: formData.email.trim().toLowerCase(),
+      phone: formData.phone.trim(),
+      country: formData.country.trim(),
+      userType: selectedRole as 'host' | 'tourguide' | 'agent',
+      ...(formData.state && { state: formData.state.trim() }),
+      ...(formData.province && { province: formData.province.trim() }),
+      ...(formData.city && { city: formData.city.trim() }),
+      ...(formData.street && { street: formData.street.trim() }),
+      ...(formData.zipCode && { zipCode: formData.zipCode.trim() }),
+      ...(formData.postalCode && { postalCode: formData.postalCode.trim() }),
+      ...(formData.postcode && { postcode: formData.postcode.trim() }),
+      ...(formData.pinCode && { pinCode: formData.pinCode.trim() }),
+      ...(formData.eircode && { eircode: formData.eircode.trim() }),
+      ...(formData.cep && { cep: formData.cep.trim() }),
+      ...(formData.experienceLevel && { experienceLevel: formData.experienceLevel }),
+      ...(formData.propertyCategories.length > 0 && { propertyCategories: formData.propertyCategories }),
+      ...(formData.services.length > 0 && { services: formData.services })
+    };
+
+    // Submit application
+    const response = await api.post('/auth/register', applicationData);
+    
+    if (response.data?.applicationId || response.status === 200 || response.status === 201) {
+      // Store application details for verification page
+      if (response.data?.applicationId) {
+        setApplicationId(response.data.applicationId);
+        localStorage.setItem('pendingApplicationId', response.data.applicationId);
+        localStorage.setItem('authToken', response.data.accessToken);
+
+      }
+      
+      // Store email for verification process
+      localStorage.setItem('pendingVerificationEmail', formData.email.trim().toLowerCase());
+      localStorage.setItem('pendingUserType', selectedRole);
+      
+      // Show success message
+      setNotify({ 
+        type: 'success', 
+        message: 'Application submitted successfully! Please check your email to verify your account and set up your password.' 
+      });
+      
+      // Redirect to verification page after a short delay
+      setTimeout(() => {
+        // Add application context to the verification URL
+        const verificationUrl = `/all/account-verification?application=true&type=${selectedRole}`;
+        window.location.href = verificationUrl;
+        // Or if using Next.js router:
+        // router.push(verificationUrl);
+      }, 2500);
+      
+      return; // Exit early on success
+    }
+
+    // Handle non-successful responses
+    if (!response.data) {
+      setNotify({ type: 'error', message: response.message || 'Application submission failed. Please try again.' });
       return;
     }
 
-    setLoading(true);
+    if (response.data?.message || response.data?.error || (response.status !== 200 && response.status !== 201)) {
+      const apiMessage = response.data?.message || response.data?.error || 'Failed to submit application. Please try again.';
+      setNotify({ type: 'error', message: apiMessage });
+      return;
+    }
+
+  } catch (error: any) {
+    console.error('Application submission error:', error);
     
-    try {
-      // Prepare application data
-      const applicationData: ServiceProviderApplicationRequest = {
-        names: formData.names.trim(),
-        email: formData.email.trim().toLowerCase(),
-        phone: formData.phone.trim(),
-        country: formData.country.trim(),
-        userType: selectedRole as 'host' | 'tourguide' | 'agent',
-        ...(formData.state && { state: formData.state.trim() }),
-        ...(formData.province && { province: formData.province.trim() }),
-        ...(formData.city && { city: formData.city.trim() }),
-        ...(formData.street && { street: formData.street.trim() }),
-        ...(formData.zipCode && { zipCode: formData.zipCode.trim() }),
-        ...(formData.postalCode && { postalCode: formData.postalCode.trim() }),
-        ...(formData.postcode && { postcode: formData.postcode.trim() }),
-        ...(formData.pinCode && { pinCode: formData.pinCode.trim() }),
-        ...(formData.eircode && { eircode: formData.eircode.trim() }),
-        ...(formData.cep && { cep: formData.cep.trim() }),
-        ...(formData.experienceLevel && { experienceLevel: formData.experienceLevel }),
-        ...(formData.propertyCategories.length > 0 && { propertyCategories: formData.propertyCategories }),
-        ...(formData.services.length > 0 && { services: formData.services })
-      };
-
-      // Submit application
-      const response = await api.post('/auth/register', applicationData);
+    // Handle specific error cases
+    const errorData = error.response?.data || error.data;
+    let errorMessage = 'Failed to submit application. Please try again.';
+    
+    if (errorData?.message) {
+      errorMessage = errorData.message;
+    } else if (errorData?.error) {
+      errorMessage = errorData.error;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    // Check if this is an email verification required error
+    if (errorMessage.includes('Please set up your password first') || 
+        errorMessage.includes('Check your email for instructions') ||
+        errorMessage.includes('verify your email')) {
       
-      if (response.data?.applicationId) {
-        setApplicationId(response.data.applicationId);
-        addToast('success', 'Application submitted successfully!');
+      // Store details for verification
+      localStorage.setItem('pendingVerificationEmail', formData.email.trim().toLowerCase());
+      localStorage.setItem('pendingUserType', selectedRole);
+      
+      setNotify({ 
+        type: 'info', 
+        message: 'Application received! Please check your email to verify your account and set up your password.' 
+      });
+      
+      setTimeout(() => {
+        const verificationUrl = `/all/account-verification?application=true&type=${selectedRole}`;
+          window.location.href = verificationUrl;
+        }, 2500);
         
-        // Move to next step based on role
-        if (selectedRole === 'host' || selectedRole === 'tourguide') {
-          setCurrentStep('agreement');
-        } else if (selectedRole === 'agent') {
-          setCurrentStep('questions');
-        }
+      } else {
+        // Show regular error
+        setNotify({ type: 'error', message: errorMessage });
       }
-
-    } catch (error: any) {
-      console.error('Application submission error:', error);
-      handleApiError(error, 'Failed to submit application. Please try again.');
+      
     } finally {
       setLoading(false);
     }
   };
-
   const handleFinalSubmission = async () => {
     // This would be called after agreement or questions step
     try {
       // For now, just show success
       // In a real implementation, you might submit additional data
-      addToast('success', 'Application completed successfully!');
+      setNotify({ type: 'success', message: 'Application completed successfully!' });
       setCurrentStep('success');
     } catch (error: any) {
       handleApiError(error, 'Failed to complete application. Please try again.');
@@ -501,11 +477,16 @@ const BecomeHost = () => {
     }
   };
 
-
-  
   return (
     <>
-      <ToastContainer />
+      {/* AlertNotification Component */}
+      {notify && (
+        <AlertNotification
+          type={notify.type}
+          message={notify.message}
+          onClose={() => setNotify(null)}
+        />
+      )}
       
       {currentStep === 'role-selection' && (
         <div className="bg-gray-50">
@@ -730,7 +711,7 @@ const BecomeHost = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row sm:justify-end mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200 space-y-3 sm:space-y-0 sm:space-x-3">
                 <button
                   onClick={handleFormSubmit}
                   disabled={loading}
@@ -987,7 +968,10 @@ const BecomeHost = () => {
                 <div className="space-y-2 sm:space-y-3">
                   <h2 className="text-xl sm:text-2xl font-bold text-[#083A85]">Application Submitted!</h2>
                   <p className="text-base sm:text-base text-gray-600 leading-relaxed px-2">
-                    Congratulations! Your {selectedRole === 'host' ? 'Property Owner' : selectedRole === 'tourguide' ? 'Tour Guide' : 'Field Agent'} application has been submitted successfully and is now under review by our team.
+                    Your {selectedRole === 'host' ? 'Property Owner' : selectedRole === 'tourguide' ? 'Tour Guide' : 'Field Agent'} application has been submitted successfully!
+                  </p>
+                  <p className="text-base text-gray-600 leading-relaxed px-2">
+                    Please check your email to verify your account and set up your password to complete the process.
                   </p>
                   {applicationId && (
                     <p className="text-sm text-gray-500">
@@ -996,52 +980,54 @@ const BecomeHost = () => {
                   )}
                 </div>
 
-                {/* Next Steps */}
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <i className="bi bi-clock text-base"></i>
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-medium text-blue-900 mb-1">What Happens Next?</h4>
-                      <p className="text-blue-700 text-base leading-relaxed">
-                        You will receive a confirmation email within 24 hours with detailed next steps. Our team will review your application and contact you within 3-5 business days regarding approval and account activation.
-                      </p>
-                    </div>
-                  </div>
+                {/* Action Buttons */}
+                <div className="flex flex-col space-y-3">
+                  <button
+                    onClick={() => {
+                      const verificationUrl = `/all/account-verification?application=true&type=${selectedRole}`;
+                      window.location.href = verificationUrl;
+                    }}
+                    className="w-full bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  >
+                    Verify Account & Set Password
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setCurrentStep('role-selection');
+                      setSelectedRole('');
+                      setFormData({
+                        names: '',
+                        email: '',
+                        phone: '',
+                        country: '',
+                        state: '',
+                        province: '',
+                        city: '',
+                        street: '',
+                        zipCode: '',
+                        postalCode: '',
+                        postcode: '',
+                        pinCode: '',
+                        eircode: '',
+                        cep: '',
+                        experienceLevel: '',
+                        propertyCategories: [],
+                        services: []
+                      });
+                      setApplicationId('');
+                      setFormErrors({});
+                      setNotify(null);
+                      // Clear stored data
+                      localStorage.removeItem('pendingApplicationId');
+                      localStorage.removeItem('pendingVerificationEmail');
+                      localStorage.removeItem('pendingUserType');
+                    }}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
+                  >
+                    Submit Another Application
+                  </button>
                 </div>
-
-                {/* Action Button */}
-                <button
-                  onClick={() => {
-                    setCurrentStep('role-selection');
-                    setSelectedRole('');
-                    setFormData({
-                      names: '',
-                      email: '',
-                      phone: '',
-                      country: '',
-                      state: '',
-                      province: '',
-                      city: '',
-                      street: '',
-                      zipCode: '',
-                      postalCode: '',
-                      postcode: '',
-                      pinCode: '',
-                      eircode: '',
-                      cep: '',
-                      experienceLevel: '',
-                      propertyCategories: [],
-                      services: []
-                    });
-                    setApplicationId('');
-                    setFormErrors({});
-                  }}
-                  className="w-full sm:w-auto bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base"
-                >
-                  Return to Home
-                </button>
               </div>
             </div>
           </div>

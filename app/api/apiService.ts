@@ -215,7 +215,7 @@ class FrontendAPIService {
   };
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'https://backend.jambolush.com/api';
+    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'http://localhost:5000/api';
   }
 
   setAuth(token: string): void {

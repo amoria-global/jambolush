@@ -288,15 +288,15 @@ const Navbar = () => {
                       <p className="text-xs text-silver-600">{user.email}</p>
                       <p className="text-xs text-silver-500 capitalize">{user.status} • {user.userType}</p>
                     </div>
-                    <a href={`https://app.jambolush.com/all/${user.userType}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                    <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-speedometer2 mr-3"></i>
                       Dashboard
                     </a>
-                    <a href={`https://app.jambolush.com/all/profile`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                    <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-person mr-3"></i>
                       Profile
                     </a>
-                    <a href={`https://app.jambolush.com/all/settings`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                    <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-gear mr-3"></i>
                       Settings
                     </a>
@@ -445,7 +445,7 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  <a href={`https://app.jambolush.com/all/${user.userType}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                  <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -453,7 +453,7 @@ const Navbar = () => {
                     <i className="bi bi-speedometer2 mr-3"></i>
                     Dashboard
                   </a>
-                  <a href={`https://app.jambolush.com/all/profile`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                  <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'
@@ -461,8 +461,8 @@ const Navbar = () => {
                     <i className="bi bi-person mr-3"></i>
                     Profile
                   </a>
-                  
-                  <a href={`https://app.jambolush.com/all/settings`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+
+                  <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'

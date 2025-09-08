@@ -1,8 +1,6 @@
-// Update your AccountVerificationPage to handle application context:
-
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import api from '@/app/api/apiService'; // Import your API service
 import PasswordChangeModal from './password-change'; // Import the modal
 import AlertNotification from '@/app/components/notify';
@@ -18,16 +16,28 @@ const AccountVerificationPage = () => {
   const [isApplicationFlow, setIsApplicationFlow] = useState(false);
   const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
   
+  // URL parameters state
+  const [urlParams, setUrlParams] = useState<URLSearchParams | null>(null);
+  
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  // Get URL parameters on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setUrlParams(params);
+    }
+  }, []);
 
   // Check if user came from application or login
   useEffect(() => {
+    if (!urlParams) return; // Wait for URL params to be loaded
+    
     const pendingEmail = localStorage.getItem('pendingVerificationEmail');
     const pendingUserType = localStorage.getItem('pendingUserType');
     const pendingAppId = localStorage.getItem('pendingApplicationId');
-    const isApplication = searchParams.get('application') === 'true';
-    const urlUserType = searchParams.get('type');
+    const isApplication = urlParams.get('application') === 'true';
+    const urlUserType = urlParams.get('type');
     
     if (pendingEmail) {
       setUserEmail(pendingEmail);
@@ -46,22 +56,28 @@ const AccountVerificationPage = () => {
     }
 
     // Check if verification was completed via URL parameters
-    const verified = searchParams.get('verified');
-    const token = searchParams.get('token') || localStorage.getItem('authToken');
+    const verified = urlParams.get('verified');
+    const token = urlParams.get('token') || localStorage.getItem('authToken');
     
     if (verified === 'true' || token) {
       handleVerificationComplete();
     }
-  }, []);
+  }, [urlParams]);
 
   // Function to handle notification close
   const handleNotificationClose = () => {
     setNotify(null);
   };
 
+  // Helper function to get URL parameter
+  const getUrlParam = (key: string): string | null => {
+    if (!urlParams) return null;
+    return urlParams.get(key);
+  };
+
   // Helper function to handle redirects after password setup
   const getRedirectUrl = (token?: string) => {
-    const redirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+    const redirect = getUrlParam('redirect') || getUrlParam('returnUrl') || getUrlParam('return_to');
     
     if (redirect) {
       try {
@@ -352,7 +368,7 @@ const AccountVerificationPage = () => {
         </div>
 
         {/* Redirect info if present */}
-        {searchParams.get('redirect') && (
+        {urlParams && getUrlParam('redirect') && (
           <div className="mt-4 p-3 bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg">
             <p className="text-blue-200 text-sm">
               <span className="font-medium">You'll be redirected after setup</span>

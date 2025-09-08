@@ -115,11 +115,11 @@ const AccountVerificationPage = () => {
     // Default redirect based on context
     if (isApplicationFlow) {
       // For applications, redirect to a welcome/onboarding page
-      return token ? `/welcome?token=${token}&type=${userType}` : '/welcome';
+      return token ? `https://app.jambolush.com?token=${token}&type=${userType}` : '/welcome';
     }
     
     // For regular login flow
-    return token ? `http://localhost:3001?token=${token}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string) => {
@@ -360,10 +360,10 @@ const AccountVerificationPage = () => {
           )}
           
           <a
-            href="/"
+            href={`https://app.jambolush.com?token=${getUrlParam('token') || ''}`}
             className="inline-flex items-center justify-center px-6 py-3 border border-white/30 text-base font-medium rounded-full text-white/90 hover:bg-white/10 transition-all duration-300 transform hover:scale-105 active:scale-95"
           >
-            Go to Homepage
+            Go to Dashboard
           </a>
         </div>
 

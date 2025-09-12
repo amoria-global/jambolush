@@ -1,11 +1,14 @@
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Link from 'next/link';
+import { useTranslations } from '../lib/LanguageContext';
 
 interface FooterProps {
   onOpenCookieModal?: () => void;
 }
 
 export default function Footer({ onOpenCookieModal }: FooterProps) {
+  const t = useTranslations();
+
   return (
     <footer className="bg-[#0C2D62] text-white">
       <div className="w-full">
@@ -19,34 +22,44 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
                 <div className="w-25 h-23 bg-white/0.05 backdrop-blur-sm rounded-l flex items-center justify-center border border-white/10 mb-4">
                   <img src="/favicon.ico" className="w-22 h-19" alt="Jambolush Logo" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">JamboLush</h3>
+                <h3 className="text-lg font-bold mb-2">{t('nav.brandName')}</h3>
                 <p className="text-base text-white/80 leading-relaxed">
-                  Book Unique.<br />Stay Inspired.
+                  {t('footer.bookU')}<br />{t('footer.bookS')}
                 </p>
               </div>
 
               {/* Quick Links */}
               <div>
-                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">QUICK LINKS</h3>
+                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">
+                  {t('footer.quickLinks').toUpperCase()}
+                </h3>
                 <ul className="space-y-3">
                   <li>
                     <Link href="/" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">Home</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('common.home')}
+                      </span>
                     </Link>
                   </li>
                   <li>
                     <Link href="/all/how-it-works" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">How It Works</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('common.hiw')}
+                      </span>
                     </Link >
                   </li>
                   <li>
                     <Link href="/all/about" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">About</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('common.about')}
+                      </span>
                     </Link >
                   </li>
                   <li>
                     <Link href="/all/contact-us" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">Contact Us</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('common.contact')}
+                      </span>
                     </Link>
                   </li>
                 </ul>
@@ -54,21 +67,29 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
 
               {/* Legal */}
               <div>
-                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">LEGAL</h3>
+                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">
+                  {t('footer.legal').toUpperCase()}
+                </h3>
                 <ul className="space-y-3">
                   <li>
                     <Link href="/all/terms-and-conditions" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">Terms & Conditions</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('footer.termsOfService')}
+                      </span>
                     </Link>
                   </li>
                   <li>
                     <Link href="/all/privacy-policy" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">Privacy Policy</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('footer.privacyPolicy')}
+                      </span>
                     </Link>
                   </li>
                   <li>
                     <Link href="/all/Agreement" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">Agreements</span>
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {t('common.agreement')}
+                      </span>
                     </Link>
                   </li>
                 </ul>
@@ -76,7 +97,9 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
 
               {/* Contact */}
               <div>
-                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">CONTACT</h3>
+                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">
+                  {t('common.contact').toUpperCase()}
+                </h3>
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <i className="bi bi-geo-alt text-white/50 text-base mt-0.5"></i>
@@ -99,7 +122,9 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
 
               {/* Social Media */}
               <div>
-                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">FOLLOW US</h3>
+                <h3 className="font-bold mb-6 text-base tracking-wider text-white/90">
+                  {t('footer.followUs').toUpperCase()}
+                </h3>
                 <div className="flex flex-wrap gap-3">
                   <Link
                     href="https://www.facebook.com/profile.php?id=61580242676397"
@@ -150,30 +175,30 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
                 {/* Newsletter Text */}
                 <div className="text-center lg:text-left">
                   <h3 className="text-xl md:text-2xl font-bold mb-2">
-                    Stay Connected with JamboLush
+                    {t('footer.stay')} {t('nav.brandName')}
                   </h3>
                   <p className="text-base text-white/70">
-                    Get exclusive updates, special offers, and travel inspiration delivered to your inbox.
+                    {t('footer.getUpdates')}
                   </p>
                 </div>
 
                 {/* Newsletter Form */}
                 <div className="w-full lg:w-auto flex flex-col sm:flex-row gap-3">
-              <div className="relative w-full sm:w-80">
-                <i className="bi bi-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  className="pl-12 pr-6 py-3 bg-white text-gray-800 rounded-full text-base focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full placeholder:text-gray-500"
-                />
-              </div>
-              <button 
-                className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-base rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer flex items-center gap-2 justify-center"
-                onClick={() => console.log('Subscribe clicked')}
-              >
-                Subscribe Free
-              </button>
-            </div>
+                  <div className="relative w-full sm:w-80">
+                    <i className="bi bi-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                    <input
+                      type="email"
+                      placeholder={t('forms.email')}
+                      className="pl-12 pr-6 py-3 bg-white text-gray-800 rounded-full text-base focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:ring-offset-2 focus:ring-offset-[#0C2D62] transition-all duration-200 w-full placeholder:text-gray-500"
+                    />
+                  </div>
+                  <button 
+                    className="px-8 py-3 bg-[#F20C8F] text-white font-semibold text-base rounded-full hover:bg-[#d00b7d] transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer flex items-center gap-2 justify-center"
+                    onClick={() => console.log('Subscribe clicked')}
+                  >
+                    {t('footer.subscribeFree')}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -184,12 +209,12 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
           <div className="px-6 md:px-12 lg:px-20 py-6">
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
               <p className="text-base text-white/60">
-                © 2025 JamboLush. All rights reserved.
+                {t('footer.copyright')}
               </p>
 
               <p className="text-base font-medium bg-gradient-to-r from-[#E5E5E5] via-[#C0C0C0] to-[#C0C0C0] bg-clip-text text-transparent">
-              Powered by Amoria Global Tech.
-            </p>
+                Powered by Amoria Global Tech.
+              </p>
 
               <div className="flex items-center gap-6">
                 {/* Changed from Link to button to trigger modal */}
@@ -197,10 +222,10 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
                   onClick={onOpenCookieModal}
                   className="text-base text-white/60 hover:text-white transition-colors duration-200 cursor-pointer"
                 >
-                  Cookies Policy
+                  {t('footer.cookiePolicy')}
                 </button>
                 <Link href="/all/site-map" className="text-base text-white/60 hover:text-white transition-colors duration-200">
-                  Sitemap
+                  {t('footer.sitemap')}
                 </Link>
               </div>
             </div>

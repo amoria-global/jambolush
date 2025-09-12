@@ -3,6 +3,10 @@ import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import "./styles/globals.css";
 
+// Import i18n configuration
+import "./lib/i18n";
+import { LanguageProvider, useLanguage } from "./lib/LanguageContext";
+
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
@@ -10,7 +14,8 @@ import Preloader from "./components/Preloader";
 import JambolushChatbot from "./components/chatbot";
 import CookiesConsent from "./pages/cookies"; // Your cookies modal component
 
-export default function RootLayout({
+// Internal layout component that uses the language context
+function LayoutContent({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -19,6 +24,9 @@ export default function RootLayout({
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [showCookieModal, setShowCookieModal] = useState(false);
+  
+  // Get current language from context
+  const { currentLanguage, isLoading: langLoading } = useLanguage();
 
   useEffect(() => {
     // Check if we're on the homepage
@@ -74,6 +82,31 @@ export default function RootLayout({
     }
   }, [pathname]);
 
+  // Update document language when language changes
+  useEffect(() => {
+    if (!langLoading && currentLanguage) {
+      document.documentElement.lang = currentLanguage.code;
+      
+      // Update meta tags
+      let langMeta = document.querySelector('meta[name="language"]');
+      if (!langMeta) {
+        langMeta = document.createElement('meta');
+        langMeta.setAttribute('name', 'language');
+        document.head.appendChild(langMeta);
+      }
+      langMeta.setAttribute('content', currentLanguage.code);
+      
+      // Update og:locale if exists
+      let ogLocaleMeta = document.querySelector('meta[property="og:locale"]');
+      if (!ogLocaleMeta) {
+        ogLocaleMeta = document.createElement('meta');
+        ogLocaleMeta.setAttribute('property', 'og:locale');
+        document.head.appendChild(ogLocaleMeta);
+      }
+      ogLocaleMeta.setAttribute('content', currentLanguage.code);
+    }
+  }, [currentLanguage, langLoading]);
+
   // Define routes where navbar should be hidden
   const hideNavbarRoutes = ["/all/login", "/all/signup", "/all/forgotpw"];
   
@@ -93,28 +126,53 @@ export default function RootLayout({
       window.history.back();
     }
   };
+
+  // Show loading if translations are still loading
+  if (langLoading) {
+    return <Preloader />;
+  }
   
+  return (
+    <>
+      {loading ? (
+        <Preloader />
+      ) : (
+        <>
+          {!shouldHideNavbarFooter && <Navbar />}
+          {children}
+          {!shouldHideNavbarFooter && <Footer onOpenCookieModal={openCookieModal} />}
+          {!shouldHideNavbarFooter && <JambolushChatbot />}
+          
+          {/* Cookie Modal Overlay */}
+          {showCookieModal && (
+            <CookiesConsent onClose={closeCookieModal} />
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+// Main layout component with language provider
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
       <head>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <meta name="language" content="en" />
+        <meta property="og:locale" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        {loading ? (
-          <Preloader />
-        ) : (
-          <>
-            {!shouldHideNavbarFooter && <Navbar />}
+        <LanguageProvider>
+          <LayoutContent>
             {children}
-            {!shouldHideNavbarFooter && <Footer onOpenCookieModal={openCookieModal} />}
-            {!shouldHideNavbarFooter && <JambolushChatbot />}
-            
-            {/* Cookie Modal Overlay */}
-            {showCookieModal && (
-              <CookiesConsent onClose={closeCookieModal} />
-            )}
-          </>
-        )}
+          </LayoutContent>
+        </LanguageProvider>
       </body>
     </html>
   );

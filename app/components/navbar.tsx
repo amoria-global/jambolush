@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import api from "../api/apiService" // Import your API connection
+import api from "../api/apiService";
+import { useLanguage } from '../lib/LanguageContext';
 
 interface UserProfile {
   email: string;
@@ -36,7 +37,6 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState('en');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Authentication state
@@ -45,6 +45,9 @@ const Navbar = () => {
   const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Language context
+  const { currentLanguage, changeLanguage, t, isLoading: langLoading } = useLanguage();
+
   // Refs for the dropdowns to detect outside clicks
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
@@ -52,6 +55,15 @@ const Navbar = () => {
 
   // Router for navigation
   const router = useRouter();
+
+  // Available languages (moved from local state to context)
+  const languages = [
+    { code: 'en', name: t('languages.en'), flag: '🇺🇸', nativeName: 'English' },
+    { code: 'es', name: t('languages.es'), flag: '🇪🇸', nativeName: 'Español' },
+    { code: 'fr', name: t('languages.fr'), flag: '🇫🇷', nativeName: 'Français' },
+    { code: 'sw', name: t('languages.sw'), flag: '🇹🇿', nativeName: 'Kiswahili' },
+    { code: 'rw', name: t('languages.rw'), flag: '🇷🇼', nativeName: 'Ikinyarwanda' }
+  ];
 
   // Function to fetch user session
   const fetchUserSession = async () => {
@@ -108,6 +120,16 @@ const Navbar = () => {
     router.push('/');
   };
 
+  // Function to handle language change
+  const handleLanguageChange = async (langCode: string) => {
+    try {
+      await changeLanguage(langCode);
+      setIsLangOpen(false);
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
+  };
+
   // Effect to fetch user session on component mount
   useEffect(() => {
     fetchUserSession();
@@ -150,21 +172,13 @@ const Navbar = () => {
     };
   }, [isProfileOpen, isLangOpen]);
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'sw', name: 'Swahili', flag: '🇹🇿' },
-    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' }
-  ];
-
   const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === currentLang);
+    return languages.find(lang => lang.code === currentLanguage.code) || languages[0];
   };
 
   // Helper function to get user display name
   const getUserDisplayName = () => {
-    if (!user) return 'User';
+    if (!user) return t('nav.profile', 'User');
     return user.name || `${user.firstName} ${user.lastName}`.trim() || user.email;
   };
 
@@ -183,6 +197,20 @@ const Navbar = () => {
     return user?.email?.charAt(0).toUpperCase() || 'U';
   };
 
+  // Don't render if translations are loading
+  if (langLoading) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex items-center justify-between h-16">
+            <div className="w-8 h-8 bg-gray-300 rounded animate-pulse"></div>
+            <div className="w-24 h-8 bg-gray-300 rounded animate-pulse"></div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled
@@ -200,10 +228,9 @@ const Navbar = () => {
             <span className={`font-bold text-xl transition-colors duration-300 ${
               isScrolled ? 'text-[#083A85]' : 'text-black/40'
             }`}>
-              JamboLush
+              {t('nav.brandName')}
             </span>
           </div>
-
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
@@ -224,18 +251,22 @@ const Navbar = () => {
               </button>
 
               {isLangOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-silver-200 py-1">
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-silver-200 py-1">
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
-                      onClick={() => {
-                        setCurrentLang(lang.code);
-                        setIsLangOpen(false);
-                      }}
-                      className="w-full text-left cursor-pointer px-4 py-2 text-base text-silver-700 hover:bg-silver-100 flex items-center space-x-2"
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`w-full text-left cursor-pointer px-4 py-2 text-base hover:bg-silver-100 flex items-center space-x-2 ${
+                        currentLanguage.code === lang.code 
+                          ? 'text-[#083A85] bg-blue-50' 
+                          : 'text-silver-700'
+                      }`}
                     >
                       <span>{lang.flag}</span>
-                      <span>{lang.name}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{lang.nativeName}</span>
+                        <span className="text-xs text-silver-500">{lang.name}</span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -248,13 +279,16 @@ const Navbar = () => {
               className="px-4 py-2 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
             >
               <i className="bi bi-binoculars mr-2"></i>
-              Find a Tour
+              {t('nav.findTour')}
             </button>
 
             {/* Become a Host Button */}
-            <button className="px-4 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer" onClick={() => router.push('/all/become-host')}>
+            <button 
+              className="px-4 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer" 
+              onClick={() => router.push('/all/become-host')}
+            >
               <i className="bi bi-house-add mr-2"></i>
-              Become a Host
+              {t('nav.becomeHost')}
             </button>
 
             {/* Profile Section */}
@@ -264,7 +298,7 @@ const Navbar = () => {
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-300 ${
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-300 cursor-pointer ${
                     isScrolled
                       ? 'text-silver-700 hover:bg-silver-100'
                       : 'text-white hover:bg-white/10'
@@ -290,15 +324,15 @@ const Navbar = () => {
                     </div>
                     <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-speedometer2 mr-3"></i>
-                      Dashboard
+                      {t('nav.dashboard')}
                     </a>
                     <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-person mr-3"></i>
-                      Profile
+                      {t('nav.profile')}
                     </a>
                     <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-gear mr-3"></i>
-                      Settings
+                      {t('nav.settings')}
                     </a>
                     <hr className="my-1" />
                     <button 
@@ -306,7 +340,7 @@ const Navbar = () => {
                       className="w-full text-left flex items-center px-4 py-2 text-base text-red-600 hover:bg-red-50"
                     >
                       <i className="bi bi-box-arrow-right mr-3"></i>
-                      Sign out
+                      {t('nav.signOut')}
                     </button>
                   </div>
                 )}
@@ -321,13 +355,13 @@ const Navbar = () => {
                       : 'text-silver-300 hover:bg-white/10'
                   }`}
                 >
-                  Sign in
+                  {t('nav.signIn')}
                 </button>
                 <button
                   onClick={() => {router.push('/all/signup');}}
                   className="px-4 py-2 bg-[#083A85] text-white text-base cursor-pointer font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
-                  Sign up
+                  {t('nav.signUp')}
                 </button>
               </div>
             )}
@@ -335,18 +369,17 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
-
-             {/* Book a Tour Mobile - First item for prominence */}
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  router.push('/all/tours');
-                }}
-                className="w-full flex items-center px-2 py-1 bg-gradient-to-r from-[#083A85]/70 to-[#F20C8F] text-white text-sm font-medium rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                 <i className="bi bi-binoculars mr-2"></i>
-                  Find a Tour
-              </button>
+            {/* Book a Tour Mobile - First item for prominence */}
+            <button 
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                router.push('/all/tours');
+              }}
+              className="w-full flex items-center px-2 py-1 bg-gradient-to-r from-[#083A85]/70 to-[#F20C8F] text-white text-sm font-medium rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+            >
+              <i className="bi bi-binoculars mr-2"></i>
+              {t('nav.findTour')}
+            </button>
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -368,7 +401,6 @@ const Navbar = () => {
           }`}>
             <div className="px-2 pt-2 pb-3 space-y-1">
 
-             
               {/* Language Switcher Mobile */}
               <div className="relative" ref={mobileLangDropdownRef}>
                 <button
@@ -381,7 +413,7 @@ const Navbar = () => {
                 >
                   <div className="flex items-center space-x-2">
                     <span>{getCurrentLanguage()?.flag}</span>
-                    <span className="text-base font-medium">{getCurrentLanguage()?.name}</span>
+                    <span className="text-base font-medium">{getCurrentLanguage()?.nativeName}</span>
                   </div>
                   <i className="bi bi-chevron-down text-base"></i>
                 </button>
@@ -391,18 +423,20 @@ const Navbar = () => {
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
-                        onClick={() => {
-                          setCurrentLang(lang.code);
-                          setIsLangOpen(false);
-                        }}
+                        onClick={() => handleLanguageChange(lang.code)}
                         className={`w-full text-left px-3 py-2 text-base rounded-lg transition-colors duration-300 flex items-center space-x-2 ${
-                          isScrolled 
+                          currentLanguage.code === lang.code
+                            ? 'text-[#083A85] bg-blue-50'
+                            : isScrolled 
                             ? 'text-silver-600 hover:bg-silver-100' 
                             : 'text-white/80 hover:bg-white/10'
                         }`}
                       >
                         <span>{lang.flag}</span>
-                        <span>{lang.name}</span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{lang.nativeName}</span>
+                          <span className="text-xs opacity-75">{lang.name}</span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -418,7 +452,7 @@ const Navbar = () => {
                 className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
               >
                 <i className="bi bi-house-add mr-2"></i>
-                Become a Host
+                {t('nav.becomeHost')}
               </button>
 
               {/* Profile Section Mobile */}
@@ -451,7 +485,7 @@ const Navbar = () => {
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-speedometer2 mr-3"></i>
-                    Dashboard
+                    {t('nav.dashboard')}
                   </a>
                   <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
@@ -459,7 +493,7 @@ const Navbar = () => {
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-person mr-3"></i>
-                    Profile
+                    {t('nav.profile')}
                   </a>
 
                   <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
@@ -468,14 +502,14 @@ const Navbar = () => {
                       : 'text-white/80 hover:bg-white/10'
                   }`}>
                     <i className="bi bi-gear mr-3"></i>
-                    Settings
+                    {t('nav.settings')}
                   </a>
                   <button 
                     onClick={handleLogout}
                     className="w-full text-left flex items-center px-6 py-2 text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"
                   >
                     <i className="bi bi-box-arrow-right mr-3"></i>
-                    Sign out
+                    {t('nav.signOut')}
                   </button>
                 </div>
               ) : (
@@ -491,7 +525,7 @@ const Navbar = () => {
                         : 'text-white hover:bg-white/10'
                     }`}
                   >
-                    Sign in
+                    {t('nav.signIn')}
                   </button>
                   <button
                     onClick={() => {
@@ -500,7 +534,7 @@ const Navbar = () => {
                     }}
                     className="w-full px-3 py-2 bg-[#083A85] text-white text-base font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                   >
-                    Sign up
+                    {t('nav.signUp')}
                   </button>
                 </div>
               )}

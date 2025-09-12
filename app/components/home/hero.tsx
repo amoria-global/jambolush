@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from '../../lib/LanguageContext';
 
 interface Tab {
   value: string;
@@ -22,6 +23,8 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ onSearch }) => {
+  const t = useTranslations();
+  
   // Fix: Initialize selectedTab with 'all' instead of empty string
   const [selectedTab, setSelectedTab] = useState<string>('all');
   const [location, setLocation] = useState<string>('');
@@ -31,9 +34,9 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const tabs: Tab[] = [
-    { value: '', label: 'All', icon: 'bi-grid' },
-    { value: 'spot', label: 'Spot', icon: 'bi-geo-alt' },
-    { value: 'stay', label: 'Stay', icon: 'bi-calendar-check' },
+    { value: 'all', label: t('hero.tabs.all'), icon: 'bi-grid' },
+    { value: 'spot', label: t('hero.tabs.spot'), icon: 'bi-geo-alt' },
+    { value: 'stay', label: t('hero.tabs.stay'), icon: 'bi-calendar-check' },
   ];
 
   const allLocations: string[] = [
@@ -115,10 +118,29 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     : [];
 
   const getSearchSuggestions = (): string[] => {
+    // Use translated suggestions
     const baseSuggestions: SearchSuggestion = {
-      all: ['2 bedroom apartment', '3 bedroom house', 'furnished studio', 'villa with pool', 'modern apartment'],
-      spot: ['office space', 'meeting room', 'coworking desk', 'event venue', 'conference hall'],
-      stay: ['vacation rental', 'guest house', 'hotel apartment', 'serviced apartment', 'short-term rental']
+      all: [
+        t('hero.suggestions.all.apartment'),
+        t('hero.suggestions.all.house'),
+        t('hero.suggestions.all.studio'),
+        t('hero.suggestions.all.villa'),
+        t('hero.suggestions.all.modern')
+      ],
+      spot: [
+        t('hero.suggestions.spot.office'),
+        t('hero.suggestions.spot.meeting'),
+        t('hero.suggestions.spot.coworking'),
+        t('hero.suggestions.spot.event'),
+        t('hero.suggestions.spot.conference')
+      ],
+      stay: [
+        t('hero.suggestions.stay.vacation'),
+        t('hero.suggestions.stay.guest'),
+        t('hero.suggestions.stay.hotel'),
+        t('hero.suggestions.stay.serviced'),
+        t('hero.suggestions.stay.shortterm')
+      ]
     };
     
     if (!searchKeyword) return [];
@@ -170,11 +192,11 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const clearSearch = (): void => {
     setLocation('');
     setSearchKeyword('');
-    setSelectedTab('');
+    setSelectedTab('all');
     
     if (onSearch) {
       onSearch({
-        type: '',
+        type: 'all',
         location: '',
         keyword: ''
       });
@@ -195,6 +217,15 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const primaryPink = '#F20C8F';
   const overlayColor = 'rgba(8, 58, 133, 0.2)';
 
+  // Quick filters array with translations
+  const quickFilters = [
+    t('hero.quickFilters.under500'),
+    t('hero.quickFilters.petFriendly'),
+    t('hero.quickFilters.parking'),
+    t('hero.quickFilters.furnished'),
+    t('hero.quickFilters.nearMetro')
+  ];
+
   return (
     <div 
       className="min-h-screen flex items-center justify-center relative"
@@ -211,10 +242,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
       {/* Content */}
       <div className="relative z-10 pt-16 xs:pt-4 sm:pt-8 md:pt-5 lg:pt-0 text-center text-white px-4 w-full max-w-6xl mx-auto">
         <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-4 sm:mb-4">
-          Discover your place to live
+          {t('hero.title')}
         </h1>
         <p className=" text-base max-w-[200px] sm:max-w-full sm:block  mx-auto lg:text-lg mb-8 md:mb-12 opacity-90">
-          Let us help you make the right move today!
+          {t('hero.subtitle')}
         </p>
         
         {/* Enhanced Search Container */}
@@ -253,7 +284,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                   ></i>
                   <input 
                     type="text" 
-                    placeholder="Browse location"
+                    placeholder={t('hero.placeholders.location')}
                     value={location}
                     onChange={(e) => {
                       setLocation(e.target.value);
@@ -298,7 +329,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                   ></i>
                   <input 
                     type="text" 
-                    placeholder="Search properties, keywords..."
+                    placeholder={t('hero.placeholders.search')}
                     value={searchKeyword}
                     onChange={(e) => {
                       setSearchKeyword(e.target.value);
@@ -342,18 +373,18 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                 style={{ backgroundColor: primaryPink }}
               >
                 <i className="bi bi-search"></i>
-                <span>Search</span>
+                <span>{t('hero.buttons.search')}</span>
               </button>
             </div>
             
             {/* Clear Search Button (only show when there are active filters) */}
-            {(location || searchKeyword || selectedTab !== '') && (
+            {(location || searchKeyword || selectedTab !== 'all') && (
               <div className="mt-4 text-center">
                 <button
                   onClick={clearSearch}
                   className="text-gray-600 hover:text-gray-800 underline text-sm"
                 >
-                  Clear all filters
+                  {t('hero.buttons.clearFilters')}
                 </button>
               </div>
             )}
@@ -361,8 +392,8 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             {/* Quick Filters */}
             <div className="mt-6 pt-6 border-t border-gray-200 hidden sm:block">
               <div className="hidden sm:flex flex-wrap gap-2 items-center">
-                <span className="text-base text-gray-500 mr-2">Quick filters:</span>
-                {['Under $500', 'Pet Friendly', 'Parking', 'Furnished', 'Near Metro'].map((filter, index) => (
+                <span className="text-base text-gray-500 mr-2">{t('hero.quickFiltersLabel')}:</span>
+                {quickFilters.map((filter, index) => (
                   <button
                     key={index}
                     onClick={() => {
@@ -383,15 +414,15 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
         <div className="mt-4 sm:mt-8 flex flex-wrap justify-center gap-6 md:gap-12 text-white">
           <div className="flex items-center gap-2">
             <i className="bi bi-shield-check text-xl"></i>
-            <span className="text-base md:text-base">Verified Listings</span>
+            <span className="text-base md:text-base">{t('hero.trustIndicators.verified')}</span>
           </div>
           <div className="flex items-center gap-2">
             <i className="bi bi-headset text-xl"></i>
-            <span className="text-base md:text-base">24/7 Support</span>
+            <span className="text-base md:text-base">{t('hero.trustIndicators.support')}</span>
           </div>
           <div className="flex items-center gap-2">
             <i className="bi bi-cash-stack text-xl"></i>
-            <span className="text-base md:text-base">Best Prices</span>
+            <span className="text-base md:text-base">{t('hero.trustIndicators.prices')}</span>
           </div>
         </div>
       </div>

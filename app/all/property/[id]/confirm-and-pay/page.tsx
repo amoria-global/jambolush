@@ -3,16 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../../api/apiService';
+import { decodeId } from '@/app/utils/encoder';
 
 interface PaymentPageProps {}
 
 interface BookingData {
+  id: string;
   propertyId: number;
   propertyName: string;
   checkIn: string;
   checkOut: string;
   guests: number;
   nights: number;
+  totalPrice: number;
   priceBreakdown?: {
     basePrice: number;
     subtotal: number;
@@ -27,12 +30,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  const [paymentTiming, setPaymentTiming] = useState<'now' | 'later' | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo' | 'airtel' | 'mpesa' | null>(null);
   const [isLoggedIn] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
+  const [fetchingBooking, setFetchingBooking] = useState(true);
 
   // Form data states
   const [cardData, setCardData] = useState({
@@ -46,87 +49,94 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     phoneNumber: ''
   });
 
-  // Load booking data from URL params and validate
+  // Load booking data from booking ID
   useEffect(() => {
-    const propertyId = searchParams.get('propertyId');
-    const checkIn = searchParams.get('checkIn');
-    const checkOut = searchParams.get('checkOut');
-    const guests = searchParams.get('guests');
+    const decodedId = decodeId(searchParams.get('bookingId') || '');
+    const bookingId = decodedId;
 
-    if (propertyId && checkIn && checkOut && guests) {
-      const nights = Math.ceil(
-        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
-      );
+    if (bookingId) {
+      fetchBookingData(bookingId);
+    } else {
+      setErrors({ general: 'Booking ID is required' });
+      setFetchingBooking(false);
+    }
+  }, [searchParams]);
 
-      // Validate booking and get pricing
-      const validateAndSetBooking = async () => {
+  const fetchBookingData = async (bookingId: string) => {
+    try {
+      setFetchingBooking(true);
+      
+      // Fetch booking details from API
+      const response = await api.getBooking(bookingId);
+      
+      if (response.data.success && response.data.data) {
+        const booking = response.data.data;
+        
+        // Calculate nights
+        const nights = Math.ceil(
+          (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        // Get property details if needed (optional)
+        let propertyName = 'Property Booking';
         try {
-          const validation = await api.validateBooking(
-            parseInt(propertyId),
-            checkIn,
-            checkOut,
-            parseInt(guests)
-          );
-
-          if (validation.data.success && validation.data.data.priceBreakdown) {
-            setBookingData({
-              propertyId: parseInt(propertyId),
-              propertyName: 'Property Booking', // This could be fetched from property API
-              checkIn,
-              checkOut,
-              guests: parseInt(guests),
-              nights,
-              priceBreakdown: validation.data.data.priceBreakdown
-            });
-          } else {
-            // Fallback with estimated pricing
-            const basePrice = 150; // This should come from property data
-            setBookingData({
-              propertyId: parseInt(propertyId),
-              propertyName: 'Property Booking',
-              checkIn,
-              checkOut,
-              guests: parseInt(guests),
-              nights,
-              priceBreakdown: {
-                basePrice,
-                subtotal: basePrice * nights,
-                cleaningFee: 35,
-                serviceFee: 25,
-                taxes: Math.round((basePrice * nights + 35 + 25) * 0.08),
-                total: Math.round((basePrice * nights + 35 + 25) * 1.08)
-              }
-            });
+          const propertyResponse = await api.getProperty(booking.propertyId);
+          if (propertyResponse.data.success && propertyResponse.data.data) {
+            propertyName = propertyResponse.data.data.name || propertyName;
           }
         } catch (error) {
-          console.error('Booking validation failed:', error);
-          // Set fallback data
-          const basePrice = 150;
-          setBookingData({
-            propertyId: parseInt(propertyId),
-            propertyName: 'Property Booking',
-            checkIn,
-            checkOut,
-            guests: parseInt(guests),
-            nights,
-            priceBreakdown: {
-              basePrice,
-              subtotal: basePrice * nights,
-              cleaningFee: 35,
-              serviceFee: 25,
-              taxes: Math.round((basePrice * nights + 35 + 25) * 0.08),
-              total: Math.round((basePrice * nights + 35 + 25) * 1.08)
-            }
-          });
+          console.warn('Could not fetch property details:', error);
         }
-      };
 
-      validateAndSetBooking();
-    } else {
-      // Redirect back if missing data
-      router.push('/');
+        // Calculate price breakdown if not already available
+        let priceBreakdown = {
+          basePrice: 150, // Default or fetch from property
+          subtotal: booking.totalPrice || 0,
+          cleaningFee: 35,
+          serviceFee: 25,
+          taxes: Math.round((booking.totalPrice || 0) * 0.08),
+          total: booking.totalPrice || 0
+        };
+
+        // If we can calculate more accurate breakdown
+        if (booking.totalPrice) {
+          const estimatedSubtotal = Math.round(booking.totalPrice / 1.08 - 60); // Remove fees and taxes
+          const basePrice = Math.round(estimatedSubtotal / nights);
+          
+          priceBreakdown = {
+            basePrice,
+            subtotal: estimatedSubtotal,
+            cleaningFee: 35,
+            serviceFee: 25,
+            taxes: Math.round((estimatedSubtotal + 60) * 0.08),
+            total: booking.totalPrice
+          };
+        }
+
+        setBookingData({
+          id: booking.id,
+          propertyId: booking.propertyId,
+          propertyName,
+          checkIn: booking.checkIn,
+          checkOut: booking.checkOut,
+          guests: booking.guests,
+          nights,
+          totalPrice: booking.totalPrice,
+          priceBreakdown
+        });
+      } else {
+        setErrors({ general: 'Booking not found or invalid' });
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch booking:', error);
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          'Failed to load booking details';
+      setErrors({ general: errorMessage });
+    } finally {
+      setFetchingBooking(false);
     }
-  }, [searchParams, router]);
+  };
 
   const handleCardInputChange = (field: string, value: string) => {
     let formattedValue = value;
@@ -176,60 +186,53 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Validate payment timing
-    if (!paymentTiming) {
-      newErrors.paymentTiming = 'Please select when you want to pay';
+    // Validate payment method
+    if (!paymentMethod) {
+      newErrors.paymentMethod = 'Please select a payment method';
     }
 
-    // Validate payment method and fields for "pay now"
-    if (paymentTiming === 'now') {
-      if (!paymentMethod) {
-        newErrors.paymentMethod = 'Please select a payment method';
+    // Validate card fields
+    if (paymentMethod === 'card') {
+      if (!cardData.cardNumber.replace(/\s/g, '')) {
+        newErrors.cardNumber = 'Card number is required';
+      } else if (cardData.cardNumber.replace(/\s/g, '').length < 13) {
+        newErrors.cardNumber = 'Card number is too short';
       }
 
-      // Validate card fields
-      if (paymentMethod === 'card') {
-        if (!cardData.cardNumber.replace(/\s/g, '')) {
-          newErrors.cardNumber = 'Card number is required';
-        } else if (cardData.cardNumber.replace(/\s/g, '').length < 13) {
-          newErrors.cardNumber = 'Card number is too short';
-        }
+      if (!cardData.cardholderName) {
+        newErrors.cardholderName = 'Cardholder name is required';
+      } else if (cardData.cardholderName.length < 2) {
+        newErrors.cardholderName = 'Cardholder name is too short';
+      }
 
-        if (!cardData.cardholderName) {
-          newErrors.cardholderName = 'Cardholder name is required';
-        } else if (cardData.cardholderName.length < 2) {
-          newErrors.cardholderName = 'Cardholder name is too short';
-        }
-
-        if (!cardData.expiryDate) {
-          newErrors.expiryDate = 'Expiry date is required';
-        } else if (!/^\d{2}\/\d{2}$/.test(cardData.expiryDate)) {
-          newErrors.expiryDate = 'Expiry date must be MM/YY format';
-        } else {
-          // Validate expiry date is not in the past
-          const [month, year] = cardData.expiryDate.split('/');
-          const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1);
-          const now = new Date();
-          now.setDate(1);
-          if (expiryDate < now) {
-            newErrors.expiryDate = 'Card has expired';
-          }
-        }
-
-        if (!cardData.cvv) {
-          newErrors.cvv = 'CVV is required';
-        } else if (cardData.cvv.length < 3) {
-          newErrors.cvv = 'CVV must be at least 3 digits';
+      if (!cardData.expiryDate) {
+        newErrors.expiryDate = 'Expiry date is required';
+      } else if (!/^\d{2}\/\d{2}$/.test(cardData.expiryDate)) {
+        newErrors.expiryDate = 'Expiry date must be MM/YY format';
+      } else {
+        // Validate expiry date is not in the past
+        const [month, year] = cardData.expiryDate.split('/');
+        const expiryDate = new Date(2000 + parseInt(year), parseInt(month) - 1);
+        const now = new Date();
+        now.setDate(1);
+        if (expiryDate < now) {
+          newErrors.expiryDate = 'Card has expired';
         }
       }
 
-      // Validate mobile money fields
-      if (paymentMethod && ['momo', 'airtel', 'mpesa'].includes(paymentMethod)) {
-        if (!mobileData.phoneNumber) {
-          newErrors.phoneNumber = 'Phone number is required';
-        } else if (mobileData.phoneNumber.length < 10) {
-          newErrors.phoneNumber = 'Phone number is too short';
-        }
+      if (!cardData.cvv) {
+        newErrors.cvv = 'CVV is required';
+      } else if (cardData.cvv.length < 3) {
+        newErrors.cvv = 'CVV must be at least 3 digits';
+      }
+    }
+
+    // Validate mobile money fields
+    if (paymentMethod && ['momo', 'airtel', 'mpesa'].includes(paymentMethod)) {
+      if (!mobileData.phoneNumber) {
+        newErrors.phoneNumber = 'Phone number is required';
+      } else if (mobileData.phoneNumber.length < 10) {
+        newErrors.phoneNumber = 'Phone number is too short';
       }
     }
 
@@ -237,19 +240,14 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+// Updated handleSubmit function in PaymentPage component
+
   const handleSubmit = async () => {
     if (!validateForm() || !bookingData) {
       return;
     }
 
-    // Add explicit check for paymentTiming to satisfy TypeScript
-    if (!paymentTiming) {
-      setErrors({ general: 'Please select when you want to pay' });
-      return;
-    }
-
-    // Add explicit check for paymentMethod when paying now
-    if (paymentTiming === 'now' && !paymentMethod) {
+    if (!paymentMethod) {
       setErrors({ general: 'Please select a payment method' });
       return;
     }
@@ -258,61 +256,81 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setLoading(true);
       setErrors({});
 
-      // Build base payload
-      const bookingPayload: any = {
-        propertyId: bookingData.propertyId,
-        checkIn: bookingData.checkIn,
-        checkOut: bookingData.checkOut,
-        guests: bookingData.guests,
-        totalPrice: bookingData.priceBreakdown?.total || 0,
-        paymentTiming,
-        paymentMethod: paymentTiming === 'now' ? paymentMethod : 'property',
-        message: ''
+      // Build payment payload matching server expectations
+      const paymentPayload: any = {
+        bookingId: bookingData.id,
+        amount: bookingData.totalPrice, // ✅ Changed from "totalAmount" to "amount"
+        paymentMethod: paymentMethod,
+        
+        // Required fields for escrow validation
+        currency: 'USD', // or 'RWF' based on your logic
+        reference: `booking_${bookingData.id}_${Date.now()}`,
+        description: `Payment for ${bookingData.propertyName} booking`,
+        
+        // Escrow terms (required by validation)
+        escrowTerms: {
+          type: 'automatic',
+          description: 'Automatic release upon successful check-in completion',
+          conditions: [
+            'Property is available as described',
+            'Check-in process completed successfully',
+            'No disputes raised within 24 hours of check-in'
+          ],
+          autoRelease: {
+            enabled: true,
+            date: new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)).toISOString() // 7 days from now
+          },
+          disputeSettings: {
+            deadline: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toISOString() // 30 days from now
+          }
+        }
       };
 
-      // Add payment details based on method
-      if (paymentTiming === 'now' && paymentMethod) {
-        if (paymentMethod === 'card') {
-          bookingPayload.cardDetails = {
-            cardNumber: cardData.cardNumber.replace(/\s/g, ''),
-            expiryDate: cardData.expiryDate,
-            cvv: cardData.cvv,
-            cardholderName: cardData.cardholderName
-          };
-        } else if (['momo', 'airtel', 'mpesa'].includes(paymentMethod)) {
-          bookingPayload.mobileDetails = {
-            phoneNumber: mobileData.phoneNumber
-          };
-        }
+      // Add payment details based on payment method
+      if (paymentMethod === 'card') {
+        // For card payments, add card details
+        paymentPayload.cardDetails = {
+          cardNumber: cardData.cardNumber.replace(/\s/g, ''),
+          expiryDate: cardData.expiryDate,
+          cvv: cardData.cvv,
+          cardholderName: cardData.cardholderName
+        };
+      } else if (['momo', 'airtel', 'mpesa'].includes(paymentMethod)) {
+        // For mobile money, add phone number at top level (backend expects this)
+        paymentPayload.phoneNumber = mobileData.phoneNumber;
+        
+        // Optional: Also include in paymentDetails for consistency
+        paymentPayload.paymentDetails = {
+          type: 'mobile_money',
+          provider: paymentMethod
+        };
       }
 
-      const response = await api.createBooking(bookingPayload);
+      const response = await api.processPayment(paymentPayload);
 
       if (response.data.success) {
-        const bookingId = response.data.data.id;
+        const transactionId = response.data.data.transactionId;
         const confirmationCode = response.data.data.confirmationCode;
         
-        // Redirect to booking confirmation page
-        router.push(`/booking-confirmation/${bookingId}?code=${confirmationCode}`);
+        // Redirect to payment confirmation page
+        router.push(`/payment-confirmation/${bookingData.id}?transaction=${transactionId}&code=${confirmationCode}`);
       } else {
-        setErrors({ general: response.data.message || 'Failed to create booking' });
+        setErrors({ general: response.data.message || 'Payment processing failed' });
       }
     } catch (error: any) {
-      console.error('Booking creation error:', error);
+      console.error('Payment processing error:', error);
       const errorMessage = error?.response?.data?.message || 
-                         error?.response?.data?.errors?.join(', ') ||
-                         error?.message || 
-                         'Failed to create booking. Please try again.';
+                        error?.response?.data?.errors?.join(', ') ||
+                        error?.message || 
+                        'Payment failed. Please try again.';
       setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
     }
   };
 
-  const canShowPaymentMethods = paymentTiming === 'now';
-  const canShowPaymentForm = paymentTiming === 'now' && paymentMethod;
-
-  if (!bookingData) {
+  // Loading state while fetching booking
+  if (fetchingBooking) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -323,8 +341,38 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     );
   }
 
+  // Error state
+  if (errors.general && !bookingData) {
+    let returnPath = "/";
+    if (errors.general.includes('401') || errors.general.includes('Authentication')) {
+      returnPath = "/all/login?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
+    }
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 mb-4">
+            <i className="bi bi-exclamation-triangle-fill text-4xl"></i>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
+          <p className="text-gray-600 mb-4">{errors.general}</p>
+          <button 
+            onClick={() => router.push(returnPath)}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            {!errors.general.includes('401') && !errors.general.includes('Authentication') ? 'Return to Home' : 'Login to Continue'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
+    <>
+     <head>
+        <title>Confirm and Pay</title>
+      </head>
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4">
+     
       <style jsx>{`
         @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
         
@@ -358,7 +406,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           {/* Left Side - Payment Form */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             
-            {/* Step 1: Payment Timing - Always visible */}
+            {/* Step 1: Payment Method Selection */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center mb-4">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
@@ -366,145 +414,93 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   1
                 </div>
                 <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
-                  Choose when to pay
+                  Select payment method
                 </h2>
               </div>
               
               <div className="space-y-3">
                 <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                  style={{ borderColor: paymentTiming === 'now' ? '#F20C8F' : '#e5e7eb' }}>
+                  style={{ borderColor: paymentMethod === 'card' ? '#F20C8F' : '#e5e7eb' }}>
                   <input
                     type="radio"
-                    name="payment-timing"
-                    value="now"
-                    checked={paymentTiming === 'now'}
-                    onChange={() => setPaymentTiming('now')}
+                    name="payment-method"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={() => setPaymentMethod('card')}
                     className="mr-3"
                     style={{ accentColor: '#F20C8F' }}
                   />
+                  <i className="bi bi-credit-card mr-3 text-xl" style={{ color: '#083A85' }}></i>
                   <div className="flex-1">
-                    <div className="font-medium">Pay now</div>
-                    <div className="text-base text-gray-500">Complete payment immediately</div>
+                    <div className="font-medium">Credit/Debit Card</div>
+                    <div className="text-base text-gray-500">Visa, Mastercard, Amex</div>
                   </div>
                 </label>
                 
                 <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                  style={{ borderColor: paymentTiming === 'later' ? '#F20C8F' : '#e5e7eb' }}>
+                  style={{ borderColor: paymentMethod === 'momo' ? '#F20C8F' : '#e5e7eb' }}>
                   <input
                     type="radio"
-                    name="payment-timing"
-                    value="later"
-                    checked={paymentTiming === 'later'}
-                    onChange={() => setPaymentTiming('later')}
+                    name="payment-method"
+                    value="momo"
+                    checked={paymentMethod === 'momo'}
+                    onChange={() => setPaymentMethod('momo')}
                     className="mr-3"
                     style={{ accentColor: '#F20C8F' }}
                   />
+                  <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
                   <div className="flex-1">
-                    <div className="font-medium">Pay at property</div>
-                    <div className="text-base text-gray-500">Pay when you arrive</div>
+                    <div className="font-medium">Mobile Money (MoMo)</div>
+                    <div className="text-base text-gray-500">MTN Mobile Money</div>
+                  </div>
+                </label>
+                
+                <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
+                  style={{ borderColor: paymentMethod === 'airtel' ? '#F20C8F' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="payment-method"
+                    value="airtel"
+                    checked={paymentMethod === 'airtel'}
+                    onChange={() => setPaymentMethod('airtel')}
+                    className="mr-3"
+                    style={{ accentColor: '#F20C8F' }}
+                  />
+                  <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
+                  <div className="flex-1">
+                    <div className="font-medium">Airtel Money</div>
+                    <div className="text-base text-gray-500">Airtel Mobile Money</div>
+                  </div>
+                </label>
+                
+                <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
+                  style={{ borderColor: paymentMethod === 'mpesa' ? '#F20C8F' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="payment-method"
+                    value="mpesa"
+                    checked={paymentMethod === 'mpesa'}
+                    onChange={() => setPaymentMethod('mpesa')}
+                    className="mr-3"
+                    style={{ accentColor: '#F20C8F' }}
+                  />
+                  <i className="bi bi-cash mr-3 text-xl" style={{ color: '#083A85' }}></i>
+                  <div className="flex-1">
+                    <div className="font-medium">M-Pesa</div>
+                    <div className="text-base text-gray-500">Safaricom M-Pesa</div>
                   </div>
                 </label>
               </div>
-              {errors.paymentTiming && <p className="error-message mt-2">{errors.paymentTiming}</p>}
+              {errors.paymentMethod && <p className="error-message mt-2">{errors.paymentMethod}</p>}
             </div>
 
-            {/* Step 2: Payment Method - Visible when "Pay now" is selected */}
-            {canShowPaymentMethods && (
+            {/* Step 2: Payment Details - Visible when payment method is selected */}
+            {paymentMethod && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
                     style={{ backgroundColor: '#F20C8F' }}>
                     2
-                  </div>
-                  <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
-                    Select payment method
-                  </h2>
-                </div>
-                
-                <div className="space-y-3">
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'card' ? '#F20C8F' : '#e5e7eb' }}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="card"
-                      checked={paymentMethod === 'card'}
-                      onChange={() => setPaymentMethod('card')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
-                    />
-                    <i className="bi bi-credit-card mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Credit/Debit Card</div>
-                      <div className="text-base text-gray-500">Visa, Mastercard, Amex</div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'momo' ? '#F20C8F' : '#e5e7eb' }}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="momo"
-                      checked={paymentMethod === 'momo'}
-                      onChange={() => setPaymentMethod('momo')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
-                    />
-                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Mobile Money (MoMo)</div>
-                      <div className="text-base text-gray-500">MTN Mobile Money</div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'airtel' ? '#F20C8F' : '#e5e7eb' }}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="airtel"
-                      checked={paymentMethod === 'airtel'}
-                      onChange={() => setPaymentMethod('airtel')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
-                    />
-                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Airtel Money</div>
-                      <div className="text-base text-gray-500">Airtel Mobile Money</div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'mpesa' ? '#F20C8F' : '#e5e7eb' }}>
-                    <input
-                      type="radio"
-                      name="payment-method"
-                      value="mpesa"
-                      checked={paymentMethod === 'mpesa'}
-                      onChange={() => setPaymentMethod('mpesa')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
-                    />
-                    <i className="bi bi-cash mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">M-Pesa</div>
-                      <div className="text-base text-gray-500">Safaricom M-Pesa</div>
-                    </div>
-                  </label>
-                </div>
-                {errors.paymentMethod && <p className="error-message mt-2">{errors.paymentMethod}</p>}
-              </div>
-            )}
-
-            {/* Step 3: Payment Details - Visible when payment method is selected */}
-            {canShowPaymentForm && (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
-                    style={{ backgroundColor: '#F20C8F' }}>
-                    3
                   </div>
                   <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
                     Enter payment details
@@ -587,8 +583,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               </div>
             )}
 
-            {/* Order Summary and Submit - Always visible once payment timing is selected */}
-            {paymentTiming && bookingData && (
+            {/* Order Summary and Submit */}
+            {bookingData && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
                   Order Summary
@@ -624,7 +620,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   <div className="border-t pt-3 flex justify-between">
                     <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
                     <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                      ${bookingData.priceBreakdown?.total || 0}
+                      ${bookingData.totalPrice}
                     </span>
                   </div>
                 </div>
@@ -644,10 +640,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      {paymentTiming === 'now' ? 'Processing...' : 'Creating Booking...'}
+                      Processing Payment...
                     </>
                   ) : (
-                    paymentTiming === 'now' ? 'Complete Payment' : 'Confirm Reservation'
+                    'Complete Payment'
                   )}
                 </button>
                 
@@ -678,7 +674,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 </h3>
                 <div className="flex items-center mt-1 text-base text-gray-600">
                   <i className="bi bi-geo-alt mr-1"></i>
-                  Booking Confirmation
+                  Payment Processing
                 </div>
               </div>
               
@@ -761,6 +757,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

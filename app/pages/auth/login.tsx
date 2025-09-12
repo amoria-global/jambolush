@@ -107,7 +107,7 @@ function LoginContent() {
     }
     
     // Default redirect with token
-    return token ? `http://localhost:3001?token=${token}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}` : 'https://app.jambolush.com';
   };
 
   // Helper function to perform redirect
@@ -161,76 +161,84 @@ function LoginContent() {
   }, []);
 
   // Also update the Google auth callback:
-  const handleGoogleCallback = async (response: any) => {
-    setGoogleLoading(true);
-    
-    try {
-      // The response contains the ID token from Google
-      const result = await api.post('/auth/google', {
-        token: response.credential,
-      });
+const handleGoogleCallback = async (response: any) => {
+  setGoogleLoading(true);
+  
+  try {
+    // The response contains the ID token from Google
+    const result = await api.post('/auth/google', {
+      token: response.credential,
+    });
 
-      // Success - store token and redirect
-      if (result.data?.token || result.data?.accessToken) {
-        const token = result.data.token || result.data.accessToken;
-        localStorage.setItem('authToken', token);
-        if (result.data.refreshToken) {
-          localStorage.setItem('refreshToken', result.data.refreshToken);
-        }
-        
-        setNotify({type: "success", message: "Successfully signed in with Google!"});
-        
-        // Redirect using the redirect handler
-        setTimeout(() => {
-          performRedirect(token);
-        }, 2000);
-      }
-    } catch (error: any) {
-      console.error('Google auth error:', error);
-      
-      let errorMessage = "Google authentication failed. Please try again.";
-      
-      if (error.data?.message) {
-        errorMessage = error.data.message;
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.status === 401) {
-        errorMessage = "Authentication failed. Please check your credentials.";
-      } else if (error.status === 404) {
-        errorMessage = "Account not found. Please sign up first.";
+    // Success - store token and check status
+    if (result.data?.token || result.data?.accessToken) {
+      const token = result.data.token || result.data.accessToken;
+      localStorage.setItem('authToken', token);
+      if (result.data.refreshToken) {
+        localStorage.setItem('refreshToken', result.data.refreshToken);
       }
       
-      // Check if user needs to set up password first (even for Google auth)
-      if (errorMessage.includes('Please set up your password first') || 
-          errorMessage.includes('Check your email for instructions')) {
-        
-        // For Google auth, we might not have the email, so check if it's in the token
-        try {
-          const tokenData = JSON.parse(atob(response.credential.split('.')[1]));
-          if (tokenData.email) {
-            localStorage.setItem('pendingVerificationEmail', tokenData.email);
-          }
-        } catch (e) {
-          console.log('Could not extract email from Google token');
-        }
-        
-        setNotify({type: "info", message: "Please check your email to set up your password first."});
-        
-        setTimeout(() => {
-          const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
-          const verificationUrl = currentRedirect 
-            ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
-            : '/all/account-verification';
-          router.push(verificationUrl);
-        }, 2000);
-        
+      // Check user status before redirecting
+      const userData = result.data?.user || result.data;
+      const userStatus = userData?.status;
+      
+      if (userStatus === 'active') {
+        setNotify({type: "success", message: "Successfully signed in with Google! Redirecting to dashboard..."});
       } else {
-        setNotify({type: "error", message: errorMessage});
+        setNotify({type: "success", message: "Successfully signed in with Google!"});
       }
-    } finally {
-      setGoogleLoading(false);
+      
+      // Handle redirect based on status
+      setTimeout(() => {
+        handleUserRedirect(userData, token);
+      }, 2000);
     }
-  };
+  } catch (error: any) {
+    console.error('Google auth error:', error);
+    
+    let errorMessage = "Google authentication failed. Please try again.";
+    
+    if (error.data?.message) {
+      errorMessage = error.data.message;
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.status === 401) {
+      errorMessage = "Authentication failed. Please check your credentials.";
+    } else if (error.status === 404) {
+      errorMessage = "Account not found. Please sign up first.";
+    }
+    
+    // Check if user needs to set up password first (even for Google auth)
+    if (errorMessage.includes('Please set up your password first') || 
+        errorMessage.includes('Check your email for instructions')) {
+      
+      // For Google auth, we might not have the email, so check if it's in the token
+      try {
+        const tokenData = JSON.parse(atob(response.credential.split('.')[1]));
+        if (tokenData.email) {
+          localStorage.setItem('pendingVerificationEmail', tokenData.email);
+        }
+      } catch (e) {
+        console.log('Could not extract email from Google token');
+      }
+      
+      setNotify({type: "info", message: "Please check your email to set up your password first."});
+      
+      setTimeout(() => {
+        const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+        const verificationUrl = currentRedirect 
+          ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
+          : '/all/account-verification';
+        router.push(verificationUrl);
+      }, 2000);
+      
+    } else {
+      setNotify({type: "error", message: errorMessage});
+    }
+  } finally {
+    setGoogleLoading(false);
+  }
+};
 
   // Trigger Google Sign-In
   const handleGoogleSignIn = () => {
@@ -298,6 +306,85 @@ function LoginContent() {
     setShowPassword(!showPassword);
   };
 
+  // Helper function to handle redirects based on user status
+const handleUserRedirect = (userData: any, token?: string) => {
+  const userStatus = userData?.status || userData?.user?.status;
+  
+  switch (userStatus) {
+    case 'active':
+      // Allow normal redirect for active users
+      performRedirect(token);
+      break;
+      
+    case 'pending':
+    case 'unverified':
+      // User needs to verify their account
+      setNotify({
+        type: "warning", 
+        message: "Please verify your email address before accessing the dashboard. Check your inbox for verification instructions."
+      });
+      
+      // Store user email for verification page
+      const userEmail = userData?.email || userData?.user?.email;
+      if (userEmail) {
+        localStorage.setItem('pendingVerificationEmail', userEmail);
+      }
+      
+      // Redirect to verification page
+      setTimeout(() => {
+        const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+        const verificationUrl = currentRedirect 
+          ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
+          : '/all/account-verification';
+        router.push(verificationUrl);
+      }, 3000);
+      break;
+      
+    case 'suspended':
+    case 'banned':
+      // Account is suspended or banned
+      setNotify({
+        type: "error", 
+        message: "Your account has been suspended. Please contact support for assistance."
+      });
+      
+      // Don't redirect, keep user on login page
+      setTimeout(() => {
+        router.push('/all/contact-support');
+      }, 3000);
+      break;
+      
+    case 'inactive':
+    case 'disabled':
+      // Account is inactive
+      setNotify({
+        type: "error", 
+        message: "Your account is inactive. Please contact support to reactivate your account."
+      });
+      
+      // Don't redirect, keep user on login page
+      setTimeout(() => {
+        router.push('/all/contact-support');
+      }, 3000);
+      break;
+      
+    default:
+      // Unknown status or no status provided
+      setNotify({
+        type: "error", 
+        message: "Unable to determine account status. Please contact support."
+      });
+      
+      // Log the issue for debugging
+      console.error('Unknown user status:', userStatus, userData);
+      
+      setTimeout(() => {
+        router.push('/all/contact-support');
+      }, 3000);
+      break;
+  }
+};
+
   // Handle form submission
     const handleSubmit = async (e?: React.FormEvent) => {
       e?.preventDefault();
@@ -320,14 +407,28 @@ function LoginContent() {
           }
         }
         
-        // Show success message
-        setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting..."});
+        // Check user status before redirecting
+        const userData = response.data?.user || response.data;
+        const userStatus = userData?.status;
         
-        // Redirect using the redirect handler
-        setTimeout(() => {
-          const token = response.data?.accessToken || response.data?.token;
-          performRedirect(token);
-        }, 2000);
+        if (userStatus === 'active') {
+          // Show success message for active users
+          setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting to dashboard..."});
+          
+          // Redirect after delay
+          setTimeout(() => {
+            const token = response.data?.accessToken || response.data?.token;
+            handleUserRedirect(userData, token);
+          }, 2000);
+        } else {
+          // Handle non-active users
+          setNotify({type: "success", message: "Login successful!"});
+          
+          setTimeout(() => {
+            const token = response.data?.accessToken || response.data?.token;
+            handleUserRedirect(userData, token);
+          }, 1500);
+        }
         
       } catch (error: any) {
         console.error('Login failed:', error);
@@ -363,7 +464,7 @@ function LoginContent() {
       } finally {
         setLoading(false);
       }
-};
+    };
 
   // Show redirect info if present (for debugging/user awareness)
   const redirectInfo = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');

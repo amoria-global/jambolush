@@ -115,11 +115,11 @@ const AccountVerificationPage = () => {
     // Default redirect based on context
     if (isApplicationFlow) {
       // For applications, redirect to a welcome/onboarding page
-      return token ? `https://app.jambolush.com?token=${token}&type=${userType}` : '/welcome';
+      return token ? `https://app.jambolush.com/all/${userType}?token=${token}` : '/';
     }
     
     // For regular login flow
-    return token ? `https://app.jambolush.com?token=${token}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com/all/${userType}?token=${token}` : '/';
   };
 
   const performRedirect = (token?: string) => {

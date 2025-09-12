@@ -16,6 +16,7 @@ interface Property {
   name: string;
   location: string;
   category: string;
+  type?: string;
   pricePerNight: number;
   image?: string;
   rating?: number;
@@ -30,6 +31,7 @@ interface HouseCardProperty {
   id: number;
   image: string;
   category: string;
+  type?: string;
   title: string;
   pricePerNight: string;
   location: string;
@@ -69,6 +71,7 @@ const Home = () => {
       title: backendProperty.name,
       image: backendProperty.image || getDefaultImage(),
       category: capitalizeFirstLetter(backendProperty.category),
+      type: backendProperty.type || 'N/A',
       pricePerNight: `$${backendProperty.pricePerNight}`,
       location: backendProperty.location,
       beds: backendProperty.beds,
@@ -220,6 +223,7 @@ const Home = () => {
       image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80",
       category: "Villa",
       title: "Modern Villa with Pool",
+      type: "villa",
       pricePerNight: "$120",
       location: "Beverly Hills, CA",
       beds: 4,
@@ -234,6 +238,7 @@ const Home = () => {
       image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
       category: "Apartment",
       title: "Downtown Luxury Apartment",
+      type: "apartment",
       pricePerNight: "$89",
       location: "Manhattan, NY",
       beds: 2,

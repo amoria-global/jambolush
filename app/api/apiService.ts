@@ -208,6 +208,52 @@ export interface User {
   profileImage?: string;
 }
 
+interface EscrowTerms {
+  type: 'manual' | 'automatic' | 'conditional' | 'milestone';
+  description: string;
+  conditions: string[];
+  autoRelease?: {
+    enabled: boolean;
+    date?: string;
+    conditions?: string[];
+  };
+  disputeSettings?: {
+    deadline?: string;
+  };
+  milestones?: Array<{
+    title: string;
+    description: string;
+    amount: number;
+    percentage: number;
+    dueDate?: string;
+  }>;
+}
+
+interface PaymentDetails {
+  type: 'card' | 'mobile_money';
+  // For card payments
+  cardNumber?: string;
+  expiryDate?: string;
+  cvv?: string;
+  cardholderName?: string;
+  // For mobile money payments
+  provider?: 'momo' | 'airtel' | 'mpesa';
+  phoneNumber?: string;
+}
+
+interface PaymentRequest {
+  bookingId: string;
+  amount: number;
+  paymentMethod: 'card' | 'momo' | 'airtel' | 'mpesa';
+  currency: 'USD' | 'RWF';
+  reference: string;
+  description?: string;
+  escrowTerms: EscrowTerms;
+  paymentDetails?: PaymentDetails;
+  disputeDeadline?: string;
+  autoReleaseDate?: string;
+}
+
 class FrontendAPIService {
   private baseURL: string;
   private defaultHeaders: Record<string, string> = {
@@ -453,7 +499,7 @@ class FrontendAPIService {
    * Get booking by ID
    */
   async getBooking(bookingId: string): Promise<APIResponse<BackendResponse<BookingInfo>>> {
-    return this.get<BackendResponse<BookingInfo>>(`/bookings/${bookingId}`);
+    return this.get<BackendResponse<BookingInfo>>(`/bookings/properties/${bookingId}`);
   }
 
   /**
@@ -783,14 +829,10 @@ async getPropertyReviewStats(
   /**
    * Process payment
    */
-  async processPayment(paymentData: {
-    bookingId: string;
-    amount: number;
-    paymentMethod: string;
-    paymentDetails?: any;
-  }): Promise<APIResponse<BackendResponse<any>>> {
-    return this.post<BackendResponse<any>>('/payments/process', paymentData);
-  }
+// Updated processPayment method
+async processPayment(paymentData: PaymentRequest): Promise<APIResponse<BackendResponse<any>>> {
+  return this.post<BackendResponse<any>>('/payments/deposit/enhanced', paymentData);
+}
 
   /**
    * Get payment status

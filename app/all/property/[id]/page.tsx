@@ -1,9 +1,11 @@
-//app/all/property/%5Bid%5D/page.tsx
+// app/all/property/[id]/page.tsx
 "use client";
 import AddReviewForm from '@/app/components/forms/add-review-home';
+import AlertNotification from '@/app/components/notify';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
+import { decodeId, encodeId } from '@/app/utils/encoder';
 
 interface HousePageProps {
   params: Promise<{
@@ -46,6 +48,14 @@ interface Review {
   date: string;
   rating: number;
   comment: string;
+}
+
+// Alert notification state interface
+interface AlertState {
+  show: boolean;
+  message: string;
+  type: "success" | "error" | "info" | "warning";
+  duration?: number;
 }
 
 // Transform backend PropertyImages to frontend photos array
@@ -141,6 +151,17 @@ export default function HousePage({ params }: HousePageProps) {
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
   const [occupiedDates, setOccupiedDates] = useState<{start: string, end: string}[]>([]);
+  
+  // Alert notification state
+  const [alert, setAlert] = useState<AlertState>({
+    show: false,
+    message: '',
+    type: 'info'
+  });
+
+  // Property ID validation state
+  const [validPropertyId, setValidPropertyId] = useState<any | null>(null);
+  const [invalidId, setInvalidId] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -148,14 +169,55 @@ export default function HousePage({ params }: HousePageProps) {
   // Get today's date for min date attribute
   const today = new Date().toISOString().split('T')[0];
 
+  // Validate and decode property ID
+  useEffect(() => {
+    if (!resolvedParams.id) {
+      setError('No property ID provided');
+      setInvalidId(true);
+      setLoading(false);
+      return;
+    }
+
+    
+    // Decode the property ID
+    const decodedId = decodeId(resolvedParams.id);
+
+    if (!decodedId) {
+      setError('Unable to decode property ID');
+      setInvalidId(true);
+      setLoading(false);
+      return;
+    }
+
+    setValidPropertyId(decodedId);
+  }, [resolvedParams.id]);
+
+  // Show alert notification
+  const showAlert = (message: string, type: AlertState['type'], duration = 5000) => {
+    setAlert({
+      show: true,
+      message,
+      type,
+      duration
+    });
+  };
+
+  // Hide alert notification
+  const hideAlert = () => {
+    setAlert(prev => ({ ...prev, show: false }));
+  };
+
   // Fetch property data from backend
   useEffect(() => {
     const fetchPropertyData = async () => {
+      if (!validPropertyId) return;
+
       try {
         setLoading(true);
         setError(null);
         
-        const response = await api.getProperty(resolvedParams.id);
+        // Use the decoded numeric ID for API call
+        const response = await api.getProperty(validPropertyId);
         
         if (response.data.success) {
           const transformedHouse = transformPropertyData(response.data.data);
@@ -167,12 +229,16 @@ export default function HousePage({ params }: HousePageProps) {
             start: dateRange.start || dateRange.startDate,
             end: dateRange.end || dateRange.endDate
           })));
+
+          showAlert('Property loaded successfully', 'success', 3000);
         } else {
           throw new Error(response.data.message || 'Failed to fetch property');
         }
       } catch (err: any) {
         console.error('Failed to fetch property:', err);
-        setError(err?.message || 'Failed to load property');
+        const errorMessage = err?.message || 'Failed to load property';
+        setError(errorMessage);
+        showAlert(`Error: ${errorMessage}`, 'error');
         
         // Fallback to sample data if API fails
         setHouse({
@@ -196,23 +262,21 @@ export default function HousePage({ params }: HousePageProps) {
       }
     };
 
-    if (resolvedParams.id) {
-      fetchPropertyData();
-    }
-  }, [resolvedParams.id]);
+    fetchPropertyData();
+  }, [validPropertyId]);
 
   // Fetch reviews from API
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!resolvedParams.id) return;
+      if (!validPropertyId) return;
       
       try {
         setReviewsLoading(true);
-        const response = await api.get(`/properties/${resolvedParams.id}/reviews`);
+        const response = await api.get(`/properties/${validPropertyId}/reviews`);
         
         if (response.data.success) {
           // Transform backend review data to frontend format
-          const transformedReviews = response.data.data.map((review: any) => ({
+          const transformedReviews = response.data.map((review: any) => ({
             id: review.id,
             name: review.userName || review.guestName || 'Anonymous',
             date: new Date(review.createdAt).toLocaleDateString('en-US', { 
@@ -234,7 +298,7 @@ export default function HousePage({ params }: HousePageProps) {
     };
 
     fetchReviews();
-  }, [resolvedParams.id]);
+  }, [validPropertyId]);
 
   // Helper function to check if a single date is occupied
   const isDateInOccupiedRange = (date: string) => {
@@ -263,6 +327,46 @@ export default function HousePage({ params }: HousePageProps) {
     });
   };
 
+  // Validate reservation data
+  const validateReservation = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    if (!checkInDate) {
+      errors.push('Check-in date is required');
+    }
+
+    if (!checkOutDate) {
+      errors.push('Check-out date is required');
+    }
+
+    if (checkInDate && checkOutDate) {
+      if (new Date(checkOutDate) <= new Date(checkInDate)) {
+        errors.push('Check-out date must be after check-in date');
+      }
+
+      if (isRangeOccupied(checkInDate, checkOutDate)) {
+        errors.push('Selected dates are not available');
+      }
+    }
+
+    if (!guests || guests < 1) {
+      errors.push('At least 1 guest is required');
+    }
+
+    if (guests > (house?.guests || 1)) {
+      errors.push(`Maximum ${house?.guests} guests allowed`);
+    }
+
+    if (!validPropertyId) {
+      errors.push('Invalid property ID');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  };
+
   // Handle check-in date change with validation
   const handleCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
@@ -270,17 +374,20 @@ export default function HousePage({ params }: HousePageProps) {
     if (isDateInOccupiedRange(newDate)) {
       setDateError('Check-in date is not available. Please select another date.');
       setCheckInDate('');
+      showAlert('Check-in date is not available', 'warning');
       return;
     }
     
     setCheckInDate(newDate);
     setDateError('');
     setBookingError(null);
+    hideAlert();
     
     // If check-out is set and creates an occupied range, clear it
     if (checkOutDate && isRangeOccupied(newDate, checkOutDate)) {
       setCheckOutDate('');
       setDateError('This date range includes occupied dates. Please select new dates.');
+      showAlert('Date range includes occupied dates', 'warning');
     }
   };
 
@@ -291,34 +398,31 @@ export default function HousePage({ params }: HousePageProps) {
     if (isDateInOccupiedRange(newDate)) {
       setDateError('Check-out date is not available. Please select another date.');
       setCheckOutDate('');
+      showAlert('Check-out date is not available', 'warning');
       return;
     }
     
     if (checkInDate && isRangeOccupied(checkInDate, newDate)) {
       setDateError('This date range includes occupied dates. Please select different dates.');
       setCheckOutDate('');
+      showAlert('Date range includes occupied dates', 'warning');
       return;
     }
     
     setCheckOutDate(newDate);
     setDateError('');
     setBookingError(null);
+    hideAlert();
   };
 
   // Create property booking via API
-// Replace the error handling section in your handleReserve function
-// Around line 372 in your page.tsx file
-
   const handleReserve = async () => {
-    if (!checkInDate || !checkOutDate) {
-      setDateError('Please select check-in and check-out dates');
-      return;
-    }
-    if (new Date(checkOutDate) <= new Date(checkInDate)) {
-      setDateError('Check-out date must be after check-in date');
-      return;
-    }
-    if (dateError) {
+    // Validate reservation data
+    const validation = validateReservation();
+    if (!validation.isValid) {
+      const errorMessage = validation.errors.join('. ');
+      setDateError(errorMessage);
+      showAlert(`Validation failed: ${errorMessage}`, 'error');
       return;
     }
 
@@ -326,18 +430,21 @@ export default function HousePage({ params }: HousePageProps) {
       setBookingLoading(true);
       setBookingError(null);
       setBookingSuccess(false);
+      hideAlert();
       
       // Get auth token
       const token = localStorage.getItem('authToken');
       if (!token) {
-        setBookingError('Please log in to make a booking');
+        const loginMessage = 'Please log in to make a booking';
+        setBookingError(loginMessage);
+        showAlert(loginMessage, 'warning');
         router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
         return;
       }
 
-      // Prepare booking data
+      // Prepare booking data using the decoded property ID
       const bookingData: CreatePropertyBookingDto = {
-        propertyId: parseInt(resolvedParams.id),
+        propertyId: parseInt(validPropertyId)!,
         checkIn: checkInDate,
         checkOut: checkOutDate,
         guests: guests,
@@ -359,8 +466,15 @@ export default function HousePage({ params }: HousePageProps) {
         setBookingSuccess(true);
         setCreatedBooking(result.data);
         
+        // Show success notification
+        showAlert('Booking created successfully! Redirecting to payment...', 'success', 3000);
+        
+        // Encode the booking ID for secure URL
+        const encodedBookingId = encodeId(result.data.id);
+        
+        // Navigate to confirm and pay page with encoded booking ID
         setTimeout(() => {
-          router.push(`${usePathname()}/confirm-and-pay?booking=${result.data?.id}`);
+          router.push(`/all/property/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
         }, 2000);
         
       } else {
@@ -368,10 +482,8 @@ export default function HousePage({ params }: HousePageProps) {
         let errorMessage = 'Something went wrong. Please try again.';
         
         if (result.data?.message) {
-          // Use the specific error message from the API
           errorMessage = result.data.message;
         } else if (result.message) {
-          // Fallback to the top-level message
           errorMessage = result.message;
         }
         
@@ -379,12 +491,15 @@ export default function HousePage({ params }: HousePageProps) {
         if (errorMessage.toLowerCase().includes('not available') || 
             errorMessage.toLowerCase().includes('dates')) {
           setDateError(errorMessage);
+          showAlert(errorMessage, 'error');
         } else if (errorMessage.toLowerCase().includes('login') || 
                   errorMessage.toLowerCase().includes('auth')) {
           setBookingError('Please log in to continue');
+          showAlert('Authentication required. Redirecting to login...', 'warning');
           router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
         } else {
           setBookingError(errorMessage);
+          showAlert(`Booking failed: ${errorMessage}`, 'error');
         }
       }
 
@@ -411,6 +526,7 @@ export default function HousePage({ params }: HousePageProps) {
             break;
           case 401:
             userMessage = 'Please log in to make a booking';
+            showAlert('Authentication expired. Redirecting to login...', 'warning');
             router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
             break;
           case 403:
@@ -433,18 +549,22 @@ export default function HousePage({ params }: HousePageProps) {
         if (userMessage.toLowerCase().includes('dates') || 
             userMessage.toLowerCase().includes('available')) {
           setDateError(userMessage);
-        } else if (statusCode === 401) {
-          setBookingError('Please log in to continue');
-        } else {
+        } else if (statusCode !== 401) {  // 401 already handled above
           setBookingError(userMessage);
+        }
+        
+        if (statusCode !== 401) {
+          showAlert(userMessage, 'error');
         }
         
       } else if (error.request) {
         // Network error
         setBookingError('Network error. Please check your connection and try again.');
+        showAlert('Network error. Please check your connection and try again.', 'error');
       } else {
         // Other error
         setBookingError('An unexpected error occurred. Please try again.');
+        showAlert('An unexpected error occurred. Please try again.', 'error');
       }
     } finally {
       setBookingLoading(false);
@@ -462,6 +582,7 @@ export default function HousePage({ params }: HousePageProps) {
   const handleUpdateReviewArray = (newReview: any) => {
     setReviews(prev => [...prev, newReview]);
     setShowAllReviews(true);
+    showAlert('Review added successfully!', 'success');
   };
 
   // Reset booking states when dates change
@@ -470,6 +591,39 @@ export default function HousePage({ params }: HousePageProps) {
     setBookingError(null);
     setCreatedBooking(null);
   }, [checkInDate, checkOutDate, guests]);
+
+  // Invalid ID state
+  if (invalidId) {
+    return (
+      <div className="mt-14 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="text-center py-12">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+              <div className="text-red-600 text-lg font-medium mb-2">
+                <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                Invalid Property ID
+              </div>
+              <p className="text-red-500 text-sm mb-4">
+                The property ID in the URL is invalid or corrupted. Please check the link and try again.
+              </p>
+              <button
+                onClick={() => router.push('/all/properties')}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors mr-2"
+              >
+                Browse Properties
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state
   if (loading) {
@@ -529,297 +683,311 @@ export default function HousePage({ params }: HousePageProps) {
 
   return (
     <>
-    <head>
-      <title>{house?.title}</title>
-    </head>
-    <div className="mt-14 bg-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        
-        {/* Error banner if there was an error but fallback data is shown */}
-        {error && house && (
-          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center text-yellow-800">
-              <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-              <span className="text-sm">Some property data could not be loaded. Showing limited information.</span>
-            </div>
-          </div>
-        )}
-
-        {/* Booking Success Message */}
-        {bookingSuccess && createdBooking && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-center text-green-800">
-              <i className="bi bi-check-circle-fill mr-2 text-xl"></i>
-              <div>
-                <p className="font-semibold">Booking Created Successfully!</p>
-                <p className="text-sm">Booking ID: {(createdBooking.id).toUpperCase()} | Status: {createdBooking.status}</p>
-                <p className="text-sm">Redirecting payment...</p>
+      <head>
+        <title>{house?.title}</title>
+      </head>
+      
+      {/* Alert Notification */}
+      {alert.show && (
+        <AlertNotification
+          message={alert.message}
+          type={alert.type}
+          position="top-center"
+          duration={alert.duration}
+          onClose={hideAlert}
+          showProgress={true}
+          autoHide={true}
+        />
+      )}
+      
+      <div className="mt-14 bg-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          
+          {/* Error banner if there was an error but fallback data is shown */}
+          {error && house && (
+            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center text-yellow-800">
+                <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                <span className="text-sm">Some property data could not be loaded. Showing limited information.</span>
               </div>
             </div>
-          </div>
-        )}
-        
-        {/* Title Section */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#083A85] mb-3 sm:mb-4 leading-tight">
-            {house?.title}
-          </h1>
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-base sm:text-base text-gray-700">
-            <span className="flex items-center gap-2">
-              <i className="bi bi-door-open text-[#F20C8F] text-lg sm:text-xl"></i>
-              <span className="font-medium">{house?.bedrooms} Bedrooms</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <i className="bi bi-droplet text-[#F20C8F] text-lg sm:text-xl"></i>
-              <span className="font-medium">{house?.bathrooms} Bathrooms</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <i className="bi bi-house-door text-[#F20C8F] text-lg sm:text-xl"></i>
-              <span className="font-medium">{house?.kitchen} Kitchen</span>
-            </span>
-            <span className="flex items-center gap-2">
-              <i className="bi bi-people text-[#F20C8F] text-lg sm:text-xl"></i>
-              <span className="font-medium">Up to {house?.guests} Guests</span>
-            </span>
-          </div>
-        </div>
+          )}
 
-        {/* Photos Section */}
-        <div className="mb-8 sm:mb-12">
-          {house?.photos && house.photos.length > 0 && (
-            <>
-              {/* Mobile: Single large image with carousel */}
-              <div className="block sm:hidden">
-                <div className="relative h-64 rounded-xl overflow-hidden">
-                  <img 
-                    src={house.photos[selectedPhoto]}
-                    alt={`House view ${selectedPhoto + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                    {house.photos.map((_: string, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedPhoto(idx)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          idx === selectedPhoto ? 'bg-white' : 'bg-white/50'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <button 
-                    className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-base font-medium"
-                    onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
-                  >
-                    <i className="bi bi-grid-3x3-gap mr-1"></i>
-                    All photos
-                  </button>
+          {/* Booking Success Message */}
+          {bookingSuccess && createdBooking && (
+            <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center text-green-800">
+                <i className="bi bi-check-circle-fill mr-2 text-xl"></i>
+                <div>
+                  <p className="font-semibold">Booking Created Successfully!</p>
+                  <p className="text-sm">Booking ID: {(createdBooking.id).toUpperCase()} | Status: {createdBooking.status}</p>
+                  <p className="text-sm">Redirecting to payment...</p>
                 </div>
               </div>
+            </div>
+          )}
+          
+          {/* Title Section */}
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#083A85] mb-3 sm:mb-4 leading-tight">
+              {house?.title}
+            </h1>
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-base sm:text-base text-gray-700">
+              <span className="flex items-center gap-2">
+                <i className="bi bi-door-open text-[#F20C8F] text-lg sm:text-xl"></i>
+                <span className="font-medium">{house?.bedrooms} Bedrooms</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <i className="bi bi-droplet text-[#F20C8F] text-lg sm:text-xl"></i>
+                <span className="font-medium">{house?.bathrooms} Bathrooms</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <i className="bi bi-house-door text-[#F20C8F] text-lg sm:text-xl"></i>
+                <span className="font-medium">{house?.kitchen} Kitchen</span>
+              </span>
+              <span className="flex items-center gap-2">
+                <i className="bi bi-people text-[#F20C8F] text-lg sm:text-xl"></i>
+                <span className="font-medium">Up to {house?.guests} Guests</span>
+              </span>
+            </div>
+          </div>
 
-              {/* Tablet: 2x2 grid */}
-              <div className="hidden sm:block lg:hidden">
-                <div className="grid grid-cols-2 gap-2 h-[400px] rounded-xl overflow-hidden relative">
-                  {house.photos.slice(0, 4).map((photo: string, idx: number) => (
-                    <div 
-                      key={idx} 
-                      className="relative group cursor-pointer overflow-hidden"
-                      onClick={() => setSelectedPhoto(idx)}
-                    >
-                      <img 
-                        src={photo}
-                        alt={`House view ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                    </div>
-                  ))}
-                  <button 
-                    className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-base font-medium"
-                    onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
-                  >
-                    <i className="bi bi-grid-3x3-gap"></i>
-                    Show all photos
-                  </button>
-                </div>
-              </div>
-
-              {/* Desktop: 4x4 grid */}
-              <div className="hidden lg:block">
-                <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
-                  <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setSelectedPhoto(0)}>
+          {/* Photos Section */}
+          <div className="mb-8 sm:mb-12">
+            {house?.photos && house.photos.length > 0 && (
+              <>
+                {/* Mobile: Single large image with carousel */}
+                <div className="block sm:hidden">
+                  <div className="relative h-64 rounded-xl overflow-hidden">
                     <img 
-                      src={house.photos[0]}
-                      alt="Primary house view"
+                      src={house.photos[selectedPhoto]}
+                      alt={`House view ${selectedPhoto + 1}`}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                  </div>
-                  {house.photos.slice(1).map((photo: string, idx: number) => (
-                    <div 
-                      key={idx} 
-                      className="relative group cursor-pointer overflow-hidden"
-                      onClick={() => setSelectedPhoto(idx + 1)}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                      {house.photos.map((_: string, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedPhoto(idx)}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            idx === selectedPhoto ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <button 
+                      className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-base font-medium"
+                      onClick={() => router.push(`${pathname}/photos`)}
                     >
+                      <i className="bi bi-grid-3x3-gap mr-1"></i>
+                      All photos
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tablet: 2x2 grid */}
+                <div className="hidden sm:block lg:hidden">
+                  <div className="grid grid-cols-2 gap-2 h-[400px] rounded-xl overflow-hidden relative">
+                    {house.photos.slice(0, 4).map((photo: string, idx: number) => (
+                      <div 
+                        key={idx} 
+                        className="relative group cursor-pointer overflow-hidden"
+                        onClick={() => setSelectedPhoto(idx)}
+                      >
+                        <img 
+                          src={photo}
+                          alt={`House view ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                      </div>
+                    ))}
+                    <button 
+                      className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-base font-medium"
+                      onClick={() => router.push(`${pathname}/photos`)}
+                    >
+                      <i className="bi bi-grid-3x3-gap"></i>
+                      Show all photos
+                    </button>
+                  </div>
+                </div>
+
+                {/* Desktop: 4x4 grid */}
+                <div className="hidden lg:block">
+                  <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
+                    <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setSelectedPhoto(0)}>
                       <img 
-                        src={photo}
-                        alt={`House view ${idx + 2}`}
+                        src={house.photos[0]}
+                        alt="Primary house view"
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
                     </div>
-                  ))}
-                  <button 
-                    className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer"
-                    onClick={() => router.push(`/all/property/${resolvedParams.id}/photos`)}
-                  >
-                    <i className="bi bi-grid-3x3-gap"></i>
-                    <span className="text-base font-medium">Show all photos</span>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Booking Section - Above location */}
-        <div className="block lg:hidden mb-8">
-          <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
-            <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
-            <div className="mb-6">
-              <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
-              <p className="text-gray-600 text-base sm:text-base">per night</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-calendar-check mr-1"></i>
-                    Check-in Date
-                  </label>
-                  <input
-                    type="date"
-                    min={today}
-                    value={checkInDate}
-                    onChange={handleCheckInChange}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-calendar-x mr-1"></i>
-                    Check-out Date
-                  </label>
-                  <input
-                    type="date"
-                    min={checkInDate || today}
-                    value={checkOutDate}
-                    onChange={handleCheckOutChange}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-base font-semibold text-gray-700 mb-2">
-                  <i className="bi bi-people mr-1"></i>
-                  Guests
-                </label>
-                <select
-                  value={guests}
-                  onChange={(e) => setGuests(parseInt(e.target.value))}
-                  disabled={bookingLoading || bookingSuccess}
-                  className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                >
-                  {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={num}>
-                      {num} guest{num !== 1 ? 's' : ''}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {dateError && (
-                <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                  <p className="text-red-600 text-base font-medium">
-                    <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                    {dateError}
-                  </p>
-                </div>
-              )}
-
-              {bookingError && (
-                <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                  <p className="text-red-600 text-base font-medium">
-                    <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                    {bookingError}
-                  </p>
-                </div>
-              )}
-
-              {occupiedDates.length > 0 && (
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
-                  <div className="space-y-1">
-                    {occupiedDates.map((period, idx) => (
-                      <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
-                        <i className="bi bi-calendar-x-fill text-xs"></i>
-                        <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                    {house.photos.slice(1).map((photo: string, idx: number) => (
+                      <div 
+                        key={idx} 
+                        className="relative group cursor-pointer overflow-hidden"
+                        onClick={() => setSelectedPhoto(idx + 1)}
+                      >
+                        <img 
+                          src={photo}
+                          alt={`House view ${idx + 2}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
                       </div>
                     ))}
+                    <button 
+                      className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer"
+                      onClick={() => router.push(`${pathname}/photos`)}
+                    >
+                      <i className="bi bi-grid-3x3-gap"></i>
+                      <span className="text-base font-medium">Show all photos</span>
+                    </button>
                   </div>
                 </div>
-              )}
+              </>
+            )}
+          </div>
 
-              {checkInDate && checkOutDate && (
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-base mb-2">
-                    <span>Nights:</span>
-                    <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
+          {/* Mobile Booking Section - Above location */}
+          <div className="block lg:hidden mb-8">
+            <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
+              <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
+              <div className="mb-6">
+                <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+                <p className="text-gray-600 text-base sm:text-base">per night</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-base font-semibold text-gray-700 mb-2">
+                      <i className="bi bi-calendar-check mr-1"></i>
+                      Check-in Date
+                    </label>
+                    <input
+                      type="date"
+                      min={today}
+                      value={checkInDate}
+                      onChange={handleCheckInChange}
+                      disabled={bookingLoading || bookingSuccess}
+                      className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    />
                   </div>
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total:</span>
-                    <span className="text-[#F20C8F]">${calculateTotal()}</span>
+                  
+                  <div>
+                    <label className="block text-base font-semibold text-gray-700 mb-2">
+                      <i className="bi bi-calendar-x mr-1"></i>
+                      Check-out Date
+                    </label>
+                    <input
+                      type="date"
+                      min={checkInDate || today}
+                      value={checkOutDate}
+                      onChange={handleCheckOutChange}
+                      disabled={bookingLoading || bookingSuccess}
+                      className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    />
                   </div>
                 </div>
-              )}
 
-              <button
-                onClick={handleReserve}
-                disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
-                className={`w-full py-3 rounded-lg font-semibold transition text-base sm:text-base ${
-                  (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                    : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
-                }`}
-              >
-                {bookingLoading ? (
-                  <>
-                    <i className="bi bi-arrow-clockwise spin mr-2"></i>
-                    Creating Booking...
-                  </>
-                ) : bookingSuccess ? (
-                  <>
-                    <i className="bi bi-check-circle-fill mr-2"></i>
-                    Booking Created!
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-calendar-heart mr-2"></i>
-                    Reserve Now
-                  </>
+                <div>
+                  <label className="block text-base font-semibold text-gray-700 mb-2">
+                    <i className="bi bi-people mr-1"></i>
+                    Guests
+                  </label>
+                  <select
+                    value={guests}
+                    onChange={(e) => setGuests(parseInt(e.target.value))}
+                    disabled={bookingLoading || bookingSuccess}
+                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={num}>
+                        {num} guest{num !== 1 ? 's' : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {dateError && (
+                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
+                    <p className="text-red-600 text-base font-medium">
+                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                      {dateError}
+                    </p>
+                  </div>
                 )}
-              </button>
+
+                {bookingError && (
+                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
+                    <p className="text-red-600 text-base font-medium">
+                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                      {bookingError}
+                    </p>
+                  </div>
+                )}
+
+                {occupiedDates.length > 0 && (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
+                    <div className="space-y-1">
+                      {occupiedDates.map((period, idx) => (
+                        <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
+                          <i className="bi bi-calendar-x-fill text-xs"></i>
+                          <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {checkInDate && checkOutDate && (
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between text-base mb-2">
+                      <span>Nights:</span>
+                      <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total:</span>
+                      <span className="text-[#F20C8F]">${calculateTotal()}</span>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleReserve}
+                  disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
+                  className={`w-full py-3 rounded-lg font-semibold transition text-base sm:text-base ${
+                    (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                      : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
+                  }`}
+                >
+                  {bookingLoading ? (
+                    <>
+                      <i className="bi bi-arrow-clockwise spin mr-2"></i>
+                      Creating Booking...
+                    </>
+                  ) : bookingSuccess ? (
+                    <>
+                      <i className="bi bi-check-circle-fill mr-2"></i>
+                      Booking Created!
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-calendar-heart mr-2"></i>
+                      Reserve Now
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Address & Map Section */}
+          {/* Address & Map Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-12">
           <div className="lg:col-span-2">
             <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">Location</h2>
@@ -1134,22 +1302,28 @@ export default function HousePage({ params }: HousePageProps) {
           </div>
         </div>
 
-        {/* Add Review Modal */}
-        {showReviewModal && ( <AddReviewForm propertyId={parseInt(resolvedParams.id, 10)} onClose={() => setShowReviewModal(false)} onAddReview={handleUpdateReviewArray} /> )}
+          {/* Add Review Modal */}
+          {showReviewModal && ( 
+            <AddReviewForm 
+              propertyId={validPropertyId!} 
+              onClose={() => setShowReviewModal(false)} 
+              onAddReview={handleUpdateReviewArray} 
+            /> 
+          )}
+        </div>
       </div>
-    </div>
 
-    {/* Add some CSS for the spinner animation */}
-    <style jsx>{`
-      .spin {
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-    `}</style>
+      {/* Add some CSS for the spinner animation */}
+      <style jsx>{`
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </>
   );
 }

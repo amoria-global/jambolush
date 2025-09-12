@@ -422,7 +422,7 @@ function SignupPage({
                     </div>
                     <div className="text-center text-base">
                       <span className="text-white/70">Want to become a service provider? </span>
-                      <a href="/become-host" className="text-blue-300 hover:text-blue-200 font-medium">Join as Host</a>
+                      <a href="/all/become-host" className="text-blue-300 hover:text-blue-200 font-medium">Join as Host</a>
                     </div>
                     <div className="relative my-4">
                       <div className="flex items-center">

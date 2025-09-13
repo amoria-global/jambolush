@@ -265,5 +265,414 @@
     "support": "Support 24/7",
     "prices": "Meilleurs Prix"
   }
+},
+"howItWorks": {
+  "title": "Notre Ingrédient Secret",
+  "subtitle": "Trouver, Réserver, Emménager — C'est Aussi Simple",
+  "steps": {
+    "search": {
+      "title": "Rechercher et Explorer",
+      "description": "Découvrez votre maison idéale ou votre lieu en utilisant des filtres intuitifs. Parcourez des photos détaillées, des visites 3D immersives, des prix transparents et des informations de localisation précises pour faire le choix parfait."
+    },
+    "login": {
+      "title": "Se Connecter et S'inscrire",
+      "description": "Accédez en toute sécurité à votre compte personnel ou créez facilement un nouveau pour procéder sans effort à votre réservation, sauvegarder vos préférences pour de futures visites et rationaliser votre expérience."
+    },
+    "book": {
+      "title": "Réserver et Payer",
+      "description": "Sélectionnez parfaitement vos dates souhaitées et confirmez la disponibilité pour votre hébergement parfait. Ensuite, complétez votre transaction en toute sécurité en ligne en utilisant une variété de méthodes de paiement pratiques, assurant un processus de réservation fluide et fiable."
+    },
+    "checkin": {
+      "title": "S'enregistrer et Profiter",
+      "description": "Une fois votre réservation confirmée, vous recevrez des notifications instantanées et des directions étape par étape vers votre destination. Avec JamboLush gérant méticuleusement tous les détails restants, vous pouvez simplement vous détendre, vous enregistrer sans tracas et profiter pleinement de votre séjour sans problème."
+    }
+  },
+  "cta": {
+    "title": "Prêt à commencer ?",
+    "description": "Rejoignez des milliers d'utilisateurs satisfaits qui ont trouvé leur endroit parfait avec JamboLush",
+    "startButton": "Commencer à Explorer",
+    "learnButton": "En Savoir Plus"
+  }
+},
+"contact": {
+  "header": {
+    "title": "Entrez en Contact",
+    "description": "Vous avez une question ou une idée à partager ? Nous aimerions vous entendre ! Envoyez-nous un message, et notre équipe vous répondra dès que possible."
+  },
+  "info": {
+    "title": "Informations de Contact",
+    "email": {
+      "label": "Email"
+    },
+    "phone": {
+      "label": "Téléphone"
+    },
+    "office": {
+      "label": "Bureau",
+      "location": "Kigali, Rwanda"
+    },
+    "hours": {
+      "label": "Heures de Travail",
+      "days": "Lundi - Vendredi",
+      "time": "9h00 - 18h00 EAT"
+    }
+  },
+  "stats": {
+    "responseTime": "Temps de Réponse",
+    "happyClients": "Clients satisfaits"
+  },
+  "form": {
+    "title": "Envoyez-nous un Message",
+    "fullName": {
+      "label": "Nom Complet",
+      "placeholder": "Entrez votre nom complet"
+    },
+    "email": {
+      "label": "Adresse Email",
+      "placeholder": "Entrez votre adresse email"
+    },
+    "phone": {
+      "label": "Numéro de Téléphone",
+      "placeholder": "Entrez votre numéro de téléphone",
+      "optional": "(optionnel)"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Votre message...",
+      "characters": "caractères"
+    },
+    "sendButton": "Envoyer le Message",
+    "privacyNote": "En envoyant ce message, vous acceptez notre politique de confidentialité et nos conditions de service."
+  },
+  "modal": {
+    "title": "Message Envoyé !",
+    "message": "Merci de nous avoir contactés ! 😊 Nous avons reçu votre message et avons hâte de vous répondre. Notre équipe répondra dès que possible, alors restez patient—nous serons bientôt en contact",
+    "closeButton": "Fermer"
+  }
+},
+"about": {
+  "hero": {
+    "badge": "Connectant Invités et Voyageurs Mondialement",
+    "title": "À Propos de Jambolush",
+    "description": "Votre porte d'entrée vers des expériences de voyage authentiques. Nous connectons les voyageurs avec des propriétaires vérifiés, des hôtes locaux et des fournisseurs de services touristiques de confiance à travers le monde."
+  },
+  "stats": {
+    "properties": "Propriétés Vérifiées",
+    "countries": "Pays",
+    "clients": "Clients et Voyageurs Heureux",
+    "support": "Support"
+  },
+  "services": {
+    "title": "Ce Que Nous Faisons",
+    "description": "Jambolush est une place de marché numérique complète qui comble l'écart entre les voyageurs et les expériences locales authentiques.",
+    "accommodation": {
+      "title": "Réservation d'Hébergement",
+      "description": "Des appartements confortables aux villas de luxe, trouvez des hébergements vérifiés qui correspondent à votre style et budget."
+    },
+    "tours": {
+      "title": "Visites Guidées",
+      "description": "Découvrez des joyaux cachés avec des experts locaux qui donnent vie aux destinations à travers une narration authentique."
+    },
+    "experiences": {
+      "title": "Expériences de Voyage",
+      "description": "Réservez des activités uniques, des expériences culturelles et des tours d'aventure qui créent des souvenirs durables."
+    }
+  },
+  "mission": {
+    "title": "Notre Mission",
+    "description": "Notre mission est de fournir un accès transparent à des espaces de vie et de travail polyvalents qui inspirent la productivité, la créativité et la communauté. Nous visons à rendre la recherche, le partage et l'expérience d'espaces sans effort, sûrs et agréables pour tous. Grâce à l'innovation et aux solutions centrées sur le client, nous autonomisons nos utilisateurs pour qu'ils se concentrent sur leurs objectifs sans se soucier de la logistique."
+  },
+  "vision": {
+    "title": "Notre Vision",
+    "description": "Notre vision est de devenir la plateforme leader pour les espaces flexibles dans le monde entier, où les personnes, équipes et entreprises peuvent prospérer dans des environnements adaptés à leurs besoins. Nous envisageons un monde où l'accès à des espaces de haute qualité est simple, fiable et améliore les styles de vie et l'efficacité du travail, favorisant les connexions et la collaboration entre les communautés."
+  },
+  "values": {
+    "title": "Nos Valeurs Fondamentales",
+    "description": "Les principes qui guident tout ce que nous faisons chez Jambolush.",
+    "trust": {
+      "title": "Confiance et Sécurité",
+      "description": "La confiance est le fondement de notre relation avec chaque utilisateur, partenaire et membre de la communauté. Nous priorisons la transparence dans toutes nos interactions, assurons des processus sécurisés et fiables, et maintenons l'intégrité dans chaque décision que nous prenons. Notre objectif est de créer une plateforme fiable où les utilisateurs se sentent confiants en réservant, partageant et s'engageant avec des espaces."
+    },
+    "community": {
+      "title": "Autonomisation Communautaire",
+      "description": "Nous croyons au pouvoir des connexions. Jambolush favorise la collaboration et les interactions significatives entre individus, équipes et organisations. En encourageant les expériences partagées, en soutenant les réseaux locaux et en nourrissant un sentiment d'appartenance, nous aidons nos utilisateurs à créer de la valeur ensemble et à construire des communautés plus fortes."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "description": "Chez Jambolush, l'innovation est au cœur de tout ce que nous faisons. Nous sommes engagés à améliorer continuellement notre plateforme, adopter les dernières technologies et créer des solutions créatives qui anticipent et répondent aux besoins évolutifs de nos utilisateurs. Nous embrassons de nouvelles idées, expérimentons avec des approches audacieuses et nous adaptons rapidement pour fournir des expériences à la fois efficaces et inspirantes."
+    },
+    "excellence": {
+      "title": "Excellence",
+      "description": "L'excellence guide notre approche du service, de la technologie et de l'expérience utilisateur. Nous nous efforçons de livrer les plus hauts standards dans chaque aspect de notre plateforme, de la qualité des espaces listés à la réactivité de notre support. Notre engagement envers l'excellence assure que chaque interaction avec Jambolush soit transparente, professionnelle et satisfaisante."
+    }
+  },
+  "whyChoose": {
+    "title": "Pourquoi Choisir Jambolush",
+    "description": "Nous sommes plus qu'une plateforme de réservation – nous sommes votre compagnon de voyage de confiance.",
+    "quality": {
+      "title": "Qualité Vérifiée",
+      "description": "Nos agents de terrain vérifient personnellement chaque annonce pour assurer la qualité et l'authenticité."
+    },
+    "payments": {
+      "title": "Paiements Sécurisés",
+      "description": "Protection avancée des paiements et transactions sécurisées pour votre tranquillité d'esprit."
+    },
+    "support": {
+      "title": "Support 24/7",
+      "description": "Support client 24h/24 pour vous assister tout au long de votre voyage."
+    }
+  },
+  "careers": {
+    "badge": "Carrières / Postes Ouverts",
+    "title": "Faites Partie de Jambolush",
+    "description": "Chez Jambolush, nous croyons en créer plus qu'une plateforme – nous construisons une communauté qui connecte les gens avec des propriétés, des hôtes, des agents et des expériences authentiques. Voulez-vous faire partie de notre voyage ? Rejoignez l'équipe Jambolush et profitez de la liberté de travailler à distance de n'importe où dans le monde. Nous sommes ravis de vous entendre !",
+    "button": "Contactez-nous"
+  }
+},
+"terms": {
+  "navigation": {
+    "sections": "Sections"
+  },
+  "agreeButton": "J'accepte les Conditions Générales",
+  "agreementAlert": "Vous avez accepté les conditions !",
+  "sections": {
+    "welcome": {
+      "title": "Bienvenue",
+      "content": "Dernière Mise à Jour : 01 Septembre 2025\n\nCes Conditions Générales établissent l'accord juridique qui régit votre accès et utilisation de la plateforme Jambolush, qui comprend notre site web, application mobile, et tous les outils et services connexes mis à votre disposition. En créant un compte, listant une propriété ou service touristique, réservant des hébergements, achetant une expérience, ou en vous engageant avec toute fonctionnalité de Jambolush de toute autre manière, vous reconnaissez et acceptez que vous êtes lié par ces Conditions dans leur intégralité. Si vous n'êtes pas d'accord avec une partie de ces Conditions, vous n'êtes pas autorisé à utiliser la plateforme, et vous devez vous abstenir d'accéder ou d'utiliser les services que nous fournissons."
+    },
+    "definitions": {
+      "title": "1. Définitions",
+      "content": "1. Plateforme : fait référence au site web Jambolush, à l'application mobile, et à tout outil, technologie ou système connexe qui facilite la connexion entre voyageurs et fournisseurs de services.\n2. Hôte : est tout individu ou entreprise qui liste une propriété ou hébergement à louer via la Plateforme.\n3. Opérateur Touristique : est un fournisseur de services liés au tourisme tels que visites guidées, activités culturelles, ou expériences de voyage disponibles aux Invités.\n4. Invité/Voyageur : fait référence à tout individu qui réserve ou achète des services via la Plateforme.\n5. Agent de Terrain : est un représentant autorisé de Jambolush responsable de vérifier les annonces de propriétés, assurer la précision, et fournir un support aux fournisseurs de services.\n6. Utilisateur : englobe toute personne ou entité, incluant Hôtes, Invités, Opérateurs Touristiques, et Agents de Terrain, qui accède ou interagit avec la Plateforme en toute capacité.\n7. Contenu : fait référence à tout matériel téléchargé, publié, ou fourni par un Utilisateur, incluant mais non limité au texte, photos, vidéos, avis, ou autres formes de données partagées via la Plateforme."
+    },
+    "scope": {
+      "title": "2. Portée des Services",
+      "content": "Jambolush sert uniquement comme une place de marché numérique qui connecte les voyageurs avec des propriétaires indépendants et des fournisseurs de services touristiques. Nous ne possédons, opérons, ni gérons aucune des propriétés, visites, ou services connexes listés sur notre plateforme. Chaque hôte ou fournisseur de services est entièrement responsable de la précision de leurs annonces, de la qualité et sécurité des services qu'ils offrent, et de se conformer à toutes les lois et réglementations applicables. Bien que Jambolush puisse fournir des outils facilitant la communication, réservation, et traitement des paiements entre voyageurs et hôtes, nous ne sommes pas partie à l'accord contractuel entre eux. En conséquence, Jambolush ne garantit, ne soutient, ni n'assume la responsabilité pour la condition, légalité, ou convenance de tout service offert via la plateforme, ni pour la conduite des hôtes, agents, ou invités. Toute dispute, annulation, accident, perte, ou dommage résultant de l'utilisation de services est de la seule responsabilité de l'hôte et de l'invité."
+    },
+    "accounts": {
+      "title": "3. Inscription de Compte",
+      "content": "Les utilisateurs doivent créer un compte pour lister, réserver, ou gérer tout service via la plateforme Jambolush, et lors de l'inscription ils doivent fournir des informations personnelles et de contact précises, véridiques, et à jour. Chaque utilisateur est seul responsable de maintenir la confidentialité et sécurité de ses identifiants de connexion, incluant noms d'utilisateur, mots de passe, ou toute autre clé d'accès associée à leur compte. Toute activité ayant lieu sous le compte d'un utilisateur sera considérée comme leur responsabilité, qu'elle ait été autorisée par eux ou non, et Jambolush ne sera pas tenu responsable pour toute perte, dommage, ou dispute résultant d'une utilisation non autorisée causée par négligence dans la protection des informations de compte. Les utilisateurs doivent promptement mettre à jour les détails de leur compte quand des changements surviennent et immédiatement notifier Jambolush s'ils soupçonnent tout accès non autorisé ou violation de sécurité liée à leur compte."
+    },
+    "hosts": {
+      "title": "4. Obligations des Hôtes et Opérateurs Touristiques",
+      "content": "Les Hôtes et Opérateurs Touristiques sont responsables de maintenir des annonces précises et à jour, s'assurant que toutes les informations sur leurs propriétés ou services sont correctes et reflètent l'état actuel. Ils doivent opérer leurs services de manière légale et sûre, suivant toutes les réglementations locales et normes de sécurité. Ils doivent aussi se conformer à tout permis nécessaire, obligations fiscales, et remplir tous les engagements de réservation pris envers les voyageurs. De plus, ils doivent payer tous frais de service applicables facturés par Jambolush pour utiliser la plateforme."
+    },
+    "guests": {
+      "title": "5. Obligations des Invités et Voyageurs",
+      "content": "Les Invités et Voyageurs doivent fournir des informations de réservation précises et complètes lors des réservations. Ils doivent respecter les règles des propriétés qu'ils visitent, suivre les directives des visites ou activités, et se conformer à toutes les lois applicables. De plus, ils sont attendus de prendre soin de la propriété et services qu'ils utilisent, évitant tout dommage ou comportement qui pourrait perturber l'expérience pour d'autres."
+    },
+    "payments": {
+      "title": "6. Paiements et Frais",
+      "content": "Tous les paiements pour réservations doivent être effectués via les passerelles de paiement approuvées de Jambolush pour assurer sécurité et suivi approprié. Les utilisateurs ne sont pas autorisés à effectuer des paiements directs entre eux pour contourner les frais de plateforme. Les paiements peuvent être temporairement retenus dans la passerelle de paiement jusqu'à ce que le service ait été entièrement livré pour protéger les deux parties. Toute taxe découlant des gains est la responsabilité de la partie recevant les fonds, pas de Jambolush."
+    },
+    "cancellations": {
+      "title": "7. Annulations et Remboursements",
+      "content": "Les Hôtes et Opérateurs Touristiques doivent clairement afficher leurs politiques d'annulation et de remboursement pour que les voyageurs comprennent les termes avant réservation. Les frais de plateforme sont généralement non remboursables sauf indication explicite contraire. Jambolush se réserve le droit d'annuler des réservations en cas de fraude suspectée, préoccupations de sécurité, ou échecs de service, et peut fournir des remboursements dans de telles situations comme jugé approprié."
+    },
+    "policies": {
+      "title": "8. Politiques",
+      "content": "Jambolush a des documents de politique supplémentaires qui sont considérés comme partie de cet accord et fournissent des règles et orientations supplémentaires pour les utilisateurs. Ceux-ci incluent la Politique de Confidentialité et Protection des Données, qui régit comment les informations personnelles sont collectées, stockées, et utilisées ; la Politique Anti-Discrimination et Inclusion, qui assure que tous les utilisateurs sont traités équitablement et respectueusement ; la Politique des Agents de Terrain, qui décrit les responsabilités des représentants autorisés qui vérifient les annonces et soutiennent les fournisseurs de services ; la Politique de Contenu et Annonces, qui établit des normes pour les informations et médias partagés sur la plateforme ; la Politique de Sécurité, qui détaille les mesures pour protéger les utilisateurs et données de la plateforme ; et la Politique des Activités Interdites, qui identifie les actions qui ne sont pas autorisées sur la plateforme. Ensemble, ces politiques soutiennent l'utilisation sûre, équitable et fiable de Jambolush."
+    },
+    "intellectual": {
+      "title": "9. Propriété Intellectuelle",
+      "content": "Toute propriété intellectuelle sur la plateforme Jambolush, incluant designs, logos, contenu, et logiciels, est soit possédée par Jambolush soit correctement licenciée à elle. Les utilisateurs ne sont pas autorisés à utiliser, copier, modifier, ou distribuer cette propriété intellectuelle sans permission explicite, assurant que Jambolush maintienne le contrôle total sur ses créations et matériaux protégés."
+    },
+    "indemnity": {
+      "title": "10. Indemnisation",
+      "content": "En utilisant la plateforme Jambolush, vous acceptez de prendre responsabilité pour toute réclamation légale, dommage, ou dépense résultant de vos actions ou violations des Conditions. Cela signifie que vous protégerez et compenserez Jambolush, ses affiliés, et personnel si des problèmes surviennent dus à votre utilisation de la plateforme, assurant qu'ils ne soient pas tenus responsables de votre conduite."
+    },
+    "accessibility": {
+      "title": "11. Engagement d'Accessibilité",
+      "content": "Jambolush s'efforce de rendre sa plateforme accessible à tous les utilisateurs, incluant ceux avec handicaps, en suivant des normes d'accessibilité reconnues. La plateforme est continuellement améliorée pour assurer que les utilisateurs avec différents besoins puissent naviguer, interagir avec, et utiliser ses fonctionnalités efficacement et confortablement."
+    },
+    "forceMajeure": {
+      "title": "12. Force Majeure",
+      "content": "Jambolush n'est pas responsable pour tout retard, perturbation, ou échec de service résultant de circonstances hors de son contrôle, telles que catastrophes naturelles, pandémies, ou actions prises par les gouvernements. Ces événements sont considérés comme inévitables, et les utilisateurs reconnaissent que Jambolush ne peut garantir la continuité de service sous de telles conditions."
+    },
+    "thirdParty": {
+      "title": "13. Services Tiers",
+      "content": "Jambolush peut travailler avec des services tiers, tels que processeurs de paiement, pour faciliter les fonctions de plateforme. Cependant, la plateforme n'est pas responsable de comment ces outils tiers performent, ni de leurs termes, politiques, ou problèmes qui peuvent survenir lors de leur utilisation. Les utilisateurs reconnaissent que les interactions avec ces services sont sujettes aux propres règles et fiabilité des tiers."
+    },
+    "changes": {
+      "title": "14. Changements à la Plateforme",
+      "content": "Jambolush peut modifier, mettre à jour, ou supprimer des fonctionnalités de plateforme pour se conformer aux exigences légales ou améliorer la fonctionnalité. Bien que des ajustements routiniers puissent survenir sans préavis, tout changement majeur affectant significativement les utilisateurs sera communiqué via email ou notifications d'application pour tenir les utilisateurs informés."
+    },
+    "liability": {
+      "title": "15. Limitation de Responsabilité",
+      "content": "Autant que la loi le permet, la responsabilité financière totale de Jambolush envers tout utilisateur est limitée au montant des frais de service que l'utilisateur a payés à la plateforme au cours des 12 derniers mois. Cela signifie qu'en cas de réclamations ou dommages, Jambolush ne sera pas responsable pour des pertes dépassant ce montant plafonné."
+    },
+    "dispute": {
+      "title": "16. Résolution de Disputes",
+      "content": "1. Négociation : Les deux parties feront un effort genuïne pour résoudre les disputes via négociations de bonne foi dans les 30 jours du problème survenant.\n2. Médiation : Si les négociations ne résolvent pas la dispute, l'affaire procédera à médiation, qui aura lieu à Kigali, Rwanda.\n3. Arbitrage : Si la médiation n'est pas réussie, les disputes seront résolues via arbitrage contraignant tenu à Kigali, Rwanda, conduit en langue anglaise.\n4. Coûts : Sauf accord contraire entre les parties, chaque partie est responsable de couvrir ses propres coûts associés au processus de résolution de dispute."
+    },
+    "law": {
+      "title": "17. Droit Applicable",
+      "content": "Ces Conditions sont régies par les lois de la République du Rwanda, ce qui signifie que toute dispute, interprétation, ou affaire légale liée à l'utilisation de la plateforme sera résolue selon le droit rwandais."
+    },
+    "language": {
+      "title": "18. Langue de Référence",
+      "content": "Ces Conditions sont écrites en anglais, et toute traduction fournie est pour commodité seulement. En cas de conflit ou discordance entre versions, la version anglaise prendra précédence et gouvernera l'interprétation et application des Conditions."
+    },
+    "compliance": {
+      "title": "19. Déclaration de Conformité Globale",
+      "content": "Jambolush s'efforce de suivre les normes légales internationales pour protection des données et confidentialité, incluant le RGPD, CCPA, et réglementations africaines pertinentes. Cela signifie que la plateforme prend des mesures pour sauvegarder les données utilisateur, gérer les informations personnelles de manière responsable, et se conformer aux lois applicables à travers différentes régions."
+    },
+    "acceptance": {
+      "title": "20. Acceptation Numérique",
+      "content": "En créant un compte, cliquant \"J'accepte,\" ou utilisant la plateforme de quelque manière, vous confirmez que vous avez lu, compris, et accepté ces Conditions, acceptant d'être lié par toutes les règles, responsabilités, et politiques décrites en elles."
+    },
+    "entire": {
+      "title": "21. Accord Complet",
+      "content": "Ces Conditions remplacent et prennent précédence sur tout accord ou compréhension antérieur entre vous et Jambolush, signifiant que les Conditions actuelles sont les règles officielles gouvernant votre utilisation de la plateforme."
+    }
+  }
+},
+"privacy": {
+  "navigation": {
+    "sections": "Sections"
+  },
+  "header": {
+    "title": "Politique de Confidentialité et Protection des Données JamboLush",
+    "lastUpdated": "Dernière Mise à Jour : 01-Septembre-2025",
+    "description": "Cette Politique de Confidentialité et Protection des Données explique comment Jambolush collecte, utilise, stocke, partage et protège les données personnelles. Nous nous conformons à la Loi No. 058/2021 du Rwanda Relative à la Protection des Données Personnelles et de la Vie Privée, ainsi qu'au Règlement Général sur la Protection des Données (RGPD) de l'Union Européenne."
+  },
+  "sections": {
+    "scope": {
+      "title": "1. Portée",
+      "content": "Cette politique s'applique à tous ceux qui utilisent la plateforme Jambolush, y compris les voyageurs, hôtes et agents de terrain. Elle couvre toutes les informations personnelles collectées via le site web de Jambolush, les applications mobiles et tout service tiers connecté, quel que soit l'endroit où l'utilisateur se trouve. Cela garantit que les données de tous les utilisateurs sont traitées selon les mêmes règles et protections, quel que soit leur rôle ou leur emplacement géographique."
+    },
+    "lawfulBasis": {
+      "title": "2. Base Légale pour le Traitement",
+      "content": "Jambolush traite les données personnelles uniquement quand c'est légalement autorisé. Cela inclut les situations où vous avez donné un consentement explicite, comme pour les communications marketing ou l'utilisation de cookies ; quand le traitement est nécessaire pour remplir des contrats, comme compléter des réservations et paiements ; quand requis pour se conformer aux obligations légales, incluant les devoirs fiscaux, financiers ou réglementaires ; et quand la plateforme a un intérêt légitime, comme maintenir la sécurité, prévenir la fraude ou améliorer les services. Cette approche assure que tout traitement de données soit légal, utile et transparent."
+    },
+    "dataCollected": {
+      "title": "3. Catégories de Données Collectées",
+      "content": "- Données d'identification : Cela inclut votre nom, numéro d'ID, passeport et tout autre document émis par le gouvernement utilisé pour vérifier votre identité.\n- Détails de contact : Comme votre adresse e-mail, numéro de téléphone et adresse physique, qui permettent à la plateforme de communiquer avec vous.\n- Détails de paiement : Informations liées aux paiements, gérées de manière sécurisée via des fournisseurs de paiement tiers.\n- Historique de réservations et transactions : Enregistrements de vos réservations, achats et interactions sur la plateforme.\n- Informations d'appareil et de localisation : Données sur les appareils que vous utilisez et votre emplacement géographique pour améliorer la fonctionnalité du service et la sécurité.\n- Photos, vidéos ou documents soumis pour vérification de propriété : Médias que vous fournissez pour confirmer l'exactitude ou la légitimité des annonces.\n- Cookies et données de suivi : Informations collectées via cookies ou autres technologies de suivi, incluant analyses, préférences utilisateur et données publicitaires le cas échéant."
+    },
+    "dataSubjectRights": {
+      "title": "4. Droits des Sujets de Données",
+      "content": "Sous le RGPD, la Loi No. 058/2021 du Rwanda, et autres normes internationales de confidentialité, vous avez les droits suivants concernant vos données personnelles :\n\n- Accès : Vous pouvez demander à voir les données personnelles que Jambolush détient sur vous.\n- Correction/Mise à jour : Vous pouvez demander que toute information inexacte ou obsolète soit corrigée ou mise à jour.\n- Suppression (\"Droit à l'oubli\") : Vous pouvez demander que vos données personnelles soient supprimées de nos systèmes.\n- Restriction ou Objection : Vous pouvez limiter ou objecter à certains types de traitement de données.\n- Portabilité des Données : Vous pouvez demander à recevoir vos données dans un format structuré et couramment utilisé pour transfert vers un autre service.\n- Retirer le Consentement : Vous pouvez retirer tout consentement que vous avez précédemment donné pour traiter vos données à tout moment.\n- Déposer une Plainte : Vous pouvez déposer une plainte auprès de l'Autorité Nationale de Sécurité Cybernétique du Rwanda (NCSA) ou, si applicable, votre autorité locale de protection des données dans l'UE."
+    },
+    "dataSharing": {
+      "title": "5. Partage de Données et Transferts Transfrontaliers",
+      "content": "Jambolush ne vend pas vos données personnelles. Cependant, nous pouvons partager vos données personnelles avec certaines parties pour fournir et améliorer nos services :\n\nProcesseurs de paiement et institutions financières : Pour compléter les transactions en toute sécurité.\nAgents de terrain vérifiés : Pour vérifier les annonces de propriétés.\nFournisseurs d'hébergement, services d'analyse et partenaires de support client : Pour maintenir la fonctionnalité de la plateforme et assister les utilisateurs.\nAutorités réglementaires ou gouvernementales : Quand requis par la loi.\n\nPour les transferts transfrontaliers de données personnelles hors du Rwanda ou de l'Espace Économique Européen (EEE), Jambolush s'appuie sur des garanties légales telles que :\n\nDécisions d'adéquation reconnues par les régulateurs pertinents.\nClauses Contractuelles Standard (CCS) pour assurer une protection appropriée des données.\nConsentement explicite de l'utilisateur où nécessaire."
+    },
+    "dataSecurity": {
+      "title": "6. Sécurité des Données",
+      "content": "Jambolush met en œuvre des mesures techniques et organisationnelles appropriées pour protéger les données personnelles. Celles-ci incluent chiffrer les données en utilisant TLS pour la transmission et AES-256 pour le stockage, appliquer des contrôles d'accès basés sur les rôles et le principe du moindre privilège pour limiter l'accès, effectuer des tests de pénétration réguliers et des audits de sécurité pour identifier les vulnérabilités, et maintenir des procédures de réponse aux incidents et de notification de violation pour traiter rapidement tout problème de sécurité."
+    },
+    "dataRetention": {
+      "title": "7. Rétention des Données",
+      "content": "Jambolush conserve les données personnelles seulement aussi longtemps que nécessaire pour remplir les obligations commerciales et légales. Les enregistrements de réservations et fiscaux sont conservés jusqu'à 7 ans. Les données marketing et de communication sont gardées jusqu'à ce que vous retiriez votre consentement. Les données liées au compte sont supprimées quand votre compte est fermé, sauf s'il y a une exigence légale de les conserver pour une période plus longue."
+    },
+    "childrensData": {
+      "title": "8. Données des Enfants",
+      "content": "Jambolush s'engage à protéger la vie privée des enfants et ne collecte pas sciemment de données personnelles de quiconque âgé de moins de 16 ans sans consentement explicite parental ou de tuteur. Si nous découvrons que des données personnelles d'un enfant de moins de 16 ans ont été collectées par inadvertance, nous prendrons des mesures immédiates pour les supprimer de nos systèmes. Les parents ou tuteurs qui croient que leur enfant a fourni des données personnelles à Jambolush peuvent nous contacter à tout moment pour demander leur suppression. Cette politique assure que les informations des enfants sont traitées de manière responsable et que la plateforme se conforme aux lois applicables de protection des enfants et de confidentialité des données."
+    },
+    "breachNotification": {
+      "title": "9. Notification de Violation",
+      "content": "Si une violation de données personnelles se produit, Jambolush informera promptement l'Autorité Nationale de Sécurité Cybernétique du Rwanda (NCSA), l'autorité de supervision de l'UE pertinente quand applicable, et tout utilisateur affecté. Cela assure que les violations sont traitées de manière transparente et en conformité avec les exigences légales, permettant aux utilisateurs et autorités de prendre les actions nécessaires pour protéger les données et atténuer les risques potentiels."
+    },
+    "regulatoryRegistration": {
+      "title": "10. Enregistrement Réglementaire",
+      "content": "Jambolush est officiellement enregistré auprès de l'Autorité Nationale de Sécurité Cybernétique du Rwanda (NCSA) comme contrôleur de données, signifiant qu'il est reconnu comme responsable de la gestion et protection des données personnelles. La plateforme se conforme à toutes les exigences d'audit et d'enregistrement établies sous la Loi No. 058/2021 du Rwanda, assurant une gouvernance appropriée des données et responsabilité."
+    },
+    "contactInformation": {
+      "title": "11. Informations de Contact"
+    }
+  },
+  "contact": {
+    "intro": "Pour toute question, plainte ou demande concernant vos droits sur les données, veuillez contacter notre Délégué à la Protection des Données :",
+    "dpo": "Délégué à la Protection des Données - JamboLush",
+    "location": "Kigali, Rwanda"
+  }
+},
+"agreement": {
+  "navigation": {
+    "sections": "Sections"
+  },
+  "agreeButton": "J'accepte les Conditions",
+  "agreementAlert": "Vous avez accepté les conditions !",
+  "sections": {
+    "ourAgreement": {
+      "title": "Accord JamboLush",
+      "content": "Cet Accord établit les règles pour la relation entre JamboLush, exploité par Amoria Global Tech Ltd (Enregistrement No. 141275771), et toute personne qui utilise la plateforme JamboLush. En accédant ou utilisant la plateforme et ses services, vous acceptez de suivre ces termes comme base de votre utilisation de JamboLush."
+    },
+    "introduction": {
+      "title": "1. Introduction",
+      "content": "Cet Accord fournit la fondation légale qui gouverne comment vous utilisez la plateforme et services de JamboLush, clarifiant les droits et responsabilités entre vous et JamboLush."
+    },
+    "definitions": {
+      "title": "2. Définitions",
+      "content": "- Plateforme : Fait référence au site web de JamboLush, application mobile, et tous les systèmes connexes utilisés pour fournir des services.\n- Hôte : Un propriétaire ou fournisseur de services qui liste son hébergement ou service sur la plateforme.\n- Invité : Un utilisateur qui réserve ou utilise une propriété ou service via la plateforme.\n- Opérateur Touristique : Une entreprise qui offre des services de voyage ou liés aux tours disponibles pour réservation sur la plateforme.\n- Agent de Terrain : Un représentant local de confiance qui aide avec la vérification de propriétés et l'intégration de fournisseurs de services.\n- Partenaire : Tout collaborateur tiers autorisé travaillant avec JamboLush pour soutenir ses services.\n- Passerelle de Paiement Approuvée : Fournisseurs de services de paiement sécurisés et officiellement intégrés utilisés pour traiter les transactions sur la plateforme."
+    },
+    "scope": {
+      "title": "3. Portée",
+      "content": "Cet Accord s'applique à tous les utilisateurs de JamboLush et établit les règles pour les activités clés sur la plateforme, incluant créer des comptes, publier et gérer des annonces, faire et gérer des réservations, traiter des paiements, gérer des annulations, assurer une conduite appropriée, et respecter les obligations de conformité."
+    },
+    "registration": {
+      "title": "4. Inscription",
+      "content": "Tous les utilisateurs de JamboLush doivent avoir au moins 18 ans et sont tenus de fournir des informations précises et vérifiables lors de la création d'un compte ou de l'utilisation de la plateforme."
+    },
+    "listings": {
+      "title": "5. Annonces et Réservations",
+      "content": "- Hôtes et Opérateurs : Sont responsables de s'assurer que toutes les annonces qu'ils publient sont précises, véridiques et conformes à la loi.\n- Invités : Doivent suivre les règles de la propriété ou directives du service pendant leur séjour ou participation à toute activité."
+    },
+    "payments": {
+      "title": "6. Paiements",
+      "content": "- Toutes les transactions : Doivent être complétées via les Passerelles de Paiement Approuvées de JamboLush pour assurer des paiements sécurisés et traçables.\n- Frais de service et commissions : Sont appliqués par JamboLush et clairement montrés au moment de la réservation.\n- Paiements hors plateforme : Pour éviter les frais de JamboLush sont strictement interdits et non autorisés sous cet Accord."
+    },
+    "cancellations": {
+      "title": "7. Annulations et Remboursements",
+      "content": "Toutes les annulations sont sujettes à la Politique de Remboursement Minimum montrée sur chaque annonce, signifiant que les remboursements seront gérés selon les termes spécifiques fournis par l'Hôte ou Opérateur au moment de la réservation."
+    },
+    "fieldAgents": {
+      "title": "8. Services d'Agents de Terrain",
+      "content": "Les Agents de Terrain jouent un rôle clé dans le soutien de la plateforme JamboLush en aidant avec l'intégration de propriétés, vérifiant la précision et légitimité des annonces, et fournissant un support local aux Hôtes et Invités. Ils sont attendus de se conduire avec le plus haut niveau de professionnalisme et standards éthiques, s'assurant que leurs actions ne compromettent pas l'intégrité de la plateforme. De plus, les Agents de Terrain doivent maintenir une stricte confidentialité concernant toute information sensible à laquelle ils accèdent pendant leur travail, protégeant la vie privée des utilisateurs et la sécurité des données de propriétés en tout temps."
+    },
+    "conduct": {
+      "title": "9. Conduite Utilisateur",
+      "content": "Toute activité qui est frauduleuse, illégale, abusive ou discriminatoire est strictement interdite sur la plateforme JamboLush. Les utilisateurs doivent agir honnêtement, suivre la loi, traiter les autres avec respect, et éviter tout comportement qui pourrait nuire à la plateforme ou sa communauté."
+    },
+    "privacy": {
+      "title": "10. Confidentialité des Données",
+      "content": "JamboLush se conforme entièrement au cadre de protection des données du Rwanda, ainsi qu'aux standards internationaux clés de confidentialité tels que le RGPD de l'Union Européenne et le CCPA de Californie, avec toute autre loi pertinente de confidentialité des données qui s'applique. Cela assure que toutes les données personnelles collectées, stockées ou traitées via la plateforme sont gérées de manière responsable, sécurisée et transparente. Les droits des utilisateurs d'accéder, corriger, supprimer ou restreindre leurs informations personnelles sont respectés, et JamboLush implémente des mesures techniques et organisationnelles pour protéger les données contre l'accès non autorisé, la perte ou le mauvais usage. En adhérant à ces réglementations, la plateforme démontre un engagement envers la confidentialité, responsabilité et gestion légale des informations utilisateur dans toutes les régions où elle opère."
+    },
+    "liability": {
+      "title": "11. Responsabilité et Indemnisation",
+      "content": "- Rôle d'intermédiaire : JamboLush sert uniquement comme plateforme qui connecte les utilisateurs avec les Hôtes, Opérateurs Touristiques et autres fournisseurs de services. La plateforme elle-même ne possède pas, n'opère pas ou ne contrôle pas les services listés, signifiant que JamboLush n'est pas responsable de la qualité, sécurité ou disponibilité de tout service.\n- Responsabilité des Hôtes et Opérateurs : Les Hôtes et Opérateurs restent entièrement responsables de livrer leurs services comme annoncé. Ils doivent assurer la conformité avec toutes les lois, réglementations et standards de sécurité applicables, et sont tenus de maintenir une assurance appropriée pour couvrir les risques potentiels ou responsabilités liées à leurs services.\n- Limitation de responsabilité : Dans la mesure la plus complète permise par la loi, JamboLush limite sa responsabilité pour tout dommage indirect, incident ou conséquentiel, incluant les pertes liées aux réservations, annulations ou échecs de service. Cela signifie que la plateforme n'est pas responsable de certains types de dommages ou pertes qui peuvent survenir lors de l'utilisation du service.\n- Indemnisation utilisateur : Les utilisateurs acceptent d'indemniser, défendre et tenir indemne JamboLush, ses affiliés et personnel de toute réclamation, perte, dommage ou dépense qui surviennent de leur mauvaise utilisation de la plateforme, violations des Termes ou Accords, ou actions illégales lors de l'utilisation de la plateforme. Cela protège JamboLush d'être tenu responsable des problèmes causés par les utilisateurs."
+    },
+    "forceMajeure": {
+      "title": "12. Force Majeure",
+      "content": "Ni JamboLush ni ses utilisateurs ne seront tenus responsables des retards, interruptions ou échecs qui résultent d'événements au-delà du contrôle raisonnable, tels que catastrophes naturelles, pandémies, grèves de travail ou pannes internet et techniques. Ces circonstances sont considérées comme inévitables, et les deux parties reconnaissent que de tels événements peuvent temporairement affecter la disponibilité ou performance du service."
+    },
+    "disputes": {
+      "title": "13. Résolution de Disputes",
+      "content": "- Médiation interne : Toute dispute survenant de l'utilisation de JamboLush ou interprétation de cet Accord doit d'abord être adressée par des efforts sincères et de bonne foi en médiation interne. Les deux parties sont attendues de communiquer ouvertement et tenter d'atteindre une résolution mutuellement acceptable avant d'escalader l'affaire.\n- Arbitrage : Si la dispute ne peut être résolue par médiation dans un délai raisonnable, elle sera formellement référée au Centre d'Arbitrage du Rwanda (ACR) à Kigali. Le processus d'arbitrage sera conduit selon les règles du centre, assurant un processus de résolution structuré et équitable.\n- Décision finale et contraignante : Le résultat de l'arbitrage est final et contraignant pour toutes les parties. Cela signifie qu'une fois que le panel d'arbitrage prend une décision, elle doit être acceptée, appliquée et ne peut être appelée, fournissant une résolution définitive à la dispute."
+    },
+    "law": {
+      "title": "14. Loi Applicable",
+      "content": "Cet Accord est régi par les lois de la République du Rwanda, signifiant que toute affaire légale ou dispute en découlant sera interprétée et résolue selon la loi rwandaise. Il est aussi aligné avec les principes commerciaux internationaux reconnus pour assurer la cohérence avec les standards d'affaires globaux."
+    },
+    "intellectual": {
+      "title": "15. Propriété Intellectuelle",
+      "content": "Toutes les marques de commerce, logos, logiciels et contenus possédés par JamboLush sont légalement protégés. Les utilisateurs ne sont pas autorisés à copier, utiliser, modifier ou distribuer aucun de ces matériaux sans permission explicite, assurant que JamboLush conserve le contrôle total sur sa propriété intellectuelle."
+    },
+    "modifications": {
+      "title": "16. Modifications",
+      "content": "JamboLush peut mettre à jour ou modifier cet Accord de temps en temps pour refléter les changements dans la plateforme, exigences légales ou pratiques d'affaires. Les utilisateurs recevront au moins 30 jours de préavis avant que tout changement prenne effet, typiquement via email ou notifications d'application. Pendant cette période, les utilisateurs ont l'opportunité de réviser les termes mis à jour et décider s'ils continuent d'utiliser la plateforme. L'utilisation continue de JamboLush après la période de préavis constitue l'acceptation de l'Accord révisé. Ce processus assure la transparence et tient les utilisateurs informés de leurs droits et obligations sous les règles actuelles de la plateforme."
+    },
+    "antiDiscrimination": {
+      "title": "17. Anti-Discrimination",
+      "content": "JamboLush interdit strictement toute forme de discrimination basée sur la race, religion, genre, handicap ou toute autre caractéristique protégée. Tous les utilisateurs, Hôtes, Opérateurs Touristiques et Agents de Terrain sont attendus de traiter les autres avec équité et respect, assurant un environnement inclusif et équitable sur la plateforme."
+    },
+    "termination": {
+      "title": "18. Résiliation",
+      "content": "Soit JamboLush soit l'utilisateur peut terminer cet Accord à tout moment en fournissant un préavis raisonnable. La résiliation termine les droits et obligations sous l'Accord, mais toute action ou responsabilité encourue avant la résiliation, telles que paiements ou réservations complétées, doivent encore être honorées."
+    },
+    "security": {
+      "title": "19. Sécurité et Protection contre la Fraude",
+      "content": "JamboLush implémente des mesures de sécurité robustes et standard de l'industrie pour protéger les données utilisateur et assurer des transactions sûres. Cela inclut le chiffrement SSL pour sécuriser les données en transit, la conformité PCI DSS pour protéger les informations de paiement, et la surveillance continue de fraude pour détecter et prévenir l'activité suspecte. En plus de ces protections, les utilisateurs sont responsables de maintenir la sécurité de leurs propres comptes, ce qui inclut utiliser des mots de passe forts, garder les identifiants de connexion confidentiels, et rapporter promptement tout accès non autorisé. Ensemble, ces mesures aident à protéger à la fois la plateforme et ses utilisateurs contre les menaces de sécurité et le mauvais usage."
+    }
+  }
 }
 }

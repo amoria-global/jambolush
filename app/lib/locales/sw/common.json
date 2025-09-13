@@ -265,6 +265,414 @@
     "support": "Msaada wa Saa 24/7",
     "prices": "Bei Bora Zaidi"
   }
+  },
+  "howItWorks": {
+  "title": "Siri Yetu ya Mafanikio",
+  "subtitle": "Tafuta, Hifadhi, Hamia — Ni Rahisi Hivyo",
+  "steps": {
+    "search": {
+      "title": "Tafuta na Gundua",
+      "description": "Gundua nyumba yako bora au mahali kwa kutumia vichujio vya urahisi. Vinjari picha za kina, ziara za 3D za kuvutia, bei wazi na maelezo sahihi ya eneo ili kufanya chaguo kamili."
+    },
+    "login": {
+      "title": "Ingia na Jisajili",
+      "description": "Fikia kwa usalama akaunti yako binafsi au uunde kwa urahisi mpya ili uendelee kwa urahisi na uhifadhi wako, hifadhi mapendeleo yako kwa ziara za baadaye, na urahishe uzoefu wako."
+    },
+    "book": {
+      "title": "Hifadhi na Lipa",
+      "description": "Chagua kwa usahihi tarehe unazotaka na uthibitishe upatikanaji wa makazi yako kamili. Kisha, kamilisha muamala wako kwa usalama mtandaoni kwa kutumia njia mbalimbali za malipo za urahisi, kuhakikisha mchakato wa uhifadhi ulio laini na wa kuaminika."
+    },
+    "checkin": {
+      "title": "Ingia na Furahia",
+      "description": "Mara uhifadhi wako utakapothibitishwa, utapokea arifa za papo hapo na maelekezo hatua kwa hatua kwenda mahali ulipokusudia. Huku JamboLush ikishughulikia kwa uwangalifu maelezo yote yaliyobaki, unaweza tu kupumzika, kujiandikisha bila msisimuko, na kufurahia kikamilifu kukaa kwako bila matatizo."
+    }
+  },
+  "cta": {
+    "title": "Uko tayari kuanza?",
+    "description": "Jiunge na maelfu ya watumiaji wenye furaha ambao wamepata mahali pao kamili na JamboLush",
+    "startButton": "Anza Kugundua",
+    "learnButton": "Jifunze Zaidi"
+  }
+},
+"contact": {
+  "header": {
+    "title": "Wasiliana Nasi",
+    "description": "Una swali au wazo ungependa kutushirikisha? Tungependa kusikia kutoka kwako! Tutumie ujumbe, na timu yetu itawasiliana nawe haraka iwezekanavyo."
+  },
+  "info": {
+    "title": "Maelezo ya Mawasiliano",
+    "email": {
+      "label": "Barua Pepe"
+    },
+    "phone": {
+      "label": "Simu"
+    },
+    "office": {
+      "label": "Ofisi",
+      "location": "Kigali, Rwanda"
+    },
+    "hours": {
+      "label": "Masaa ya Kazi",
+      "days": "Jumatatu - Ijumaa",
+      "time": "9:00 Asubuhi - 6:00 Jioni EAT"
+    }
+  },
+  "stats": {
+    "responseTime": "Muda wa Kujibu",
+    "happyClients": "Wateja wenye furaha"
+  },
+  "form": {
+    "title": "Tutumie Ujumbe",
+    "fullName": {
+      "label": "Jina Kamili",
+      "placeholder": "Weka jina lako kamili"
+    },
+    "email": {
+      "label": "Anwani ya Barua Pepe",
+      "placeholder": "Weka anwani yako ya barua pepe"
+    },
+    "phone": {
+      "label": "Nambari ya Simu",
+      "placeholder": "Weka nambari yako ya simu",
+      "optional": "(si lazima)"
+    },
+    "message": {
+      "label": "Ujumbe",
+      "placeholder": "Ujumbe wako...",
+      "characters": "herufi"
+    },
+    "sendButton": "Tuma Ujumbe",
+    "privacyNote": "Kwa kutuma ujumbe huu, unakubali sera yetu ya faragha na masharti ya huduma."
+  },
+  "modal": {
+    "title": "Ujumbe Umetumwa!",
+    "message": "Asante kwa kuwasiliana nasi! 😊 Tumepokea ujumbe wako na hatuwezi kusubiri kukujibu. Timu yetu itajibu haraka iwezekanavyo, hivyo baki mkangavu—tutawasiliana hivi karibuni",
+    "closeButton": "Funga"
+  }
+},
+"about": {
+  "hero": {
+    "badge": "Kuunganisha Wageni na Wasafiri Duniani",
+    "title": "Kuhusu Jambolush",
+    "description": "Mlango wako wa kuingia kwenye uzoefu wa kweli wa kusafiri. Tunawaunganiha wasafiri na wamiliki wa mali waliothibitishwa, waenyeji wa mitaani, na watoa huduma za utalii wanaoaminika kote duniani."
+  },
+  "stats": {
+    "properties": "Mali Zilizothibitishwa",
+    "countries": "Nchi",
+    "clients": "Wateja na Wasafiri Wenye Furaha",
+    "support": "Msaada"
+  },
+  "services": {
+    "title": "Tunachofanya",
+    "description": "Jambolush ni soko la kidijitali la kina ambalo huunganisha nafuu kati ya wasafiri na uzoefu wa kweli wa mitaani.",
+    "accommodation": {
+      "title": "Uhifadhi wa Makazi",
+      "description": "Kutoka vyumba vya kawaida hadi villa za kifahari, tafuta makazi yaliyothibitishwa yanayolingana na mtindo wako na bajeti."
+    },
+    "tours": {
+      "title": "Ziara za Uongozaji",
+      "description": "Gundua makombora ya siri na wataalamu wa mitaani ambao hutoa maisha kwenye maeneo kupitia masimulizi ya kweli."
+    },
+    "experiences": {
+      "title": "Uzoefu wa Kusafiri",
+      "description": "Hifadhi shughuli za kipekee, uzoefu wa kitamaduni, na ziara za ushujaa ambazo hutoa kumbukumbu za kudumu."
+    }
+  },
+  "mission": {
+    "title": "Dhamira Yetu",
+    "description": "Dhamira yetu ni kutoa ufikiaji usio na matatizo kwa nafasi za kuishi na kufanyia kazi zinazochochea uzalishaji, ubunifu, na jamii. Tunalenga kufanya kutafuta, kushiriki, na kupata uzoefu wa nafasi kuwa rahisi, salama, na kufurahisha kwa kila mtu. Kupitia uvumbuzi na suluhisho zinazolenga wateja, tunawawezesha watumiaji wetu kuzingatia malengo yao bila wasiwasi kuhusu mambo ya kiutendaji."
+  },
+  "vision": {
+    "title": "Maono Yetu",
+    "description": "Maono yetu ni kuwa jukwaa la kwanza duniani kwa nafasi za kubadilika, ambapo watu, timu, na biashara zinaweza kustawi katika mazingira yaliyorekebishwa mahitaji yao. Tunaona dunia ambapo ufikiaji wa nafasi za ubora ni rahisi, wa kuaminika, na huboresha mitindo ya maisha na ufanisi wa kazi, ukichochea mahusiano na ushirikiano kati ya jamii."
+  },
+  "values": {
+    "title": "Maadili Yetu Muhimu",
+    "description": "Kanuni zinazoongoza kila kitu tunachofanya katika Jambolush.",
+    "trust": {
+      "title": "Uaminifu na Usalama",
+      "description": "Uaminifu ni msingi wa uhusiano wetu na kila mtumiaji, mshirika, na mwanachama wa jamii. Tunaipa kipaumbele uwazi katika maingiliano yetu yote, kuhakikisha michakato salama na ya kuaminika, na kudumisha uongozi katika kila uamuzi tunaofanya. Lengo letu ni kuunda jukwaa la kuaminika ambapo watumiaji wanahisi kuwa na uhakika katika kuhifadhi, kushiriki, na kushughulika na nafasi."
+    },
+    "community": {
+      "title": "Kuimarisha Jamii",
+      "description": "Tunaamini nguvu za mahusiano. Jambolush inachochea ushirikiano na maingiliano makubwa kati ya watu binafsi, timu, na mashirika. Kwa kuchochea uzoefu wa pamoja, kuunga mkono mitandao ya mitaani, na kulinda hisia za kuwa sehemu, tunasaidia watumiaji wetu kuunda thamani pamoja na kujenga jamii zenye nguvu."
+    },
+    "innovation": {
+      "title": "Uvumbuzi",
+      "description": "Katika Jambolush, uvumbuzi uko katika moyo wa kila kitu tunachofanya. Tumejitolea kuboresha jukwaa letu mara kwa mara, kukubali teknolojia ya hivi karibuni, na kuunda suluhisho za ubunifu ambazo zinatarajia na kukidhi mahitaji yanayobadilika ya watumiaji wetu. Tunakubali mawazo mapya, tunajaribu mbinu za ushujaa, na tunabadilika haraka kutoa uzoefu ambao ni ufanisi na wa kutia moyo."
+    },
+    "excellence": {
+      "title": "Ubora",
+      "description": "Ubora unaongoza mbinu yetu ya huduma, teknolojia, na uzoefu wa mtumiaji. Tunajitahidi kutoa viwango vya juu katika kila kipengele cha jukwaa letu, kutoka ubora wa nafasi zilizoorodheshwa hadi ujibu wa msaada wetu. Kujitolea kwetu kwa ubora kunahakikisha kwamba kila maingiliano na Jambolush ni rahisi, kitaalamu, na kuridhisha."
+    }
+  },
+  "whyChoose": {
+    "title": "Kwa Nini Chagua Jambolush",
+    "description": "Sisi ni zaidi ya jukwaa la kuhifadhi tu – sisi ni mwenzako wa kusafiri wa kuaminika.",
+    "quality": {
+      "title": "Ubora Uliothibitishwa",
+      "description": "Mawakala wetu wa kundini huthibitisha kwa kibinafsi kila orodha ili kuhakikisha ubora na ukweli."
+    },
+    "payments": {
+      "title": "Malipo Salama",
+      "description": "Ulinzi wa hali ya juu wa malipo na miamala salama kwa amani ya akili."
+    },
+    "support": {
+      "title": "Msaada wa Saa 24/7",
+      "description": "Msaada wa wateja mchana na usiku kukusaidia katika safari yako yote."
+    }
+  },
+  "careers": {
+    "badge": "Kazi / Nafasi Wazi",
+    "title": "Kuwa Sehemu ya Jambolush",
+    "description": "Katika Jambolush, tunaamini kuunda zaidi ya jukwaa tu – tunajenga jamii inayowaunganiha watu na mali, waenyeji, mawakala, na uzoefu wa kweli. Unataka kuwa sehemu ya safari yetu? Jiunge na timu ya Jambolush na ufurahie uhuru wa kufanya kazi kwa mbali kutoka popote duniani. Tunafurahi kukusikia!",
+    "button": "Wasiliana Nasi"
+  }
+},
+"terms": {
+  "navigation": {
+    "sections": "Sehemu"
+  },
+  "agreeButton": "Nakubali Masharti na Makubaliano",
+  "agreementAlert": "Umekubali masharti!",
+  "sections": {
+    "welcome": {
+      "title": "Karibu",
+      "content": "Imesasishwa Mwisho: 01 Septemba, 2025\n\nMasharti na Makubaliano haya yanaanzisha makubaliano ya kisheria yanayosimamia ufikiaji na matumizi yako ya jukwaa la Jambolush, ambalo linajumuisha tovuti yetu, programu ya simu, na zana na huduma zote zinazohusiana zinazokupatikishwa. Kwa kuunda akaunti, kuorodhesha mali au huduma ya utalii, kuhifadhi makazi, kununua uzoefu, au kushughulika na kipengele chochote cha Jambolush kwa namna nyingine yoyote, unakiri na kukubali kwamba umefungwa na Masharti haya kikamilifu. Ikiwa haukubaliani na sehemu yoyote ya Masharti haya, haujaruhusiwa kutumia jukwaa, na lazima ujizuie kufikia au kutumia huduma zozote tunazotoa."
+    },
+    "definitions": {
+      "title": "1. Ufafanuzi",
+      "content": "1. Jukwaa: inamaanisha tovuti ya Jambolush, programu ya simu, na zana, teknolojia, au mifumo yoyote inayohusiana inayowezesha muunganisho kati ya wasafiri na watoa huduma.\n2. Mwenyeji: ni mtu yeyote au biashara inayoorodhesha mali au makazi ya kukodisha kupitia Jukwaa.\n3. Mfanyabiashara wa Utalii: ni mtoa wa huduma zinazohusiana na utalii kama vile ziara za uongozaji, shughuli za kitamaduni, au uzoefu wa kusafiri unaopatikana kwa Wageni.\n4. Mgeni/Msafiri: inamaanisha mtu yeyote anayehifadhi, kuweka akiba, au kununua huduma kupitia Jukwaa.\n5. Wakala wa Uwandani: ni mwakilishi aliyeidhinishwa wa Jambolush anayehusika na kuthibitisha orodha za mali, kuhakikisha usahihi, na kutoa msaada kwa watoa huduma.\n6. Mtumiaji: inajumuisha mtu yeyote au chombo, ikijumuisha Waenyeji, Wageni, Wafanyabiashara wa Utalii, na Mawakala wa Uwandani, anayefikia au kuingiliana na Jukwaa katika uwezo wowote.\n7. Maudhui: inamaanisha nyenzo yoyote iliyopakiwa, kuchapishwa, au kutolewa na Mtumiaji, ikijumuisha lakini si tu maandishi, picha, video, mapitio, au aina nyingine za data zinazoshirikiwa kupitia Jukwaa."
+    },
+    "scope": {
+      "title": "2. Upeo wa Huduma",
+      "content": "Jambolush inatumika tu kama soko la kidijitali linalowaunganiha wasafiri na wamiliki huru wa mali na watoa huduma za utalii. Hatumiliki, kuendesha, au kusimamia yoyote ya mali, ziara, au huduma zinazohusiana zilizoorodheshwa kwenye jukwaa letu. Kila mwenyeji au mtoa huduma ni mwenye jukumu kamili la usahihi wa orodha zao, ubora na usalama wa huduma wanazotoa, na kufuata sheria na kanuni zote zinazotumika. Ingawa Jambolush inaweza kutoa zana zinazosaidia mawasiliano, uhifadhi, na usindikaji wa malipo kati ya wasafiri na waenyeji, sisi si sehemu ya makubaliano ya kikontrakti kati yao. Kwa hiyo, Jambolush haihakikishi, kuidhinisha, au kuchukua jukumu la hali, uhalali, au ufaa wa huduma yoyote inayotolewa kupitia jukwaa, wala kwa tabia ya waenyeji, mawakala, au wageni. Migogoro yoyote, kufuta uhifadhi, ajali, hasara, au uharibifu unaotokana na matumizi ya huduma ni jukumu la mwenyeji na mgeni pekee."
+    },
+    "accounts": {
+      "title": "3. Usajili wa Akaunti",
+      "content": "Watumiaji wanahitajika kuunda akaunti ili kuorodhesha, kuhifadhi, au kusimamia huduma yoyote kupitia jukwaa la Jambolush, na wakati wa usajili lazima watoe maelezo sahihi, ya kweli, na ya kisasa ya kibinafsi na ya mawasiliano. Kila mtumiaji ni mwenye jukumu pekee la kudumisha usiri na usalama wa vitambulisho vyao vya kuingia, ikijumuisha majina ya watumiaji, manenosiri, au funguo nyingine zozote za ufikiaji zinazohusishwa na akaunti yao. Shughuli yoyote inayofanyika chini ya akaunti ya mtumiaji itahesabiwa kuwa jukumu lao, ikiwa waliruhusiwa au la, na Jambolush haitachukua jukumu la hasara, uharibifu, au migogoro yoyote inayotokana na matumizi yasiyoidhinishwa yanayosababishwa na uzembe katika kulinda maelezo ya akaunti. Watumiaji lazima wasasishe haraka maelezo ya akaunti yao mabadiliko yanapotokea na kujulisha mara moja Jambolush wakishuku ufikiaji wowote usioidhinishwa au uvunjaji wa usalama unaohusiana na akaunti yao."
+    },
+    "hosts": {
+      "title": "4. Majukumu ya Waenyeji na Wafanyabiashara wa Utalii",
+      "content": "Waenyeji na Wafanyabiashara wa Utalii wana jukumu la kudumisha orodha sahihi na za kisasa, kuhakikisha kwamba maelezo yote kuhusu mali au huduma zao ni sahihi na yanaonyesha hali ya sasa. Lazima waendaeleze huduma zao kwa njia halali na salama, wakifuata kanuni zote za mitaa na viwango vya usalama. Pia wanahitajika kufuata vibali vyovyote vinavyohitajika, majukumu ya ushuru, na kutimiza ahadi zote za uhifadhi zilizoahidiwa kwa wasafiri. Zaidi ya hayo, lazima walipe ada zozote za huduma zinazotozwa na Jambolush kwa kutumia jukwaa."
+    },
+    "guests": {
+      "title": "5. Majukumu ya Wageni na Wasafiri",
+      "content": "Wageni na Wasafiri wanahitajika kutoa maelezo sahihi na kamili ya uhifadhi wakati wa kufanya uhifadhi. Lazima waheshimu sheria za mali wanazitembelea, kufuata miongozo ya ziara au shughuli, na kufuata sheria zote zinazotumika. Zaidi ya hayo, wanatarajiwa kutunza mali na huduma wanazotumia, kuepuka uharibifu wowote au tabia ambayo inaweza kuvuruga uzoefu wa wengine."
+    },
+    "payments": {
+      "title": "6. Malipo na Ada",
+      "content": "Malipo yote ya uhifadhi lazima yafanywe kupitia njia za malipo zilizoidhinishwa za Jambolush ili kuhakikisha usalama na ufuatiliaji sahihi. Watumiaji hawaruhusiwi kufanya malipo ya moja kwa moja kati yao ili kuepuka ada za jukwaa. Malipo yanaweza kushikiliwa kwa muda katika njia ya malipo hadi huduma iwe imetolewa kikamilifu ili kulinda pande zote mbili. Ushuru wowote unaotokana na mapato ni jukumu la upande unaopokea fedha, si la Jambolush."
+    },
+    "cancellations": {
+      "title": "7. Kufuta na Marejesho",
+      "content": "Waenyeji na Wafanyabiashara wa Utalii wanahitajika kuonyesha wazi sera zao za kufuta na marejesho ili wasafiri waelewe masharti kabla ya kuhifadhi. Ada za jukwaa kwa kawaida hazirejeshwi isipokuwa ikisemwa kinyume chake wazi. Jambolush inajihifadhi haki ya kufuta uhifadhi katika hali za mashaka ya udanganyifu, wasiwasi wa usalama, au kushindwa kwa huduma, na inaweza kutoa marejesho katika hali kama hizo inavyoonekana kufaa."
+    },
+    "policies": {
+      "title": "8. Sera",
+      "content": "Jambolush ina hati za sera za ziada ambazo zinachukuliwa kuwa sehemu ya makubaliano haya na kutoa sheria na mwongozo zaidi kwa watumiaji. Hizi ni pamoja na Sera ya Faragha na Ulinzi wa Data, ambayo inahakikisha jinsi maelezo ya kibinafsi yanavyokusanywa, kuhifadhiwa, na kutumika; Sera ya Kupinga Ubaguzi na Kujumuishwa, ambayo inahakikisha watumiaji wote wanapokewa kwa haki na heshima; Sera ya Mawakala wa Uwandani, ambayo inafafanua majukumu ya wawakilishi walioidhinishwa wanaothibitisha orodha na kusaidia watoa huduma; Sera ya Maudhui na Orodha, ambayo inaweka viwango vya maelezo na vyombo vya habari vinavyoshirikiwa kwenye jukwaa; Sera ya Usalama, ambayo inaeleza hatua za kulinda watumiaji na data za jukwaa; na Sera ya Shughuli Zilizokatazwa, ambayo inatambua vitendo visivyoruhusiwa kwenye jukwaa. Kwa pamoja, sera hizi zinaunga mkono matumizi salama, haki na ya kuaminika ya Jambolush."
+    },
+    "intellectual": {
+      "title": "9. Haki za Kimakusudi",
+      "content": "Haki zote za kimakusudi kwenye jukwaa la Jambolush, ikijumuisha miundo, nembo, maudhui, na programu, ni za Jambolush au zimeidhinishwa ipasavyo kwake. Watumiaji hawaruhusiwi kutumia, kunakili, kubadilisha, au kusambaza yoyote ya haki hizo za kimakusudi bila ruhusa ya wazi, kuhakikisha kwamba Jambolush inadumisha udhibiti kamili wa viumbe vyake na nyenzo zilizolindwa."
+    },
+    "indemnity": {
+      "title": "10. Fidia",
+      "content": "Kwa kutumia jukwaa la Jambolush, unakubali kuchukua jukumu la madai yoyote ya kisheria, uharibifu, au gharama zinazotokana na vitendo vyako au ukiukaji wa Masharti. Hii inamaanisha utamlinda na kumlipa fidia Jambolush, washirika wake, na wafanyakazi ikiwa matatizo yatatokea kutokana na matumizi yako ya jukwaa, kuhakikisha hawahusishwi na tabia yako."
+    },
+    "accessibility": {
+      "title": "11. Ahadi ya Ufikiaji",
+      "content": "Jambolush inajitahidi kufanya jukwaa lake lifikiwe na watumiaji wote, ikijumuisha wale walio na ulemavu, kwa kufuata viwango vya ufikiaji vinavyojulikana. Jukwaa linaboreshwa mara kwa mara kuhakikisha kwamba watumiaji wenye mahitaji tofauti wanaweza kusogea, kuingiliana na, na kutumia vipengele vyake kwa ufanisi na starehe."
+    },
+    "forceMajeure": {
+      "title": "12. Nguvu Kuu",
+      "content": "Jambolush haihusishwi na kucheleweshwa kwoyote, kuvurugwa, au kushindwa kwa huduma kinachotokana na mazingira yasiyoweza kudhibitiwa, kama vile majanga ya asili, magonjwa makubwa, au vitendo vinavyochukuliwa na serikali. Matukio haya yanachukuliwa kuwa yasiyoepukika, na watumiaji wanakiri kwamba Jambolush haiwezi kuhakikisha uendeleo wa huduma chini ya hali kama hizo."
+    },
+    "thirdParty": {
+      "title": "13. Huduma za Wahusika wa Tatu",
+      "content": "Jambolush inaweza kufanya kazi na huduma za wahusika wa tatu, kama vile wasindikaji wa malipo, kurahisisha kazi za jukwaa. Hata hivyo, jukwaa haliitikii jinsi zana hizi za wahusika wa tatu zinavyofanya kazi, wala masharti yao, sera, au matatizo yoyote yanayoweza kutokea wakati wa kuzitumia. Watumiaji wanakiri kwamba maingiliano na huduma hizi yanategemea sheria na uongozi wa wahusika wa tatu wenyewe."
+    },
+    "changes": {
+      "title": "14. Mabadiliko ya Jukwaa",
+      "content": "Jambolush inaweza kubadilisha, kusasisha, au kuondoa vipengele vya jukwaa ili kufuata mahitaji ya kisheria au kuboresha utendaji. Ingawa marekebisho ya kawaida yanaweza kutokea bila ilani, mabadiliko makubwa yoyote yanayoathiri kwa kiasi kikubwa watumiaji yatawasilishwa kupitia barua pepe au arifa za programu ili kuweka watumiaji wamejulishwa."
+    },
+    "liability": {
+      "title": "15. Kipimo cha Jukumu",
+      "content": "Kadiri sheria inavyoruhusu, jukumu la jumla la kifedha la Jambolush kwa mtumiaji yeyote limepunguzwa kwa kiasi cha ada za huduma ambazo mtumiaji amezilipa kwa jukwaa katika miezi 12 iliyopita. Hii inamaanisha kwamba, katika hali ya madai au uharibifu yoyote, Jambolush haitaitikia hasara zinazozidi kiasi hiki cha juu."
+    },
+    "dispute": {
+      "title": "16. Utatuzi wa Migogoro",
+      "content": "1. Mazungumzo: Pande zote mbili zitafanya juhudi halisi za kutatua migogoro kupitia mazungumzo ya imani njema ndani ya siku 30 za kutokea kwa tatizo.\n2. Upatanisho: Ikiwa mazungumzo hayatatuzi mgogoro, jambo litaendelea kwa upatanisho, ambao utafanyika huko Kigali, Rwanda.\n3. Uamuzi wa Nje: Ikiwa upatanisho hautafanikiwa, migogoro itatatulizwa kupitia uamuzi wa nje unaofunga uliofanyika huko Kigali, Rwanda, ukiendeshwa kwa lugha ya Kiingereza.\n4. Gharama: Isipokuwa kukubaliana kinyume chake kati ya pande, kila upande ni mwenye jukumu la kufunika gharama zake mwenyewe zinazohusiana na mchakato wa utatuzi wa mgogoro."
+    },
+    "law": {
+      "title": "17. Sheria Inayotawala",
+      "content": "Masharti haya yanatawaliwa na sheria za Jamhuri ya Rwanda, ambayo inamaanisha kwamba migogoro yoyote, maelezo, au mambo ya kisheria yanayohusiana na matumizi ya jukwaa yatatatulizwa kulingana na sheria za Kigali."
+    },
+    "language": {
+      "title": "18. Lugha Inayotawala",
+      "content": "Masharti haya yameandikwa kwa Kiingereza, na tafsiri yoyote inayotolewa ni kwa starehe tu. Katika hali ya mgongano au kutofautiana kati ya matoleo, toleo la Kiingereza litachukua kipaumbele na kutawala ufafanuzi na utekelezaji wa Masharti."
+    },
+    "compliance": {
+      "title": "19. Taarifa ya Kufuata Kimataifa",
+      "content": "Jambolush inajitahidi kufuata viwango vya kimataifa vya kisheria kwa ulinzi wa data na faragha, ikijumuisha GDPR, CCPA, na kanuni za Afrika zinazohusiana. Hii inamaanisha kwamba jukwaa linachukua hatua za kulinda data za watumiaji, kushughulikia maelezo ya kibinafsi kwa uwazi, na kufuata sheria zinazotumika katika maeneo tofauti."
+    },
+    "acceptance": {
+      "title": "20. Ukubali wa Kidijitali",
+      "content": "Kwa kuunda akaunti, kubofya \"Nakubali,\" au kutumia jukwaa kwa njia yoyote, unathibitisha kwamba umesoma, umeelewa, na umekubali Masharti haya, ukikubali kufungwa na sheria zote, majukumu, na sera zilizoorodheshwa ndani yao."
+    },
+    "entire": {
+      "title": "21. Makubaliano Kamili",
+      "content": "Masharti haya yanabadilisha na kuchukua kipaumbele juu ya makubaliano au uelewano wowote wa awali kati yako na Jambolush, ikimaanisha kwamba Masharti ya sasa ni sheria rasmi zinazotawala matumizi yako ya jukwaa."
+    }
+  }
+},
+"privacy": {
+  "navigation": {
+    "sections": "Sehemu"
+  },
+  "header": {
+    "title": "Sera ya Faragha na Ulinzi wa Data ya JamboLush",
+    "lastUpdated": "Imesasishwa Mwisho: 01-Septemba-2025",
+    "description": "Sera hii ya Faragha na Ulinzi wa Data inaeleza jinsi Jambolush inavyokusanya, kutumia, kuhifadhi, kushiriki na kulinda data binafsi. Tunafuata Sheria ya Rwanda Na. 058/2021 Inayohusiana na Ulinzi wa Data Binafsi na Faragha, pamoja na Kanuni za Jumla za Ulinzi wa Data (GDPR) za Umoja wa Ulaya."
+  },
+  "sections": {
+    "scope": {
+      "title": "1. Upeo",
+      "content": "Sera hii inatumika kwa kila mtu anayetumia jukwaa la Jambolush, ikiwa ni pamoja na wasafiri, waenyeji na mawakala wa uwandani. Inashughulikia maelezo yote ya kibinafsi yanayokusanywa kupitia tovuti ya Jambolush, programu za simu na huduma zozote za wahusika wa tatu zilizounganishwa, bila kujali mahali ambapo mtumiaji yupo. Hii inahakikisha kuwa data za watumiaji wote zinashughulikiwa kulingana na sheria na ulinzi sawa, bila kujali jukumu lao au eneo la kijiografia."
+    },
+    "lawfulBasis": {
+      "title": "2. Msingi wa Kisheria wa Usindikaji",
+      "content": "Jambolush inasindika data binafsi tu wakati inaruhusiwa kisheria kufanya hivyo. Hii ni pamoja na hali ambazo umeidhinisha wazi, kama kwa mawasiliano ya masoko au matumizi ya vidakuzi; wakati usindikaji ni muhimu kutimiza mikataba, kama kukamilisha uhifadhi na malipo; wakati inahitajika kufuata majukumu ya kisheria, ikijumuisha majukumu ya kodi, kifedha au ya udhibiti; na wakati jukwaa lina maslahi halali, kama kudumisha usalama, kuzuia udanganyifu au kuboresha huduma. Mbinu hii inahakikisha kuwa usindikaji wote wa data ni wa kisheria, una maana na wa uwazi."
+    },
+    "dataCollected": {
+      "title": "3. Aina za Data Zinazokusanywa",
+      "content": "- Data za utambulisho: Hii ni pamoja na jina lako, nambari ya kitambulisho, pasi na nyaraka nyingine zozote za serikali zinazotumiwa kuthibitisha utambulisho wako.\n- Maelezo ya mawasiliano: Kama anwani yako ya barua pepe, nambari ya simu na anwani ya kimwili, ambazo huruhusu jukwaa kuwasiliana nawe.\n- Maelezo ya malipo: Maelezo yanayohusiana na malipo, yanayoshughulikiwa kwa usalama kupitia watoa huduma wa malipo wa wahusika wa tatu.\n- Historia ya uhifadhi na miamala: Rekodi za uhifadhi wako, ununuzi na maingiliano kwenye jukwaa.\n- Maelezo ya kifaa na eneo: Data kuhusu vifaa unavyotumia na eneo lako la kijiografia ili kuboresha utendakazi wa huduma na usalama.\n- Picha, video au hati zilizotumwa kwa uthibitisho wa mali: Vyombo vya habari unavyotoa ili kuthibitisha usahihi au uhalali wa orodha.\n- Vidakuzi na data ya kufuatilia: Maelezo yanayokusanywa kupitia vidakuzi au teknolojia nyingine za kufuatilia, ikijumuisha uchanganuzi, mapendeleo ya mtumiaji na data ya utangazaji inapohusika."
+    },
+    "dataSubjectRights": {
+      "title": "4. Haki za Wahusika wa Data",
+      "content": "Chini ya GDPR, Sheria ya Rwanda Na. 058/2021, na viwango vingine vya kimataifa vya faragha, una haki zifuatazo kuhusu data yako binafsi:\n\n- Ufikiaji: Unaweza kuomba kuona data binafsi ambayo Jambolush inashika kukuhusu.\n- Urekebishaji/Usasishaji: Unaweza kuomba maelezo yoyote yasiyo sahihi au ya zamani yarekebishwe au yasasishwe.\n- Ufutaji (\"Haki ya Kusahaulika\"): Unaweza kuomba data yako binafsi ifutwe kutoka mifumo yetu.\n- Kizuizi au Pingamizi: Unaweza kupunguza au kupinga aina fulani za usindikaji wa data.\n- Uhamishaji wa Data: Unaweza kuomba kupokea data yako katika muundo uliowekewa, unaotumiwa kwa kawaida kwa uhamishaji kwa huduma nyingine.\n- Kuondoa Idhini: Unaweza kuondoa idhini yoyote uliyotoa hapo awali kwa usindikaji wa data yako wakati wowote.\n- Kuwasilisha Malalamiko: Unaweza kuwasilisha malalamiko kwa Mamlaka ya Taifa ya Usalama wa Mtandao wa Rwanda (NCSA) au, ikiwa inatumika, mamlaka yako ya ndani ya ulinzi wa data katika EU."
+    },
+    "dataSharing": {
+      "title": "5. Kushiriki Data na Uhamisho wa Mipakani",
+      "content": "Jambolush haiwuzi data yako binafsi. Hata hivyo, tunaweza kushiriki data yako binafsi na wahusika fulani kutoa na kuboresha huduma zetu:\n\nWasindikaji wa malipo na taasisi za kifedha: Ili kukamilisha miamala kwa usalama.\nMawakala wa uwandani waliothibitishwa: Ili kuthibitisha orodha za mali.\nWatoa huduma za uongozaji, huduma za uchanganuzi na washirika wa msaada wa wateja: Ili kudumisha utendakazi wa jukwaa na kusaidia watumiaji.\nMamlaka za udhibiti au za serikali: Wakati zinahitajika na sheria.\n\nKwa uhamisho wa mipakani wa data binafsi nje ya Rwanda au Eneo la Kiuchumi la Ulaya (EEA), Jambolush inategemea ulinzi wa kisheria kama vile:\n\nMaamuzi ya kutosha yanayotambuliwa na wadhibiti husika.\nVikandarasi vya Kawaida vya Mikataba (SCCs) kuhakikisha ulinzi sahihi wa data.\nIdhini ya wazi ya mtumiaji inapohitajika."
+    },
+    "dataSecurity": {
+      "title": "6. Usalama wa Data",
+      "content": "Jambolush inatekeleza hatua za kiteknolojia na kiutendaji zinazofaa kulinda data binafsi. Hizi ni pamoja na kusimbua data kwa kutumia TLS kwa uhamishaji na AES-256 kwa uhifadhi, kutumia udhibiti wa ufikiaji unaotegemea majukumu na kanuni ya priviledji ndogo zaidi ili kupunguza ufikiaji, kufanya upimaji wa upenya wa kawaida na ukaguzi wa usalama ili kutambua udhaifu, na kudumisha taratibu za kujibu matukio na arifa za ukiukaji ili kushughulikia masuala yoyote ya usalama haraka."
+    },
+    "dataRetention": {
+      "title": "7. Uhifadhi wa Data",
+      "content": "Jambolush inahifadhi data binafsi tu kwa muda unaohitajika kutimiza majukumu ya kibiashara na ya kisheria. Rekodi za uhifadhi na kodi zinahifadhiwa kwa miaka 7. Data ya masoko na mawasiliano inahifadhiwa hadi unapoondoa idhini yako. Data zinazohusiana na akaunti zinafutwa akaunti yako inapofungwa, isipokuwa kuna hitaji la kisheria la kuzihifadhi kwa muda mrefu zaidi."
+    },
+    "childrensData": {
+      "title": "8. Data za Watoto",
+      "content": "Jambolush imejitolea kulinda faragha ya watoto na haikusanyi kwa makusudi data binafsi kutoka kwa mtu yeyote chini ya umri wa miaka 16 bila idhini ya wazi ya mzazi au mlezi. Ikiwa tutagundua kuwa data binafsi kutoka kwa mtoto chini ya miaka 16 imekusanywa bila makusudi, tutachukua hatua za haraka kuifuta kutoka mifumo yetu. Wazazi au walezi wanaoamini kuwa mtoto wao ametoa data binafsi kwa Jambolush wanaweza kutupigia simu wakati wowote kuomba ifutwe. Sera hii inahakikisha kuwa maelezo ya watoto yanashughulikiwa kwa uwajibikaji na kuwa jukwaa linafuata sheria zinazotumika za ulinzi wa watoto na faragha ya data."
+    },
+    "breachNotification": {
+      "title": "9. Arifa ya Ukiukaji",
+      "content": "Ikiwa ukiukaji wa data binafsi utatokea, Jambolush itajulisha haraka Mamlaka ya Taifa ya Usalama wa Mtandao wa Rwanda (NCSA), mamlaka husika ya usimamizi wa EU inapotumika, na watumiaji wowote walioathiriwa. Hii inahakikisha kuwa makosa yanashughulikiwa kwa uwazi na kufuata mahitaji ya kisheria, kuruhusu watumiaji na mamlaka kuchukua hatua muhimu za kulinda data na kupunguza hatari zinazowezekana."
+    },
+    "regulatoryRegistration": {
+      "title": "10. Usajili wa Udhibiti",
+      "content": "Jambolush imesajiliwa rasmi na Mamlaka ya Taifa ya Usalama wa Mtandao wa Rwanda (NCSA) kama mdhibiti wa data, ikimaanisha kwamba inatambuliwa kama yenye jukumu la kusimamia na kulinda data binafsi. Jukwaa linafuata mahitaji yote ya ukaguzi na usajili yaliyowekwa chini ya Sheria ya Rwanda Na. 058/2021, kuhakikisha utawala sahihi wa data na uwajibikaji."
+    },
+    "contactInformation": {
+      "title": "11. Maelezo ya Mawasiliano"
+    }
+  },
+  "contact": {
+    "intro": "Kwa maswali yoyote, malalamiko au maombi kuhusu haki zako za data, tafadhali wasiliana na Afisa wetu wa Ulinzi wa Data:",
+    "dpo": "Afisa wa Ulinzi wa Data - JamboLush",
+    "location": "Kigali, Rwanda"
+  }
+},
+"agreement": {
+  "navigation": {
+    "sections": "Sehemu"
+  },
+  "agreeButton": "Nakubali Masharti",
+  "agreementAlert": "Umekubali masharti!",
+  "sections": {
+    "ourAgreement": {
+      "title": "Makubaliano ya JamboLush",
+      "content": "Makubaliano haya yanaweka sheria za uhusiano kati ya JamboLush, inayoendeshwa na Amoria Global Tech Ltd (Usajili Na. 141275771), na mtu yeyote anayetumia jukwaa la JamboLush. Kwa kufikia au kutumia jukwaa na huduma zake, unakubali kufuata masharti haya kama msingi wa matumizi yako ya JamboLush."
+    },
+    "introduction": {
+      "title": "1. Utangulizi",
+      "content": "Makubaliano haya yanatoa msingi wa kisheria unaosimamia jinsi unavyotumia jukwaa na huduma za JamboLush, yakifafanua haki na majukumu kati yako na JamboLush."
+    },
+    "definitions": {
+      "title": "2. Ufafanuzi",
+      "content": "- Jukwaa: Inamaanisha tovuti ya JamboLush, programu ya simu, na mifumo yote inayohusiana inayotumiwa kutoa huduma.\n- Mwenyeji: Mmiliki wa mali au mtoa huduma ambaye anaorodhesha makazi au huduma yake kwenye jukwaa.\n- Mgeni: Mtumiaji anayehifadhi au kutumia mali au huduma kupitia jukwaa.\n- Mfanyabiashara wa Utalii: Biashara inayotoa huduma za kusafiri au zinazohusiana na ziara zinazopatikana kwa uhifadhi kwenye jukwaa.\n- Wakala wa Uwandani: Mwakilishi wa ndani wa kuaminika anayesaidia na uthibitisho wa mali na uongozaji wa watoa huduma.\n- Mshirika: Mshirikiano yoyote wa nje aliyeidhinishwa anayefanya kazi na JamboLush kuunga mkono huduma zake.\n- Njia ya Malipo Iliyoidhinishwa: Watoa huduma wa malipo salama na waliounganishwa rasmi wanaotumiwa kusindika miamala kwenye jukwaa."
+    },
+    "scope": {
+      "title": "3. Upeo",
+      "content": "Makubaliano haya yanatumika kwa watumiaji wote wa JamboLush na yanaweka sheria za shughuli muhimu kwenye jukwaa, ikijumuisha kuunda akaunti, kuchapisha na kusimamia orodha, kufanya na kushughulikia uhifadhi, kusindika malipo, kusimamia kufuta, kuhakikisha tabia sahihi, na kukidhi majukumu ya kufuata."
+    },
+    "registration": {
+      "title": "4. Usajili",
+      "content": "Watumiaji wote wa JamboLush lazima wawe na angalau umri wa miaka 18 na wanahitajika kutoa maelezo sahihi na yanayoweza kuthibitishwa wakati wa kuunda akaunti au kutumia jukwaa."
+    },
+    "listings": {
+      "title": "5. Orodha na Uhifadhi",
+      "content": "- Waenyeji na Waendeshaji: Wana wajibu wa kuhakikisha kwamba orodha zote wanazochapisha ni sahihi, za kweli, na zinafuata sheria.\n- Wageni: Lazima wafuate sheria za mali au miongozo ya huduma wakati wa kukaa kwao au kushiriki katika shughuli yoyote."
+    },
+    "payments": {
+      "title": "6. Malipo",
+      "content": "- Miamala yote: Lazima ikamilishwe kupitia Njia za Malipo Zilizoidhinishwa za JamboLush ili kuhakikisha malipo salama na yanayoweza kufuatiliwa.\n- Ada za huduma na kamisheni: Zinatumika na JamboLush na zinaonyeshwa wazi wakati wa uhifadhi.\n- Malipo nje ya jukwaa: Ili kuepuka ada za JamboLush yamepigwa marufuku kabisa na hayaruhusiwi chini ya Makubaliano haya."
+    },
+    "cancellations": {
+      "title": "7. Kufuta na Marejesho",
+      "content": "Kufuta kwote kunategemea Sera ya Marejesho ya Chini kabisa inayoonyeshwa kwenye kila orodha, ikimaanisha kwamba marejesho yatashughulikiwa kulingana na masharti maalum yaliyotolewa na Mwenyeji au Mfanyabiashara wakati wa uhifadhi."
+    },
+    "fieldAgents": {
+      "title": "8. Huduma za Mawakala wa Uwandani",
+      "content": "Mawakala wa Uwandani wana jukumu muhimu katika kuunga mkono jukwaa la JamboLush kwa kusaidia na uongozaji wa mali, kuthibitisha usahihi na uhalali wa orodha, na kutoa msaada wa ndani kwa Waenyeji na Wageni. Wanatarajiwa kujiendesha kwa kiwango cha juu cha utaalamu na viwango vya maadili, kuhakikisha kwamba vitendo vyao haviharibu uongozi wa jukwaa. Zaidi ya hayo, Mawakala wa Uwandani lazima wadumishe usiri mkubwa kuhusu maelezo yoyote nyeti wanayoyafikia wakati wa kazi yao, kulinda faragha ya watumiaji na usalama wa data za mali wakati wote."
+    },
+    "conduct": {
+      "title": "9. Tabia ya Mtumiaji",
+      "content": "Shughuli yoyote ya udanganyifu, haramu, unyanyasaji, au ubaguzi imepigwa marufuku kabisa kwenye jukwaa la JamboLush. Watumiaji lazima watende kwa uaminifu, wafuate sheria, wawashughulikie wengine kwa heshima, na kuepuka tabia yoyote inayoweza kudhuru jukwaa au jumuiya yake."
+    },
+    "privacy": {
+      "title": "10. Faragha ya Data",
+      "content": "JamboLush inafuata kikamilifu mfumo wa ulinzi wa data wa Rwanda, pamoja na viwango muhimu vya kimataifa vya faragha kama vile GDPR ya Umoja wa Ulaya na CCPA ya California, pamoja na sheria nyingine zozote za faragha ya data zinazotumika. Hii inahakikisha kwamba data zote za kibinafsi zinazokusanywa, kuhifadhiwa au kusindikwa kupitia jukwaa zinashughulikiwa kwa uwajibikaji, usalama na uwazi. Haki za watumiaji za kufikia, kurekebisha, kufuta au kupunguza maelezo yao ya kibinafsi zinaheshimiwa, na JamboLush inatekeleza hatua za kiteknolojia na kiutendaji kulinda data dhidi ya ufikiaji usioidhinishwa, kupotea au matumizi mabaya. Kwa kufuata kanuni hizi, jukwaa linaonyesha kujitolea kwa faragha, uwajibikaji na usimamizi wa kisheria wa maelezo ya mtumiaji katika maeneo yote ambapo linafanya kazi."
+    },
+    "liability": {
+      "title": "11. Uwajibikaji na Fidia",
+      "content": "- Jukumu la kati: JamboLush inatumika tu kama jukwaa linalowaunganiha watumiaji na Waenyeji, Waendeshaji wa Utalii na watoa huduma wengine. Jukwaa lenyewe halimiliki, halifanyi kazi au halidhibiti huduma zilizoorodheshwa, ikimaanisha kwamba JamboLush haiwajibiki kwa ubora, usalama au upatikanaji wa huduma yoyote.\n- Uwajibikaji wa Waenyeji na Waendeshaji: Waenyeji na Waendeshaji wanabaki wajibikaji kikamilifu kwa kutoa huduma zao kama zilivyotangazwa. Lazima wahakikishe kufuata sheria zote zinazotumika, kanuni na viwango vya usalama, na wanahitajika kudumisha bima sahihi kufunika hatari au majukumu yanayowezekana yanayohusiana na huduma zao.\n- Kipimo cha uwajibikaji: Kwa kiasi kikuu kinachoruhusiwa na sheria, JamboLush inapunguza uwajibikaji wake kwa uharibifu wowote wa moja kwa moja, wa nasibu au wa matokeo, ikijumuisha hasara zinazohusiana na uhifadhi, kufuta au kushindwa kwa huduma. Hii inamaanisha kwamba jukwaa halina jukumu la aina fulani za uharibifu au hasara zinazoweza kutokea wakati wa kutumia huduma.\n- Fidia ya mtumiaji: Watumiaji wanakubali kulipa fidia, kutetea na kushikilia JamboLush, washirika wake na wafanyakazi salama kutoka madai yoyote, hasara, uharibifu au gharama zinazotokana na matumizi mabaya ya jukwaa, ukiukaji wa Masharti au Makubaliano, au vitendo vya haramu wakati wa kutumia jukwaa. Hii inalinda JamboLush kutokana na kuwajibikana kwa matatizo yanayosababishwa na watumiaji."
+    },
+    "forceMajeure": {
+      "title": "12. Nguvu Kubwa",
+      "content": "Wala JamboLush wala watumiaji wake hawatawajibikana kwa kucheleweshwa, kukatizwa au kushindikana kunakotokana na matukio zaidi ya udhibiti wa busara, kama vile majanga ya asili, magonjwa makubwa, migomo ya kazi au kukatika kwa mtandao na kiteknolojia. Mazingira haya yanachukuliwa kuwa yasiyoepukika, na pande zote mbili zinakiri kwamba matukio kama hayo yanaweza kuathiri kwa muda upatikanaji au utendaji wa huduma."
+    },
+    "disputes": {
+      "title": "13. Utatuzi wa Migogoro",
+      "content": "- Upatanisho wa ndani: Mgogoro wowote unaotokana na matumizi ya JamboLush au tafsiri ya Makubaliano haya lazima kwanza ushughulikiwe kupitia juhudi za uaminifu na imani njema katika upatanisho wa ndani. Pande zote mbili zinatarajiwa kuwasiliana wazi na kujaribu kufikia suluhisho linalokubaliwa na wote kabla ya kupandisha jambo.\n- Uamuzi wa nje: Ikiwa mgogoro hauwezi kutatulizwa kupitia upatanisho ndani ya muda wa busara, utatumwa rasmi kwa Kituo cha Uamuzi wa Nje cha Rwanda (ACR) huko Kigali. Mchakato wa uamuzi wa nje utaendeshwa kulingana na sheria za kituo, kuhakikisha mchakato wa utatuzi uliowekewa na wa haki.\n- Uamuzi wa mwisho na wa kulazimisha: Matokeo ya uamuzi wa nje ni ya mwisho na ya kulazimisha kwa pande zote. Hii inamaanisha kwamba mara tu paneli ya uamuzi wa nje inapofanya uamuzi, lazima ukubaliwe, utekelezwe na hauwezi kurudiwa, ukitoa utatuzi wa uhakika wa mgogoro."
+    },
+    "law": {
+      "title": "14. Sheria Inayotawala",
+      "content": "Makubaliano haya yanatawaliwa na sheria za Jamhuri ya Rwanda, ikimaanisha kwamba mambo yoyote ya kisheria au migogoro inayotokana nayo yatatafsiriwa na kutatulizwa kulingana na sheria za Kirwanda. Pia imepangwa na kanuni za kibiashara za kimataifa zinazotambuliwa ili kuhakikisha uthabiti na viwango vya kibiashara vya kimataifa."
+    },
+    "intellectual": {
+      "title": "15. Mali ya Kiakili",
+      "content": "Alama zote za biashara, nembo, programu na maudhui yanayomilikiwa na JamboLush yamehifadhiwa kisheria. Watumiaji hawaruhusiwi kunakili, kutumia, kubadilisha au kusambaza yoyote ya nyenzo hizi bila ruhusa ya wazi, kuhakikisha kwamba JamboLush inashikilia udhibiti kamili juu ya mali yake ya kiakili."
+    },
+    "modifications": {
+      "title": "16. Marekebisho",
+      "content": "JamboLush inaweza kusasisha au kubadilisha Makubaliano haya mara kwa mara ili kuonyesha mabadiliko katika jukwaa, mahitaji ya kisheria au mazoea ya kibiashara. Watumiaji watapewa angalau siku 30 za ilani kabla ya mabadiliko yoyote kutumika, kwa kawaida kupitia barua pepe au arifa za programu. Wakati wa kipindi hiki, watumiaji wana fursa ya kupitia masharti yaliyosasishwa na kuamua kama wataendelea kutumia jukwaa. Matumizi endelevu ya JamboLush baada ya kipindi cha ilani ni ukubali wa Makubaliano yaliyorekebishwa. Mchakato huu unahakikisha uwazi na kuweka watumiaji wakijua haki na majukumu yao chini ya sheria za sasa za jukwaa."
+    },
+    "antiDiscrimination": {
+      "title": "17. Kupinga Ubaguzi",
+      "content": "JamboLush inakataza kabisa aina yoyote ya ubaguzi kulingana na rangi, dini, jinsia, ulemavu au sifa nyingine yoyote iliyohifadhiwa. Watumiaji wote, Waenyeji, Waendeshaji wa Utalii na Mawakala wa Uwandani wanatarajiwa kuwashughulikia wengine kwa haki na heshima, kuhakikisha mazingira ya kujumuisha na ya haki kwenye jukwaa."
+    },
+    "termination": {
+      "title": "18. Mwisho",
+      "content": "Aidha JamboLush au mtumiaji anaweza kumaliza Makubaliano haya wakati wowote kwa kutoa ilani ya busara. Kumalizika kunamaliza haki na majukumu chini ya Makubaliano, lakini vitendo vyovyote au majukumu yaliyotokea kabla ya kumalizika, kama malipo au uhifadhi uliokamilika, lazima bado yatiwe."
+    },
+    "security": {
+      "title": "19. Usalama na Ulinzi wa Udanganyifu",
+      "content": "JamboLush inatekeleza hatua za usalama za kiwango cha juu na za kiwango cha sekta kulinda data za watumiaji na kuhakikisha miamala salama. Hii ni pamoja na usimbaji wa SSL kulinda data zinazosafiri, kufuata PCI DSS kulinda maelezo ya malipo, na ufuatiliaji endelevu wa udanganyifu kutambua na kuzuia shughuli za mashaka. Zaidi ya ulinzi huu, watumiaji wana jukumu la kudumisha usalama wa akaunti zao wenyewe, ambalo linajumuisha kutumia manenosiri makuu, kuweka vitambulisho vya kuingia kwa siri, na kuripoti haraka ufikiaji wowote usioidhinishwa. Pamoja, hatua hizi zinasaidia kulinda jukwaa na watumiaji wake dhidi ya vitisho vya usalama na matumizi mabaya."
+    }
+  }
 }
-
 }

@@ -265,5 +265,414 @@
     "support": "Ubufasha 24/7",
     "prices": "Ibiciro byiza"
   }
+},
+"howItWorks": {
+  "title": "Ibanga Ryacu ry'Intsinzi",
+  "subtitle": "Shakisha, Kubika, Kwimukira — Byoroshye Gutya",
+  "steps": {
+    "search": {
+      "title": "Gushakisha no Kumenya",
+      "description": "Menya inzu yawe cyangwa ahantu heza ukoresheje uburyo bworoshye bwo gutandukanya. Reba amafoto ameze neza, ubugenzuzi bwa 3D bukomeye, ibiciro bisobanutse n'amakuru y'aho biherereye kugira ngo uhitemo neza."
+    },
+    "login": {
+      "title": "Kwinjira no Kwiyandikisha",
+      "description": "Injira muri konti yawe cyangwa ukore nshya mu buryo bworoshye kugira ngo ukomeze kubika neza kandi ubike ibyo ukunda kugira ngo bizakorohere mu gihe kizaza, kandi utyaze uburambe bwawe."
+    },
+    "book": {
+      "title": "Kubika no Kwishyura",
+      "description": "Hitamo neza iminsi ushaka kandi wemeze ko hari umwanya wo gutura wakunze. Nyuma, rangiza ibikorwa byawe mu buryo butegeje hejuru y'urubuga ukoresheje uburyo butandukanye bwo kwishyura, ukagenzura ko inzira yo kubika ikoroheye kandi yizewe."
+    },
+    "checkin": {
+      "title": "Kwinjira no Kuryoherwa",
+      "description": "Ibyo wabitse bimaze kwemezwa, uzabona ubutumwa bw'ako kanya n'amabwiriza akurikirana akwereka inzira yaho uri bujye. Hamwe na JamboLush, izacunga neza amakuru yose asigaye, bityo bikorohere unatuje, kwinjira bitakugoye, kandi wishimire byuzuye kugumana natwe."
+    }
+  },
+  "cta": {
+    "title": "Witeguye gutangira?",
+    "description": "Jya mu bantu ibihumbi banyuze muri JamboLush bageze ku byifuzo byabo",
+    "startButton": "Tangira Kumenya",
+    "learnButton": "Menya Ibindi"
+  }
+},
+"contact": {
+  "header": {
+    "title": "Tuvugane",
+    "description": "Ufite ikibazo cyangwa igitekerezo ushaka gutanga? Twifuza kukumva! Twohereze ubutumwa, kandi itsinda ryacu rizagusubiza vuba bishoboka."
+  },
+  "info": {
+    "title": "Amakuru akenewe",
+    "email": {
+      "label": "Imeri"
+    },
+    "phone": {
+      "label": "Telefoni"
+    },
+    "office": {
+      "label": "Ibiro",
+      "location": "Kigali, Rwanda"
+    },
+    "hours": {
+      "label": "Amasaha yo Gukora",
+      "days": "Kuwa gatatu - Kuwa gatanu",
+      "time": "9:00 AM - 6:00 PM EAT"
+    }
+  },
+  "stats": {
+    "responseTime": "Igihe cyo Gusubiza",
+    "happyClients": "Abakiriya banyuzwe"
+  },
+  "form": {
+    "title": "Duhereze Ubutumwa",
+    "fullName": {
+      "label": "Amazina Yose",
+      "placeholder": "Shyiramo amazina yawe yose"
+    },
+    "email": {
+      "label": "Aderesi ya Imeri",
+      "placeholder": "Shyiramo aderesi yawe ya imeri"
+    },
+    "phone": {
+      "label": "Nimero ya Telefoni",
+      "placeholder": "Shyiramo nimero yawe ya telefoni",
+      "optional": "(ntago bitegetswe)"
+    },
+    "message": {
+      "label": "Ubutumwa",
+      "placeholder": "Ubutumwa bwawe...",
+      "characters": "inyuguti"
+    },
+    "sendButton": "Kohereza Ubutumwa",
+    "privacyNote": "Mu kohereza ubu butumwa, wemeye gahunda yacu y'ibanga n'amabwiriza y'ubuhererekane."
+  },
+  "modal": {
+    "title": "Ubutumwa Bwoherejwe!",
+    "message": "Urakoze kutuvugisha! 😊 Twakiriye ubutumwa bwawe kandi tudashidikanya kugusubiza. Itsinda ryacu rizasubiza vuba bishoboka, komera—tuzaba tuvugana vuba",
+    "closeButton": "Funga"
+  }
+},
+"about": {
+  "hero": {
+    "badge": "Guhuza Abashyitsi n'Abakerarugendo Kwisi Yose",
+    "title": "Ibyerekeye Jambolush",
+    "description": "Urubuga rwawe rwizewe rwo kugufasha. Duhuza abakerarugendo, ab'amazu yemewe, ba nyir'umutungo, n'abatanga serivisi z'ubukerarugendo bemejwe kwisi yose."
+  },
+  "stats": {
+    "properties": "Imitungo Yemejwe",
+    "countries": "Ibihugu",
+    "clients": "Abakiriya n'Abakerarugendo Banyuzwe",
+    "support": "Ubufasha"
+  },
+  "services": {  
+    "title": "Icyo Dukora",
+    "description": "Jambolush ni urubuga rw'ikoranabuhanga ruziba icyuho kiri hagati y'abakerarugendo n'ibintu by'aho baba.",
+    "accommodation": {
+      "title": "Kwizigamira Amacumbi",
+      "description": "Kuva mu byumba byo kuraramo bigezweho kugeza nzu z'ubwiza buhebuje, shakisha amacumbi ajyanye n'imiterere yawe n'ingengo yawe y'imari."
+    },
+    "tours": {
+      "title": "Ingendo zirinzwe nez",
+      "description": "Menya ibintu by'agaciro byahishwe hamwe n'impuguke zo muri ako gace zigufasha kumva ahantu neza binyuze mu kubara inkuru z'ukuri."
+    },
+    "experiences": {
+      "title": "Uburambe mu ngendo",
+      "description": "Bika ibikorwa n'ibintu bidasanzwe bizagushimisha, imico itandukanye ishimishije uzakora kandi utazibagirwa."
+    }
+  },
+  "mission": {
+    "title": "Inshingano Zacu",
+    "description": "Intego yacu ni ugutanga uburyo bworoshye bwo kugera ku mazu meza yo kubamo no gukoreramo atuma habaho umusaruro, ndetse no guhanga udushya. Intego yacu nuko abantu bose babona, bagasangira, bakamenya ibijyanye n'ahantu runaka bitabagoye, mu mutekano kandi mu buryo bushimishije. Binyuze mu guhanga udushya n'ibisubizo byibanda ku bakiriya, dufasha abakoresha bacu kwerekeza ibitekerezo ku ntego zabo badashishikajwe n'ibikoresho."
+  },
+  "vision": {
+    "title": "Icyerekezo Cyacu",
+    "description": "Icyerekezo cyacu ni ukuba urubuga ruyobora kwisi yose ku mwanya uhindagurika, aho abantu, amakoraniro, n'ubucuruzi bishobora gutera imbere mu buryo buhuje nibyo bakeneye. Tureba isi aho kubona imyanya y'ireme ryiza ari byoroshye, byizewe, kandi bigatuma imibereho n'imikorere y'akazi birushaho kuba byiza, bigatuma habaho imikoranire n'ubufatanye mu baturage."
+  },
+  "values": {
+    "title": "Indangagaciro Zacu Nkuru",
+    "description": "Ihame riyobora byose dukora muri Jambolush.",
+    "trust": {
+      "title": "Kwizera n'Umutekano",
+      "description": "Kwizera ni urufatiro rw'isano yacu na buri mukoresha, umunyamakoperative, n'umunyamuryango. Dushyira imbere kugaragaza ukuri mu mibanire n'imikoranire yacu yose, tukagenzura imikorere n'umutekano byizewe, kandi tugakorana ubwitange mu cyemezo cyose dufata. Intego yacu ni ugushyiraho urubuga rwizewe aho abakoresha bumva bavuye mu kwizera kubika, gusangira, no kwishora mu myanya."
+    },
+    "community": {
+      "title": "Gushimangira Umuryango",
+      "description": "Twizera imbaraga z'imibanire. Jambolush itera imbere ubufatanye n'imibanire ifatika hagati y'abantu ku giti cyabo, amakipe, n'amashyirahamwe. Mu gushishikariza ubunyangamugayo bwo gusangira, gushyigikira imitandao y'aho baba, no kurwana ubwoba bwo kuba aho bashaka, dufasha abakoresha bacu kurema agaciro bahuriye hamwe no kubaka umuryango ukomeye."
+    },
+    "innovation": {
+      "title": "Ubuhanga",
+      "description": "Muri Jambolush, ubuhanga buri mu mutima wa byose dukora. Twiyemeje gukomeza kubungabunga urubuga rwacu, twakira ikoranabuhanga rya vuba, kandi turema ibisubizo by'ubuhanga bitaganya kandi bigahura n'ibikenerwa n'abakoresha bacu. Twakira ibitekerezo bishya, tugerageza inzira zose zishoboka, kandi tuhinduka vuba gutanga ubunyangamugayo bwombi bukora kandi bukangurira."
+    },
+    "excellence": {
+      "title": "Ubuhebuje",
+      "description": "Ubuhebuje buyobora uburyo bwacu bwo gutanga serivisi, ikoranabuhanga, n'ubunyangamugayo bw'umukoresha. Turimo gukora cyane kugira ngo dutange ibipimo by'hejuru mu buryo bwose bw'urubuga rwacu, uhereye ku bwiza bw'imyanya yagenewe kugeza ku gusubiza ubwoba bw'ubufasha bwacu. Kwiyemeza kwacu ku buhebuje biratuma buri mibanire na Jambolush ikorwa mu buryo bworoshye, bw'umwuga, kandi bushimishije."
+    }
+  },
+  "whyChoose": {
+    "title": "Kuki Uhitamo Jambolush",
+    "description": "Turi benshi kuruta gusa urubuga rwo kubika - turi umugenzi wawe wizewe w'ingendo.",
+    "quality": {
+      "title": "Ireme Ryemejwe",
+      "description": "Abacuruzi bacu bo mu murima bemeza ku giti cyabo buri rutonde kugira ngo bahakikishe ireme n'ukuri."
+    },
+    "payments": {
+      "title": "Kwishyura Gufite Umutekano",
+      "description": "Uburinzi bwo ku rwego rwo hejuru bw'amafaranga n'ibikorwa by'umutekano kugira ngo ugende amahoro."
+    },
+    "support": {
+      "title": "Ubufasha 24/7",
+      "description": "Ubufasha bw'abakiriya saa 24 kugufasha mu ngendo yawe yose."
+    }
+  },
+  "careers": {
+    "badge": "Imirimo / Imyanya Ifunguye",
+    "title": "Kuba Umwanditsi wa Jambolush",
+    "description": "Muri Jambolush, twizera kurema urubuga rurenga gusa - turimo kubaka umuryango uhuza abantu n'imitungo, abakira, abacuruzi, n'ubunyangamugayo bw'ukuri. Urashaka kuba muri urwo rugendo? Jya muri itsinda rya Jambolush kandi wishimire ubwisanzure bwo gukora kure ahantu hose kwisi. Turishimye kukumva!",
+    "button": "Tuvugane"
+  }
+},
+"terms": {
+  "navigation": {
+    "sections": "Ibice"
+  },
+  "agreeButton": "Ndemera Amabwiriza n'Amasezerano",
+  "agreementAlert": "Wemeye amabwiriza!",
+  "sections": {
+    "welcome": {
+      "title": "Murakaza Neza",
+      "content": "Byavuguruwe Bwa Nyuma: 01 Nzeri, 2025\n\nAmabwiriza n'Amasezerano yashyizweho amasezerano y'amategeko agenga ukuntu winjira no gukoresha urubuga rwa Jambolush, harimo urubuga rwacu, porogaramu y'igikoresho, n'ibikoresho byose bijyanye na serivisi zitangwa. Mu gukora konti, gushyira ku rutonde umutungo cyangwa serivisi z'ubukerarugendo, gukodesha aho gusengera, kugura ubunyangamugayo, cyangwa kwishora mu kintu icyo ari cyo cyose cya Jambolush mu buryo ubundi, wemera kandi ukemeza ko uziko amabwiriza hose. Niba udashyigikiye igice icyo ari cyo cyose cya aya mabwiriza, ntiwemerewe gukoresha urubuga, kandi ugomba kwirinda kwinjira cyangwa gukoresha serivisi iyo ari yo yose dutanga."
+    },
+    "definitions": {
+      "title": "1. Ibisobanuro",
+      "content": "1. Urubuga: bivuga urubuga rwa Jambolush, porogaramu y'igikoresho, n'ibikoresho byose bijyanye, tekinoloji, cyangwa sisitemu yoroshya guhuza abakerarugendo n'abatanga serivisi.\n2. Umusangwa: ni umuntu uwo ari we wese cyangwa ubucuruzi bushyira ku rutonde umutungo cyangwa aho gusengera kugira ngo bakodishe binyuze mu Rubuga.\n3. Umukoresha w'Ubukerarugendo: ni utanga serivisi zijyanye n'ubukerarugendo nk'ubugendanyi buyobowe, ibikorwa by'umuco, cyangwa ubunyangamugayo bw'ingendo buboneka ku Bashyitsi.\n4. Umushyitsi/Umukerarugendo: bivuga umuntu uwo ari we wese ubika, agashyira ku ruhande, cyangwa agura serivisi binyuze mu Rubuga.\n5. Umukozi wo mu Murima: ni uhagarariye Jambolush wemerewe ushinzwe kugenzura urutonde rw'imitungo, kwirinda ko byose byuye, no gutanga ubufasha kubatanga serivisi.\n6. Umukoresha: bikubiyemo umuntu uwo ari we wese cyangwa ikigo, harimo Abasangwa, Abashyitsi, Abakoresha b'Ubukerarugendo, n'Abakozi bo mu Murima, binjira cyangwa bakorana n'Urubuga mu buryo ubwo ari bwo bwose.\n7. Ibirimo: bivuga ibintu byose byashyizwe, byatangazwe, cyangwa byatanzwe n'Umukoresha, harimo ariko bitarenze inyandiko, amafoto, amashusho, ibitekerezo, cyangwa ubundi buryo bw'amakuru asangiwe binyuze mu Rubuga."
+    },
+    "scope": {
+      "title": "2. Uturere tw'Ubukoresha",
+      "content": "Jambolush ikora gusa nk'isoko ry'ubuhanga rihuza abakerarugendo n'ab'inyubako bigenga n'abatanga serivisi z'ubukerarugendo. Ntidufite, gukoresha, cyangwa gucunga kimwe mu mitungo, ubugendanyi, cyangwa serivisi zijyanye zishyizwe ku rutonde ku rubuga rwacu. Buri musangwa cyangwa utanga serivisi afite inshingano zuzuye z'ukuri kw'urutonde rwabo, ubwiza n'umutekano wa serivisi batanga, no gukurikiza amategeko n'amabwiriza yose akurikizwa. Mu gihe Jambolush ishobora gutanga ibikoresho byoroshya itumanaho, kubika, no gutunganya ubwishyu hagati y'abakerarugendo n'abasangwa, ntitugira uruhare mu masezerano y'amasezerano hagati yabo. Kubwibyo, Jambolush ntiyemeza, gushyigikira, cyangwa gufata inshingano ku buryo, gutarika cyangwa kubahiriza serivisi yose itangwa binyuze mu rubuga, cyangwa ku myitwarire y'abasangwa, abakozi, cyangwa abashyitsi. Amakimbirane yose, guhagarika kubika, impanuka, igihombo, cyangwa kwangiza bituruka ku gukoresha serivisi ni inshingano y'umusangwa n'umushyitsi gusa."
+    },
+    "accounts": {
+      "title": "3. Kwiyandikisha Konti",
+      "content": "Abakoresha basabwa gukora konti kugira ngo bashobore gushyira ku rutonde, kubika, cyangwa gucunga serivisi yose binyuze mu rubuga rwa Jambolush, kandi mu gihe cyo kwiyandikisha bagomba gutanga amakuru y'umuntu ku giti cye n'ay'itumanaho atari ukuri, atanyanyuje, kandi ashyije ku buryo. Buri mukoresha afite inshingano zonyine zo kubungabunga ibanga n'umutekano w'ibimenyetso bye byo kwinjira, harimo amazina y'abakoresha, ibanga ry'injira, cyangwa urufunguzo rurundi rwose rwo kwinjira rujyanye na konti ye. Igikorwa icyo ari cyo cyose kibera mu konti y'umukoresha kizafatwa nk'inshingano ze, yaba cyemerewe nawe cyangwa atari cyo, kandi Jambolush ntizajya mu inshingano z'igihombo cyose, kwangiza, cyangwa amakimbirane bituruka ku gukoresha nabi biterwa no kutagira ubwitonzi mu kubungabunga amakuru ya konti. Abakoresha bagomba vuba kuvugurura amakuru ya konti yabo impinduka zibaye no mu bwoba kumenyesha Jambolush niba bakeka kwinjira kwose kutemewe cyangwa ubuziko bw'umutekano bujyanye na konti yabo."
+    },
+    "hosts": {
+      "title": "4. Inshingano z'Abasangwa n'Abakoresha b'Ubukerarugendo",
+      "content": "Abasangwa n'Abakoresha b'Ubukerarugendo bafite inshingano zo kubungabunga urutonde rwukuri kandi rushyije ku buryo, kwiteza ku bikoresho byose ku mitungo yabo cyangwa serivisi zabo ari ukuri kandi zerekana uko bimeze ubu. Bagomba gukoresha serivisi zabo mu buryo bwemewe n'amategeko kandi bwateje umutekano, bakurikiza amabwiriza yose yo mu karere n'ibipimo by'umutekano. Kandi bagomba gukurikiza uruhushya rwose rukenewe, inshingano z'umusoro, no kuzuza byose byasezanyweho mu kubika byasabwe n'abakerarugendo. Byongeyeho, bagomba kwishyura amafaranga yose akenewe y'ubukozi asabwa na Jambolush kugira ngo bakoreshe urubuga."
+    },
+    "guests": {
+      "title": "5. Inshingano z'Abashyitsi n'Abakerarugendo",
+      "content": "Abashyitsi n'Abakerarugendo basabwa gutanga amakuru atari ukuri kandi yuzuye yo kubika igihe babika. Bagomba kubaha amategeko y'imitungo basura, gukurikiza ibyerekezo by'ubugendanyi cyangwa ibikorwa, no gukurikiza amategeko yose akurikizwa. Byongeyeho, biteganijwe ko bazafata neza umutungo na serivisi bakoresha, birinda kwangiza kwose cyangwa imyitwarire ishobora guhungabanya ubunyangamugayo bw'abandi."
+    },
+    "payments": {
+      "title": "6. Ubwishyu n'Amafaranga",
+      "content": "Ubwishyu bwose bwo kubika bugomba gukorwa binyuze mu nzira z'ubwishyu zemejwe za Jambolush kugira ngo habe umutekano n'ukurikirana gukwiye. Abakoresha ntibemerewe kwishyura bikuya binyuze ku nzira zikurikirana amafaranga y'urubuga. Ubwishyu bushobora gufatwa by'agateganyo mu nzira y'ubwishyu kugeza igihe serivisi imaze gutangwa neza kugira ngo harinzwe impande zombi. Umusoro uwese uturuka ku nyungu ni inshingano y'uruhande rwakiriye amafaranga, ntabwo ari iya Jambolush."
+    },
+    "cancellations": {
+      "title": "7. Guhagarika no Gusubiza",
+      "content": "Abasangwa n'Abakoresha b'Ubukerarugendo basabwa kwerekana neza politiki zabo zo guhagarika no gusubiza kugira ngo abakerarugendo basobanukirwe amabwiriza mbere yo kubika. Amafaranga y'urubuga muri rusange ntiyasubizwa keretse byerekanyijwe hanyuma ukandi. Jambolush ifite uburenganzira bwo guhagarika kubika mu gihe gikeka uburiganya, impungenge z'umutekano, cyangwa gukurikirana serivisi, kandi ishobora gutanga ubwishyu busubije mu bihe nk'ibyo uko bisabwa."
+    },
+    "policies": {
+      "title": "8. Politiki",
+      "content": "Jambolush ifite inyandiko z'andi mapolitiki afatwa nk'igice cy'iki gisezerano kandi itanga amategeko n'ubuyobozi bw'inyongera ku bakoresha. Ibi bikubiyemo Politiki y'Ubuziko n'Uburinzi bw'Amakuru, igena ukuntu amakuru y'umuntu ku giti cye akusanywa, abikwa, kandi akoreshwa; Politiki yo Kurwanya Ivangura n'Kwakira, ikemeza ko abakoresha bose bakirwa mu kwitondera kandi babagiwe; Politiki y'Abakozi bo mu Murima, isobanura inshingano z'abahagarariye bemejwe bagenzura urutonde kandi bafasha abatanga serivisi; Politiki y'Ibirimo n'Urutonde, ishyiraho ibipimo by'amakuru n'amakuru asangiwe ku rubuga; Politiki y'Umutekano, isobanura ingamba zo kurinda abakoresha n'amakuru y'urubuga; na Politiki y'Ibikorwa Bihagaritswe, imenya ibikorwa bitemewe ku rubuga. Hamwe, izi politiki zishyigikira ukoresha kwiza, kwizera, kandi kwizewe kwa Jambolush."
+    },
+    "intellectual": {
+      "title": "9. Umutungo w'Ubwenge",
+      "content": "Umutungo wose w'ubwenge ku rubuga rwa Jambolush, urimo gushushanya, ibimenyetso, ibirimo, na software, ni uwa Jambolush cyangwa cyuya uruhushya rwuzuye. Abakoresha ntibemerewe gukoresha, gukoporora, guhindura, cyangwa gukwirakwiza kimwe mu mutungo w'ubwenge ute nteko rtinya, kugira ngo Jambolush igumane igenzura byuzuye ibyaremye n'ibikoresho byarinzwe."
+    },
+    "indemnity": {
+      "title": "10. Kwishyura",
+      "content": "Gukoresha urubuga rwa Jambolush, wemera gufata inshingano z'ibibazo byose by'amategeko, kwangiza, cyangwa amafaranga aturuka ku bikorwa byawe cyangwa ukurya amabwiriza. Ibi bivuze ko uzarinda kandi wishyure Jambolush, abo bakorana nayo, n'abakozi mu gihe ibibazo byose bituruka ku gukoresha urubuga, kugira ngo batemezwa inshingano z'imyitwarire yawe."
+    },
+    "accessibility": {
+      "title": "11. Kwishyira mu Ntumbero Kubaho",
+      "content": "Jambolush ikoresha cyane ko urubuga rwayo rushobora kuboneka n'abakoresha bose, harimo n'abafite ubumuga, mugukurikiza ibipimo by'kubaho byizwi. Urubuga ruragenda runonosorwa kugira ngo abakoresha bafite ibisabwa bitandukanye bashobore kwerekeza, gukoresha, no gukoresha ibintu byarwo neza kandi neza."
+    },
+    "forceMajeure": {
+      "title": "12. Imbaraga Nkuru",
+      "content": "Jambolush ntizitishwa n'gutinda kwose, kwangiza, cyangwa kutakunda serivisi bituruka ku muntu utabasha kugenzura, nk'ibiza by'ukurikiranacu, ibicurane by'ubuzima, cyangwa ibikorwa byafashwe na guverinoma. Ibi bihinduka bifatwa nk'ibidashobora kwirindwa, kandi abakoresha bemera ko Jambolush idashobora kwemeza gukomeza kwa serivisi mu bihugu nk'ibyo."
+    },
+    "thirdParty": {
+      "title": "13. Serivisi za Kimwe",
+      "content": "Jambolush ishobora gukora na serivisi za kimwe, nk'abakundana b'ubwishyu, kugira ngo byoroshye imirimo y'urubuga. Ariko, urubuga ntirutishe ku bikorwa bya kimwe nk'ibyo bicuti cumi, cyangwa ku mabwiriza abo, politiki, cyangwa ibibazo byose bishobora kubaho mugihe cyo kubikoresha. Abakoresha bemera ko imibanire n'izo serivisi iteganye ku mategeko yabo n'ubwigirire bwa kimwe."
+    },
+    "changes": {
+      "title": "14. Guhindura Urubuga",
+      "content": "Jambolush ishobora guhindura, kuvugurura, cyangwa gukuraho ibintu by'urubuga kugira ngo bikurikize ibisabwa by'amategeko cyangwa gutezimbere imikorere. Mu gihe imihinduzi y'ubusanzwe ishobora kugira intengo itagaragara, impinduka zose nkuru zigira ingaruka ku bakoresha zizamenyeshwa binyuze kuri imeri cyangwa ibimenyesha by'porogaramu kugira ngo abakoresha bamenyeshe."
+    },
+    "liability": {
+      "title": "15. Kugabanya Inshingano",
+      "content": "Ukurikije uko amategeko abitekereza, inshingano z'amafaranga zuzuye za Jambolush ku mukoresha uwariwe wese ni gato ku igiciro cy'amafaranga y'ubukozi umukoresha yishyuye ku rubuga mu myezi 12 ishize. Ibi bivuze ko, mu gihe cy'ibibazo byose cyangwa kwangiza, Jambolush ntizafata inshingano z'igihombo kirenze urwo rugero."
+    },
+    "dispute": {
+      "title": "16. Gukemura Amakimbirane",
+      "content": "1. Kwiganira: Impande zombi zizagerageza rwose gukemura amakimbirane binyuze mu kwigasuka kwa kwizera kwiza muri munsi 30 y'ukubaho kwa ikibazo.\n2. Ubunyabutege: Niba kwiganira kudashobora gukemura amakimbirane, ikibazo kizagenda mu bunyabutege, bizaba mu Kigali, mu Rwanda.\n3. Ukwemeza kw'Inyuma: Niba ubunyabutege budashoboka, amakimbirane azakemurwa binyuze mu kwemeza kwa nkuri gubera mu Kigali, Rwanda, binyuze mu rurimi rw'Icyongereza.\n4. Amafaranga: Keretse mu kandi bwemerekanwe hagati y'impande, buri ruhande rufite inshingano zo gushakira amafaranga yazo ajyanye n'inzira yo gukemura amakimbirane."
+    },
+    "law": {
+      "title": "17. Amategeko Agenga",
+      "content": "Aya mabwiriza ayobowe n'amategeko ya Repubulika y'u Rwanda, bivuze ko amakimbirane yose, ibisobanuro, cyangwa ibibazo by'amategeko bijyanye no gukoresha urubuga bizakemurwa hakurikijwe amategeko yo mu Rwanda."
+    },
+    "language": {
+      "title": "18. Ururimi Rugenga",
+      "content": "Aya mabwiriza yanditswe mu Cyongereza, kandi ubuhinduzi bwose butangwa ni ku rwego rwo kuraguza gusa. Mu gihe cya makimbirane cyangwa itandukaniro hagati y'amahinduzi, igisonga mu Cyongereza kizasubiragirwa kandi gigenga ibisobanuro n'ishyirwa mu bikorwa by'Amabwiriza."
+    },
+    "compliance": {
+      "title": "19. Inyandiko y'Ubuziko ku Isi",
+      "content": "Jambolush igerageza gukurikiza ibipimo mpuza amahanga by'amategeko ku kuringaniza amakuru n'ubwoba, harimo GDPR, CCPA, n'amabwiriza ya Afurika afitanye isano. Ibi bivuze ko urubuga rufata ingamba zo kurinda amakuru y'abakoresha, gukoresha amakuru y'umuntu ku giti cye mu kwitonda, no gukurikiza amategeko akurikizwa mu turere dutandukanye."
+    },
+    "acceptance": {
+      "title": "20. Kwemera kwa Digital",
+      "content": "Gukora konti, gukanya \"Ndemera,\" cyangwa gukoresha urubuga mu buryo ubwo ari bwo bwose, wemeza ko wasomye, wasobanukirwa, kandi wemeye aya mabwiriza, wemera guhurira n'amategeko yose, inshingano, na politiki zasobanuwe muri yo."
+    },
+    "entire": {
+      "title": "21. Amasezerano Yuzuye",
+      "content": "Aya mabwiriza asimbuza kandi afata icyicuho ku masezerano yose cyangwa ubwiyumvire bwabonekereye hagati yawe na Jambolush, bivuze ko Amabwiriza y'ubu ari amategeko akumira agenga ukuntu ukoresha urubuga."
+    }
+  }
+},
+"privacy": {
+  "navigation": {
+    "sections": "Ibice"
+  },
+  "header": {
+    "title": "Politiki ya JamboLush yo Kurinda Ibanga n'Amakuru y'Umuntu ku Giti Cye",
+    "lastUpdated": "Byavuguruwe Bwa Nyuma: 01-Nzeri-2025",
+    "description": "Iyi Politiki yo Kurinda Ibanga n'Amakuru y'Umuntu ku Giti Cye isobanura ukuntu Jambolush ikusanya, ikoresha, ibika, isangira kandi ikarinda amakuru y'umuntu ku giti cye. Dukurikiza Itegeko rya Rwanda Na. 058/2021 Rijyanye no Kurinda Amakuru y'Umuntu ku Giti Cye n'Ubuziko, kimwe n'Amategeko Rusange yo Kurinda Amakuru (GDPR) y'Ubumwe bw'Uburayi."
+  },
+  "sections": {
+    "scope": {
+      "title": "1. Icyerekezo",
+      "content": "Iyi politiki ikurikizwa n'abantu bose bakoresha urubuga rwa Jambolush, harimo abakerarugendo, abasangwa n'abakozi bo mu murima. Ikubiyemo amakuru yose y'umuntu ku giti cye akusanywa binyuze ku rubuga rwa Jambolush, porogaramu z'igikoresho n'amaseruvise yose yo ku ruhande ajyanye, nta kuba uko ukoresha aba. Ibi biragaragaza ko amakuru y'abakoresha bose akoreshwa ukurikije amategeko kimwe n'uburinzi bumwe, nta kuba inshingano zabo cyangwa aharabana."
+    },
+    "lawfulBasis": {
+      "title": "2. Ishingiro ry'Amategeko ryo Gukoresha",
+      "content": "Jambolush ikoresha amakuru y'umuntu ku giti cye gusa igihe byemewe n'amategeko. Ibi bikubiyemo igihe watanze uruhushya rwo kwizereza, nko mu itumanaho ry'ubucuruzi cyangwa gukoresha cookies; igihe gukoresha bikenewe mu masezerano, nko kurangiza ubwishyuzi n'ubwishyu; igihe bisabwe mu gukurikiza inshingano z'amategeko, harimo ubushinganire, ubwishyu, cyangwa imirimo y'ubugenzuzi; kandi igihe urubuga rufite inyungu zemewe, nko kubungabunga umutekano, kurinda ubusobe cyangwa kunoza amaseruvise. Ubu buryo bugaragaza ko gukoresha amakuru byose ari ubw'amategeko, bufite intego kandi bugaragara."
+    },
+    "dataCollected": {
+      "title": "3. Ubwoko bw'Amakuru Akusanywa",
+      "content": "- Amakuru yo kwimenyekanisha: Ibi bikubiyemo izina ryawe, nimero y'irangamuntu, pasepo n'inyandiko zindi zose za leta zikoreshwa mu kwemeza umwirondoro wawe.\n- Amakuru yo kuvugana: Nk'aderesi yawe ya imeri, nimero ya telefoni n'aderesi y'ahantu utuye, bigatuma urubuga rubasha kuvugana nawe.\n- Amakuru y'ubwishyu: Amakuru ajyanye n'ubwishyu, akoreshwa neza hakoreshejwe abatanga ubwishyu bo ku ruhande.\n- Urutonde rw'ubwishyuzi n'ibyaguzwe: Inyandiko z'ubwishyuzi bwawe, ubwiguzi n'ibikoranye mu rubuga.\n- Amakuru y'ibikoresho n'aho uherereye: Amakuru ku bikoresho ukoresha n'aho uherereye kugirango inyongera imirimo y'ubunyangamugayo n'umutekano.\n- Amafoto, amashusho cyangwa inyandiko zohererejwe kugirango zemeze umutungo: Ibitangazamakuru utanga kugirango wemeze ko urutonde rw'ukuri cyangwa rwemewe.\n- Cookies n'amakuru yo gukurikirana: Amakuru akusanywa binyuze kuri cookies cyangwa ubundi buryo bwo gukurikirana, harimo isesengura, ibyifuzo by'umukoresha n'amakuru y'ubwiyamamarizo bihaze."
+    },
+    "dataSubjectRights": {
+      "title": "4. Uburenganzira bw'Abo Amakuru Abajyanye",
+      "content": "Hakurikijwe GDPR, Itegeko rya Rwanda Na. 058/2021, n'izindi mpuguke mpuzamahanga zo kurinda ubuziko, ufite uburenganzira bukurikira ku makuru yawe bwite:\n\n- Kugera ku makuru: Urashobora gusaba kureba amakuru y'umuntu ku giti cye Jambolush ifite ibyakureba.\n- Kugena/Kuvugurura: Urashobora gusaba amakuru adasobanutse cyangwa yashaje akorwe cyangwa avugururwe.\n- Gusiba (\"Uburenganzira bwo kwibagirwa\"): Urashobora gusaba ko amakuru yawe bwite asibirwe kuri sisitemu zacu.\n- Kugabanya cyangwa Kurwanya: Urashobora kugabanya cyangwa kurwanya ubwoko bumwe bwo gukoresha amakuru.\n- Kwimura Amakuru: Urashobora gusaba kwakirira amakuru yawe mu buryo butunganijwe, bukoreshwa cyane bwo kwimura kuri serivise indi.\n- Gukuraho Uruhushya: Urashobora gukuraho uruhushya rwose watanze mbere yo gukoresha amakuru yawe igihe icyo ari cyo cyose.\n- Gutangaza Ikirego: Urashobora gutangaza ikirego ku Rwego rw'Igihugu rw'Umutekano wa Cyber muri Rwanda (NCSA) cyangwa, nibibahira, inzego zawe zo kurinda amakuru mu Burayi."
+    },
+    "dataSharing": {
+      "title": "5. Gusangira Amakuru n'Ubwiyimire mu Mpaka",
+      "content": "Jambolush ntiwuzanya amakuru yawe bwite. Ariko, dushobora gusangira amakuru yawe bwite n'amatsinda amwe kugirango dutange kandi tubonyezeho serivisi zacu:\n\nAbatanga ubwishyu n'ibigo by'amafaranga: Kugirango bangaje ibikorwa neza.\nAbakozi bo mu murima bemejwe: Kugirango bemeje urutonde rw'imitungo.\nAbatanga ubwongere, serivisi z'isesengura na bagenzi bo gufasha abakiriya: Kugirango babungabunge imikorere y'urubuga kandi bafashe abakoresha.\nInzego z'ubugenzuzi cyangwa za leta: Igihe bisabwa n'amategeko.\n\nKu bwiyimire mu mpaka bw'amakuru y'umuntu ku giti cye hanze ya Rwanda cyangwa Agace k'Ubukungu bw'Uburayi (EEA), Jambolush ishingiye ku burinzi bw'amategeko nk'ubu:\n\nIbyemezo byo kuba byuzuye byemejwe n'abateganira.\nAmagambo y'Ibisanzwe by'Amabyerekana (SCCs) kugirango bemeze ko amakuru arinzwe neza.\nUruhushya rweruye rw'umukoresha igihe bikenewe."
+    },
+    "dataSecurity": {
+      "title": "6. Umutekano w'Amakuru",
+      "content": "Jambolush ishyira mu bikorwa ingamba zikwiriye z'ubuhanga n'ubuyobozi kugirango zirinze amakuru y'umuntu ku giti cye. Ibi bikubiyemo gusiba amakuru ukoresheje TLS yo kohereza na AES-256 yo kubika, gukoresha ingamba z'ubwitabire zishingiye ku nshingano n'ihame ry'uburenganzira buke bushoboka kugirango ugabanye ukwinjira, gukora ibizamini bya penetration n'isuzuma ry'umutekano rya buri gihe kugirango umenye ubushobozi buke, no kubungabunga uburyo bwo gusubiza ibyago n'ibyamamaza remezo kugirango byihutire ibibazo byose by'umutekano."
+    },
+    "dataRetention": {
+      "title": "7. Kubika Amakuru",
+      "content": "Jambolush ibika amakuru y'umuntu ku giti cye gusa mu gihe gikenewe kuzuza inshingano z'ubucuruzi n'amategeko. Inyandiko z'ubwishyuzi n'umusoro zibikwa kugeza ku myaka 7. Amakuru y'ubwiyamamaze n'ubunyangamugayo abikwa kugeza igihe uzakuraho uruhushya rwawe. Amakuru ajyanye na konti asibirwa konti yawe iyo ifunze, keretse hari ibisabwa by'amategeko byo kubikwa igihe kirekire."
+    },
+    "childrensData": {
+      "title": "8. Amakuru y'Abana",
+      "content": "Jambolush yiyemeje kurinda ubuziko bw'abana kandi ntikusanya ubwenge amakuru y'umuntu ku giti cye kuva ku muntu uwo ari we wese uri munsi y'imyaka 16 atamaze gutanga uruhushya rweruye rw'ababyeyi cyangwa umuguzi. Niba tuzabona ko amakuru y'umuntu ku giti cye yakuriwe ku mwana uri munsi y'imyaka 16 yafashwe mu buryo butateganijwe, tuzafata intambwe zo byihutiraho kugirango duyasibe kuri sisitemu zacu. Ababyeyi cyangwa abaguzi bemeza ko umwana wabo yatanze amakuru y'umuntu ku giti cye kuri Jambolush barashobora kutuvugana igihe icyo ari cyo cyose kugirango basabe ko asibirwe. Iyi politiki iragaragaza ko amakuru y'abana akoreshwa mu buryo bwisanzuye kandi ko urubuga rubakurikiza amategeko akurikizwa yo kurinda abana no kurinda amakuru y'ubuziko."
+    },
+    "breachNotification": {
+      "title": "9. Ubumenyesha bw'Ubwiyongere",
+      "content": "Niba habaye ubwiyongere bw'amakuru y'umuntu ku giti cye, Jambolush izamenyesha byihutiraho Urwego rw'Igihugu rw'Umutekano wa Cyber muri Rwanda (NCSA), urwego rukurikirana rw'Ubumwe bw'Uburayi rurimo igihe byaba bikurikizwa, n'abakoresha bose bayobye. Ibi biragaragaza ko ubwiyongere bukoreshwa mu buryo bugaragara kandi bukurikiza ibisabwa by'amategeko, bigatuma abakoresha n'inzego zafata ibikorwa bikenewe byo kurinda amakuru no kugabanya ibyago bishobora kugaragara."
+    },
+    "regulatoryRegistration": {
+      "title": "10. Kwiyandikisha ku Rwego rw'Ubugenzuzi",
+      "content": "Jambolush yiyandikishije ku mugaragaro ku Rwego rw'Igihugu rw'Umutekano wa Cyber muri Rwanda (NCSA) nk'umuteganyi w'amakuru, bivuze ko yemejwe nk'ushinzwe gucunga no kurinda amakuru y'umuntu ku giti cye. Urubuga rukurikiza ibisabwa byose by'isuzuma no kwiyandikisha byashyizweho hakurikijwe Itegeko rya Rwanda Na. 058/2021, bikarinda ko amakuru acungwa neza kandi habaho isuzuzi."
+    },
+    "contactInformation": {
+      "title": "11. Amakuru yo Kuvugana"
+    }
+  },
+  "contact": {
+    "intro": "Ku bibazo byose, ibibazo cyangwa ibyifuzo bijyanye n'uburenganzira bwawe bw'amakuru, nyamuneka vugana n'Umunyamabanga wacu w'Uburinzi bw'Amakuru:",
+    "dpo": "Umunyamabanga w'Uburinzi bw'Amakuru - JamboLush",
+    "location": "Kigali, Rwanda"
+  }
+},
+"agreement": {
+  "navigation": {
+    "sections": "Ibice"
+  },
+  "agreeButton": "Ndemera Amabwiriza",
+  "agreementAlert": "Wemeye amabwiriza!",
+  "sections": {
+    "ourAgreement": {
+      "title": "Amasezerano ya JamboLush",
+      "content": "Aya masezerano ashyiraho amategeko agenga isano hagati ya JamboLush, igendeshwa na Amoria Global Tech Ltd (Nimero y'iyandikisha 141275771), n'umuntu uwo ari we wese ukoresha urubuga rwa JamboLush. Mu kwinjira cyangwa gukoresha urubuga n'ubukore bwarwo, wemera gukurikiza aya mabwiriza nk'ishingiro ry'ukuntu ukoresha JamboLush."
+    },
+    "introduction": {
+      "title": "1. Intangiriro",
+      "content": "Aya masezerano atanga ishingiro ry'amategeko rigegennya ukuntu ukoresha urubuga n'ubukore bwa JamboLush, akasobanura uburenganzira n'inshingano hagati yawe na JamboLush."
+    },
+    "definitions": {
+      "title": "2. Ibisobanuro",
+      "content": "- Urubuga: Bivuga urubuga rwa JamboLush, porogaramu y'igikoresho, n'uburyo bwose bujyanye bukoreshwa mu gutanga ubukozi.\n- Umusangwa: Nyir'umutungo cyangwa utanga serivisi ushyira ku rutonde aho gusengera cyangwa serivisi ye ku rubuga.\n- Umushyitsi: Umukoresha ubika cyangwa ukoresha umutungo cyangwa serivisi abinyuze ku rubuga.\n- Umukoresha w'Ubukerarugendo: Ubucuruzi butanga serivisi z'ingendo cyangwa zijyanye n'ubugendanyi zuboneka byo kubika ku rubuga.\n- Umukozi wo mu Murima: Uhagarariye hafi uzwi kandi wizewe ufasha mu kwemeza umutungo no gutangiza abatanga serivisi.\n- Umunyamakoperative: Uwo ari we wese w'abantu bo ku ruhande bemejwe bakorana na JamboLush gushyigikira ubukozi bwayo.\n- Inzira y'Ubwishyu Yemejwe: Abatanga serivisi z'ubwishyu zifite umutekano kandi zenganijwe ku mugaragaro zikoreshwa gukora ubucuruzi ku rubuga."
+    },
+    "scope": {
+      "title": "3. Icyerekezo",
+      "content": "Aya masezerano akurikizwa n'abakoresha bose ba JamboLush kandi ashyiraho amategeko y'ibikorwa by'ingenzi ku rubuga, harimo gukora konti, gushyira ku rutonde no kuyobora urutonde, gukora no gukoresha kubika, gutunganya ubwishyu, kuyobora guhagarika, kwirinda imyitwarire ikwiye, no kuzuza inshingano zo gukurikiza."
+    },
+    "registration": {
+      "title": "4. Kwiyandikisha",
+      "content": "Abakoresha bose ba JamboLush bagomba kuba bagize byibuze imyaka 18 kandi basabwa gutanga amakuru yukuri kandi ashobora kwemezwa igihe bakora konti cyangwa bakoresha urubuga."
+    },
+    "listings": {
+      "title": "5. Urutonde n'Ubwishyuzi",
+      "content": "- Abasangwa n'Abayobozi: Bafite inshingano zo kumenya ko urutonde rwose bashyira ku mugaragaro ari rw'ukuri, rw'ukuri, kandi rukurikiza amategeko.\n- Abashyitsi: Bagomba gukurikiza amategeko y'umutungo cyangwa ibyerekezo by'ubukoro mugihe cyo kuguma kwabo cyangwa kugira uruhare mu bikorwa byose."
+    },
+    "payments": {
+      "title": "6. Ubwishyu",
+      "content": "- Ubucuruzi bwose: Bugomba kurangizwa binyuze mu nzira z'Ubwishyu Zemejwe za JamboLush kugirango haboneke ubwishyu bwiza kandi bushobora gukurikiranwa.\n- Amafaranga y'ubukozi na komisiyo: Bikoreshwa na JamboLush kandi byerekanywa neza mugihe cyo kubika.\n- Ubwishyu hanze y'urubuga: Kugirango wirinde amafaranga ya JamboLush birabujijwe cyane kandi ntibyemewe muri aya masezerano."
+    },
+    "cancellations": {
+      "title": "7. Guhagarika n'Ubwishyu Busubira",
+      "content": "Guhagarika kwose guteganye Politiki y'Ubwishyu Busubira Buto bwerekanywa kuri buri rutonde, bivuze ko ubwishyu busubira buzakoreshwa hakurikijwe amabwiriza yihariye atangwa n'Umusangwa cyangwa Umuyobozi mugihe cyo kubika."
+    },
+    "fieldAgents": {
+      "title": "8. Ubukozi bw'Abakozi bo mu Murima",
+      "content": "Abakozi bo mu Murima bafite uruhare rw'ingenzi mu gushyigikira urubuga rwa JamboLush mu gufasha mu gutangiza umutungo, kwemeza ukuri n'ukwimerezo kw'urutonde, no gutanga ubufasha bw'aho baba ku Basangwa n'Abashyitsi. Biteganijwe ko bayobore imyitwarire y'ikimuga cyane cy'ubwenge n'ibipimo by'imyitwarire myiza, bagenzure ko ibikorwa byabo bidateza ubushobozi bw'urubuga. Byongeyeho, Abakozi bo mu Murima bagomba kubungabunga ibanga rikomeye ku makuru yose y'ibanga bayinjira mu kazi kabo, barinde ubuziko bw'abakoresha n'umutekano w'amakuru y'umutungo buri gihe."
+    },
+    "conduct": {
+      "title": "9. Imyitwarire y'Umukoresha",
+      "content": "Igikorwa icyo ari cyo cyose cy'ubusobe, kididugu, ubugome, cyangwa ivangura girabujijwe cyane ku rubuga rwa JamboLush. Abakoresha bagomba kwitwarira mu kinyangamugayo, gukurikiza amategeko, gufata abandi neza, kandi kwirinda imyitwarire yose ishobora kwangiza urubuga cyangwa umuryango warwo."
+    },
+    "privacy": {
+      "title": "10. Ubuziko bw'Amakuru",
+      "content": "JamboLush ikurikiza neza uburyo bw'u Rwanda bwo kurinda amakuru, kimwe n'ibipimo by'ingenzi mpuzamahanga by'ubuziko nk'amategeko rusange y'ubuziko bw'amakuru ya Ubumwe bw'Uburayi (GDPR) na CCPA ya Californiya, hamwe n'amategeko andi ose ajyanye n'ubuziko bw'amakuru akurikizwa. Ibi biragaragaza ko amakuru yose y'umuntu ku giti cye akusanywa, abikwa, cyangwa akoreshwa binyuze ku rubuga akoreshwa mu kinyangamugayo, ubutekerezije, kandi mu buryo bugaragara. Uburenganzira bw'abakoresha bwo kugera, gukosora, gusiba, cyangwa kugabanya amakuru yabo bwite burabagiwe, kandi JamboLush ishyira mu bikorwa ingamba z'ubuhanga n'ubuyobozi kurinda amakuru ku kwinjira kutemewe, gutakaza, cyangwa gukoresha nabi. Mu gukurikiza aya mategeko, urubuga rwerekana kwiyemeza ubuziko, isuzuma, n'ubuyobozi bwemewe bw'amakuru y'umukoresha mu turere twose rukora."
+    },
+    "liability": {
+      "title": "11. Isuzuma n'Indishyi",
+      "content": "- Uruhare rwo hagati: JamboLush ikora gusa nk'urubuga ruhuza abakoresha n'Abasangwa, Abayobozi b'Ubukerarugendo n'abatanga serivisi bandi. Urubuga ubwarwo ntirufite, rukora, cyangwa rugenzura serivisi zashyizwe ku rutonde, bivuze ko JamboLush itisuzumwa ku bwiza, umutekano, cyangwa kuboneka kwa serivisi yose.\n- Isuzuma ry'Abasangwa n'Abayobozi: Abasangwa n'Abayobozi bagumana bisuzuma byuzuye byo gutanga serivisi zabo nkuko zitangazwa. Bagomba kwirinda gukurikiza amategeko yose akurikizwa, amabwiriza n'ibipimo by'umutekano, kandi basabwa kubungabunga ubwishingizi bukwiye kurinda ibyago bishobora kugaragara cyangwa inshingano zijyanye na serivisi zabo.\n- Kugabanya isuzuma: Ubushobozi bukomeye bwemewe n'amategeko, JamboLush igabanya isuzuma ryayo ku kwangiza kwose kwidadaha, kw'impanuka, cyangwa kw'ingaruka, harimo igihombo gijyanye na kubika, guhagarika, cyangwa gutsindagira kwa serivisi. Ibi bivuze ko urubuga rutisuzumwa ku bwoko bumwe bw'inkomyi cyangwa igihombo bishobora kugaragara igihe gikoresha serivisi.\n- Indishyi y'umukoresha: Abakoresha bemera gutanga indishyi, kurengera no guhagarika JamboLush, abo ikorana nabo, n'abakozi kuri ibibazo byose, igihombo, kwangiza, cyangwa amafaranga bituruka mu gukoresha nabi urubuga, kurya Amategeko cyangwa Amasezerano, cyangwa ibikorwa bitemewe mugihe cyo gukoresha urubuga. Ibi biringaniza JamboLush kutabazwa ku bibazo bituruka ku bakoresha."
+    },
+    "forceMajeure": {
+      "title": "12. Imbaraga Nkuru",
+      "content": "Ntabwo JamboLush cyangwa abakoresha bazabazwa ku gutinda, guhagarika, cyangwa gutsindagira bituruka ku bintu birenza ubugenzuzi busanzwe, nk'ibiza rusange, ubwandu, imyigaragambyo y'abakozi, cyangwa guhagarika internet n'ubuhanga. Ibi bibazo bifatwa nk'ibitarebuka, kandi impande zombi zemera ko ibintu nk'ibyo bishobora kwangiza by'agateganyo ubwisanzure cyangwa imikorere y'ubukoro."
+    },
+    "disputes": {
+      "title": "13. Gukemura Amakimbirane",
+      "content": "- Ubunyangamugayo bw'imbere: Amakimbirane yose aturuka mu gukoresha JamboLush cyangwa gusobanura aya masezerano agomba kubanza gukemurwa binyuze mu imbaraga z'ukwizera no gufata neza mu bunyangamugayo bw'imbere. Impande zombi ziteganijwe kuvugana kumyanya kandi kugerageza kugera ku gukemura kwemererwa n'abombi mbere yo kwongera ikibazo.\n- Ubuciko: Niba amakimbirane adashobora gukemurwa binyuze mu bunyangamugayo mu gihe gikwiye, azajyanwa ku mugaragaro ku ikigo cy'Ubuciko cya Rwanda (ACR) i Kigali. Inzira y'ubuciko izakorwa hakurikijwe amategeko y'ikigo, bikazuza inzira yo gukemura itunganijwe kandi ijyanye.\n- Icyemezo cya nyuma kandi giteye: Ibisubizo by'ubuciko ni bya nyuma kandi byateye impande zose. Ibi bivuze ko igihe inteko y'ubuciko imaze gufata icyemezo, igomba kwakira, gushyirwa mu bikorwa kandi ntishobora kujurirwa, ikaba itanga gukemura guteganya ku makimbirane."
+    },
+    "law": {
+      "title": "14. Amategeko Agenga",
+      "content": "Aya masezerano ayobowe n'amategeko ya Repubulika y'u Rwanda, bivuze ko ibibazo byose by'amategeko cyangwa amakimbirane bituruka muri yo bizasobanurwa kandi bikemurwe hakurikijwe amategeko yo mu Rwanda. Nabyo bifitanye isano n'amahame y'ubucuruzi mpuzamahanga yemejwe kugirango haboneke guhuza n'ibipimo by'ubucuruzi bw'isi."
+    },
+    "intellectual": {
+      "title": "15. Umutungo w'Ubwenge",
+      "content": "Ibimenyetso byose by'ubucuruzi, ibimenyetso, software, n'ibirimo byafatwe na JamboLush birinzwe n'amategeko. Abakoresha ntibemerewe gukoporora, gukoresha, guhindura, cyangwa gukwirakwiza kimwe muri ibyo bikoresho nta ruhushya rweruye, kugirango JamboLush igumane igenzura byuzuye ku mutungo wayo w'ubwenge."
+    },
+    "modifications": {
+      "title": "16. Guhindura",
+      "content": "JamboLush ishobora kuvugurura cyangwa guhindura aya masezerano rimwe na rimwe kugirango yerekane impinduka mu rubuga, ibisabwa by'amategeko, cyangwa imikorere y'ubucuruzi. Abakoresha bazahabwa byibuze iminsi 30 y'itangazo mbere y'uko impinduka zose zishyira mu bikorwa, mubisanzwe binyuze kuri imeri cyangwa ibimenyesha by'aplikasiyo. Mugihe cyanguru, abakoresha bafite amahirwe yo gusuzuma amabwiriza yavuguruwe no gufata icyemezo cyo komeza gukoresha urubuga. Gukomeza gukoresha JamboLush nyuma y'igihe cy'itangazo ni ukwemera Amasezerano yavuguruwe. Iyi nzira igenzura ko habaho ukugaragara kandi ikomeza kwigisha abakoresha uburenganzira bwabo n'inshingano hakurikijwe amategeko y'urubuga y'ubu."
+    },
+    "antiDiscrimination": {
+      "title": "17. Kurwanya Ivangura",
+      "content": "JamboLush ibuza cyane ubwoko ubwo ari ubwo bwose bw'ivangura bushingiye ku muboko, amadini, igitsina, ubumuga, cyangwa ikindi kintu icyo ari cyo cyose cy'ihariye kirinzwe. Abakoresha bose, Abasangwa, Abayobozi b'Ubukerarugendo n'Abakozi bo mu Murima biteganijwe kwifata kubandi mu kwitondera no kubaha, kugirango haboneke ibidukikije byakira kandi bibangikane ku rubuga."
+    },
+    "termination": {
+      "title": "18. Kurangiza",
+      "content": "Haba JamboLush cyangwa umukoresha birashobora kurangiza aya masezerano igihe icyo ari cyo cyose batanga itangazo rikwiye. Kurangiza kurangiza uburenganzira n'inshingano hakurikijwe Amasezerano, ariko ibikorwa byose cyangwa inshingano yabayeho mbere yo kurangiza, nk'ubwishyu cyangwa kubika kwuzuye, bigomba gutubahirizwa."
+    },
+    "security": {
+      "title": "19. Umutekano n'Uburinzi bw'Ubusobe",
+      "content": "JamboLush ishyira mu bikorwa ingamba z'umutekano zikomeye kandi z'ikimuga cy'inganda kurinda amakuru y'abakoresha no kwirinda ubucuruzi bwiza. Ibi bikubiyemo gusiba kwa SSL kurinda amakuru mu rwendo, gukurikiza PCI DSS kurinda amakuru y'ubwishyu, no gukurikirana burigihe ubusobe kugirango bamenye kandi birinde ibikorwa bikekwaho. Usibye izi nzira zo kuringaniza, abakoresha bafite isuzuma ryo kubungabunga umutekano wa konti zabo bwite, bikaba harimo gukoresha amagambo y'ibanga akomeye, kubungabunga ibimenyetso byo kwinjira mu mabanga, no gutangazamo byihutiraho kwinjira kwose kutemewe. Hamwe, izi ngamba zifasha kurinda urubuga n'abakoresha barwo kurwanya iterabwoba ry'umutekano n'ubukoresha nabi."
+    }
+  }
 }
 }

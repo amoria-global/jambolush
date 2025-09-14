@@ -254,6 +254,42 @@ interface PaymentRequest {
   autoReleaseDate?: string;
 }
 
+// ============ TOUR INTERFACES ============
+
+export interface Tour {
+  id: string;
+  title: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  duration: string;
+  price: number;
+  image: string;
+  isBestseller?: boolean;
+  category: string;
+}
+
+export interface TourFilters {
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  location?: string;
+  rating?: number;
+  sortBy?: 'price' | 'rating' | 'reviews' | 'title';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export interface ToursResponse {
+  tours: Tour[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 class FrontendAPIService {
   private baseURL: string;
   private defaultHeaders: Record<string, string> = {
@@ -680,8 +716,59 @@ class FrontendAPIService {
     return this.delete<BackendResponse<any>>(`/properties/${propertyId}`);
   }
 
-// Updated Review-related methods for apiService.ts
-// Add these methods to your existing FrontendAPIService class
+/**
+ * Search tours with filters
+ */
+async searchTours(filters?: TourFilters): Promise<APIResponse<BackendResponse<ToursResponse>>> {
+  const params: Record<string, any> = {};
+  
+  if (filters) {
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params[key] = value;
+      }
+    });
+  }
+
+  return this.get<BackendResponse<ToursResponse>>('/tours/search', { params });
+}
+
+/**
+ * Get all tours with optional filters
+ */
+async getTours(filters?: TourFilters): Promise<APIResponse<BackendResponse<ToursResponse>>> {
+  return this.searchTours(filters);
+}
+
+/**
+ * Get a single tour by ID
+ */
+async getTour(id: string): Promise<APIResponse<BackendResponse<Tour>>> {
+  return this.get<BackendResponse<Tour>>(`/tours/${id}`);
+}
+
+/**
+ * Get featured tours
+ */
+async getFeaturedTours(limit: number = 12): Promise<APIResponse<BackendResponse<ToursResponse>>> {
+  return this.get<BackendResponse<ToursResponse>>('/tours/featured', { 
+    params: { limit } 
+  });
+}
+
+/**
+ * Get tour categories
+ */
+async getTourCategories(): Promise<APIResponse<BackendResponse<string[]>>> {
+  return this.get<BackendResponse<string[]>>('/tours/categories');
+}
+
+/**
+ * Get tour locations
+ */
+async getTourLocations(): Promise<APIResponse<BackendResponse<string[]>>> {
+  return this.get<BackendResponse<string[]>>('/tours/locations');
+}
 
 // ============ REVIEW API METHODS ============
 

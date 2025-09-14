@@ -301,7 +301,7 @@ const Navbar = () => {
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-300 cursor-pointer ${
                     isScrolled
                       ? 'text-silver-700 hover:bg-silver-100'
-                      : 'text-white hover:bg-white/10'
+                      : 'text-silver-200 hover:bg-white/10'
                   }`}
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
@@ -311,7 +311,7 @@ const Navbar = () => {
                       <span className="text-white text-sm font-semibold">{getUserAvatar()}</span>
                     )}
                   </div>
-                  <span className="text-base font-medium hidden lg:block">{getUserDisplayName()}</span>
+                  <span className={`${isScrolled ? 'text-silver-700' : 'text-silver-300'} text-base font-medium hidden lg:block`}>{getUserDisplayName()}</span>
                   <i className="bi bi-chevron-down text-base"></i>
                 </button>
 
@@ -464,7 +464,7 @@ const Navbar = () => {
               ) : isLoggedIn && user ? (
                 <div className="space-y-1">
                   <div className={`flex items-center px-3 py-2 ${
-                    isScrolled ? 'text-silver-700' : 'text-white'
+                    isScrolled ? 'text-silver-700' : 'text-silver-300'
                   }`}>
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center mr-3">
                       {user.profile ? (

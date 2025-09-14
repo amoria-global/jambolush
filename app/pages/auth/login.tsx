@@ -59,7 +59,7 @@ function LoginContent() {
   };
 
   // Helper function to handle redirects
-  const getRedirectUrl = (token?: string) => {
+  const getRedirectUrl = (token?: string, refreshToken?: string) => {
     const redirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
     
     if (redirect) {
@@ -75,6 +75,7 @@ function LoginContent() {
           // Add token to query params if provided
           if (token) {
             url.searchParams.set('token', token);
+            url.searchParams.set('refresh_token', refreshToken || '');
           }
           return url.toString();
         }
@@ -107,12 +108,12 @@ function LoginContent() {
     }
     
     // Default redirect with token
-    return token ? `http://localhost:3001?token=${token}` : 'https://app.jambolush.com';
+    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   // Helper function to perform redirect
-  const performRedirect = (token?: string) => {
-    const redirectUrl = getRedirectUrl(token);
+  const performRedirect = (token?: string, refreshToken?: string) => {
+    const redirectUrl = getRedirectUrl(token, refreshToken);
     
     // Check if it's an external redirect (different origin)
     try {
@@ -173,6 +174,7 @@ const handleGoogleCallback = async (response: any) => {
     // Success - store token and check status
     if (result.data?.token || result.data?.accessToken) {
       const token = result.data.token || result.data.accessToken;
+      const refreshToken = result.data.refreshToken;
       localStorage.setItem('authToken', token);
       if (result.data.refreshToken) {
         localStorage.setItem('refreshToken', result.data.refreshToken);
@@ -190,7 +192,7 @@ const handleGoogleCallback = async (response: any) => {
       
       // Handle redirect based on status
       setTimeout(() => {
-        handleUserRedirect(userData, token);
+        handleUserRedirect(userData, token, refreshToken);
       }, 2000);
     }
   } catch (error: any) {
@@ -307,13 +309,13 @@ const handleGoogleCallback = async (response: any) => {
   };
 
   // Helper function to handle redirects based on user status
-const handleUserRedirect = (userData: any, token?: string) => {
+const handleUserRedirect = (userData: any, token?: string, refreshToken?: string) => {
   const userStatus = userData?.status || userData?.user?.status;
   
   switch (userStatus) {
     case 'active':
       // Allow normal redirect for active users
-      performRedirect(token);
+      performRedirect(token, refreshToken);
       break;
       
     case 'pending':

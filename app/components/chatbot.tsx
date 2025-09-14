@@ -297,7 +297,7 @@ const JambolushChatbot: React.FC = () => {
     }
     
     // A more direct fallback response, inspired by Chatbot12.tsx
-    return `I’m not sure about that one! You might find a detailed answer in our Help Center or by contacting Jambolush support. In the meantime, is there anything else I can assist you with?`;
+    return `I'm not sure about that one! You might find a detailed answer in our Help Center or by contacting Jambolush support. In the meantime, is there anything else I can assist you with?`;
   };
 
   const handleSendMessage = (text: string) => {
@@ -456,4 +456,3 @@ const JambolushChatbot: React.FC = () => {
 };
 
 export default JambolushChatbot;
-

@@ -276,7 +276,7 @@ const Navbar = () => {
             {/* Book a Tour Button - Prominent positioning */}
             <button 
               onClick={() => router.push('/all/tours')} 
-              className="px-4 py-2 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
+              className="px-4 py-2 bg-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
             >
               <i className="bi bi-binoculars mr-2"></i>
               {t('nav.findTour')}

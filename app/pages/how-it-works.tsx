@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from '../lib/LanguageContext'
 
 export default function HowItWorksPage() {
+  const t = useTranslations()
   const [activeStep, setActiveStep] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -13,26 +15,26 @@ export default function HowItWorksPage() {
   const steps = [
     {
       number: '01',
-      title: 'Search & Explore',
-      description: 'Discover your ideal home or spot by utilizing intuitive filters. Browse detailed photos, immersive 3D tours, transparent pricing, and precise location information to make the perfect choice.',
+      title: t('howItWorks.steps.search.title'),
+      description: t('howItWorks.steps.search.description'),
       mockupImage: '/search.png'
     },
     {
       number: '02',
-      title: 'Login and Sign up',
-      description: 'Securely access your personal account or easily create a new one to effortlessly proceed with your booking, save your preferences for future visits, and streamline your experience.',
+      title: t('howItWorks.steps.login.title'),
+      description: t('howItWorks.steps.login.description'),
       mockupImage: '/login.png'
     },
     {
       number: '03',
-      title: 'Book & Pay',
-      description: 'Seamlessly select your desired dates and confirm availability for your perfect accommodation. Then, complete your transaction securely online using a variety of convenient payment methods, ensuring a smooth and reliable booking process.',
+      title: t('howItWorks.steps.book.title'),
+      description: t('howItWorks.steps.book.description'),
       mockupImage: '/booking.png'
     },
     {
       number: '04',
-      title: 'Check in & Enjoy',
-      description: 'Once your booking is confirmed, you\'ll receive instant notifications and step-by-step directions to your destination. With JambiSlash meticulously handling all remaining details, you can simply relax, check in without fuss, and fully enjoy your hassle-free stay.',
+      title: t('howItWorks.steps.checkin.title'),
+      description: t('howItWorks.steps.checkin.description'),
       mockupImage: '/check.png'
     }
   ]
@@ -49,10 +51,10 @@ export default function HowItWorksPage() {
       {/* Header Section */}
       <div className={`max-w-7xl mx-auto text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
         <h1 className="text-5xl md:text-6xl font-bold text-[#083A85] mb-6">
-          Our Secret Sauce
+          {t('howItWorks.title')}
         </h1>
         <p className="text-xl text-black max-w-3xl mx-auto">
-          Find, Book, Move in — It's That Simple
+          {t('howItWorks.subtitle')}
         </p>
       </div>
 
@@ -224,17 +226,17 @@ export default function HowItWorksPage() {
       }`}>
         <div className="bg-gradient-to-r from-[#083A85]/30 to-[#083A85]/30 rounded-3xl p-12 border border-[#083A85]/20">
           <h2 className="text-3xl font-bold text-[#083A85] mb-4">
-            Ready to get started?
+            {t('howItWorks.cta.title')}
           </h2>
           <p className="text-lg text-black mb-8">
-            Join thousands of satisfied users who have found their perfect place with JamboLush
+            {t('howItWorks.cta.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="px-8 py-4 bg-[#083A85] text-white font-semibold rounded-xl hover:bg-[#06295e] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer">
-              Start Exploring
+              {t('howItWorks.cta.startButton')}
             </button>
             <button className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-200 cursor-pointer">
-              Learn More
+              {t('howItWorks.cta.learnButton')}
             </button>
           </div>
         </div>

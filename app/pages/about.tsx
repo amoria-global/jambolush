@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useTranslations } from '../lib/LanguageContext';
 
 const AboutUsPage = () => {
+  const t = useTranslations();
   const [hasScrolled, setHasScrolled] = useState(false);
   const [visibleElements, setVisibleElements] = useState(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -45,7 +47,7 @@ const AboutUsPage = () => {
   }, []);
 
   const getAnimationClass = (elementId: string, animationType = 'fade-up', delay = 0) => {
-    const baseClasses = 'transition-all duration-600 ease-out';
+    const baseClasses = 'transition-all duration-700 ease-out';
     const isVisible = visibleElements.has(elementId);
     const delayClass = delay > 0 ? `delay-${delay}` : '';
     
@@ -59,7 +61,7 @@ const AboutUsPage = () => {
       case 'fade-right':
         return `${baseClasses} ${delayClass} ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-16'}`;
       case 'scale-fade':
-        return `${baseClasses} ${delayClass} ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-8'}`;
+        return `${baseClasses} ${delayClass} ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`;
       case 'slide-up':
         return `${baseClasses} ${delayClass} ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'}`;
       case 'fade':
@@ -70,294 +72,386 @@ const AboutUsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black font-sans mt-12 mx-4 md:mx-12">
-      {/* Header - No scroll animation */}
-      <header className="container mx-auto px-4 pt-8 text-center">
-        <div>
-          <h1 className="text-2xl md:text-4xl font-bold text-[#0C2D62] mb-4">About JAMBOLUSH</h1>
-        </div>
-        <div>
-          <p className="max-w-2xl mx-auto text-black text-xl md:text-xl leading-relaxed">
-            Jambolush is a dynamic platform designed to connect people with unique living and 
-            working spaces. We aim to create flexible, comfortable, and inspiring environments for 
-            individuals, teams, and businesses. By offering easy access to quality spaces, 
-            we help our users focus on what truly matters whether it's productivity, creativity, or collaboration.
-          </p>
-        </div>
-      </header>
-
-      {/* Three Images Section - Start scroll animations here */}
-      <section className="container mx-auto px-4 py-8">
-        <div 
-          data-animate-id="images-container"
-          className={`grid grid-cols-1 sm:grid-cols-3 gap-4 ${getAnimationClass('images-container', 'fade-up-large')}`}
-        >
-          <div 
-            data-animate-id="image-1"
-            className={getAnimationClass('image-1', 'scale-fade')}
-            style={{ transitionDelay: '50ms' }}
-          >
-            <img src="https://plus.unsplash.com/premium_photo-1661767467261-4a4bed92a507?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Team working" className="w-full h-56 object-cover rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div className="container mx-auto px-6 py-20 relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+              {t('about.hero.badge')}
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold bg-[#0C2D62] to-blue-900 bg-clip-text text-transparent mb-8 mt-8 leading-tight">
+              {t('about.hero.title')}
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
+              {t('about.hero.description')}
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* Statistics Section */}
+      <section 
+        data-animate-id="stats"
+        className={`container mx-auto px-6 py-16 ${getAnimationClass('stats', 'fade-up')}`}
+      >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div 
-            data-animate-id="image-2"
-            className={getAnimationClass('image-2', 'scale-fade')}
+            data-animate-id="stat-1"
+            className={`text-center ${getAnimationClass('stat-1', 'scale-fade')}`}
             style={{ transitionDelay: '100ms' }}
           >
-            <img src="https://plus.unsplash.com/premium_photo-1661953971836-a5a88abca0dd?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Home Office Corner" className="w-full h-56 object-cover rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" />
+            <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">10K+</div>
+            <div className="text-gray-600 font-medium">{t('about.stats.properties')}</div>
           </div>
           <div 
-            data-animate-id="image-3"
-            className={getAnimationClass('image-3', 'scale-fade')}
+            data-animate-id="stat-2"
+            className={`text-center ${getAnimationClass('stat-2', 'scale-fade')}`}
             style={{ transitionDelay: '150ms' }}
           >
-            <img src="https://images.unsplash.com/photo-1550399504-8953e1a6ac87?q=80&w=1329&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="vacation" className="w-full h-56 object-cover rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" />
-          </div>
-        </div>
-      </section>
-
-      {/* Ratings Section */}
-      <section 
-        data-animate-id="ratings"
-        className={`container mx-auto px-4 flex flex-col sm:flex-row items-center justify-center gap-8 text-center py-6 ${getAnimationClass('ratings', 'slide-up')}`}
-      >
-        <div 
-          data-animate-id="rating-1"
-          className={getAnimationClass('rating-1', 'fade-up')}
-          style={{ transitionDelay: '50ms' }}
-        >
-          <p className="text-xl font-semibold text-gray-700">REVIEWED ON</p>
-          <p className="text-red-500 font-bold text-xl">★★★★★</p>
-          <p className="text-xl text-gray-500">Clutch · 50 Ratings</p>
-        </div>
-        <div 
-          data-animate-id="rating-2"
-          className={getAnimationClass('rating-2', 'fade-up')}
-          style={{ transitionDelay: '100ms' }}
-        >
-          <p className="text-xl font-semibold text-gray-700">GoodFirms</p>
-          <p className="text-yellow-500 font-bold text-xl">★★★★★</p>
-          <p className="text-xl text-gray-500">9 Reviews</p>
-        </div>
-        <div 
-          data-animate-id="rating-3"
-          className={getAnimationClass('rating-3', 'fade-up')}
-          style={{ transitionDelay: '150ms' }}
-        >
-          <p className="text-xl font-semibold text-gray-700">READ REVIEWS ON</p>
-          <p className="text-red-500 font-bold text-xl">★★★★★</p>
-          <p className="text-xl text-gray-500">G2</p>
-        </div>
-      </section>
-
-      {/* Our Mission & Our Vision */}
-      <section 
-        data-animate-id="mission-vision-container"
-        className={`container mx-auto px-4 py-12 ${getAnimationClass('mission-vision-container', 'fade-up-large')}`}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div 
-            data-animate-id="mission"
-            className={getAnimationClass('mission', 'fade-right')}
-            style={{ transitionDelay: '100ms' }}
-          >
-            <h2 className="text-2xl font-bold mb-3">Our Mission</h2>
-            <p className="text-black text-xl">
-              Our mission is to provide seamless access to versatile living and working spaces that 
-              inspire productivity, creativity, and community. We aim to make finding, sharing, 
-              and experiencing spaces effortless, safe, and enjoyable for everyone. Through innovation 
-              and customer-centric solutions, we empower our users to focus on their goals without worrying about logistics.
-            </p>
+            <div className="text-3xl md:text-4xl font-bold text-purple-600 mb-2">20+</div>
+            <div className="text-gray-600 font-medium">{t('about.stats.countries')}</div>
           </div>
           <div 
-            data-animate-id="vision"
-            className={getAnimationClass('vision', 'fade-left')}
+            data-animate-id="stat-3"
+            className={`text-center ${getAnimationClass('stat-3', 'scale-fade')}`}
             style={{ transitionDelay: '200ms' }}
           >
-            <h2 className="text-2xl font-bold mb-3">Our Vision</h2>
-            <p className="text-black text-xl">
-              Our vision is to become the leading platform for flexible spaces worldwide, where people, teams, 
-              and businesses can thrive in environments tailored to their needs. We envision a world where access to 
-              high-quality spaces is simple, reliable, and enhances lifestyles and work efficiency, fostering connections 
-              and collaboration across communities.
-            </p>
+            <div className="text-3xl md:text-4xl font-bold text-green-600 mb-2">10K+</div>
+            <div className="text-gray-600 font-medium">{t('about.stats.clients')}</div>
           </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section 
-        data-animate-id="values-section"
-        className={`container mx-auto px-4 py-12 ${getAnimationClass('values-section', 'slide-up')}`}
-      >
-        <div 
-          data-animate-id="values-title"
-          className={getAnimationClass('values-title', 'fade-up')}
-          style={{ transitionDelay: '50ms' }}
-        >
-          <h2 className="text-xl font-bold text-black mb-6">Our values</h2>
-        </div>
-
-        {/* Value Item 1 */}
-        <div 
-          data-animate-id="value-1"
-          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12 ${getAnimationClass('value-1', 'fade-up-large')}`}
-          style={{ transitionDelay: '100ms' }}
-        >
-          <img src="https://images.unsplash.com/photo-1493612276216-ee3925520721?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8SW5ub3ZhdGlvbnxlbnwwfHwwfHx8MA%3D%3D" alt="Innovation" className="w-full rounded-lg object-cover h-64 shadow-lg" />
-          <div>
-            <p className="text-[#F20C8F] text-xl font-semibold mb-1">01</p>
-            <h3 className="text-xl font-bold mb-3">Innovation</h3>
-            <p className="text-black mb-3 text-xl md:text-xl">
-              At Jambolush, innovation is at the heart of everything we do. We are committed to continuously 
-              improving our platform, adopting the latest technology, and creating creative solutions that 
-              anticipate and meet the evolving needs of our users. We embrace new ideas, experiment with bold
-               approaches, and adapt quickly to provide experiences that are both efficient and inspiring.
-            </p>
-            <Link href="/all/explore-more" className="text-[#F20C8F] text-xl font-semibold hover:underline">
-              Explore more →
-            </Link>
-          </div>
-        </div>
-
-        {/* Value Item 2 */}
-        <div 
-          data-animate-id="value-2"
-          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12 ${getAnimationClass('value-2', 'fade-up-large')}`}
-          style={{ transitionDelay: '150ms' }}
-        >
-          <div>
-            <p className="text-[#F20C8F] text-xl font-semibold mb-1">02</p>
-            <h3 className="text-xl font-bold mb-3">Intergrity & Proffesionalism</h3>
-            <p className="text-black mb-3 text-xl md:text-xl">
-            Trust is the foundation of our relationship with every user, partner, and community member.
-            We prioritize transparency in all our interactions, ensure secure and reliable processes, 
-            and maintain integrity in every decision we make. Our goal is to create a dependable platform where 
-            users feel confident booking, sharing, and engaging with spaces.
-            </p>
-            <Link href="all/case-study" className="text-[#F20C8F] text-xl font-semibold hover:underline">
-              Case study →
-            </Link>
-          </div>
-          <img src="https://media.istockphoto.com/id/1924766978/photo/business-ethics-concept-ethical-investment-sustianable-development-business-integrity-and.webp?a=1&b=1&s=612x612&w=0&k=20&c=rb41AM3ez9Ad5NOGqkFQN2QU3kkiqRQFbWO21K-0C5w=" alt="Intergrity & Proffesionalism" className="w-full rounded-lg object-cover h-64 shadow-lg" />
-        </div>
-
-        {/* Value Item 3 */}
-        <div 
-          data-animate-id="value-3"
-          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12 ${getAnimationClass('value-3', 'fade-up-large')}`}
-          style={{ transitionDelay: '200ms' }}
-        >
-          <img src="https://images.unsplash.com/photo-1499540633125-484965b60031?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Community" className="w-full rounded-lg object-cover h-64 shadow-lg" />
-          <div>
-            <p className="text-[#F20C8F] text-xl font-semibold mb-1">03</p>
-            <h3 className="text-xl font-bold mb-3">Community</h3>
-            <p className="text-black mb-3 text-xl md:text-xl">
-              We believe in the power of connections. Jambolush fosters collaboration and meaningful interactions 
-              among individuals, teams, and organizations. By encouraging shared experiences, supporting local networks,
-               and nurturing a sense of belonging, we help our users create value together and build stronger communities.
-            </p>
-            <Link href="/all/learn-more" className="text-[#F20C8F] text-xl font-semibold hover:underline">
-              Learn more →
-            </Link>
-          </div>
-        </div>
-
-        {/* Value Item 4 */}
-        <div 
-          data-animate-id="value-4"
-          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center ${getAnimationClass('value-4', 'fade-up-large')}`}
-          style={{ transitionDelay: '250ms' }}
-        >
-          <div>
-            <p className="text-[#F20C8F] text-xl font-semibold mb-1">04</p>
-            <h3 className="text-xl font-bold mb-3">Excellence</h3>
-            <p className="text-black mb-3 text-xl md:text-xl">
-              Excellence guides our approach to service, technology, and user experience. We strive to 
-              deliver the highest standards in every aspect of our platform, from the quality of spaces
-               listed to the responsiveness of our support. Our commitment to excellence ensures that every 
-               interaction with Jambolush is seamless, professional, and satisfying.
-            </p>
-            <Link href="/all/discover" className="text-[#F20C8F] text-xl font-semibold hover:underline">
-              Discover how →
-            </Link>
-          </div>
-          <img src="https://images.unsplash.com/photo-1541186877-bb5a745edde5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8RXhjZWxsZW5jZXxlbnwwfHwwfHx8MA%3D%3D" alt="Excellence" className="w-full rounded-lg object-cover h-64 shadow-lg" />
-        </div>
-
-        {/* Value Item 5 */}
-        <div 
-          data-animate-id="value-5"
-          className={`grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12 mt-12 ${getAnimationClass('value-5', 'fade-up-large')}`}
-          style={{ transitionDelay: '300ms' }}
-        >
-          <img src="https://media.istockphoto.com/id/2164609178/photo/low-angle-view-of-tree-branches-seen-through-lens-held-by-hand.webp?a=1&b=1&s=612x612&w=0&k=20&c=3xVt5gjjfllgbdfhN9EAX6Jt8sztESIC4Xrnm8ZIbvg=" alt=" Transparency" className="w-full rounded-lg object-cover h-64 shadow-lg" />
-          <div>
-            <p className="text-[#F20C8F] text-xl font-semibold mb-1">05</p>
-            <h3 className="text-xl font-bold mb-3"> Transparency</h3>
-            <p className="text-black mb-3 text-xl md:text-xl">
-              At Jambolush, we ensure that users have full visibility into every aspect of their experience, 
-              from property details and pricing to booking policies and safety measures. By sharing information openly and 
-              maintaining accountability, we build trust with our users and partners, allowing them to make informed decisions with confidence. 
-              Transparency also guides our internal operations, fostering a culture of integrity, fairness, and collaboration across the entire team.
-            </p>
-            <Link href="/all/learn-more" className="text-[#F20C8F] text-xl font-semibold hover:underline">
-              Learn more →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Who We Serve & our commitment*/}
-      <section 
-        data-animate-id="serve-commitment-container"
-        className={`container mx-auto px-4 py-12 ${getAnimationClass('serve-commitment-container', 'slide-up')}`}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div 
-            data-animate-id="who-we-serve"
-            className={getAnimationClass('who-we-serve', 'fade-right')}
-            style={{ transitionDelay: '100ms' }}
+            data-animate-id="stat-4"
+            className={`text-center ${getAnimationClass('stat-4', 'scale-fade')}`}
+            style={{ transitionDelay: '250ms' }}
           >
-            <h2 className="text-2xl font-bold mb-3">Who We Serve</h2>
-            <p className="text-black text-xl mb-6">
-              We partner with startups, enterprises, and non-profit organizations across various industries, 
-              helping them shape their identity and achieve sustainable growth.
-            </p>
-          </div>
-        
-          <div 
-            data-animate-id="commitment"
-            className={getAnimationClass('commitment', 'fade-left')}
-            style={{ transitionDelay: '200ms' }}
-          >
-            <h2 className="text-2xl font-bold mb-3">Our Commitment</h2>
-            <p className="text-black text-xl">
-              We are committed to delivering high-quality, user-focused solutions. Our dedication to 
-              innovation, transparency, and collaboration ensures that we exceed our clients' expectations.
-            </p>
+            <div className="text-3xl md:text-4xl font-bold text-orange-600 mb-2">24/7</div>
+            <div className="text-gray-600 font-medium">{t('about.stats.support')}</div>
           </div>
         </div>
       </section>
 
-      {/* Become One of Us Section */}
+      {/* What We Do Section */}
+      <section 
+        data-animate-id="what-we-do"
+        className={`container mx-auto px-6 py-16 ${getAnimationClass('what-we-do', 'fade-up-large')}`}
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{t('about.services.title')}</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t('about.services.description')}
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div 
+              data-animate-id="service-1"
+              className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 ${getAnimationClass('service-1', 'scale-fade')}`}
+              style={{ transitionDelay: '100ms' }}
+            >
+              <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.services.accommodation.title')}</h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t('about.services.accommodation.description')}
+              </p>
+            </div>
+
+            <div 
+              data-animate-id="service-2"
+              className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 ${getAnimationClass('service-2', 'scale-fade')}`}
+              style={{ transitionDelay: '150ms' }}
+            >
+              <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.services.tours.title')}</h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t('about.services.tours.description')}
+              </p>
+            </div>
+
+            <div 
+              data-animate-id="service-3"
+              className={`bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 ${getAnimationClass('service-3', 'scale-fade')}`}
+              style={{ transitionDelay: '200ms' }}
+            >
+              <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.services.experiences.title')}</h3>
+              <p className="text-gray-600 leading-relaxed">
+                {t('about.services.experiences.description')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission & Vision */}
+      <section 
+        data-animate-id="mission-vision"
+        className={`bg-white py-20 ${getAnimationClass('mission-vision', 'fade-up-large')}`}
+      >
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div 
+              data-animate-id="mission"
+              className={getAnimationClass('mission', 'fade-right')}
+              style={{ transitionDelay: '100ms' }}
+            >
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('about.mission.title')}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                {t('about.mission.description')}
+              </p>
+            </div>
+            
+            <div 
+              data-animate-id="vision"
+              className={getAnimationClass('vision', 'fade-left')}
+              style={{ transitionDelay: '200ms' }}
+            >
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">{t('about.vision.title')}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                {t('about.vision.description')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values */}
+      <section 
+        data-animate-id="values"
+        className={`container mx-auto px-6 py-20 ${getAnimationClass('values', 'slide-up')}`}
+      >
+        <div className="max-w-6xl mx-auto">
+          <div 
+            data-animate-id="values-header"
+            className={`text-center mb-16 ${getAnimationClass('values-header', 'fade-up')}`}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{t('about.values.title')}</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              {t('about.values.description')}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Trust & Security */}
+            <div 
+              data-animate-id="value-trust"
+              className={`group ${getAnimationClass('value-trust', 'fade-up')}`}
+              style={{ transitionDelay: '100ms' }}
+            >
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{t('about.values.trust.title')}</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {t('about.values.trust.description')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Local Community */}
+            <div 
+              data-animate-id="value-community"
+              className={`group ${getAnimationClass('value-community', 'fade-up')}`}
+              style={{ transitionDelay: '150ms' }}
+            >
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{t('about.values.community.title')}</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {t('about.values.community.description')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Innovation */}
+            <div 
+              data-animate-id="value-innovation"
+              className={`group ${getAnimationClass('value-innovation', 'fade-up')}`}
+              style={{ transitionDelay: '200ms' }}
+            >
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{t('about.values.innovation.title')}</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {t('about.values.innovation.description')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Excellence */}
+            <div 
+              data-animate-id="value-excellence"
+              className={`group ${getAnimationClass('value-excellence', 'fade-up')}`}
+              style={{ transitionDelay: '250ms' }}
+            >
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <svg className="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{t('about.values.excellence.title')}</h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {t('about.values.excellence.description')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How We're Different */}
+      <section 
+        data-animate-id="different"
+        className={`bg-gradient-to-br from-blue-50 to-purple-50 py-20 ${getAnimationClass('different', 'fade-up-large')}`}
+      >
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto text-center">
+            <div 
+              data-animate-id="different-header"
+              className={getAnimationClass('different-header', 'fade-up')}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{t('about.whyChoose.title')}</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-16">
+                {t('about.whyChoose.description')}
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <div 
+                data-animate-id="diff-1"
+                className={`text-center ${getAnimationClass('diff-1', 'scale-fade')}`}
+                style={{ transitionDelay: '100ms' }}
+              >
+                <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.whyChoose.quality.title')}</h3>
+                <p className="text-gray-600">
+                  {t('about.whyChoose.quality.description')}
+                </p>
+              </div>
+
+              <div 
+                data-animate-id="diff-2"
+                className={`text-center ${getAnimationClass('diff-2', 'scale-fade')}`}
+                style={{ transitionDelay: '150ms' }}
+              >
+                <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <svg className="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.whyChoose.payments.title')}</h3>
+                <p className="text-gray-600">
+                  {t('about.whyChoose.payments.description')}
+                </p>
+              </div>
+
+              <div 
+                data-animate-id="diff-3"
+                className={`text-center ${getAnimationClass('diff-3', 'scale-fade')}`}
+                style={{ transitionDelay: '200ms' }}
+              >
+                <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 11-9.75 9.75 9.75 9.75 0 019.75-9.75z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t('about.whyChoose.support.title')}</h3>
+                <p className="text-gray-600">
+                  {t('about.whyChoose.support.description')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Join Our Team */}
       <section 
         data-animate-id="careers"
-        className={`container mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center ${getAnimationClass('careers', 'fade-up-large')}`}
-        style={{ transitionDelay: '50ms' }}
+        className={`container mx-auto px-4 py-20 ${getAnimationClass('careers', 'fade-up-large')}`}
       >
-        <div>
-          <p className="uppercase tracking-wide text-gray-500 text-xl mb-2">Careers / Open Roles</p>
-          <h2 className="text-3xl font-bold mb-4">Be Part of Jambolush</h2>
-          <p className="text-black text-xl mb-6">
-           At Jambolush, we believe in creating more than just a platform we're building a community that connects people with places. 
-           Want to be part of our journey? Join the Jambolush team and enjoy the freedom to work remotely from anywhere in the world. 
-           We're excited to hear from you!
-          </p>
-         <Link href="/all/contact-us"className="bg-pink-500 text-white px-3 py-2 rounded text-xl font-medium hover:bg-pink-700 flex items-center gap-1 inline-flex">
-            <i className="bi bi-telephone-fill text-xl"></i>
-            Contact Us
-       </Link>
+        <div className="max-w-4xl mx-auto">
+          <div 
+            data-animate-id="careers-content"
+            className={getAnimationClass('careers-content', 'scale-fade')}
+          >
+            <div className="text-center">
+              <p className="uppercase tracking-wide text-gray-500 text-xl mb-2">{t('about.careers.badge')}</p>
+              <h2 className="text-3xl font-bold mb-4">{t('about.careers.title')}</h2>
+              <p className="text-black text-xl mb-6 max-w-3xl mx-auto">
+                {t('about.careers.description')}
+              </p>
+              <Link 
+                href="/all/contact-us" 
+                className="bg-[#F20C8F] text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-pink-700 items-center gap-2 inline-flex transition-all duration-300"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>
+                {t('about.careers.button')}
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

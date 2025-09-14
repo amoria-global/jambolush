@@ -11,7 +11,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
 import Preloader from "./components/Preloader";
-import JambolushChatbot from "./components/chatbot";
+import JambolushChatbot from "./components/chatbot"; 
+import Backtop from "./components/backtop";
+
 import CookiesConsent from "./pages/cookies"; // Your cookies modal component
 
 // Internal layout component that uses the language context
@@ -142,7 +144,9 @@ function LayoutContent({
           {children}
           {!shouldHideNavbarFooter && <Footer onOpenCookieModal={openCookieModal} />}
           {!shouldHideNavbarFooter && <JambolushChatbot />}
+          {!shouldHideNavbarFooter && <Backtop />}
           
+
           {/* Cookie Modal Overlay */}
           {showCookieModal && (
             <CookiesConsent onClose={closeCookieModal} />

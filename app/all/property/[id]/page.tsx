@@ -995,13 +995,13 @@ export default function HousePage({ params }: HousePageProps) {
               <i className="bi bi-geo-alt-fill text-[#F20C8F] text-lg sm:text-xl mt-0.5 flex-shrink-0"></i>
               <p className="text-gray-700 font-medium text-base sm:text-base leading-relaxed">{house?.address}</p>
             </div>
-            <div className="w-full h-[250px] sm:h-[300px] lg:h-[400px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
+            <div className="w-full h-[250px] sm:h-[300px] lg:h-[750px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
               <iframe
                 width="100%"
                 height="100%"
                 frameBorder="0"
                 style={{ border: 0 }}
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(house?.address || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(house?.address || '')}&t=k&z=15&ie=UTF8&iwloc=&output=embed`}
                 allowFullScreen
                 className="w-full h-full"
               ></iframe>
@@ -1157,7 +1157,7 @@ export default function HousePage({ params }: HousePageProps) {
         {house?.videoUrl && (
           <div className="mb-8 sm:mb-12">
             <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">3D Virtual Tour</h2>
-            <div className="w-full h-[250px] sm:h-[350px] lg:h-[500px] rounded-xl overflow-hidden shadow-xl">
+            <div className="w-full h-[250px] sm:h-[350px] lg:h-[600px] rounded-xl overflow-hidden shadow-xl">
               {house.videoUrl.includes('youtube.com') || house.videoUrl.includes('youtu.be') ? (
                 <iframe
                   width="100%"

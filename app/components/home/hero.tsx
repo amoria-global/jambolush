@@ -35,7 +35,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
 
   const tabs: Tab[] = [
     { value: 'all', label: t('hero.tabs.all'), icon: 'bi-grid' },
-    { value: 'spot', label: t('hero.tabs.spot'), icon: 'bi-geo-alt' },
+    { value: 'tours', label: t('hero.tabs.spot'), icon: 'bi-geo-alt' },
     { value: 'stay', label: t('hero.tabs.stay'), icon: 'bi-calendar-check' },
   ];
 

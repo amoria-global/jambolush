@@ -73,6 +73,20 @@ interface AlertState {
   duration?: number;
 }
 
+// Fixed TypeScript interfaces for component props
+interface ReviewModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (reviewData: any) => void;
+  loading: boolean;
+}
+
+interface PhotoGalleryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  images?: any;
+}
+
 // Transform backend tour data to frontend format
 const transformTourData = (backendTour: any) => {
   const parseJSON = (jsonString: string, fallback: any) => {
@@ -113,8 +127,8 @@ const transformTourData = (backendTour: any) => {
   };
 };
 
-// Review Modal Component
-const ReviewModal = ({ isOpen, onClose, onSubmit, loading }) => {
+// Review Modal Component - Fixed props typing
+const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reviewData, setReviewData] = useState({
     bookingId: '',
     rating: 5,
@@ -208,8 +222,8 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, loading }) => {
   );
 };
 
-// Photo Gallery Modal Component  
-const PhotoGalleryModal = ({ isOpen, onClose, images = [] }) => {
+// Photo Gallery Modal Component - Fixed props typing
+const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, images = [] }) => {
   if (!isOpen) return null;
 
   return (
@@ -286,7 +300,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const [validTourId, setValidTourId] = useState<number | null>(null);
   const [invalidId, setInvalidId] = useState(false);
 
-  // Validate tour ID
+  // ID validation useEffect - updated to handle loading state properly
   useEffect(() => {
     if (!resolvedParams.id) {
       setError('No tour ID provided');
@@ -296,7 +310,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
     }
 
     const decodedId: any = decodeId(resolvedParams.id);
-    if (!decodedId) {
+    if (decodedId === null || decodedId === undefined) {
       setError('Unable to decode tour ID');
       setInvalidId(true);
       setLoading(false);
@@ -318,8 +332,8 @@ export default function TourDetailPage({ params }: TourPageProps) {
   // Fetch tour data
   useEffect(() => {
     const fetchTourData = async () => {
-      if (!validTourId) return;
-      window.alert(validTourId)
+      if (validTourId === null) return;
+      
       try {
         setLoading(true);
         setError(null);
@@ -327,7 +341,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         const response: any = await api.get(`/tours/${validTourId}`);
 
         if (response.success) {
-          const transformedTour = transformTourData(response.data);
+          const transformedTour = transformTourData(response.data.data);
           setTour(transformedTour);
           
           setBookingForm(prev => ({
@@ -379,14 +393,14 @@ export default function TourDetailPage({ params }: TourPageProps) {
   // Fetch reviews
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!validTourId) return;
+      if (validTourId === null) return;
       
       try {
         setReviewsLoading(true);
         const response: any = await api.get(`/tours/${validTourId}/reviews`);
         
         if (response.success) {
-          const transformedReviews = (response.data || []).map((review: any) => ({
+          const transformedReviews = (response.data.reviews || []).map((review: any) => ({
             id: review.id,
             userName: review.userName || review.name || 'Anonymous',
             rating: review.rating,
@@ -406,7 +420,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
     fetchReviews();
   }, [validTourId]);
 
-  // Booking validation
+  // Fixed booking validation - more comprehensive check
   const validateBooking = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
@@ -431,6 +445,18 @@ export default function TourDetailPage({ params }: TourPageProps) {
     if (!validTourId) errors.push('Invalid tour ID');
 
     return { isValid: errors.length === 0, errors };
+  };
+
+  // Check if all required fields are filled (for enabling/disabling the button)
+  const isBookingFormComplete = (): boolean => {
+    if (!selectedSchedule) return false;
+    
+    return bookingForm.participants.every(participant => 
+      participant.name.trim() && 
+      participant.email.trim() && 
+      participant.phone.trim() && 
+      participant.age.trim()
+    );
   };
 
   // Handle booking submission
@@ -470,7 +496,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       const response = await api.post('/tours/bookings', bookingData);
       const result: BookingResponse = response.data;
 
-      if (response.ok && result.success && result.data) {
+      if (result.success && result.data) {
         setBookingSuccess(true);
         setCreatedBooking(result.data);
         showAlert('Booking created successfully!', 'success', 3000);
@@ -789,7 +815,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       >
                         {Array.from({ length: (tour?.maxGroupSize || 1) - (tour?.minGroupSize || 1) + 1 }, (_, i) => (
                           <option key={i} value={(tour?.minGroupSize || 1) + i}>
-                            {(tour?.minGroupSize || 1) + i} participants
+                            {(tour?.minGroupSize || 1)} participants
                           </option>
                         ))}
                       </select>
@@ -803,12 +829,13 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
                     <button
                       onClick={() => setShowBookingModal(true)}
+                      disabled={!selectedSchedule}
                       className="w-full py-4 bg-[#F20C8F] text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]"
                     >
                       Book Now
                     </button>
-                    
-                    <p className="text-center text-sm text-gray-500">You won't be charged yet</p>
+
+                    {/*<p className="text-center text-sm text-gray-500">You won't be charged yet</p>*/}
                     
                     <div className="border-t pt-4 space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -1095,7 +1122,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     {/* Available Schedules */}
                     {tour?.schedules && tour.schedules.length > 0 && (
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-3">AVAILABLE DATES</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">AVAILABLE DATES {"(click to select)"}</label>
                         <div className="space-y-2 max-h-48 overflow-y-auto">
                           {tour.schedules.map((schedule: Schedule) => (
                             <div 
@@ -1135,14 +1162,17 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       </div>
                     )}
 
+                    
                     <button
                       onClick={() => setShowBookingModal(true)}
-                      className="w-full py-4 bg-[#F20C8F] text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]"
+                      disabled={!selectedSchedule}
+                      className={`w-full py-4 ${!selectedSchedule ? 'cursor-nodrop bg-[#F20C8F]/50 ' : ' bg-[#F20C8F]'} text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]`}
                     >
                       Book Now
                     </button>
                     
-                    <p className="text-center text-sm text-gray-500">You won't be charged yet</p>
+                    
+                    {/*<p className="text-center text-sm text-gray-500">You won't be charged yet</p>*/}
 
                     <div className="border-t pt-4 space-y-3">
                       <div className="flex justify-between text-gray-700">
@@ -1176,7 +1206,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     onClick={() => setShowBookingModal(false)}
                     className="text-gray-400 hover:text-gray-600 text-3xl font-light"
                   >
-                    ×
+                    x
                   </button>
                 </div>
 
@@ -1269,7 +1299,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     </button>
                     <button
                       onClick={handleBookingSubmit}
-                      disabled={bookingLoading || !selectedSchedule}
+                      disabled={bookingLoading || !isBookingFormComplete()}
                       className="flex-1 py-3 bg-[#F20C8F] text-white rounded-lg font-bold hover:bg-opacity-90 disabled:opacity-50 transition-all"
                     >
                       {bookingLoading ? 'Processing...' : 'Confirm Booking'}

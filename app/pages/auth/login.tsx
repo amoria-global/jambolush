@@ -53,26 +53,27 @@ function LoginContent() {
 
   const getCurrentLanguage = () => languages.find(lang => lang.code === currentLang);
 
-  // Function to handle notification close
   const handleNotificationClose = () => {
     setNotify(null);
   };
 
-  // Helper function to handle redirects
   const getRedirectUrl = (token?: string, refreshToken?: string) => {
     const redirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
     
     if (redirect) {
       try {
-        // Decode the redirect URL in case it's encoded
         const decodedRedirect = decodeURIComponent(redirect);
-        
-        // Security check: ensure the redirect URL is safe
         const url = new URL(decodedRedirect, window.location.origin);
         
-        // Allow same origin redirects
-        if (url.origin === window.location.origin) {
-          // Add token to query params if provided
+        const trustedDomains = [
+          'localhost:3001',
+          'localhost:3000',
+          'https://app.jambolush.com',
+          'https://jambolush.com',
+          'http://jambolush.com'
+        ];
+        
+        if (url.origin === window.location.origin || trustedDomains.some(domain => url.host === domain)) {
           if (token) {
             url.searchParams.set('token', token);
             url.searchParams.set('refresh_token', refreshToken || '');
@@ -80,59 +81,31 @@ function LoginContent() {
           return url.toString();
         }
         
-        // Allow specific trusted domains (add your trusted domains here)
-        const trustedDomains = [
-          'localhost:3001',
-          'localhost:3000',
-          'https://app.jambolush.com',
-          'https://jambolush.com',
-          'http://jambolush.com'
-          // Add your production domains here
-          // 'yourdomain.com',
-          // 'app.yourdomain.com'
-        ];
-        
-        if (trustedDomains.some(domain => url.host === domain)) {
-          if (token) {
-            url.searchParams.set('token', token);
-          }
-          return url.toString();
-        }
-        
-        // If not a trusted domain, log the attempt and fall back to default
         console.warn('Redirect to untrusted domain blocked:', url.origin);
       } catch (error) {
-        // Invalid URL, log and fall back to default
         console.warn('Invalid redirect URL:', redirect, error);
       }
     }
     
-    // Default redirect with token
-    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
-  // Helper function to perform redirect
-  const performRedirect = (token?: string, refreshToken?: string) => {
-    const redirectUrl = getRedirectUrl(token, refreshToken);
+  const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
+    const redirectUrl = redirectPath || getRedirectUrl(token, refreshToken);
     
-    // Check if it's an external redirect (different origin)
     try {
-      const url = new URL(redirectUrl);
+      const url = new URL(redirectUrl, window.location.origin);
       if (url.origin !== window.location.origin) {
-        // External redirect - use window.location
         window.location.href = redirectUrl;
         return;
       }
     } catch (error) {
-      // If URL parsing fails, treat as internal redirect
+      console.error("Invalid URL for redirection:", error);
     }
     
-    // Internal redirect - use Next.js router
-    const path = redirectUrl.replace(window.location.origin, '');
-    router.push(path);
+    router.push(redirectUrl);
   };
 
-  // Initialize Google Sign-In
   useEffect(() => {
     const loadGoogleScript = () => {
       const script = document.createElement('script');
@@ -161,110 +134,79 @@ function LoginContent() {
     };
   }, []);
 
-  // Also update the Google auth callback:
-const handleGoogleCallback = async (response: any) => {
-  setGoogleLoading(true);
-  
-  try {
-    // The response contains the ID token from Google
-    const result = await api.post('/auth/google', {
-      token: response.credential,
-    });
-
-    // Success - store token and check status
-    if (result.data?.token || result.data?.accessToken) {
-      const token = result.data.token || result.data.accessToken;
+  const handleGoogleCallback = async (response: any) => {
+    setGoogleLoading(true);
+    
+    try {
+      const result = await api.post('/auth/google', { token: response.credential });
+      const token = result.data?.token || result.data?.accessToken;
       const refreshToken = result.data.refreshToken;
-      localStorage.setItem('authToken', token);
-      if (result.data.refreshToken) {
-        localStorage.setItem('refreshToken', result.data.refreshToken);
-      }
       
-      // Check user status before redirecting
-      const userData = result.data?.user || result.data;
-      const userStatus = userData?.status;
-      
-      if (userStatus === 'active') {
-        setNotify({type: "success", message: "Successfully signed in with Google! Redirecting to dashboard..."});
-      } else {
-        setNotify({type: "success", message: "Successfully signed in with Google!"});
-      }
-      
-      // Handle redirect based on status
-      setTimeout(() => {
-        handleUserRedirect(userData, token, refreshToken);
-      }, 2000);
-    }
-  } catch (error: any) {
-    console.error('Google auth error:', error);
-    
-    let errorMessage = "Google authentication failed. Please try again.";
-    
-    if (error.data?.message) {
-      errorMessage = error.data.message;
-    } else if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
-    } else if (error.status === 401) {
-      errorMessage = "Authentication failed. Please check your credentials.";
-    } else if (error.status === 404) {
-      errorMessage = "Account not found. Please sign up first.";
-    }
-    
-    // Check if user needs to set up password first (even for Google auth)
-    if (errorMessage.includes('Please set up your password first') || 
-        errorMessage.includes('Check your email for instructions')) {
-      
-      // For Google auth, we might not have the email, so check if it's in the token
-      try {
-        const tokenData = JSON.parse(atob(response.credential.split('.')[1]));
-        if (tokenData.email) {
-          localStorage.setItem('pendingVerificationEmail', tokenData.email);
+      if (token) {
+        localStorage.setItem('authToken', token);
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
         }
-      } catch (e) {
-        console.log('Could not extract email from Google token');
+        
+        const userData = result.data?.user || result.data;
+        const userStatus = userData?.status;
+        
+        if (userStatus === 'active') {
+          setNotify({type: "success", message: "Successfully signed in with Google! Redirecting..."});
+        } else {
+          setNotify({type: "success", message: "Successfully signed in with Google! Pending verification."});
+        }
+        
+        setTimeout(() => {
+          handleUserRedirect(userData, token, refreshToken);
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Google auth error:', error);
+      let errorMessage = "Google authentication failed. Please try again.";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       }
       
-      setNotify({type: "info", message: "Please check your email to set up your password first."});
-      
-      setTimeout(() => {
-        const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
-        const verificationUrl = currentRedirect 
-          ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
-          : '/all/account-verification';
-        router.push(verificationUrl);
-      }, 2000);
-      
-    } else {
-      setNotify({type: "error", message: errorMessage});
+      if (errorMessage.includes('Please set up your password first') || errorMessage.includes('Check your email for instructions')) {
+        try {
+          const tokenData = JSON.parse(atob(response.credential.split('.')[1]));
+          if (tokenData.email) {
+            localStorage.setItem('pendingVerificationEmail', tokenData.email);
+          }
+        } catch (e) {
+          console.log('Could not extract email from Google token');
+        }
+        setNotify({type: "info", message: "Please check your email to set up your password first."});
+        setTimeout(() => {
+          const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+          const verificationUrl = currentRedirect ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}` : '/all/account-verification';
+          router.push(verificationUrl);
+        }, 2000);
+      } else {
+        setNotify({type: "error", message: errorMessage});
+      }
+    } finally {
+      setGoogleLoading(false);
     }
-  } finally {
-    setGoogleLoading(false);
-  }
-};
+  };
 
-  // Trigger Google Sign-In
   const handleGoogleSignIn = () => {
     if (window.google) {
       window.google.accounts.id.prompt((notification: any) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // If the prompt can't be displayed, try the popup method
           const googleLoginDiv = document.createElement('div');
           document.body.appendChild(googleLoginDiv);
-          
           window.google.accounts.id.renderButton(googleLoginDiv, {
             type: 'standard',
             theme: 'outline',
             size: 'large',
             click_listener: () => {},
           });
-          
-          // Programmatically click the rendered button
           const googleButton = googleLoginDiv.querySelector('[role="button"]') as HTMLElement;
           if (googleButton) {
             googleButton.click();
           }
-          
-          // Clean up
           setTimeout(() => {
             document.body.removeChild(googleLoginDiv);
           }, 100);
@@ -277,7 +219,6 @@ const handleGoogleCallback = async (response: any) => {
     const checkMobileView = () => {
       setIsMobileView(window.innerWidth < 768);
     };
-    
     checkMobileView();
     window.addEventListener('resize', checkMobileView);
     return () => window.removeEventListener('resize', checkMobileView);
@@ -288,16 +229,13 @@ const handleGoogleCallback = async (response: any) => {
     setIsFormValid(emailRegex.test(email) && password.length >= 6);
   }, [email, password]);
 
-  // Effect to close language dropdown on outside click
   useEffect(() => {
     if (!isLangOpen) return;
-
     function handleClickOutside(event: MouseEvent) {
       if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
         setIsLangOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -308,174 +246,112 @@ const handleGoogleCallback = async (response: any) => {
     setShowPassword(!showPassword);
   };
 
-  // Helper function to handle redirects based on user status
-const handleUserRedirect = (userData: any, token?: string, refreshToken?: string) => {
-  const userStatus = userData?.status || userData?.user?.status;
-  
-  switch (userStatus) {
-    case 'active':
-      // Allow normal redirect for active users
-      performRedirect(token, refreshToken);
-      break;
-      
-    case 'pending':
-    case 'unverified':
-      // User needs to verify their account
-      setNotify({
-        type: "warning", 
-        message: "Please verify your email address before accessing the dashboard. Check your inbox for verification instructions."
-      });
-      
-      // Store user email for verification page
-      const userEmail = userData?.email || userData?.user?.email;
-      if (userEmail) {
-        localStorage.setItem('pendingVerificationEmail', userEmail);
-      }
-      
-      // Redirect to verification page
-      setTimeout(() => {
-        const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
-        const verificationUrl = currentRedirect 
-          ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
-          : '/all/account-verification';
-        router.push(verificationUrl);
-      }, 3000);
-      break;
-      
-    case 'suspended':
-    case 'banned':
-      // Account is suspended or banned
-      setNotify({
-        type: "error", 
-        message: "Your account has been suspended. Please contact support for assistance."
-      });
-      
-      // Don't redirect, keep user on login page
-      setTimeout(() => {
-        router.push('/all/contact-support');
-      }, 3000);
-      break;
-      
-    case 'inactive':
-    case 'disabled':
-      // Account is inactive
-      setNotify({
-        type: "error", 
-        message: "Your account is inactive. Please contact support to reactivate your account."
-      });
-      
-      // Don't redirect, keep user on login page
-      setTimeout(() => {
-        router.push('/all/contact-support');
-      }, 3000);
-      break;
-      
-    default:
-      // Unknown status or no status provided
-      setNotify({
-        type: "error", 
-        message: "Unable to determine account status. Please contact support."
-      });
-      
-      // Log the issue for debugging
-      console.error('Unknown user status:', userStatus, userData);
-      
-      setTimeout(() => {
-        router.push('/all/contact-support');
-      }, 3000);
-      break;
-  }
-};
+  // UPDATED handleUserRedirect function
+  const handleUserRedirect = (userData: any, token?: string, refreshToken?: string) => {
+    const userRole = userData?.role || userData?.user?.role;
+    const userStatus = userData?.status || userData?.user?.status;
+    const verificationStatus = userData?.verificationStatus;
+    const isVerified = userData?.isVerified;
 
-  // Handle form submission
-    const handleSubmit = async (e?: React.FormEvent) => {
-      e?.preventDefault();
-      
-      if (!isFormValid) {
-        setNotify({type: "warning", message: "Please enter a valid email and password (minimum 6 characters)."});
-        return;
-      }
+    // Condition 1: Success Login (verified and active)
+    if (userStatus === 'active' && verificationStatus === 'verified') {
+      setNotify({ type: "success", message: "Login successful! Redirecting to dashboard..." });
+      setTimeout(() => {
+        performRedirect(token, refreshToken);
+      }, 1500);
+      return;
+    }
 
-      setLoading(true);
-      try {
-        const response = await api.post('/auth/login', { email, password });
-        console.log('Login successful:', response);
-        
-        // Store tokens
-        if (response.data?.accessToken) {
-          localStorage.setItem('authToken', response.data.accessToken);
-          if (response.data.refreshToken) {
-            localStorage.setItem('refreshToken', response.data.refreshToken);
+    // Condition 2: Verified but not active -> Redirect to set password
+    if (verificationStatus === 'verified' && userStatus !== 'active') {
+      setNotify({ type: "info", message: "Account verified but not active. Please set your password." });
+      setTimeout(() => {
+        performRedirect(token, refreshToken, '/all/set-password');
+      }, 1500);
+      return;
+    }
+
+    // Condition 3: Not verified and any status
+    if (verificationStatus !== 'verified') {
+      const dashboardBase = 'https://app.jambolush.com';
+
+      switch (userRole) {
+        case 'host':
+          setNotify({ type: "warning", message: "Please complete your KYC verification." });
+          performRedirect(token, refreshToken, `${dashboardBase}/host/verify-kyc`);
+          break;
+        case 'agent':
+        case 'tourguide':
+          if (!isVerified) {
+            setNotify({ type: "info", message: "Please complete your assessments." });
+            performRedirect(token, refreshToken, `${dashboardBase}/${userRole}/assessment`);
+          } else {
+            setNotify({ type: "warning", message: "Please complete your KYC verification." });
+            performRedirect(token, refreshToken, `${dashboardBase}/verify-kyc`);
           }
-        }
-        
-        // Check user status before redirecting
-        const userData = response.data?.user || response.data;
-        const userStatus = userData?.status;
-        
-        if (userStatus === 'active') {
-          // Show success message for active users
-          setNotify({type: "success", message: response.data?.message || "Login successful! Redirecting to dashboard..."});
-          
-          // Redirect after delay
-          setTimeout(() => {
-            const token = response.data?.accessToken || response.data?.token;
-            handleUserRedirect(userData, token);
-          }, 2000);
-        } else {
-          // Handle non-active users
-          setNotify({type: "success", message: "Login successful!"});
-          
-          setTimeout(() => {
-            const token = response.data?.accessToken || response.data?.token;
-            handleUserRedirect(userData, token);
-          }, 1500);
-        }
-        
-      } catch (error: any) {
-        console.error('Login failed:', error);
-        
-        // Get error message from server
-        const errorMessage = error.response?.data?.message || 
-                            error.response?.data?.error || 
-                            error.data?.message ||
-                            'Login failed. Please try again.';
-        
-        // Check if user needs to set up password first
-        if (errorMessage.includes('Please set up your password first') || 
-            errorMessage.includes('Check your email for instructions')) {
-          
-          // Store email for verification page
-          localStorage.setItem('pendingVerificationEmail', email);
-          
-          // Show info message and redirect to verification
-          setNotify({type: "info", message: "Please check your email to set up your password first."});
-          
-          setTimeout(() => {
-            const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
-            const verificationUrl = currentRedirect 
-              ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}`
-              : '/all/account-verification';
-            router.push(verificationUrl);
-          }, 2000);
-          
-        } else {
-          // Show regular error message
-          setNotify({type: "error", message: errorMessage});
-        }
-      } finally {
-        setLoading(false);
+          break;
+        case 'guest':
+          setNotify({ type: "info", message: "Please verify your account to continue." });
+          performRedirect(token, refreshToken, `/all/account-verification`);
+          break;
+        default:
+          // Handles 'admin' and any other unverified roles
+          setNotify({ type: "error", message: "Access denied. Account is not active or verified." });
+          break;
       }
-    };
+      return;
+    }
 
-  // Show redirect info if present (for debugging/user awareness)
+    // All other cases (e.g., pending, suspended, inactive, or unhandled roles/statuses)
+    setNotify({ type: "error", message: "Access denied. Your account is not in a valid state." });
+    setTimeout(() => {
+      router.push('/all/contact-support');
+    }, 2000);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!isFormValid) {
+      setNotify({type: "warning", message: "Please enter a valid email and password (minimum 6 characters)."});
+      return;
+    }
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const accessToken = response.data?.accessToken || response.data?.token;
+      const refreshToken = response.data?.refreshToken;
+      if (accessToken) {
+        localStorage.setItem('authToken', accessToken);
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken);
+        }
+      }
+      const userData = response.data?.user || response.data;
+      handleUserRedirect(userData, accessToken, refreshToken);
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || error.data?.message || 'Login failed. Please try again.';
+      if (errorMessage.includes('Please set up your password first') || errorMessage.includes('Check your email for instructions')) {
+        localStorage.setItem('pendingVerificationEmail', email);
+        setNotify({type: "info", message: "Please check your email to set up your password first."});
+        setTimeout(() => {
+          const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+          const verificationUrl = currentRedirect ? `/all/account-verification?redirect=${encodeURIComponent(currentRedirect)}` : '/all/account-verification';
+          router.push(verificationUrl);
+        }, 2000);
+      } else {
+        setNotify({type: "error", message: errorMessage});
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const redirectInfo = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
   
-  // Mobile View
   if (isMobileView) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#083A85] flex flex-col relative">
-        {/* Alert Notifications */}
         {notify && (
           <AlertNotification
             message={notify.message}
@@ -488,8 +364,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             onClose={handleNotificationClose}
           />
         )}
-
-        {/* Language Selector - Mobile */}
         <div ref={langDropdownRef} className="absolute top-4 right-4 z-20">
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
@@ -520,8 +394,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             </div>
           )}
         </div>
-
-        {/* Mobile Header */}
         <div className="pt-12 pb-6 px-6 text-center">
           <div className="inline-block mb-4">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden">
@@ -542,7 +414,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             Discover extraordinary places and create unforgettable memories
           </p>
           
-          {/* Redirect info for mobile */}
           {redirectInfo && (
             <div className="mt-3 mx-4">
               <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-3 py-2">
@@ -553,15 +424,11 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             </div>
           )}
         </div>
-
-        {/* Mobile Form */}
         <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-t-3xl border-t border-white/20 px-6 pt-6 overflow-y-auto">
           <div className="max-w-sm mx-auto">
             <h3 className="text-white text-lg font-bold mb-1 text-center">Welcome Back</h3>
             <p className="text-white/70 text-xs mb-6 text-center">Sign in to your account to continue</p>
-
             <div className="space-y-4">
-              {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-white/90 text-xs font-medium mb-1.5">
                   Email Address
@@ -576,8 +443,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   required
                 />
               </div>
-
-              {/* Password Field */}
               <div>
                 <label htmlFor="password-mobile" className="block text-white/90 text-xs font-medium mb-1.5">
                   Password
@@ -610,8 +475,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   </button>
                 </div>
               </div>
-
-              {/* Remember Me and Forgot Password */}
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center">
                   <input
@@ -627,8 +490,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   Forgot password?
                 </a>
               </div>
-
-              {/* Sign In Button */}
               <button
                 type="button"
                 onClick={handleSubmit}
@@ -641,16 +502,12 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
               >
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>
-
-              {/* Sign Up Link */}
               <div className="text-center text-xs">
                 <span className="text-white/70">Don't have an account? </span>
                 <a href="/all/signup" className="text-blue-300 hover:text-blue-200 font-medium">
                   Create one
                 </a>
               </div>
-
-              {/* Divider */}
               <div className="relative my-4">
                 <div className="flex items-center">
                   <div className="flex-1 border-t border-white/20"></div>
@@ -658,8 +515,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   <div className="flex-1 border-t border-white/20"></div>
                 </div>
               </div>
-
-              {/* Google Sign In Button */}
               <button 
                 type="button" 
                 onClick={handleGoogleSignIn} 
@@ -682,10 +537,8 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
     );
   }
 
-  // Desktop/Tablet View
   return (
     <div className="h-screen flex font-['Inter',sans-serif] antialiased overflow-hidden">
-      {/* Alert Notifications */}
       {notify && (
         <AlertNotification
           message={notify.message}
@@ -698,11 +551,7 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
           onClose={handleNotificationClose}
         />
       )}
-
-      {/* Left Side - Brand Section */}
       <div className="hidden md:flex flex-1 bg-gradient-to-br from-[#0B1426] via-[#0F1B35] to-[#0B1426] items-center justify-center p-8 relative overflow-hidden">
-        
-        {/* Language Dropdown - Top Left */}
         <div className="absolute top-6 left-6 z-20">
           <div ref={langDropdownRef} className="relative">
             <button
@@ -735,7 +584,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             )}
           </div>
         </div>
-
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-20 w-24 h-24 border border-white/20 rotate-45"></div>
           <div className="absolute bottom-32 right-24 w-20 h-20 border border-white/10 rotate-12"></div>
@@ -769,15 +617,11 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
           </div>
         </div>
       </div>
-
-      {/* Right Side - Login Form */}
       <div className="flex-1 bg-gradient-to-bl from-[#083A85] via-[#0A4694] to-[#083A85] flex items-center justify-center p-4 sm:p-8 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-24 right-20 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-24 left-20 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
         </div>
-
-        {/* Language Selector for tablet view */}
         <div className="md:hidden absolute top-4 right-4 z-20">
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
@@ -808,9 +652,7 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             </div>
           )}
         </div>
-
         <div className="w-full max-w-md relative z-10">
-          {/* Brand Section (Tablet only) */}
           <div className="md:hidden text-center mb-6">
             <div className="inline-block mb-4">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden">
@@ -823,13 +665,11 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
             </div>
             <h1 className="text-white text-xl font-bold">JamboLush</h1>
           </div>
-
           <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-6 lg:p-8 shadow-2xl">
             <div className="text-center mb-6 lg:mb-8">
               <h3 className="text-white text-xl lg:text-2xl font-bold mb-2">Welcome Back</h3>
               <p className="text-white/70 text-sm lg:text-base">Sign in to your account to continue</p>
               
-              {/* Redirect info for desktop */}
               {redirectInfo && (
                 <div className="mt-4">
                   <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-4 py-2">
@@ -840,9 +680,7 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                 </div>
               )}
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-5 lg:space-y-6">
-              {/* Email Field */}
               <div className="space-y-2">
                 <label htmlFor="email-desktop" className="block text-white/90 text-sm lg:text-base font-medium">
                   Email Address
@@ -860,8 +698,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   />
                 </div>
               </div>
-
-              {/* Password Field */}
               <div className="space-y-2">
                 <label htmlFor="password-desktop" className="block text-white/90 text-sm lg:text-base font-medium">
                   Password
@@ -896,8 +732,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   </button>
                 </div>
               </div>
-
-              {/* Remember Me and Forgot Password */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center">
                   <input
@@ -918,8 +752,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                   <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 group-hover:w-full transition-all duration-300"></div>
                 </a>
               </div>
-
-              {/* Sign In Button */}
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
@@ -932,46 +764,40 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
                 {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
-              
-              {/* Sign Up Link */}
-              <div className="text-center mt-5">
-                <span className="text-white/70 text-sm lg:text-base">Don't have an account? </span>
-                <a 
-                  href="/all/signup" 
-                  className="group text-blue-300 text-sm lg:text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
-                >
-                  <span className="relative">Create one</span>
-                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 group-hover:w-full transition-all duration-300"></div>
-                </a>
-              </div>
-
-              {/* Divider */}
-              <div className="relative my-5 lg:my-6">
-                <div className="flex items-center">
-                  <div className="flex-1 border-t border-white/20"></div>
-                  <span className="px-4 text-white/60 text-sm lg:text-base">
-                    Or continue with
-                  </span>
-                  <div className="flex-1 border-t border-white/20"></div>
-                </div>
-              </div>
-
-              {/* Google Sign In Button */}
-              <button 
-                type="button" 
-                onClick={handleGoogleSignIn} 
-                disabled={googleLoading}
-                aria-label="Sign in with Google" 
-                className="group w-full bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-2.5 lg:py-3 px-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-3 transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
+            <div className="text-center mt-5">
+              <span className="text-white/70 text-sm lg:text-base">Don't have an account? </span>
+              <a 
+                href="/all/signup" 
+                className="group text-blue-300 text-sm lg:text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                <span>{googleLoading ? 'Signing in...' : 'Sign in with Google'}</span>
-              </button>
+                <span className="relative">Create one</span>
+                <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 group-hover:w-full transition-all duration-300"></div>
+              </a>
+            </div>
+            <div className="relative my-5 lg:my-6">
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-white/20"></div>
+                <span className="px-4 text-white/60 text-sm lg:text-base">
+                  Or continue with
+                </span>
+                <div className="flex-1 border-t border-white/20"></div>
+              </div>
+            </div>
+            <button 
+              type="button" 
+              onClick={handleGoogleSignIn} 
+              disabled={googleLoading}
+              aria-label="Sign in with Google" 
+              className="group w-full bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 text-gray-700 py-2.5 lg:py-3 px-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center space-x-3 transform hover:scale-105 shadow-sm hover:shadow-md cursor-pointer"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              <span>{googleLoading ? 'Signing in...' : 'Sign in with Google'}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -979,7 +805,6 @@ const handleUserRedirect = (userData: any, token?: string, refreshToken?: string
   );
 }
 
-// Main component with Suspense wrapper
 export default function Login() {
   return (
     <Suspense fallback={<LoginSkeleton />}>

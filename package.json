@@ -17,6 +17,7 @@
     "next": "15.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hot-toast": "^2.6.0",
     "react-i18next": "^15.7.3"
   },
   "devDependencies": {

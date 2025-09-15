@@ -303,9 +303,6 @@ export default function BrowseToursPage() {
     <div className="bg-white min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 py-8 mt-10">
         <div className="mb-8 mt-20">
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">
-            Unforgettable Journeys Await; Explore With Our Passionate 
-          </h1>
           <div className="flex flex-wrap gap-2 mb-4">
             {filterCategories.map((category) => (
               <button

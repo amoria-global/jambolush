@@ -198,7 +198,7 @@ function SignupPage({
         provider: 'manual',
         phoneCountryCode: country ? getCountryCode(country) : 'US',
         country: country || undefined,
-        userType: 'admin'
+        userType: 'guest'
       });
 
       // Check if the response indicates an error even if it didn't throw

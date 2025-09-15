@@ -1,4 +1,3 @@
-//app/all/property/[id]/confirm-and-pay/page.tsx
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -23,6 +22,7 @@ interface BookingData {
     serviceFee: number;
     taxes: number;
     total: number;
+    payAtPropertyFee?: number; // New field for 10% fee
   };
 }
 
@@ -30,7 +30,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo' | 'airtel' | 'mpesa' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo' | 'airtel' | 'mpesa' | 'pay_at_property' | null>(null);
   const [isLoggedIn] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -48,6 +48,50 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [mobileData, setMobileData] = useState({
     phoneNumber: ''
   });
+
+  // Calculate price breakdown with pay at property option
+  const calculatePriceBreakdown = (originalPrice: number, nights: number, isPayAtProperty: boolean = false) => {
+    const estimatedSubtotal = Math.round(originalPrice / 1.08 - 60); // Remove fees and taxes
+    const basePrice = Math.round(estimatedSubtotal / nights);
+    const cleaningFee = 35;
+    const serviceFee = 25;
+    const taxes = Math.round((estimatedSubtotal + 60) * 0.08);
+    
+    let finalTotal = originalPrice;
+    let payAtPropertyFee = 0;
+    
+    if (isPayAtProperty) {
+      payAtPropertyFee = Math.round(originalPrice * 0.1); // 10% fee
+      finalTotal = originalPrice + payAtPropertyFee;
+    }
+    
+    return {
+      basePrice,
+      subtotal: estimatedSubtotal,
+      cleaningFee,
+      serviceFee,
+      taxes,
+      total: finalTotal,
+      payAtPropertyFee
+    };
+  };
+
+  // Update price breakdown when payment method changes
+  useEffect(() => {
+    if (bookingData) {
+      const isPayAtProperty = paymentMethod === 'pay_at_property';
+      const updatedBreakdown = calculatePriceBreakdown(
+        bookingData.totalPrice, 
+        bookingData.nights, 
+        isPayAtProperty
+      );
+      
+      setBookingData(prev => prev ? {
+        ...prev,
+        priceBreakdown: updatedBreakdown
+      } : null);
+    }
+  }, [paymentMethod]);
 
   // Load booking data from booking ID
   useEffect(() => {
@@ -88,30 +132,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           console.warn('Could not fetch property details:', error);
         }
 
-        // Calculate price breakdown if not already available
-        let priceBreakdown = {
-          basePrice: 150, // Default or fetch from property
-          subtotal: booking.totalPrice || 0,
-          cleaningFee: 35,
-          serviceFee: 25,
-          taxes: Math.round((booking.totalPrice || 0) * 0.08),
-          total: booking.totalPrice || 0
-        };
-
-        // If we can calculate more accurate breakdown
-        if (booking.totalPrice) {
-          const estimatedSubtotal = Math.round(booking.totalPrice / 1.08 - 60); // Remove fees and taxes
-          const basePrice = Math.round(estimatedSubtotal / nights);
-          
-          priceBreakdown = {
-            basePrice,
-            subtotal: estimatedSubtotal,
-            cleaningFee: 35,
-            serviceFee: 25,
-            taxes: Math.round((estimatedSubtotal + 60) * 0.08),
-            total: booking.totalPrice
-          };
-        }
+        // Calculate initial price breakdown (without pay at property fee)
+        const priceBreakdown = calculatePriceBreakdown(booking.totalPrice, nights, false);
 
         setBookingData({
           id: booking.id,
@@ -121,7 +143,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           checkOut: booking.checkOut,
           guests: booking.guests,
           nights,
-          totalPrice: booking.totalPrice,
+          totalPrice: booking.totalPrice, // Keep original price
           priceBreakdown
         });
       } else {
@@ -236,11 +258,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       }
     }
 
+    // Pay at property doesn't need additional validation
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-// Updated handleSubmit function in PaymentPage component
 
   const handleSubmit = async () => {
     if (!validateForm() || !bookingData) {
@@ -256,10 +278,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setLoading(true);
       setErrors({});
 
+      // Use the current total (which includes pay at property fee if selected)
+      const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalPrice;
+
       // Build payment payload matching server expectations
       const paymentPayload: any = {
         bookingId: bookingData.id,
-        amount: bookingData.totalPrice, // ✅ Changed from "totalAmount" to "amount"
+        amount: finalAmount, // Use final amount (with 10% if pay at property)
         paymentMethod: paymentMethod,
         
         // Required fields for escrow validation
@@ -269,15 +294,23 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         
         // Escrow terms (required by validation)
         escrowTerms: {
-          type: 'automatic',
-          description: 'Automatic release upon successful check-in completion',
-          conditions: [
-            'Property is available as described',
-            'Check-in process completed successfully',
-            'No disputes raised within 24 hours of check-in'
-          ],
+          type: paymentMethod === 'pay_at_property' ? 'manual' : 'automatic',
+          description: paymentMethod === 'pay_at_property' 
+            ? 'Payment to be made at property with 10% convenience fee'
+            : 'Automatic release upon successful check-in completion',
+          conditions: paymentMethod === 'pay_at_property'
+            ? [
+                'Payment must be made upon arrival at property',
+                'Property must be available as described', 
+                'Guest agrees to 10% convenience fee for pay-at-property option'
+              ]
+            : [
+                'Property is available as described',
+                'Check-in process completed successfully',
+                'No disputes raised within 24 hours of check-in'
+              ],
           autoRelease: {
-            enabled: true,
+            enabled: paymentMethod !== 'pay_at_property',
             date: new Date(Date.now() + (7 * 24 * 60 * 60 * 1000)).toISOString() // 7 days from now
           },
           disputeSettings: {
@@ -304,6 +337,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           type: 'mobile_money',
           provider: paymentMethod
         };
+      } else if (paymentMethod === 'pay_at_property') {
+        // For pay at property, add special handling
+        paymentPayload.paymentDetails = {
+          type: 'pay_at_property',
+          convenienceFee: bookingData.priceBreakdown?.payAtPropertyFee || 0,
+          originalAmount: bookingData.totalPrice,
+          feePercentage: 10
+        };
+        paymentPayload.requiresPropertyPayment = true;
       }
 
       const response = await api.processPayment(paymentPayload);
@@ -313,7 +355,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         const confirmationCode = response.data.data.confirmationCode;
         
         // Redirect to payment confirmation page
-        router.push(`/payment-confirmation/${bookingData.id}?transaction=${transactionId}&code=${confirmationCode}`);
+        router.push(`/payment-confirmation/${bookingData.id}?transaction=${transactionId}&code=${confirmationCode}&payAtProperty=${paymentMethod === 'pay_at_property'}`);
       } else {
         setErrors({ general: response.data.message || 'Payment processing failed' });
       }
@@ -490,12 +532,36 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <div className="text-base text-gray-500">Safaricom M-Pesa</div>
                   </div>
                 </label>
+
+                {/* New Pay at Property Option */}
+                <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
+                  style={{ borderColor: paymentMethod === 'pay_at_property' ? '#F20C8F' : '#e5e7eb' }}>
+                  <input
+                    type="radio"
+                    name="payment-method"
+                    value="pay_at_property"
+                    checked={paymentMethod === 'pay_at_property'}
+                    onChange={() => setPaymentMethod('pay_at_property')}
+                    className="mr-3"
+                    style={{ accentColor: '#F20C8F' }}
+                  />
+                  <i className="bi bi-house mr-3 text-xl" style={{ color: '#083A85' }}></i>
+                  <div className="flex-1">
+                    <div className="font-medium">Pay at Property</div>
+                    <div className="text-base text-gray-500">Pay when you arrive (+10% convenience fee)</div>
+                  </div>
+                  {paymentMethod === 'pay_at_property' && (
+                    <div className="ml-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded">
+                      +10% Fee
+                    </div>
+                  )}
+                </label>
               </div>
               {errors.paymentMethod && <p className="error-message mt-2">{errors.paymentMethod}</p>}
             </div>
 
             {/* Step 2: Payment Details - Visible when payment method is selected */}
-            {paymentMethod && (
+            {paymentMethod && paymentMethod !== 'pay_at_property' && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
@@ -583,6 +649,54 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               </div>
             )}
 
+            {/* Pay at Property Information */}
+            {paymentMethod === 'pay_at_property' && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
+                    style={{ backgroundColor: '#F20C8F' }}>
+                    2
+                  </div>
+                  <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
+                    Pay at Property Details
+                  </h2>
+                </div>
+
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-start">
+                    <i className="bi bi-info-circle-fill text-orange-600 mr-3 mt-1"></i>
+                    <div>
+                      <h4 className="font-medium text-orange-800 mb-2">Important Information</h4>
+                      <ul className="text-sm text-orange-700 space-y-1">
+                        <li>• A 10% convenience fee is added for paying at the property</li>
+                        <li>• Payment must be made upon arrival at check-in</li>
+                        <li>• Cash or card payments are typically accepted at the property</li>
+                        <li>• Your booking is confirmed, but payment is required upon arrival</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-800 mb-2">What to expect:</h4>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <i className="bi bi-check-circle-fill text-green-600 mr-2"></i>
+                      Your booking is confirmed immediately
+                    </div>
+                    <div className="flex items-center">
+                      <i className="bi bi-clock-fill text-blue-600 mr-2"></i>
+                      Payment due at check-in time
+                    </div>
+                    <div className="flex items-center">
+                      <i className="bi bi-calculator-fill text-purple-600 mr-2"></i>
+                      Total amount includes 10% convenience fee
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Order Summary and Submit */}
             {bookingData && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -617,12 +731,32 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <span className="text-gray-600">Taxes</span>
                     <span className="font-medium">${bookingData.priceBreakdown?.taxes || 0}</span>
                   </div>
+                  
+                  {/* Show pay at property fee if applicable */}
+                  {paymentMethod === 'pay_at_property' && bookingData.priceBreakdown?.payAtPropertyFee && (
+                    <div className="flex justify-between text-base">
+                      <span className="text-orange-600">Pay at Property Fee (10%)</span>
+                      <span className="font-medium text-orange-600">+${bookingData.priceBreakdown.payAtPropertyFee}</span>
+                    </div>
+                  )}
+                  
                   <div className="border-t pt-3 flex justify-between">
                     <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
-                    <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                      ${bookingData.totalPrice}
+                    <span className={`font-bold text-lg ${paymentMethod === 'pay_at_property' ? 'text-orange-600' : ''}`} 
+                          style={paymentMethod !== 'pay_at_property' ? { color: '#083A85' } : {}}>
+                      ${bookingData.priceBreakdown?.total || bookingData.totalPrice}
                     </span>
                   </div>
+                  
+                  {/* Show savings for other payment methods */}
+                  {paymentMethod && paymentMethod !== 'pay_at_property' && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                      <p className="text-green-700 text-sm font-medium">
+                        <i className="bi bi-check-circle-fill mr-2"></i>
+                        You're saving ${Math.round(bookingData.totalPrice * 0.1)} by paying online!
+                      </p>
+                    </div>
+                  )}
                 </div>
                 
                 <button 
@@ -640,10 +774,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Processing Payment...
+                      {paymentMethod === 'pay_at_property' ? 'Confirming Booking...' : 'Processing Payment...'}
                     </>
                   ) : (
-                    'Complete Payment'
+                    paymentMethod === 'pay_at_property' ? 'Confirm Booking' : 'Complete Payment'
                   )}
                 </button>
                 
@@ -674,7 +808,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 </h3>
                 <div className="flex items-center mt-1 text-base text-gray-600">
                   <i className="bi bi-geo-alt mr-1"></i>
-                  Payment Processing
+                  {paymentMethod === 'pay_at_property' ? 'Pay on Arrival' : 'Payment Processing'}
                 </div>
               </div>
               
@@ -734,10 +868,20 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         <i className="bi bi-currency-dollar mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                         <span>Total</span>
                       </span>
-                      <span className="font-bold" style={{ color: '#083A85' }}>
+                      <span className={`font-bold ${paymentMethod === 'pay_at_property' ? 'text-orange-600' : ''}`} 
+                            style={paymentMethod !== 'pay_at_property' ? { color: '#083A85' } : {}}>
                         ${bookingData.priceBreakdown?.total || 0}
                       </span>
                     </li>
+                    {paymentMethod === 'pay_at_property' && (
+                      <li className="flex items-center justify-between text-sm text-orange-600">
+                        <span className="flex items-center">
+                          <i className="bi bi-info-circle mr-2 flex-shrink-0"></i>
+                          <span>Includes 10% fee</span>
+                        </span>
+                        <span>+${bookingData.priceBreakdown?.payAtPropertyFee || 0}</span>
+                      </li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -749,7 +893,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   Your booking is protected by our guarantee
                 </p>
                 <p className="text-base text-gray-400 mt-2">
-                  Secure payment processing
+                  {paymentMethod === 'pay_at_property' ? 'Payment due at check-in' : 'Secure payment processing'}
                 </p>
               </div>
             </div>

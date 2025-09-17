@@ -1,6 +1,5 @@
 'use client';
 
-import Head from 'next/head';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import api, { Tour, TourFilters } from '@/app/api/apiService'; // Update path as needed
@@ -88,7 +87,7 @@ const TourCard = ({
   isFavorite: boolean;
   toggleFavorite: (id: string) => void;
 }) => (
-  <Link href={`/all/tour/${encodeId(tour.id)}`} legacyBehavior>
+  <Link href={`/all/tours/${encodeId(tour.id)}`} legacyBehavior>
     <a className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
       <div 
         className="relative h-48 bg-cover bg-center bg-gray-200"

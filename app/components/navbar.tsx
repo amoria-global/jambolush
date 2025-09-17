@@ -337,7 +337,7 @@ const Navbar = () => {
                     <hr className="my-1" />
                     <button 
                       onClick={handleLogout}
-                      className="w-full text-left flex items-center px-4 py-2 text-base text-red-600 hover:bg-red-50"
+                      className="w-full text-left flex items-center px-4 py-2 text-base text-red-600 hover:bg-red-50 cursor-pointer rounded-b-lg transition-colors duration-300"
                     >
                       <i className="bi bi-box-arrow-right mr-3"></i>
                       {t('nav.signOut')}

@@ -1249,7 +1249,7 @@ export default function HousePage({ params }: HousePageProps) {
           <div className="border-t pt-6 sm:pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
               <h3 className="text-lg sm:text-xl font-semibold text-[#083A85]">Guest Reviews</h3>
-              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-base sm:text-base"
+              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-base sm:text-base cursor-pointer"
                       onClick={() => setShowReviewModal(true)}>
                 <i className="bi bi-plus-circle mr-2"></i>
                 Add Review

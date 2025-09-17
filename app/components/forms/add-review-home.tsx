@@ -144,29 +144,31 @@ const AddReviewForm = ({ propertyId, onClose, onAddReview }: AddReviewFormProps)
         onClick={onClose}
       ></div>
       
-      {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 rounded-t-2xl">
+      {/* Modal: Main container now uses flex-col and no longer scrolls */}
+      <div className="relative bg-white rounded-xl shadow-2xl max-w-md w-full flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+        {/* Header: No longer sticky, acts as a flex item */}
+        <div className="flex-shrink-0 bg-white border-b border-gray-100 px-6 py-4 rounded-t-xl">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-[#083A85]">Add Your Review</h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1 cursor-pointer"
               disabled={isSubmitting}
             >
               <i className="bi bi-x-lg text-xl"></i>
             </button>
           </div>
-          <p className="text-sm text-gray-600 mt-1">Share your experience with future guests</p>
+          <p className="text-base text-gray-600 mt-1">Share your experience with future guests</p>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
+        {/* Scrollable Content Area: This new div handles the overflow */}
+        <div className="overflow-y-auto p-6">
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-base text-red-600">{error}</p>
+            </div>
+          )}
 
         {/* Form Content */}
         <div className="p-6 space-y-5">

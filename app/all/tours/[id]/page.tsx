@@ -15,16 +15,34 @@ interface CreateTourBookingDto {
   tourId: number;
   scheduleId: string;
   numberOfParticipants: number;
-  participants: Participant[];
+  participants: TourParticipant[];
   totalAmount: number;
   specialRequests?: string;
 }
 
-interface Participant {
+// Updated to match backend interface
+interface TourParticipant {
   name: string;
-  email: string;
-  phone: string;
+  age: number;
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  specialRequirements?: string[];
+  medicalConditions?: string[];
+}
+
+// Frontend form interface for easier handling
+interface ParticipantForm {
+  name: string;
   age: string;
+  email: string; // Keep email for form, but don't send to backend
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  emergencyContactRelationship: string;
+  specialRequirements: string;
+  medicalConditions: string;
 }
 
 interface BookingResponse {
@@ -127,7 +145,7 @@ const transformTourData = (backendTour: any) => {
   };
 };
 
-// Review Modal Component - Fixed props typing
+// Review Modal Component
 const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reviewData, setReviewData] = useState({
     bookingId: '',
@@ -222,7 +240,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, lo
   );
 };
 
-// Photo Gallery Modal Component - Fixed props typing
+// Photo Gallery Modal Component
 const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, images = [] }) => {
   if (!isOpen) return null;
 
@@ -279,12 +297,21 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   
-  // Form state
+  // Form state - Updated to use new interface
   const [bookingForm, setBookingForm] = useState({
     tourId: '',
     scheduleId: '',
     numberOfParticipants: 1,
-    participants: [{ name: '', email: '', phone: '', age: '' }] as Participant[],
+    participants: [{
+      name: '',
+      age: '',
+      email: '',
+      emergencyContactName: '',
+      emergencyContactPhone: '',
+      emergencyContactRelationship: '',
+      specialRequirements: '',
+      medicalConditions: ''
+    }] as ParticipantForm[],
     totalAmount: 0,
     specialRequests: ''
   });
@@ -300,7 +327,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const [validTourId, setValidTourId] = useState<number | null>(null);
   const [invalidId, setInvalidId] = useState(false);
 
-  // ID validation useEffect - updated to handle loading state properly
+  // ID validation useEffect
   useEffect(() => {
     if (!resolvedParams.id) {
       setError('No tour ID provided');
@@ -340,7 +367,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
         const response: any = await api.get(`/tours/${validTourId}`);
 
-        if (response.success) {
+        if (response.data.success) {
           const transformedTour = transformTourData(response.data.data);
           setTour(transformedTour);
           
@@ -420,7 +447,22 @@ export default function TourDetailPage({ params }: TourPageProps) {
     fetchReviews();
   }, [validTourId]);
 
-  // Fixed booking validation - more comprehensive check
+  // Transform form participants to backend format
+  const transformParticipantsForBackend = (formParticipants: ParticipantForm[]): TourParticipant[] => {
+    return formParticipants.map(participant => ({
+      name: participant.name,
+      age: parseInt(participant.age) || 0,
+      emergencyContact: {
+        name: participant.emergencyContactName,
+        phone: participant.emergencyContactPhone,
+        relationship: participant.emergencyContactRelationship
+      },
+      specialRequirements: participant.specialRequirements ? [participant.specialRequirements] : [],
+      medicalConditions: participant.medicalConditions ? [participant.medicalConditions] : []
+    }));
+  };
+
+  // Updated booking validation
   const validateBooking = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
@@ -437,9 +479,10 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
     bookingForm.participants.forEach((participant, index) => {
       if (!participant.name.trim()) errors.push(`Participant ${index + 1}: Name is required`);
-      if (!participant.email.trim()) errors.push(`Participant ${index + 1}: Email is required`);
-      if (!participant.phone.trim()) errors.push(`Participant ${index + 1}: Phone is required`);
       if (!participant.age.trim()) errors.push(`Participant ${index + 1}: Age is required`);
+      if (!participant.emergencyContactName.trim()) errors.push(`Participant ${index + 1}: Emergency contact name is required`);
+      if (!participant.emergencyContactPhone.trim()) errors.push(`Participant ${index + 1}: Emergency contact phone is required`);
+      if (!participant.emergencyContactRelationship.trim()) errors.push(`Participant ${index + 1}: Emergency contact relationship is required`);
     });
 
     if (!validTourId) errors.push('Invalid tour ID');
@@ -447,15 +490,16 @@ export default function TourDetailPage({ params }: TourPageProps) {
     return { isValid: errors.length === 0, errors };
   };
 
-  // Check if all required fields are filled (for enabling/disabling the button)
+  // Check if all required fields are filled
   const isBookingFormComplete = (): boolean => {
     if (!selectedSchedule) return false;
     
     return bookingForm.participants.every(participant => 
       participant.name.trim() && 
-      participant.email.trim() && 
-      participant.phone.trim() && 
-      participant.age.trim()
+      participant.age.trim() && 
+      participant.emergencyContactName.trim() &&
+      participant.emergencyContactPhone.trim() &&
+      participant.emergencyContactRelationship.trim()
     );
   };
 
@@ -479,7 +523,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         const loginMessage = 'Please log in to make a booking';
         setBookingError(loginMessage);
         showAlert(loginMessage, 'warning');
-        router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+        router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
         return;
       }
 
@@ -487,7 +531,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         tourId: validTourId!,
         scheduleId: selectedSchedule!.id,
         numberOfParticipants: bookingForm.numberOfParticipants,
-        participants: bookingForm.participants,
+        participants: transformParticipantsForBackend(bookingForm.participants),
         totalAmount: bookingForm.numberOfParticipants * tour.price,
         specialRequests: bookingForm.specialRequests || ''
       };
@@ -503,7 +547,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         
         const encodedBookingId = encodeId(result.data.id);
         setTimeout(() => {
-          router.push(`/tours/${resolvedParams.id}/confirm?bookingId=${encodedBookingId}`);
+          router.push(`/all/tours/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
         }, 2000);
       } else {
         const errorMessage = result.message || 'Something went wrong. Please try again.';
@@ -512,11 +556,11 @@ export default function TourDetailPage({ params }: TourPageProps) {
       }
     } catch (error: any) {
       console.error('Booking creation error:', error);
-      let userMessage = 'Unable to process your booking. Please try again.';
+      let userMessage = error.response?.message || 'Unable to process your booking. Please try again.';
       
       if (error.response?.status === 401) {
         userMessage = 'Please log in to make a booking';
-        router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+        router.push(`/all/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       } else if (error.response?.status === 409) {
         userMessage = 'This schedule is no longer available.';
       }
@@ -532,7 +576,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const handleReviewSubmit = async (reviewData: any) => {
     try {
       setLoading(true);
-      const response: any = await api.post(`/tours/${validTourId}/reviews`, reviewData);
+      const response: any = await api.post(`/tours/reviews`, reviewData);
       
       if (response.success) {
         showAlert('Review submitted successfully!', 'success');
@@ -555,10 +599,22 @@ export default function TourDetailPage({ params }: TourPageProps) {
     }
   };
 
+  // Create empty participant form
+  const createEmptyParticipant = (): ParticipantForm => ({
+    name: '',
+    age: '',
+    email: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactRelationship: '',
+    specialRequirements: '',
+    medicalConditions: ''
+  });
+
   // Update participants
   const updateParticipants = (count: number) => {
     const participants = Array(count).fill(null).map((_, index) => 
-      bookingForm.participants[index] || { name: '', email: '', phone: '', age: '' }
+      bookingForm.participants[index] || createEmptyParticipant()
     );
     setBookingForm({
       ...bookingForm,
@@ -568,7 +624,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
     });
   };
 
-  const updateParticipant = (index: number, field: keyof Participant, value: string) => {
+  const updateParticipant = (index: number, field: keyof ParticipantForm, value: string) => {
     const updatedParticipants = [...bookingForm.participants];
     updatedParticipants[index] = { ...updatedParticipants[index], [field]: value };
     setBookingForm({ ...bookingForm, participants: updatedParticipants });
@@ -815,7 +871,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       >
                         {Array.from({ length: (tour?.maxGroupSize || 1) - (tour?.minGroupSize || 1) + 1 }, (_, i) => (
                           <option key={i} value={(tour?.minGroupSize || 1) + i}>
-                            {(tour?.minGroupSize || 1)} participants
+                            {(tour?.minGroupSize || 1) + i} participants
                           </option>
                         ))}
                       </select>
@@ -834,8 +890,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     >
                       Book Now
                     </button>
-
-                    {/*<p className="text-center text-sm text-gray-500">You won't be charged yet</p>*/}
                     
                     <div className="border-t pt-4 space-y-2 text-sm">
                       <div className="flex justify-between">
@@ -1170,9 +1224,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     >
                       Book Now
                     </button>
-                    
-                    
-                    {/*<p className="text-center text-sm text-gray-500">You won't be charged yet</p>*/}
 
                     <div className="border-t pt-4 space-y-3">
                       <div className="flex justify-between text-gray-700">
@@ -1195,10 +1246,10 @@ export default function TourDetailPage({ params }: TourPageProps) {
           </div>
         </div>
 
-        {/* Booking Modal */}
+        {/* Booking Modal - Updated with emergency contact fields */}
         {showBookingModal && (
           <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-2xl font-bold text-[#083A85]">Complete Your Booking</h3>
@@ -1206,7 +1257,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     onClick={() => setShowBookingModal(false)}
                     className="text-gray-400 hover:text-gray-600 text-3xl font-light"
                   >
-                    x
+                    ×
                   </button>
                 </div>
 
@@ -1236,51 +1287,105 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     </select>
                   </div>
 
-                  {/* Participant Details */}
+                  {/* Participant Details - Updated with emergency contact */}
                   {bookingForm.participants.map((participant, index) => (
                     <div key={index} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
                       <h5 className="font-bold text-gray-900 mb-4 text-lg">Participant {index + 1}</h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input
-                          type="text"
-                          placeholder="Full Name"
-                          value={participant.name}
-                          onChange={(e) => updateParticipant(index, 'name', e.target.value)}
-                          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                        />
-                        <input
-                          type="email"
-                          placeholder="Email Address"
-                          value={participant.email}
-                          onChange={(e) => updateParticipant(index, 'email', e.target.value)}
-                          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                        />
-                        <input
-                          type="tel"
-                          placeholder="Phone Number"
-                          value={participant.phone}
-                          onChange={(e) => updateParticipant(index, 'phone', e.target.value)}
-                          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                        />
-                        <input
-                          type="number"
-                          placeholder="Age"
-                          value={participant.age}
-                          onChange={(e) => updateParticipant(index, 'age', e.target.value)}
-                          className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                        />
+                      
+                      {/* Basic Information */}
+                      <div className="mb-6">
+                        <h6 className="font-semibold text-gray-800 mb-3">Basic Information</h6>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input
+                            type="text"
+                            placeholder="Full Name *"
+                            value={participant.name}
+                            onChange={(e) => updateParticipant(index, 'name', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          />
+                          <input
+                            type="number"
+                            placeholder="Age *"
+                            value={participant.age}
+                            onChange={(e) => updateParticipant(index, 'age', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          />
+                          <input
+                            type="email"
+                            placeholder="Email Address"
+                            value={participant.email}
+                            onChange={(e) => updateParticipant(index, 'email', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Emergency Contact */}
+                      <div className="mb-6">
+                        <h6 className="font-semibold text-gray-800 mb-3">Emergency Contact *</h6>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input
+                            type="text"
+                            placeholder="Emergency Contact Name *"
+                            value={participant.emergencyContactName}
+                            onChange={(e) => updateParticipant(index, 'emergencyContactName', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          />
+                          <input
+                            type="tel"
+                            placeholder="Emergency Contact Phone *"
+                            value={participant.emergencyContactPhone}
+                            onChange={(e) => updateParticipant(index, 'emergencyContactPhone', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          />
+                          <select
+                            value={participant.emergencyContactRelationship}
+                            onChange={(e) => updateParticipant(index, 'emergencyContactRelationship', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                          >
+                            <option value="">Select Relationship *</option>
+                            <option value="Parent">Parent</option>
+                            <option value="Spouse">Spouse</option>
+                            <option value="Sibling">Sibling</option>
+                            <option value="Child">Child</option>
+                            <option value="Friend">Friend</option>
+                            <option value="Partner">Partner</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Additional Information */}
+                      <div>
+                        <h6 className="font-semibold text-gray-800 mb-3">Additional Information (Optional)</h6>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <textarea
+                            placeholder="Special Requirements (dietary, accessibility, etc.)"
+                            value={participant.specialRequirements}
+                            onChange={(e) => updateParticipant(index, 'specialRequirements', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                            rows={3}
+                          />
+                          <textarea
+                            placeholder="Medical Conditions (allergies, medications, etc.)"
+                            value={participant.medicalConditions}
+                            onChange={(e) => updateParticipant(index, 'medicalConditions', e.target.value)}
+                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                            rows={3}
+                          />
+                        </div>
                       </div>
                     </div>
                   ))}
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Special Requests (Optional)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-3">Additional Special Requests (Optional)</label>
                     <textarea
                       value={bookingForm.specialRequests}
                       onChange={(e) => setBookingForm({ ...bookingForm, specialRequests: e.target.value })}
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
                       rows={4}
-                      placeholder="Any dietary requirements, accessibility needs, or special requests..."
+                      placeholder="Any additional requests for your group..."
                     />
                   </div>
 

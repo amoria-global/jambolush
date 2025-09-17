@@ -51,11 +51,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
   // Calculate price breakdown with pay at property option
   const calculatePriceBreakdown = (originalPrice: number, nights: number, isPayAtProperty: boolean = false) => {
-    const estimatedSubtotal = Math.round(originalPrice / 1.08 - 60); // Remove fees and taxes
+    const estimatedSubtotal = Math.round(originalPrice / 1.1 - 39); // Remove fees and taxes
     const basePrice = Math.round(estimatedSubtotal / nights);
     const cleaningFee = 35;
-    const serviceFee = 25;
-    const taxes = Math.round((estimatedSubtotal + 60) * 0.08);
+    const serviceFee = 4;
+    const taxes = Math.round((estimatedSubtotal + 60) * 0.10);
     
     let finalTotal = originalPrice;
     let payAtPropertyFee = 0;

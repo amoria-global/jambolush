@@ -297,7 +297,7 @@ class FrontendAPIService {
   };
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'https://localhost:5000/api';
+    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'http://localhost:5000/api';
   }
 
   setAuth(token: string): void {
@@ -776,15 +776,15 @@ async getTourLocations(): Promise<APIResponse<BackendResponse<string[]>>> {
  * Create a new review for a property
  */
 async addPropertyReview(
-  propertyId: number,
   reviewData: {
+    propertyId: number;
     rating: number;
     comment: string;
     images?: string[];
   }
 ): Promise<APIResponse<BackendResponse<any>>> {
   return this.post<BackendResponse<any>>(
-    `/properties/${propertyId}/reviews`,
+    `/properties/${reviewData.propertyId}/reviews`,
     reviewData
   );
 }

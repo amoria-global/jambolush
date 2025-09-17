@@ -12,7 +12,7 @@ interface HousePageProps {
     id: string;
   }>;
 }
-
+ 
 // Booking interfaces
 interface CreatePropertyBookingDto {
   propertyId: number;

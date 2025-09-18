@@ -2,7 +2,7 @@
 // All frontend requests should go through this single file
 
 // Configuration
-const PUBLIC_API_ENDPOINT_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'http://localhost:5000/api'; // Change to your API base URL
+const PUBLIC_API_ENDPOINT_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'https://backend.jambolush.com/api'; // Change to your API base URL
 
 // Types and Interfaces
 export interface ApiResponse<T = any> {

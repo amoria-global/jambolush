@@ -22,9 +22,9 @@ const rolesData = [
     tip: 'Unlock travel rewards! Invite friends to Jambolush to earn credits to  use Gift Cards to make booking even easier.',
   },
   {
-    key: 'Host',
+    key: 'property owner',
     icon: 'bi bi-briefcase',
-    title: 'Property Owner',
+    title: 'Property owner',
     description: 'List your properties, connect with potential buyers or renters, and manage your real estate portfolio',
     steps: [
     'Click the "Become a Host" button to begin your registration.',
@@ -43,9 +43,9 @@ const rolesData = [
     tip: 'Tax cancellation and refunds.',
   },
   {
-    key: 'TOUR GUIDE',
+    key: 'Tour guide',
     icon: 'bi bi-compass',
-    title: 'TOUR GUIDE',
+    title: 'Tour guide',
     description: 'Share your passion and local knowledge. Lead unforgettable tours, connect with travelers from around the world, and earn money doing what you love.',
     steps: [
     'Begin by clicking the become a host button and selecting "TOUR GUIDE" as your role.',
@@ -63,9 +63,9 @@ const rolesData = [
     tip: 'Regularly check your Tour Dashboard for updates and feedback from clients.',
   },
   {
-    key: 'FIELD AGENT',
+    key: 'Field agent',
     icon: 'bi bi-geo-alt',
-    title: 'FIELD AGENT',
+    title: 'Field agent',
     description: 'Help clients find their perfect property, provide expert guidance, and earn competitive commissions..',
     steps: [
     'Begin by clicking the become a host button and selecting "Field Agent" as your role.',
@@ -84,7 +84,7 @@ const rolesData = [
   },
 ];
 
-type RoleKey = 'guest' | 'agent' | 'tour' | 'FIELD AGENT';
+type RoleKey = 'guest' | 'property owner' | 'tour' | 'Field agent';
 
 interface RoleCardProps {
   icon: string;
@@ -166,7 +166,7 @@ const JambolushGetStarted = () => {
               <div className="flex items-center space-x-4 mb-6">
                 <button 
                   onClick={handleGoBack} 
-                  className="p-2 text-[#083A85] hover:bg-gray-100 rounded-full transition-colors duration-200"
+                  className="p-2 text-[#083A85] hover:bg-gray-100 rounded-full transition-colors duration-200 cursor-pointer"
                 >
                   <i className="bi bi-arrow-left text-xl"></i>
                 </button>

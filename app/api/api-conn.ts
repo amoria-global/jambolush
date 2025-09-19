@@ -35,6 +35,40 @@ export interface LogEntry {
   duration: number;
 }
 
+export interface Tour {
+  id: string;
+  title: string;
+  location: string;
+  rating: number;
+  reviews: number;
+  duration: string;
+  price: number;
+  image: string;
+  isBestseller?: boolean;
+  category: string;
+}
+
+export interface TourFilters {
+  search?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  location?: string;
+  rating?: number;
+  sortBy?: 'price' | 'rating' | 'reviews' | 'title';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+export interface ToursResponse {
+  tours: Tour[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 // Self-implemented Logger
 class ApiLogger {
   private logs: LogEntry[] = [];
@@ -433,6 +467,76 @@ export const api = {
   clearLogs: () => logger.clearLogs(),
   getErrorLogs: () => logger.getErrorLogs(),
   getLogsByEndpoint: (endpoint: string) => logger.getLogsByEndpoint(endpoint),
+
+
+  getTourCategories: async (): Promise<ApiResponse<{ success: boolean; data: string[] }>> => {
+    const response = await apiConnector.get<string[]>('/tours/categories');
+    return {
+      ...response,
+      data: {
+        success: response.success,
+        data: response.data || []
+      }
+    };
+  },
+
+  searchTours: async (filters?: TourFilters): Promise<ApiResponse<{ success: boolean; data: ToursResponse }>> => {
+    const params: Record<string, string | number> = {};
+    
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          params[key] = value;
+        }
+      });
+    }
+
+    const response = await apiConnector.get<ToursResponse>('/tours/search', params);
+    return {
+      ...response,
+      data: {
+        success: response.success,
+        data: response.data || { tours: [], total: 0, page: 1, limit: 10, totalPages: 0 }
+      }
+    };
+  },
+
+  getTours: async (filters?: TourFilters): Promise<ApiResponse<{ success: boolean; data: ToursResponse }>> => {
+    return api.searchTours(filters);
+  },
+
+  getTour: async (id: string): Promise<ApiResponse<{ success: boolean; data: Tour }>> => {
+    const response = await apiConnector.get<Tour>(`/tours/${id}`);
+    return {
+      ...response,
+      data: {
+        success: response.success,
+        data: response.data || {} as Tour
+      }
+    };
+  },
+
+  getFeaturedTours: async (limit: number = 12): Promise<ApiResponse<{ success: boolean; data: ToursResponse }>> => {
+    const response = await apiConnector.get<ToursResponse>('/tours/featured', { limit });
+    return {
+      ...response,
+      data: {
+        success: response.success,
+        data: response.data || { tours: [], total: 0, page: 1, limit, totalPages: 0 }
+      }
+    };
+  },
+
+  getTourLocations: async (): Promise<ApiResponse<{ success: boolean; data: string[] }>> => {
+    const response = await apiConnector.get<string[]>('/tours/locations');
+    return {
+      ...response,
+      data: {
+        success: response.success,
+        data: response.data || []
+      }
+    };
+  }
 };
 
 // Example usage and documentation

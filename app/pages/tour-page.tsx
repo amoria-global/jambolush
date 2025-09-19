@@ -2,8 +2,32 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import api, { Tour, TourFilters } from '@/app/api/apiService'; // Update path as needed
+import { api } from '@/app/api/api-conn';
 import { encodeId } from '../utils/encoder';
+
+// Define the Tour type
+type Tour = {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+  rating: number;
+  reviews: number;
+  location: string;
+  duration: string;
+  category: string;
+  isBestseller?: boolean;
+};
+
+// Optionally, define TourFilters if missing
+type TourFilters = {
+  page?: number;
+  limit?: number;
+  category?: string;
+  search?: string;
+  sortBy?: "price" | "rating" | "reviews" | "title";
+  sortOrder?: 'asc' | 'desc';
+};
 
 // --- HELPER HOOK (Unchanged) ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -171,22 +195,25 @@ export default function BrowseToursPage() {
 
   // Load initial data and categories
   useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        // Load categories
-        const categoriesResponse = await api.getTourCategories();
-        if (categoriesResponse.data.success) {
-          setFilterCategories(['All', ...categoriesResponse.data.data]);
-        }
-      } catch (err) {
-        console.error('Failed to load categories:', err);
-        // Use default categories if API fails
+  const loadInitialData = async () => {
+    try {
+      // Load categories
+      const categoriesResponse = await api.getTourCategories();
+      if (categoriesResponse.data?.success && Array.isArray(categoriesResponse.data?.data)) {
+        setFilterCategories(['All', ...categoriesResponse.data.data]);
+      } else {
+        // Use default categories if API fails or returns non-array
         setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
       }
-    };
+    } catch (err) {
+      console.error('Failed to load categories:', err);
+      // Use default categories if API fails
+      setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
+    }
+  };
 
-    loadInitialData();
-  }, []);
+  loadInitialData();
+}, []);
 
   // Fetch tours from API
   const fetchTours = async (filters?: TourFilters) => {
@@ -196,12 +223,12 @@ export default function BrowseToursPage() {
       
       const response = await api.searchTours(filters);
       
-      if (response.data.success) {
+      if (response.data && response.data.success) {
         setDisplayedTours(response.data.data.tours);
         setTotalResults(response.data.data.total);
         setTotalPages(response.data.data.totalPages);
       } else {
-        throw new Error(response.data.message || 'Failed to fetch tours');
+        throw new Error('Failed to fetch tours');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load tours. Please try again.');
@@ -243,6 +270,8 @@ export default function BrowseToursPage() {
           break;
         default:
           // Featured/default sorting
+          filters.sortBy = undefined;
+          filters.sortOrder = undefined;
           break;
       }
 
@@ -351,20 +380,19 @@ export default function BrowseToursPage() {
         
         {error && <ErrorMessage message={error} onRetry={handleRetry} />}
         
-        {!loading && !error && displayedTours.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {displayedTours.map((tour) => (
-                <TourCard
-                  key={tour.id}
-                  tour={tour}
-                  isFavorite={favorites.includes(tour.id)}
-                  toggleFavorite={toggleFavorite}
-                />
-              ))}
-            </div>
-            
-            {totalPages > 1 && (
+        {!loading && !error && displayedTours && displayedTours.length > 0 && (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {displayedTours.map((tour) => (
+        <TourCard
+          key={tour.id}
+          tour={tour}
+          isFavorite={favorites.includes(tour.id)}
+          toggleFavorite={toggleFavorite}
+        />
+      ))}
+    </div>
+    {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row justify-center items-center mt-12 gap-4">
                 <div className="flex items-center space-x-2">
                   <button
@@ -419,23 +447,23 @@ export default function BrowseToursPage() {
           </>
         )}
 
-        {!loading && !error && displayedTours.length === 0 && (
-          <div className="text-center py-20">
-            <div className="max-w-md mx-auto">
-              <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>
-              <h2 className="text-xl font-bold text-gray-700 mb-2">No tours found</h2>
-              <p className="text-sm text-gray-500 mb-6">
-                Try adjusting your filters or search terms to find your next adventure!
-              </p>
-              <button
-                onClick={handleClearFilters}
-                className="px-6 py-3 bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          </div>
-        )}
+        {!loading && !error && (!displayedTours || displayedTours.length === 0) && (
+  <div className="text-center py-20">
+    <div className="max-w-md mx-auto">
+      <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>
+      <h2 className="text-xl font-bold text-gray-700 mb-2">No tours found</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        Try adjusting your filters or search terms to find your next adventure!
+      </p>
+      <button
+        onClick={handleClearFilters}
+        className="px-6 py-3 bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
+      >
+        Clear All Filters
+      </button>
+    </div>
+  </div>
+)}
       </main>
     </div>
   );

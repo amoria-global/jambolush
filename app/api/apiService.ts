@@ -383,7 +383,7 @@ class FrontendAPIService {
   }
 
   async request<T = any>(endpoint: string, config: APIConfig = {}): Promise<APIResponse<T>> {
-    const { method = 'GET', headers = {}, body, params, timeout = 30000 } = config;
+    const { method = 'GET', headers = {}, body, params, timeout = 500000 } = config;
     
     const url = this.buildURL(endpoint, params);
     const mergedHeaders = { ...this.defaultHeaders, ...headers };

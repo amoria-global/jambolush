@@ -801,10 +801,10 @@ const handleFormSubmit = async () => {
           <div className="">
             <div className="max-w-4xl mx-auto px-6 py-20">
               <div className="text-center space-y-3">
-                <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-[#F20C8F] text-base font-medium rounded-full">
+                <div className="inline-flex items-center px-3 py-1.5 bg-[#F20C8F] bg-opacity-10 text-white text-base font-medium rounded-full">
                   Join Our Platform
                 </div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#083A85]">Become a Service Provider</h1>
+                <h1 className="text-lg sm:text-2xl lg:text-2xl font-medium text-[#083A85]">Become a Service Provider</h1>
                 <p className="text-base sm:text-base text-gray-600 max-w-lg mx-auto px-4">
                   Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.
                 </p>

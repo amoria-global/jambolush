@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/app/api/apiService';
 import { decodeId } from '@/app/utils/encoder';
+import { calculatePriceBreakdown, getBasePriceFromDisplay, formatPrice } from '@/app/utils/pricing';
 import AlertNotification from '@/app/components/notify';
 
 interface TourPaymentPageProps {}
@@ -25,8 +26,9 @@ interface TourBookingData {
       relationship: string;
     };
   }>;
-  totalAmount: number;
-  pricePerPerson: number;
+  totalAmount: number; // This will be the display price from booking
+  pricePerPerson: number; // Display price per person
+  basePricePerPerson: number; // Base price per person (calculated)
   status: string;
   specialRequests?: string;
   tourDetails?: {
@@ -39,11 +41,12 @@ interface TourBookingData {
   };
   priceBreakdown?: {
     basePrice: number;
+    displayPrice: number;
     subtotal: number;
     serviceFee: number;
     taxes: number;
     total: number;
-    payAtPropertyFee?: number;
+    payAtTourFee?: number;
   };
 }
 
@@ -61,7 +64,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo' | 'airtel' | 'mpesa' | 'pay_at_tour' | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [bookingData, setBookingData] = useState<TourBookingData | null>(null);
+  const [bookingData, setBookingData] = useState<TourBookingData | any |null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
 
   // Alert state
@@ -92,47 +95,35 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
     setAlert(prev => ({ ...prev, show: false }));
   };
 
-  // Calculate price breakdown with pay at tour option
-  const calculatePriceBreakdown = (originalPrice: number, participants: number, isPayAtTour: boolean = false) => {
-    const basePrice = Math.round(originalPrice / participants);
-    const subtotal = basePrice * participants;
-    const serviceFee = Math.round(subtotal * 0.04); // 5% service fee
-    const taxes = Math.round(subtotal * 0.10); // 8% taxes
-    
-    let finalTotal = originalPrice + serviceFee + taxes;
-    let payAtPropertyFee = 0;
-    
-    if (isPayAtTour) {
-      payAtPropertyFee = Math.round(originalPrice * 0.1); // 10% fee
-      finalTotal = originalPrice + payAtPropertyFee;
-    }
-    
-    return {
-      basePrice,
-      subtotal,
-      serviceFee,
-      taxes,
-      total: finalTotal,
-      payAtPropertyFee
-    };
-  };
-
   // Update price breakdown when payment method changes
   useEffect(() => {
     if (bookingData) {
       const isPayAtTour = paymentMethod === 'pay_at_tour';
+      
+      // Calculate base price per person from display price
+      const basePricePerPerson = bookingData.basePricePerPerson || getBasePriceFromDisplay(bookingData.pricePerPerson);
+      
+      // Use the pricing utility for tours (treating as 1 "night" since tours are per-person pricing)
       const updatedBreakdown = calculatePriceBreakdown(
-        bookingData.totalAmount, 
-        bookingData.numberOfParticipants, 
+        basePricePerPerson, 
+        bookingData.numberOfParticipants, // Use participants as "nights" for calculation
         isPayAtTour
       );
       
-      setBookingData(prev => prev ? {
+      setBookingData((prev: any) => prev ? {
         ...prev,
-        priceBreakdown: updatedBreakdown
+        priceBreakdown: {
+          basePrice: basePricePerPerson,
+          displayPrice: basePricePerPerson * 1.10, // 10% markup
+          subtotal: basePricePerPerson * 1.10 * bookingData.numberOfParticipants,
+          serviceFee: updatedBreakdown.serviceFee,
+          taxes: updatedBreakdown.taxes,
+          total: updatedBreakdown.total,
+          payAtTourFee: isPayAtTour ? updatedBreakdown.payAtPropertyFee : undefined
+        }
       } : null);
     }
-  }, [paymentMethod]);
+  }, [paymentMethod, bookingData?.totalAmount, bookingData?.numberOfParticipants]);
 
   // Load booking data from booking ID
   useEffect(() => {
@@ -199,8 +190,12 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
           }
         }
 
+        // Calculate pricing - totalAmount from booking is display price
+        const displayPricePerPerson = booking.totalAmount / booking.numberOfParticipants;
+        const basePricePerPerson = getBasePriceFromDisplay(displayPricePerPerson);
+        
         // Calculate initial price breakdown (without pay at tour fee)
-        const priceBreakdown = calculatePriceBreakdown(booking.totalAmount, booking.numberOfParticipants, false);
+        const priceBreakdown = calculatePriceBreakdown(basePricePerPerson, booking.numberOfParticipants, false);
 
         setBookingData({
           id: booking.id,
@@ -210,11 +205,21 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
           ...scheduleDetails,
           numberOfParticipants: booking.numberOfParticipants,
           participants: booking.participants || [],
-          totalAmount: booking.totalAmount,
-          pricePerPerson: Math.round(booking.totalAmount / booking.numberOfParticipants),
+          totalAmount: booking.totalAmount, // Display price total
+          pricePerPerson: displayPricePerPerson, // Display price per person
+          basePricePerPerson: basePricePerPerson, // Base price per person
           status: booking.status,
           specialRequests: booking.specialRequests,
-          priceBreakdown
+          tourDetails,
+          priceBreakdown: {
+            basePrice: basePricePerPerson,
+            displayPrice: displayPricePerPerson,
+            subtotal: displayPricePerPerson * booking.numberOfParticipants,
+            serviceFee: priceBreakdown.serviceFee,
+            taxes: priceBreakdown.taxes,
+            total: priceBreakdown.total,
+            payAtTourFee: undefined
+          }
         });
 
         showAlert('Booking details loaded successfully', 'success', 3000);
@@ -412,7 +417,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
       } else if (paymentMethod === 'pay_at_tour') {
         paymentPayload.paymentDetails = {
           type: 'pay_at_tour',
-          convenienceFee: bookingData.priceBreakdown?.payAtPropertyFee || 0,
+          convenienceFee: bookingData.priceBreakdown?.payAtTourFee || 0,
           originalAmount: bookingData.totalAmount,
           feePercentage: 10
         };
@@ -478,7 +483,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-600 mb-4">
-            <span className="text-4xl">⚠️</span>
+            <i className="bi bi-exclamation-triangle-fill text-4xl"></i>
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Tour Booking Not Found</h2>
           <p className="text-gray-600 mb-4">{errors.general}</p>
@@ -568,7 +573,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       className="mr-3"
                       style={{ accentColor: '#F20C8F' }}
                     />
-                    <span className="mr-3 text-xl" style={{ color: '#083A85' }}>💳</span>
+                    <i className="bi bi-credit-card mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Credit/Debit Card</div>
                       <div className="text-base text-gray-500">Visa, Mastercard, Amex</div>
@@ -586,7 +591,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       className="mr-3"
                       style={{ accentColor: '#F20C8F' }}
                     />
-                    <span className="mr-3 text-xl" style={{ color: '#083A85' }}>📱</span>
+                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Mobile Money (MoMo)</div>
                       <div className="text-base text-gray-500">MTN Mobile Money</div>
@@ -604,7 +609,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       className="mr-3"
                       style={{ accentColor: '#F20C8F' }}
                     />
-                    <span className="mr-3 text-xl" style={{ color: '#083A85' }}>📱</span>
+                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Airtel Money</div>
                       <div className="text-base text-gray-500">Airtel Mobile Money</div>
@@ -622,7 +627,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       className="mr-3"
                       style={{ accentColor: '#F20C8F' }}
                     />
-                    <span className="mr-3 text-xl" style={{ color: '#083A85' }}>💰</span>
+                    <i className="bi bi-cash mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">M-Pesa</div>
                       <div className="text-base text-gray-500">Safaricom M-Pesa</div>
@@ -641,7 +646,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       className="mr-3"
                       style={{ accentColor: '#F20C8F' }}
                     />
-                    <span className="mr-3 text-xl" style={{ color: '#083A85' }}>🎯</span>
+                    <i className="bi bi-house mr-3 text-xl" style={{ color: '#083A85' }}></i>
                     <div className="flex-1">
                       <div className="font-medium">Pay at Tour Start</div>
                       <div className="text-base text-gray-500">Pay at meeting point (+10% convenience fee)</div>
@@ -760,7 +765,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
 
                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
                     <div className="flex items-start">
-                      <span className="text-orange-600 mr-3 mt-1 text-xl">ℹ️</span>
+                      <i className="bi bi-info-circle-fill text-orange-600 mr-3 mt-1"></i>
                       <div>
                         <h4 className="font-medium text-orange-800 mb-2">Important Information</h4>
                         <ul className="text-sm text-orange-700 space-y-1">
@@ -778,19 +783,19 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                     <h4 className="font-medium text-gray-800 mb-2">What to expect:</h4>
                     <div className="space-y-2 text-sm text-gray-600">
                       <div className="flex items-center">
-                        <span className="text-green-600 mr-2 text-lg">✅</span>
+                        <i className="bi bi-check-circle-fill text-green-600 mr-2"></i>
                         Your booking is confirmed immediately
                       </div>
                       <div className="flex items-center">
-                        <span className="text-blue-600 mr-2 text-lg">🕐</span>
+                        <i className="bi bi-clock-fill text-blue-600 mr-2"></i>
                         Payment due at tour meeting point
                       </div>
                       <div className="flex items-center">
-                        <span className="text-purple-600 mr-2 text-lg">🧮</span>
+                        <i className="bi bi-calculator-fill text-purple-600 mr-2"></i>
                         Total amount includes 10% convenience fee
                       </div>
                       <div className="flex items-center">
-                        <span className="text-[#F20C8F] mr-2 text-lg">📍</span>
+                        <i className="bi bi-geo-alt-fill text-[#F20C8F] mr-2"></i>
                         Meeting point: {bookingData?.tourDetails?.meetingPoint || 'Details provided in confirmation'}
                       </div>
                     </div>
@@ -809,31 +814,43 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                   {errors.general && (
                     <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
                       <p className="text-red-600 text-sm font-medium">
-                        <span className="mr-2 text-lg">⚠️</span>
+                        <i className="bi bi-exclamation-triangle-fill mr-2"></i>
                         {errors.general}
                       </p>
                     </div>
                   )}
                   
                   <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Tour price ({bookingData.numberOfParticipants} participants)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalAmount}</span>
+                    {/* Price Breakdown */}
+                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Base Price ({bookingData.numberOfParticipants} participants × ${bookingData.priceBreakdown?.basePrice})</span>
+                        <span>${Math.round((bookingData.priceBreakdown?.basePrice || 0) * bookingData.numberOfParticipants)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Display Markup (10%)</span>
+                        <span>+${Math.round((bookingData.priceBreakdown?.basePrice || 0) * bookingData.numberOfParticipants * 0.10)}</span>
+                      </div>
+                      <div className="border-t pt-2 flex justify-between text-base font-medium">
+                        <span>Subtotal (Display Price)</span>
+                        <span>${bookingData.priceBreakdown?.subtotal || 0}</span>
+                      </div>
                     </div>
+
                     <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Service fee</span>
+                      <span className="text-gray-600">Service Fee</span>
                       <span className="font-medium">${bookingData.priceBreakdown?.serviceFee || 0}</span>
                     </div>
                     <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Taxes</span>
+                      <span className="text-gray-600">Taxes (4%)</span>
                       <span className="font-medium">${bookingData.priceBreakdown?.taxes || 0}</span>
                     </div>
                     
                     {/* Show pay at tour fee if applicable */}
-                    {paymentMethod === 'pay_at_tour' && bookingData.priceBreakdown?.payAtPropertyFee && (
+                    {paymentMethod === 'pay_at_tour' && bookingData.priceBreakdown?.payAtTourFee && (
                       <div className="flex justify-between text-base">
                         <span className="text-orange-600">Pay at Tour Fee (10%)</span>
-                        <span className="font-medium text-orange-600">+${bookingData.priceBreakdown.payAtPropertyFee}</span>
+                        <span className="font-medium text-orange-600">+${bookingData.priceBreakdown.payAtTourFee}</span>
                       </div>
                     )}
                     
@@ -849,7 +866,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                     {paymentMethod && paymentMethod !== 'pay_at_tour' && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
                         <p className="text-green-700 text-sm font-medium">
-                          <span className="mr-2 text-lg">✅</span>
+                          <i className="bi bi-check-circle-fill mr-2"></i>
                           You're saving ${Math.round(bookingData.totalAmount * 0.1)} by paying online!
                         </p>
                       </div>
@@ -904,7 +921,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                     {bookingData?.tourTitle || 'Tour Experience'}
                   </h3>
                   <div className="flex items-center mt-1 text-base text-gray-600">
-                    <span className="mr-1 text-lg">📍</span>
+                    <i className="bi bi-geo-alt mr-1"></i>
                     {bookingData?.tourDetails?.locationCity}, {bookingData?.tourDetails?.locationCountry}
                   </div>
                 </div>
@@ -946,21 +963,26 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                     <ul className="space-y-2 text-base">
                       <li className="flex items-center justify-between">
                         <span className="flex items-center">
-                          <span className="mr-2 text-lg" style={{ color: '#F20C8F' }}>👥</span>
+                          <i className="bi bi-people mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                           <span>Participants</span>
                         </span>
                         <span className="font-medium">{bookingData.numberOfParticipants}</span>
                       </li>
                       <li className="flex items-center justify-between">
                         <span className="flex items-center">
-                          <span className="mr-2 text-lg" style={{ color: '#F20C8F' }}>💰</span>
+                          <i className="bi bi-currency-dollar mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                           <span>Price per person</span>
                         </span>
-                        <span className="font-medium">${bookingData.pricePerPerson}</span>
+                        <div className="text-right">
+                          <span className="font-medium">${bookingData.pricePerPerson}</span>
+                          {bookingData.basePricePerPerson && (
+                            <div className="text-xs text-gray-500 line-through">${bookingData.basePricePerPerson}</div>
+                          )}
+                        </div>
                       </li>
                       <li className="flex items-center justify-between">
                         <span className="flex items-center">
-                          <span className="mr-2 text-lg" style={{ color: '#F20C8F' }}>🧾</span>
+                          <i className="bi bi-receipt mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                           <span>Total</span>
                         </span>
                         <span className={`font-bold ${paymentMethod === 'pay_at_tour' ? 'text-orange-600' : ''}`} 
@@ -971,15 +993,15 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                       {paymentMethod === 'pay_at_tour' && (
                         <li className="flex items-center justify-between text-sm text-orange-600">
                           <span className="flex items-center">
-                            <span className="mr-2 text-lg">ℹ️</span>
+                            <i className="bi bi-info-circle mr-2 flex-shrink-0"></i>
                             <span>Includes 10% fee</span>
                           </span>
-                          <span>+${bookingData.priceBreakdown?.payAtPropertyFee || 0}</span>
+                          <span>+${bookingData.priceBreakdown?.payAtTourFee || 0}</span>
                         </li>
                       )}
                       <li className="flex items-center justify-between">
                         <span className="flex items-center">
-                          <span className="mr-2 text-lg" style={{ color: '#F20C8F' }}>📋</span>
+                          <i className="bi bi-check-circle mr-2 flex-shrink-0" style={{ color: '#F20C8F' }}></i>
                           <span>Status</span>
                         </span>
                         <span className="font-medium text-green-600 capitalize">{bookingData.status}</span>
@@ -991,7 +1013,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
                 {/* Security Message */}
                 <div className="p-4 text-center">
                   <p className="text-base text-gray-500">
-                    <span className="mr-1 text-lg" style={{ color: '#F20C8F' }}>🛡️</span>
+                    <i className="bi bi-shield-check mr-1" style={{ color: '#F20C8F' }}></i>
                     Your booking is protected by our guarantee
                   </p>
                   <p className="text-base text-gray-400 mt-2">

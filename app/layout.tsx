@@ -13,6 +13,7 @@ import Footer from "./components/footer";
 import Preloader from "./components/Preloader";
 import JambolushChatbot from "./components/chatbot"; 
 import Backtop from "./components/backtop";
+import WhatsAppIcon from "./components/WhatsAppIcon";
 
 import CookiesConsent from "./pages/cookies"; // Your cookies modal component
 
@@ -145,6 +146,10 @@ function LayoutContent({
           {!shouldHideNavbarFooter && <Footer onOpenCookieModal={openCookieModal} />}
           {!shouldHideNavbarFooter && <JambolushChatbot />}
           {!shouldHideNavbarFooter && <Backtop />}
+          {!shouldHideNavbarFooter && (
+            <WhatsAppIcon phoneNumber="+250788437347" />
+          )}
+
           
 
           {/* Cookie Modal Overlay */}

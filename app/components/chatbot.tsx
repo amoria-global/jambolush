@@ -331,7 +331,7 @@ const JambolushChatbot: React.FC = () => {
 
   if (isMinimized) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-40 right-4 z-50">
         <button
           onClick={() => setIsMinimized(false)}
           className="w-16 h-16 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer flex items-center justify-center"
@@ -345,7 +345,7 @@ const JambolushChatbot: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-2 left-4 right-4 flex flex-col backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300 
+      className="fixed bottom-40 left-4 right-4 flex flex-col backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300 
                  sm:left-auto sm:w-full sm:max-w-sm h-[85vh] max-h-[550px] z-50"
       style={{
         backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.stockcake.com/public/9/4/d/94dce4db-7571-41c0-b98f-5e67852fd988_large/elephant-river-crossing-stockcake.jpg')`,

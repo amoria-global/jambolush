@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { encodeId } from '@/app/utils/encoder'; // Adjust path as needed
-import api from '@/app/api/apiService'; // Assuming your API service is exported
-import AlertNotification from '@/app/components/notify'; // Import your custom notification component
+import { encodeId } from '@/app/utils/encoder';
+import api from '@/app/api/apiService';
+import AlertNotification from '@/app/components/notify';
+import { calculateDisplayPrice, formatPrice } from '../../utils/pricing';
 
 // Define the shape for our notification state
 interface NotificationState {
@@ -18,7 +19,7 @@ interface HouseProps {
     category: string;
     type?: string;
     title: string;
-    pricePerNight: string;
+    pricePerNight: string | number; // Base price from backend
     location: string;
     beds: number;
     baths: number;
@@ -94,6 +95,13 @@ const HouseCard: React.FC<HouseProps> = ({ house, isInitiallyLiked = false }) =>
 
   const encodedId = encodeId(house.id);
 
+  // Calculate display price (base price + 10%)
+  const basePrice = typeof house.pricePerNight === 'string' 
+    ? parseFloat(house.pricePerNight.replace(/[^0-9.]/g, '')) 
+    : house.pricePerNight;
+  
+  const displayPrice = calculateDisplayPrice(basePrice);
+
   return (
     <>
       {/* --- NOTIFICATION COMPONENT --- */}
@@ -101,7 +109,7 @@ const HouseCard: React.FC<HouseProps> = ({ house, isInitiallyLiked = false }) =>
         <AlertNotification
           message={notification.message}
           type={notification.type}
-          position="bottom-center" // As requested
+          position="bottom-center"
           onClose={() => setNotification({ ...notification, isVisible: false })}
         />
       )}
@@ -143,8 +151,9 @@ const HouseCard: React.FC<HouseProps> = ({ house, isInitiallyLiked = false }) =>
 
           <div className="absolute bottom-2 left-2">
             <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
-              {house.pricePerNight}/night
+              ${displayPrice}/night
             </span>
+            
           </div>
         </div>
 

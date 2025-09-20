@@ -4,13 +4,15 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { api } from '@/app/api/api-conn';
 import { encodeId } from '../utils/encoder';
+import { calculateDisplayPrice, formatPrice } from '@/app/utils/pricing';
 
-// Define the Tour type
+// Define the Tour type with pricing structure
 type Tour = {
   id: string;
   title: string;
   image: string;
-  price: number;
+  price: number; // This will be the display price (base + 10%)
+  basePrice?: number; // Base price from backend
   rating: number;
   reviews: number;
   location: string;
@@ -101,7 +103,7 @@ const ErrorMessage = ({ message, onRetry }: { message: string; onRetry: () => vo
   </div>
 );
 
-// TourCard component (Unchanged)
+// TourCard component with pricing display
 const TourCard = ({
   tour,
   isFavorite,
@@ -138,9 +140,12 @@ const TourCard = ({
           </div>
         </div>
         <div className="absolute bottom-2 left-2">
-          <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
-            ${tour.price}/person
-          </span>
+          <div className="flex flex-col items-start">
+            <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
+              ${tour.price}/person
+            </span>
+           
+          </div>
         </div>
       </div>
       <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
@@ -175,6 +180,26 @@ const TourCard = ({
   </Link>
 );
 
+// Transform backend tour data to include display pricing
+const transformTourData = (backendTour: any): Tour => {
+  const basePrice = backendTour.price;
+  const displayPrice = calculateDisplayPrice(basePrice);
+  
+  return {
+    id: backendTour.id,
+    title: backendTour.title,
+    image: backendTour.image || `https://images.unsplash.com/photo-1464822759844-d150f39cbae2?w=400&h=300&fit=crop&q=80&random=${backendTour.id}`,
+    price: displayPrice, // Display price (base + 10%)
+    basePrice: basePrice, // Keep base price for transparency
+    rating: backendTour.rating || 4.5,
+    reviews: backendTour.reviews || backendTour.totalReviews || 0,
+    location: `${backendTour.locationCity || 'Unknown'}, ${backendTour.locationCountry || 'Unknown'}`,
+    duration: backendTour.duration ? `${Math.floor(backendTour.duration / 24)} days` : '1 day',
+    category: backendTour.category || 'Adventure',
+    isBestseller: backendTour.isBestseller || false
+  };
+};
+
 export default function BrowseToursPage() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [sortOption, setSortOption] = useState('Featured');
@@ -195,43 +220,46 @@ export default function BrowseToursPage() {
 
   // Load initial data and categories
   useEffect(() => {
-  const loadInitialData = async () => {
-    try {
-      // Load categories
-      const categoriesResponse = await api.getTourCategories();
-      if (categoriesResponse.data?.success && Array.isArray(categoriesResponse.data?.data)) {
-        setFilterCategories(['All', ...categoriesResponse.data.data]);
-      } else {
-        // Use default categories if API fails or returns non-array
+    const loadInitialData = async () => {
+      try {
+        // Load categories
+        const categoriesResponse = await api.get("/tours/categories");
+        if (categoriesResponse.data?.success && Array.isArray(categoriesResponse.data?.data)) {
+          setFilterCategories(['All', ...categoriesResponse.data.data]);
+        } else {
+          // Use default categories if API fails or returns non-array
+          setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
+        }
+      } catch (err) {
+        console.error('Failed to load categories:', err);
+        // Use default categories if API fails
         setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
       }
-    } catch (err) {
-      console.error('Failed to load categories:', err);
-      // Use default categories if API fails
-      setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
-    }
-  };
+    };
 
-  loadInitialData();
-}, []);
+    loadInitialData();
+  }, []);
 
-  // Fetch tours from API
+  // Fetch tours from API with pricing transformation
   const fetchTours = async (filters?: TourFilters) => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await api.searchTours(filters);
+      const response = await api.get("/tours/search", filters);
       
       if (response.data && response.data.success) {
-        setDisplayedTours(response.data.data.tours);
+        // Transform tours to include display pricing
+        const transformedTours = response.data.data.tours.map(transformTourData);
+        
+        setDisplayedTours(transformedTours);
         setTotalResults(response.data.data.total);
         setTotalPages(response.data.data.totalPages);
       } else {
         throw new Error('Failed to fetch tours');
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load tours. Please try again.');
+      setError(""+err || 'Failed to load tours. Please try again.');
       setDisplayedTours([]);
       setTotalResults(0);
       setTotalPages(0);
@@ -258,10 +286,10 @@ export default function BrowseToursPage() {
         filters.search = debouncedSearchQuery.trim();
       }
 
-      // Sort option
+      // Sort option - Note: when sorting by price, we sort by base price on backend
       switch (sortOption) {
         case 'Price (low to high)':
-          filters.sortBy = 'price';
+          filters.sortBy = 'price'; // Backend sorts by base price
           filters.sortOrder = 'asc';
           break;
         case 'Rating':
@@ -331,6 +359,7 @@ export default function BrowseToursPage() {
     <div className="bg-white min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 py-8 mt-10">
         <div className="mb-8 mt-20">
+
           <div className="flex flex-wrap gap-2 mb-4">
             {filterCategories.map((category) => (
               <button
@@ -363,6 +392,7 @@ export default function BrowseToursPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <span className="text-sm font-semibold text-gray-700">
             {loading ? 'Loading...' : `${totalResults} results found`}
+            
           </span>
           <select
             value={sortOption}
@@ -381,18 +411,19 @@ export default function BrowseToursPage() {
         {error && <ErrorMessage message={error} onRetry={handleRetry} />}
         
         {!loading && !error && displayedTours && displayedTours.length > 0 && (
-  <>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {displayedTours.map((tour) => (
-        <TourCard
-          key={tour.id}
-          tour={tour}
-          isFavorite={favorites.includes(tour.id)}
-          toggleFavorite={toggleFavorite}
-        />
-      ))}
-    </div>
-    {totalPages > 1 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {displayedTours.map((tour) => (
+                <TourCard
+                  key={tour.id}
+                  tour={tour}
+                  isFavorite={favorites.includes(tour.id)}
+                  toggleFavorite={toggleFavorite}
+                />
+              ))}
+            </div>
+            
+            {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row justify-center items-center mt-12 gap-4">
                 <div className="flex items-center space-x-2">
                   <button
@@ -448,22 +479,22 @@ export default function BrowseToursPage() {
         )}
 
         {!loading && !error && (!displayedTours || displayedTours.length === 0) && (
-  <div className="text-center py-20">
-    <div className="max-w-md mx-auto">
-      <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>
-      <h2 className="text-xl font-bold text-gray-700 mb-2">No tours found</h2>
-      <p className="text-sm text-gray-500 mb-6">
-        Try adjusting your filters or search terms to find your next adventure!
-      </p>
-      <button
-        onClick={handleClearFilters}
-        className="px-6 py-3 bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
-      >
-        Clear All Filters
-      </button>
-    </div>
-  </div>
-)}
+          <div className="text-center py-20">
+            <div className="max-w-md mx-auto">
+              <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>
+              <h2 className="text-xl font-bold text-gray-700 mb-2">No tours found</h2>
+              <p className="text-sm text-gray-500 mb-6">
+                Try adjusting your filters or search terms to find your next adventure!
+              </p>
+              <button
+                onClick={handleClearFilters}
+                className="px-6 py-3 bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
+              >
+                Clear All Filters
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

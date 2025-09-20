@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import api from '@/app/api/apiService';
 import AlertNotification from '@/app/components/notify';
 import { decodeId, encodeId } from '@/app/utils/encoder';
+import { calculateDisplayPrice, calculateBookingTotal, getBasePriceFromDisplay, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 
 interface TourPageProps {
   params: Promise<{
@@ -105,7 +106,7 @@ interface PhotoGalleryModalProps {
   images?: any;
 }
 
-// Transform backend tour data to frontend format
+// Transform backend tour data to frontend format with pricing
 const transformTourData = (backendTour: any) => {
   const parseJSON = (jsonString: string, fallback: any) => {
     try {
@@ -118,12 +119,17 @@ const transformTourData = (backendTour: any) => {
   const itinerary = parseJSON(backendTour.itinerary, []);
   const images = parseJSON(backendTour.images, {"main":[],"gallery":[]});
 
+  // Calculate display price from base price (base price + 10%)
+  const basePrice = backendTour.price;
+  const displayPrice = calculateDisplayPrice(basePrice);
+
   return {
     id: backendTour.id,
     title: backendTour.title,
     shortDescription: backendTour.shortDescription,
     description: backendTour.description,
-    price: backendTour.price,
+    price: displayPrice, // Display price for UI (base + 10%)
+    basePrice: basePrice, // Keep base price for calculations
     duration: backendTour.duration,
     difficulty: backendTour.difficulty,
     minGroupSize: backendTour.minGroupSize,
@@ -374,7 +380,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           setBookingForm(prev => ({
             ...prev,
             tourId: transformedTour.id,
-            totalAmount: transformedTour.price
+            totalAmount: transformedTour.price // Use display price for initial calculation
           }));
 
           showAlert('Tour loaded successfully', 'success', 3000);
@@ -393,6 +399,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           shortDescription: 'Tour could not be loaded',
           description: 'This tour data could not be loaded from the server.',
           price: 0,
+          basePrice: 0,
           duration: 0,
           difficulty: 'Unknown',
           minGroupSize: 0,
@@ -446,6 +453,25 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
     fetchReviews();
   }, [validTourId]);
+
+  // Calculate tour total with new pricing structure
+  const calculateTourTotal = () => {
+    if (tour && bookingForm.numberOfParticipants > 0) {
+      // Use base price for calculation
+      const basePricePerPerson = tour.basePrice || getBasePriceFromDisplay(tour.price);
+      return calculateBookingTotal(basePricePerPerson, bookingForm.numberOfParticipants, false);
+    }
+    return 0;
+  };
+
+  // Get price breakdown for display
+  const getTourPriceBreakdown = () => {
+    if (tour && bookingForm.numberOfParticipants > 0) {
+      const basePricePerPerson = tour.basePrice || getBasePriceFromDisplay(tour.price);
+      return calculatePriceBreakdown(basePricePerPerson, bookingForm.numberOfParticipants, false);
+    }
+    return null;
+  };
 
   // Transform form participants to backend format
   const transformParticipantsForBackend = (formParticipants: ParticipantForm[]): TourParticipant[] => {
@@ -527,12 +553,15 @@ export default function TourDetailPage({ params }: TourPageProps) {
         return;
       }
 
+      // Calculate total using new pricing structure
+      const totalAmount = calculateTourTotal();
+
       const bookingData: CreateTourBookingDto = {
         tourId: validTourId!,
         scheduleId: selectedSchedule!.id,
         numberOfParticipants: bookingForm.numberOfParticipants,
         participants: transformParticipantsForBackend(bookingForm.participants),
-        totalAmount: bookingForm.numberOfParticipants * tour.price,
+        totalAmount: totalAmount, // Send calculated total including all fees and taxes
         specialRequests: bookingForm.specialRequests || ''
       };
 
@@ -620,7 +649,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       ...bookingForm,
       numberOfParticipants: count,
       participants,
-      totalAmount: count * (tour?.price || 0)
+      totalAmount: count * (tour?.price || 0) // Use display price for form display
     });
   };
 
@@ -664,6 +693,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
   };
 
   const reviewStats = getReviewStats();
+  const priceBreakdown = getTourPriceBreakdown();
 
   // Error/Loading states
   if (invalidId) {
@@ -849,7 +879,9 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl bg-gradient-to-br from-white to-blue-50">
                   <div className="flex justify-between items-baseline mb-6">
                     <div>
-                      <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
+                      </div>
                       <span className="text-gray-600 text-lg"> / person</span>
                     </div>
                     <div className="text-right">
@@ -891,16 +923,24 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       Book Now
                     </button>
                     
-                    <div className="border-t pt-4 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>${tour?.price} × {bookingForm.numberOfParticipants} participants</span>
-                        <span className="font-semibold">${bookingForm.totalAmount}</span>
+                    {priceBreakdown && (
+                      <div className="border-t pt-4 space-y-2 text-sm">
+                        <div className="flex justify-between text-gray-600">
+                          <span>Base Price ({bookingForm.numberOfParticipants} participants)</span>
+                          <span>${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants)}</span>
+                        </div>
+                        
+                        <div className="flex justify-between text-gray-600">
+                          <span>Fees & Taxes</span>
+                          <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                        </div>
+                        <div className="flex justify-between font-bold text-lg border-t pt-2">
+                          <span>Total</span>
+                          <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                       </div>
-                      <div className="flex justify-between font-bold text-lg border-t pt-2">
-                        <span>Total</span>
-                        <span className="text-[#F20C8F]">${bookingForm.totalAmount}</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1123,8 +1163,14 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-2xl bg-gradient-to-br from-white to-blue-50">
                   <div className="flex justify-between items-baseline mb-6">
                     <div>
-                      <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
+                        {tour?.basePrice && (
+                          <span className="text-lg text-gray-500 line-through">${tour.basePrice}</span>
+                        )}
+                      </div>
                       <span className="text-gray-600 text-lg"> / person</span>
+                      <p className="text-xs text-gray-500">Includes 10% markup</p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-1">
@@ -1220,25 +1266,34 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     <button
                       onClick={() => setShowBookingModal(true)}
                       disabled={!selectedSchedule}
-                      className={`w-full py-4 ${!selectedSchedule ? 'cursor-nodrop bg-[#F20C8F]/50 ' : ' bg-[#F20C8F]'} text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]`}
+                      className={`w-full py-4 ${!selectedSchedule ? 'cursor-not-allowed bg-[#F20C8F]/50 ' : ' bg-[#F20C8F]'} text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]`}
                     >
                       Book Now
                     </button>
 
-                    <div className="border-t pt-4 space-y-3">
-                      <div className="flex justify-between text-gray-700">
-                        <span>${tour?.price} × {bookingForm.numberOfParticipants} participants</span>
-                        <span className="font-semibold">${bookingForm.totalAmount}</span>
+                    {priceBreakdown && (
+                      <div className="border-t pt-4 space-y-3">
+                        <div className="space-y-2 text-sm text-gray-600 mb-3">
+                          <div className="flex justify-between">
+                            <span>Base Price ({bookingForm.numberOfParticipants} participants)</span>
+                            <span>${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Display Markup (10%)</span>
+                            <span>+${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants * 0.10)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Fees & Taxes</span>
+                            <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between font-bold text-xl border-t pt-3">
+                          <span>Total</span>
+                          <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                       </div>
-                      <div className="flex justify-between text-gray-700">
-                        <span>Service Fee</span>
-                        <span>$0</span>
-                      </div>
-                      <div className="flex justify-between font-bold text-xl border-t pt-3">
-                        <span>Total</span>
-                        <span className="text-[#F20C8F]">${bookingForm.totalAmount}</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1266,9 +1321,19 @@ export default function TourDetailPage({ params }: TourPageProps) {
                   <p className="text-gray-700">
                     {selectedSchedule ? formatDate(selectedSchedule.startDate) : 'Please select a date above'}
                   </p>
-                  <p className="text-lg font-semibold text-[#F20C8F]">
-                    ${tour?.price} × {bookingForm.numberOfParticipants} = ${bookingForm.totalAmount}
-                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-semibold text-[#F20C8F]">
+                      ${tour?.price} × {bookingForm.numberOfParticipants} = ${(tour?.price || 0) * bookingForm.numberOfParticipants}
+                    </span>
+                    {tour?.basePrice && (
+                      <span className="text-sm text-gray-500">(Display price includes 10% markup)</span>
+                    )}
+                  </div>
+                  {priceBreakdown && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      Final total with fees: ${calculateTourTotal()}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-6">

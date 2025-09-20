@@ -87,7 +87,11 @@ function LoginContent() {
       }
     }
     
+
     return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'http://localhost:3001';
+
+    // return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -278,16 +282,16 @@ function LoginContent() {
       switch (userRole) {
         case 'host':
           setNotify({ type: "warning", message: "Please complete your KYC verification." });
-          performRedirect(token, refreshToken, `${dashboardBase}/host/verify-kyc`);
+          performRedirect(token, refreshToken, `${dashboardBase}/all/kyc`);
           break;
         case 'agent':
         case 'tourguide':
           if (!isVerified) {
             setNotify({ type: "info", message: "Please complete your assessments." });
-            performRedirect(token, refreshToken, `${dashboardBase}/${userRole}/assessment`);
+            performRedirect(token, refreshToken, `${dashboardBase}/all/${userRole}/assessment`);
           } else {
             setNotify({ type: "warning", message: "Please complete your KYC verification." });
-            performRedirect(token, refreshToken, `${dashboardBase}/verify-kyc`);
+            performRedirect(token, refreshToken, `${dashboardBase}/all/kyc`);
           }
           break;
         case 'guest':

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
 import { decodeId, encodeId } from '@/app/utils/encoder';
+import { calculateDisplayPrice, calculateBookingTotal, getBasePriceFromDisplay, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 
 interface HousePageProps {
   params: Promise<{
@@ -90,13 +91,18 @@ const transformPropertyImages = (images: PropertyImages): string[] => {
 const transformPropertyData = (backendProperty: PropertyInfo) => {
   const photos = transformPropertyImages(backendProperty.images);
   
+  // Calculate display price from base price (base price + 10%)
+  const basePricePerNight = backendProperty.pricePerNight;
+  const displayPrice = calculateDisplayPrice(basePricePerNight);
+  
   return {
     title: backendProperty.name,
     bedrooms: backendProperty.beds,
     bathrooms: backendProperty.baths,
     kitchen: 1, // Assume 1 kitchen, you can modify this logic
     guests: backendProperty.maxGuests,
-    price: backendProperty.pricePerNight,
+    price: displayPrice, // Display price for UI (base + 10%)
+    basePrice: basePricePerNight, // Keep base price for calculations
     address: backendProperty.location,
     coordinates: { lat: 25.7617, lng: -80.1918 }, // Default coordinates - you might want to add these to your backend
     description: backendProperty.description || 'No description available.',
@@ -248,6 +254,7 @@ export default function HousePage({ params }: HousePageProps) {
           kitchen: 0,
           guests: 0,
           price: 0,
+          basePrice: 0,
           address: 'Address not available',
           coordinates: { lat: 25.7617, lng: -80.1918 },
           description: 'Property data could not be loaded.',
@@ -415,6 +422,31 @@ export default function HousePage({ params }: HousePageProps) {
     hideAlert();
   };
 
+  // Calculate booking total using new pricing structure
+  const calculateTotal = () => {
+    if (checkInDate && checkOutDate && house) {
+      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      if (days > 0) {
+        // Use base price for calculation
+        const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
+        return calculateBookingTotal(basePricePerNight, days, false); // false = not pay at property
+      }
+    }
+    return 0;
+  };
+
+  // Get price breakdown for display
+  const getPriceBreakdown = () => {
+    if (checkInDate && checkOutDate && house) {
+      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      if (days > 0) {
+        const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
+        return calculatePriceBreakdown(basePricePerNight, days, false);
+      }
+    }
+    return null;
+  };
+
   // Create property booking via API
   const handleReserve = async () => {
     // Validate reservation data
@@ -442,6 +474,11 @@ export default function HousePage({ params }: HousePageProps) {
         return;
       }
 
+      // Calculate the base price per night and total
+      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
+      const totalPrice = calculateBookingTotal(basePricePerNight, days, false);
+
       // Prepare booking data using the decoded property ID
       const bookingData: CreatePropertyBookingDto = {
         propertyId: parseInt(validPropertyId)!,
@@ -450,7 +487,7 @@ export default function HousePage({ params }: HousePageProps) {
         guests: guests,
         message: 'Booking request from property page',
         specialRequests: '',
-        totalPrice: calculateTotal(),
+        totalPrice: totalPrice, // Send calculated total including all fees and taxes
       };
 
       // Make API call to create booking
@@ -571,14 +608,6 @@ export default function HousePage({ params }: HousePageProps) {
     }
   };
 
-  const calculateTotal = () => {
-    if (checkInDate && checkOutDate && house) {
-      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
-      return days > 0 ? days * house.price : 0;
-    }
-    return 0;
-  };
-
   const handleUpdateReviewArray = (newReview: any) => {
     setReviews(prev => [...prev, newReview]);
     setShowAllReviews(true);
@@ -680,6 +709,8 @@ export default function HousePage({ params }: HousePageProps) {
       </div>
     );
   }
+
+  const priceBreakdown = getPriceBreakdown();
 
   return (
     <>
@@ -855,9 +886,17 @@ export default function HousePage({ params }: HousePageProps) {
           <div className="block lg:hidden mb-8">
             <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
               <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
+              
+              {/* Price Display with Breakdown */}
               <div className="mb-6">
-                <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+                  {house?.basePrice && (
+                    <span className="text-sm text-gray-500 line-through">${house.basePrice}</span>
+                  )}
+                </div>
                 <p className="text-gray-600 text-base sm:text-base">per night</p>
+                <p className="text-xs text-gray-500">Includes 10% markup</p>
               </div>
               
               <div className="space-y-4">
@@ -944,16 +983,27 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 )}
 
-                {checkInDate && checkOutDate && (
+                {checkInDate && checkOutDate && priceBreakdown && (
                   <div className="border-t pt-4">
-                    <div className="flex justify-between text-base mb-2">
-                      <span>Nights:</span>
-                      <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
+                    <div className="space-y-2 text-sm text-gray-600 mb-3">
+                      <div className="flex justify-between">
+                        <span>Base Price ({priceBreakdown.subtotal / priceBreakdown.displayPrice} nights)</span>
+                        <span>${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice))}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Display Markup (10%)</span>
+                        <span>+${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice) * 0.10)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fees & Taxes</span>
+                        <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-lg font-bold">
+                    <div className="border-t pt-2 flex justify-between text-lg font-bold">
                       <span>Total:</span>
                       <span className="text-[#F20C8F]">${calculateTotal()}</span>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                   </div>
                 )}
 
@@ -1018,9 +1068,17 @@ export default function HousePage({ params }: HousePageProps) {
           <div className="hidden lg:block lg:col-span-1">
             <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl sticky top-8">
               <h3 className="text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
+              
+              {/* Price Display with Breakdown */}
               <div className="mb-6">
-                <p className="text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+                <div className="flex items-baseline gap-2 mb-2">
+                  <p className="text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+                  {house?.basePrice && (
+                    <span className="text-sm text-gray-500 line-through">${house.basePrice}</span>
+                  )}
+                </div>
                 <p className="text-gray-600">per night</p>
+                <p className="text-xs text-gray-500">Includes 10% markup</p>
               </div>
               
               <div className="space-y-4">
@@ -1105,16 +1163,27 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 )}
 
-                {checkInDate && checkOutDate && (
+                {checkInDate && checkOutDate && priceBreakdown && (
                   <div className="border-t pt-4">
-                    <div className="flex justify-between text-base mb-2">
-                      <span>Nights:</span>
-                      <span className="font-semibold">{Math.max(0, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)))}</span>
+                    <div className="space-y-2 text-sm text-gray-600 mb-3">
+                      <div className="flex justify-between">
+                        <span>Base Price ({priceBreakdown.subtotal / priceBreakdown.displayPrice} nights)</span>
+                        <span>${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice))}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Display Markup (10%)</span>
+                        <span>+${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice) * 0.10)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fees & Taxes</span>
+                        <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-lg font-bold">
+                    <div className="border-t pt-2 flex justify-between text-lg font-bold">
                       <span>Total:</span>
                       <span className="text-[#F20C8F]">${calculateTotal()}</span>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                   </div>
                 )}
 

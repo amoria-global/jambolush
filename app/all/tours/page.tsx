@@ -1,5 +1,5 @@
 import React from 'react';
-import Tourpage from '../../pages/tour-page';
+import BrowseToursPage from '../../pages/tour-page';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 const AppRouterAboutUsPage = () => {
-  return <Tourpage />;
+  return <BrowseToursPage />;
 };
 
 export default AppRouterAboutUsPage;

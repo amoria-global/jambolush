@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/app/api/api-conn';
 import { encodeId } from '../utils/encoder';
 import { calculateDisplayPrice, formatPrice } from '@/app/utils/pricing';
@@ -21,7 +21,7 @@ type Tour = {
   isBestseller?: boolean;
 };
 
-// Optionally, define TourFilters if missing
+// Define TourFilters
 type TourFilters = {
   page?: number;
   limit?: number;
@@ -103,6 +103,17 @@ const ErrorMessage = ({ message, onRetry }: { message: string; onRetry: () => vo
   </div>
 );
 
+// Safe encode ID function
+const safeEncodeId = (id: string | undefined | null): string => {
+  if (!id) return '';
+  try {
+    return encodeId(id.toString());
+  } catch (error) {
+    console.error('Error encoding ID:', error, id);
+    return '';
+  }
+};
+
 // TourCard component with pricing display
 const TourCard = ({
   tour,
@@ -112,83 +123,124 @@ const TourCard = ({
   tour: Tour;
   isFavorite: boolean;
   toggleFavorite: (id: string) => void;
-}) => (
-  <Link href={`/all/tours/${encodeId(tour.id)}`} legacyBehavior>
-    <a className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
-      <div 
-        className="relative h-48 bg-cover bg-center bg-gray-200"
-        style={{ backgroundImage: `url(${tour.image})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
-        {tour.isBestseller && (
-          <div className="absolute top-2 left-2">
-            <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
-              Best Seller
-            </span>
+}) => {
+  const encodedId = safeEncodeId(tour.id);
+  
+  if (!encodedId) {
+    console.error('Invalid tour ID:', tour);
+    return null;
+  }
+
+  return (
+    <Link href={`/all/tours/${encodedId}`} legacyBehavior>
+      <a className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
+        <div 
+          className="relative h-48 bg-cover bg-center bg-gray-200"
+          style={{ backgroundImage: `url(${tour.image})` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
+          {tour.isBestseller && (
+            <div className="absolute top-2 left-2">
+              <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
+                Best Seller
+              </span>
+            </div>
+          )}
+          <div className="absolute top-2 right-2 z-10">
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavorite(tour.id);
+              }}
+              className="cursor-pointer"
+            >
+              <HeartIcon active={isFavorite} />
+            </div>
           </div>
-        )}
-        <div className="absolute top-2 right-2 z-10">
-          <div
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleFavorite(tour.id);
-            }}
-            className="cursor-pointer"
-          >
-            <HeartIcon active={isFavorite} />
-          </div>
-        </div>
-        <div className="absolute bottom-2 left-2">
-          <div className="flex flex-col items-start">
-            <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
-              ${tour.price}/person
-            </span>
-           
-          </div>
-        </div>
-      </div>
-      <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
-        <div className="flex items-center mb-2">
-          <StarIcon />
-          <span className="text-sm font-bold ml-1">{tour.rating}</span>
-          <span className="text-sm text-blue-100 ml-1.5">({tour.reviews})</span>
-        </div>
-        <h3 className="text-sm font-bold mb-2 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
-          {tour.title}
-        </h3>
-        <div className="flex items-center mb-3 text-sm text-blue-100">
-          <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
-          <p className="truncate">{tour.location}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
-            <ClockIcon />
-            <span className="text-xs text-white">{tour.duration}</span>
-          </div>
-          <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
-            <CheckIcon />
-            <span className="text-xs text-white">Free cancellation</span>
+          <div className="absolute bottom-2 left-2">
+            <div className="flex flex-col items-start">
+              <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
+                ${tour.price}/person
+              </span>
+            </div>
           </div>
         </div>
-        <div className="flex justify-between items-center text-xs text-blue-100">
-          <span className="truncate">{tour.category}</span>
-          <span className="text-green-300">Available</span>
+        <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
+          <div className="flex items-center mb-2">
+            <StarIcon />
+            <span className="text-sm font-bold ml-1">{tour.rating}</span>
+            <span className="text-sm text-blue-100 ml-1.5">({tour.reviews})</span>
+          </div>
+          <h3 className="text-sm font-bold mb-2 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
+            {tour.title}
+          </h3>
+          <div className="flex items-center mb-3 text-sm text-blue-100">
+            <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
+            <p className="truncate">{tour.location}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
+              <ClockIcon />
+              <span className="text-xs text-white">{tour.duration}</span>
+            </div>
+            <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
+              <CheckIcon />
+              <span className="text-xs text-white">Free cancellation</span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-xs text-blue-100">
+            <span className="truncate">{tour.category}</span>
+            <span className="text-green-300">Available</span>
+          </div>
         </div>
-      </div>
-    </a>
-  </Link>
-);
+      </a>
+    </Link>
+  );
+};
+
+// Helper function to safely extract error message
+const getErrorMessage = (error: any): string => {
+  if (error?.response?.message) {
+    return error.response.message;
+  }
+
+  if (error?.data?.message) {
+    return error.data.message;
+  }
+  
+  if (error?.response?.data?.message) {
+    return error.response.data.message;
+  }
+  
+  if (error?.message) {
+    return error.message;
+  }
+  
+  return 'Failed to load tours. Please try again.';
+};
 
 // Transform backend tour data to include display pricing
 const transformTourData = (backendTour: any): Tour => {
-  const basePrice = backendTour.price;
+  // Add null/undefined checks
+  if (!backendTour) {
+    throw new Error('Invalid tour data received');
+  }
+
+  // Ensure ID exists and is a string
+  const id = backendTour.id || backendTour._id || '';
+  if (!id) {
+    console.error('Tour missing ID:', backendTour);
+    throw new Error('Tour ID is missing');
+  }
+
+  const basePrice = backendTour.price || 0;
   const displayPrice = calculateDisplayPrice(basePrice);
   
   return {
-    id: backendTour.id,
-    title: backendTour.title,
-    image: backendTour.image || `https://images.unsplash.com/photo-1464822759844-d150f39cbae2?w=400&h=300&fit=crop&q=80&random=${backendTour.id}`,
+    id: id.toString(), // Ensure it's a string
+    title: backendTour.title || 'Untitled Tour',
+    image: backendTour.image || `https://images.unsplash.com/photo-1464822759844-d150f39cbae2?w=400&h=300&fit=crop&q=80&random=${id}`,
     price: displayPrice, // Display price (base + 10%)
     basePrice: basePrice, // Keep base price for transparency
     rating: backendTour.rating || 4.5,
@@ -214,104 +266,148 @@ export default function BrowseToursPage() {
   const [error, setError] = useState<string | null>(null);
   const [totalResults, setTotalResults] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   
   const toursPerPage = 8;
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // Load initial data and categories
-  useEffect(() => {
-    const loadInitialData = async () => {
-      try {
-        // Load categories
-        const categoriesResponse = await api.get("/tours/categories");
-        if (categoriesResponse.data?.success && Array.isArray(categoriesResponse.data?.data)) {
-          setFilterCategories(['All', ...categoriesResponse.data.data]);
-        } else {
-          // Use default categories if API fails or returns non-array
-          setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
-        }
-      } catch (err) {
-        console.error('Failed to load categories:', err);
-        // Use default categories if API fails
-        setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
-      }
-    };
-
-    loadInitialData();
-  }, []);
-
   // Fetch tours from API with pricing transformation
-  const fetchTours = async (filters?: TourFilters) => {
+  const fetchTours = useCallback(async (filters?: TourFilters) => {
     try {
       setLoading(true);
       setError(null);
       
-      const response = await api.get("/tours/search", filters);
+      // Prepare params object for the API call
+      const params: any = {
+        page: filters?.page || 1,
+        limit: filters?.limit || toursPerPage,
+      };
+
+      if (filters?.category && filters.category !== 'All') {
+        params.category = filters.category;
+      }
+
+      if (filters?.search) {
+        params.search = filters.search;
+      }
+
+      if (filters?.sortBy) {
+        params.sortBy = filters.sortBy;
+        params.sortOrder = filters.sortOrder || 'asc';
+      }
       
-      if (response.data && response.data.success) {
-        // Transform tours to include display pricing
-        const transformedTours = response.data.data.tours.map(transformTourData);
+      console.log('Fetching tours with params:', params);
+      
+      const response = await api.get("/tours/search", { params });
+      
+      console.log('API Response:', response);
+      
+      if (response?.data?.success) {
+        // Handle different response structures
+        const toursData = response.data.data?.tours || response.data.tours || [];
+        const totalData = response.data.data?.total || response.data.total || 0;
+        const totalPagesData = response.data.data?.totalPages || response.data.totalPages || 0;
+        
+        // Transform tours to include display pricing with error handling
+        const transformedTours = toursData.map((tour: any) => {
+          try {
+            return transformTourData(tour);
+          } catch (transformError) {
+            console.error('Error transforming tour data:', transformError, tour);
+            return null;
+          }
+        }).filter(Boolean); // Remove any null results
         
         setDisplayedTours(transformedTours);
-        setTotalResults(response.data.data.total);
-        setTotalPages(response.data.data.totalPages);
+        setTotalResults(totalData);
+        setTotalPages(totalPagesData);
       } else {
-        throw new Error('Failed to fetch tours');
+        throw new Error(response?.data?.message || 'Invalid response format from server');
       }
     } catch (err: any) {
-      setError(""+err || 'Failed to load tours. Please try again.');
+      console.error('Error fetching tours:', err);
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
       setDisplayedTours([]);
       setTotalResults(0);
       setTotalPages(0);
     } finally {
       setLoading(false);
+      setInitialLoadComplete(true);
     }
-  };
+  }, [toursPerPage]);
 
-  // Effect to handle filtering and searching
+  // Load categories
+  const loadCategories = useCallback(async () => {
+    try {
+      const categoriesResponse = await api.get("/tours/categories");
+      if (categoriesResponse?.data?.success && Array.isArray(categoriesResponse.data.data)) {
+        // Use Set to avoid duplicates
+        const uniqueCategories = Array.from(new Set(['All', ...categoriesResponse.data.data]));
+        setFilterCategories(uniqueCategories);
+      } else {
+        // Use default categories
+        setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
+      }
+    } catch (err) {
+      console.error('Failed to load categories:', err);
+      // Use default categories if API fails
+      setFilterCategories(['All', 'Mountains', 'National Parks', 'Lakes & Rivers', 'Rift Valley', 'Museums & Historical Sites', 'City Tours', 'Adventure', 'Cultural', 'Wildlife', 'Relaxation', 'Hiking', 'Photography', 'Family', 'Romantic', 'Budget', 'Luxury']);
+    }
+  }, []);
+
+  // Initial load
   useEffect(() => {
-    const buildFilters = (): TourFilters => {
-      const filters: TourFilters = {
-        page: currentPage,
-        limit: toursPerPage,
-      };
-
-      // Category filter
-      if (activeFilter !== 'All') {
-        filters.category = activeFilter;
-      }
-
-      // Search filter
-      if (debouncedSearchQuery.trim() !== '') {
-        filters.search = debouncedSearchQuery.trim();
-      }
-
-      // Sort option - Note: when sorting by price, we sort by base price on backend
-      switch (sortOption) {
-        case 'Price (low to high)':
-          filters.sortBy = 'price'; // Backend sorts by base price
-          filters.sortOrder = 'asc';
-          break;
-        case 'Rating':
-          filters.sortBy = 'rating';
-          filters.sortOrder = 'desc';
-          break;
-        default:
-          // Featured/default sorting
-          filters.sortBy = undefined;
-          filters.sortOrder = undefined;
-          break;
-      }
-
-      return filters;
+    const initializeData = async () => {
+      // Load categories and initial tours in parallel
+      await Promise.all([
+        loadCategories(),
+        fetchTours({ page: 1, limit: toursPerPage })
+      ]);
     };
 
-    fetchTours(buildFilters());
-  }, [activeFilter, sortOption, debouncedSearchQuery, currentPage]);
+    initializeData();
+  }, []); // Empty dependency array - only run once on mount
+
+  // Handle filter changes (after initial load)
+  useEffect(() => {
+    // Skip if initial load hasn't completed
+    if (!initialLoadComplete) return;
+
+    const filters: TourFilters = {
+      page: currentPage,
+      limit: toursPerPage,
+    };
+
+    if (activeFilter !== 'All') {
+      filters.category = activeFilter;
+    }
+
+    if (debouncedSearchQuery.trim() !== '') {
+      filters.search = debouncedSearchQuery.trim();
+    }
+
+    switch (sortOption) {
+      case 'Price (low to high)':
+        filters.sortBy = 'price';
+        filters.sortOrder = 'asc';
+        break;
+      case 'Rating':
+        filters.sortBy = 'rating';
+        filters.sortOrder = 'desc';
+        break;
+      default:
+        break;
+    }
+
+    fetchTours(filters);
+  }, [activeFilter, sortOption, debouncedSearchQuery, currentPage, initialLoadComplete, fetchTours]);
 
   // Reset to first page when filters change
   useEffect(() => {
-    setCurrentPage(1);
+    if (initialLoadComplete) {
+      setCurrentPage(1);
+    }
   }, [activeFilter, sortOption, debouncedSearchQuery]);
 
   const toggleFavorite = (id: string) => {
@@ -330,8 +426,8 @@ export default function BrowseToursPage() {
       filters.category = activeFilter;
     }
 
-    if (debouncedSearchQuery.trim() !== '') {
-      filters.search = debouncedSearchQuery.trim();
+    if (searchQuery.trim() !== '') {
+      filters.search = searchQuery.trim();
     }
 
     switch (sortOption) {
@@ -359,7 +455,6 @@ export default function BrowseToursPage() {
     <div className="bg-white min-h-screen">
       <main className="container mx-auto px-4 sm:px-6 py-8 mt-10">
         <div className="mb-8 mt-20">
-
           <div className="flex flex-wrap gap-2 mb-4">
             {filterCategories.map((category) => (
               <button
@@ -392,7 +487,6 @@ export default function BrowseToursPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <span className="text-sm font-semibold text-gray-700">
             {loading ? 'Loading...' : `${totalResults} results found`}
-            
           </span>
           <select
             value={sortOption}
@@ -406,7 +500,7 @@ export default function BrowseToursPage() {
           </select>
         </div>
 
-        {loading && <LoadingSpinner />}
+        {loading && !initialLoadComplete && <LoadingSpinner />}
         
         {error && <ErrorMessage message={error} onRetry={handleRetry} />}
         

@@ -1,8 +1,7 @@
 // utils/pricing.ts
 
 export interface PriceBreakdown {
-  basePrice: number;
-  displayPrice: number; // Base price + 10%
+  price: number; // Display price shown to customer
   subtotal: number;
   cleaningFee: number;
   serviceFee: number;
@@ -12,53 +11,55 @@ export interface PriceBreakdown {
 }
 
 export interface PricingConfig {
-  displayMarkup: number; // 10% = 0.10
-  taxRate: number; // 4% = 0.04
-  payAtPropertyFeeRate: number; // 10% = 0.10
+  displayMarkup: number; // 10% markup (hidden from customer)
+  taxRate: number; // 4% tax (visible to customer)
+  payAtPropertyFeeRate: number; // 10%
   cleaningFee: number;
   serviceFee: number;
 }
 
 export const PRICING_CONFIG: PricingConfig = {
-  displayMarkup: 0.10, // 10%
-  taxRate: 0.04, // 4%
+  displayMarkup: 0.10, // 10% hidden markup
+  taxRate: 0.04, // 4% visible tax
   payAtPropertyFeeRate: 0.10, // 10%
-  cleaningFee: 35,
-  serviceFee: 4
+  cleaningFee: 0, // No cleaning fee for tours
+  serviceFee: 0 // No service fee - taxes only
 };
 
 /**
- * Calculate display price (base price + 10% markup)
+ * Calculate display price from original price (adds 10% markup)
+ * This price is shown to customer (markup is hidden)
  */
-export const calculateDisplayPrice = (basePrice: number): number => {
-  return Math.round(basePrice * (1 + PRICING_CONFIG.displayMarkup));
+export const calculateDisplayPrice = (originalPrice: number): number => {
+  return Math.round(originalPrice * (1 + PRICING_CONFIG.displayMarkup));
 };
 
 /**
- * Get base price from display price
+ * Get original price from display price
  */
-export const getBasePriceFromDisplay = (displayPrice: number): number => {
+export const getOriginalPrice = (displayPrice: number): number => {
   return Math.round(displayPrice / (1 + PRICING_CONFIG.displayMarkup));
 };
 
 /**
  * Calculate complete price breakdown for payment
+ * Customer sees: display price + 4% tax ONLY
  */
 export const calculatePriceBreakdown = (
-  basePricePerNight: number, 
+  displayPricePerNight: number, 
   nights: number, 
-  isPayAtProperty: boolean = false
+  isPayAtProperty: boolean = false,
+  isTour: boolean = false
 ): PriceBreakdown => {
-  const basePrice = basePricePerNight;
-  const displayPrice = calculateDisplayPrice(basePrice);
-  const subtotal = displayPrice * nights;
-  const cleaningFee = PRICING_CONFIG.cleaningFee;
-  const serviceFee = PRICING_CONFIG.serviceFee;
+  const price = displayPricePerNight; // Display price (already includes 10% markup)
+  const subtotal = price * nights;
+  const cleaningFee = 0; // No cleaning fee
+  const serviceFee = 0; // No service fee - taxes only
   
-  // Calculate 4% tax on the subtotal (display price * nights)
+  // 4% tax calculated on display price (which already contains 10% markup)
   const taxes = Math.round(subtotal * PRICING_CONFIG.taxRate);
   
-  let total = subtotal + cleaningFee + serviceFee + taxes;
+  let total = subtotal + taxes; // Only subtotal + taxes
   let payAtPropertyFee = 0;
   
   if (isPayAtProperty) {
@@ -67,8 +68,7 @@ export const calculatePriceBreakdown = (
   }
   
   return {
-    basePrice,
-    displayPrice,
+    price,
     subtotal,
     cleaningFee,
     serviceFee,
@@ -94,10 +94,11 @@ export const formatPrice = (price: number, currency: string = 'USD'): string => 
  * Calculate total booking price
  */
 export const calculateBookingTotal = (
-  basePricePerNight: number,
+  displayPricePerNight: number,
   nights: number,
-  isPayAtProperty: boolean = false
+  isPayAtProperty: boolean = false,
+  isTour: boolean = false
 ): number => {
-  const breakdown = calculatePriceBreakdown(basePricePerNight, nights, isPayAtProperty);
+  const breakdown = calculatePriceBreakdown(displayPricePerNight, nights, isPayAtProperty, isTour);
   return breakdown.total;
 };

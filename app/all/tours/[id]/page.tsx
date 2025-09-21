@@ -4,7 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import api from '@/app/api/apiService';
 import AlertNotification from '@/app/components/notify';
 import { decodeId, encodeId } from '@/app/utils/encoder';
-import { calculateDisplayPrice, calculateBookingTotal, getBasePriceFromDisplay, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import { calculateDisplayPrice, calculateBookingTotal, getOriginalPrice, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 
 interface TourPageProps {
   params: Promise<{
@@ -21,7 +21,6 @@ interface CreateTourBookingDto {
   specialRequests?: string;
 }
 
-// Updated to match backend interface
 interface TourParticipant {
   name: string;
   age: number;
@@ -34,11 +33,10 @@ interface TourParticipant {
   medicalConditions?: string[];
 }
 
-// Frontend form interface for easier handling
 interface ParticipantForm {
   name: string;
   age: string;
-  email: string; // Keep email for form, but don't send to backend
+  email: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactRelationship: string;
@@ -92,7 +90,6 @@ interface AlertState {
   duration?: number;
 }
 
-// Fixed TypeScript interfaces for component props
 interface ReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -106,7 +103,7 @@ interface PhotoGalleryModalProps {
   images?: any;
 }
 
-// Transform backend tour data to frontend format with pricing
+// Transform backend tour data - convert original price to display price
 const transformTourData = (backendTour: any) => {
   const parseJSON = (jsonString: string, fallback: any) => {
     try {
@@ -119,17 +116,15 @@ const transformTourData = (backendTour: any) => {
   const itinerary = parseJSON(backendTour.itinerary, []);
   const images = parseJSON(backendTour.images, {"main":[],"gallery":[]});
 
-  // Calculate display price from base price (base price + 10%)
-  const basePrice = backendTour.price;
-  const displayPrice = calculateDisplayPrice(basePrice);
+  // Convert original price to display price (original + 10% markup)
+  const displayPrice = calculateDisplayPrice(backendTour.price);
 
   return {
     id: backendTour.id,
     title: backendTour.title,
     shortDescription: backendTour.shortDescription,
     description: backendTour.description,
-    price: displayPrice, // Display price for UI (base + 10%)
-    basePrice: basePrice, // Keep base price for calculations
+    price: displayPrice, // Display price shown to customer (includes hidden 10% markup)
     duration: backendTour.duration,
     difficulty: backendTour.difficulty,
     minGroupSize: backendTour.minGroupSize,
@@ -151,7 +146,6 @@ const transformTourData = (backendTour: any) => {
   };
 };
 
-// Review Modal Component
 const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, loading }) => {
   const [reviewData, setReviewData] = useState({
     bookingId: '',
@@ -246,7 +240,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, lo
   );
 };
 
-// Photo Gallery Modal Component
 const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, images = [] }) => {
   if (!isOpen) return null;
 
@@ -283,27 +276,23 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
   
-  // Core state
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Booking state
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   
-  // UI state
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   
-  // Form state - Updated to use new interface
   const [bookingForm, setBookingForm] = useState({
     tourId: '',
     scheduleId: '',
@@ -322,18 +311,15 @@ export default function TourDetailPage({ params }: TourPageProps) {
     specialRequests: ''
   });
 
-  // Alert state
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     message: '',
     type: 'info'
   });
 
-  // ID validation
   const [validTourId, setValidTourId] = useState<number | null>(null);
   const [invalidId, setInvalidId] = useState(false);
 
-  // ID validation useEffect
   useEffect(() => {
     if (!resolvedParams.id) {
       setError('No tour ID provided');
@@ -353,7 +339,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     setValidTourId(decodedId);
   }, [resolvedParams.id]);
 
-  // Alert functions
   const showAlert = (message: string, type: AlertState['type'], duration = 5000) => {
     setAlert({ show: true, message, type, duration });
   };
@@ -362,7 +347,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     setAlert(prev => ({ ...prev, show: false }));
   };
 
-  // Fetch tour data
   useEffect(() => {
     const fetchTourData = async () => {
       if (validTourId === null) return;
@@ -380,7 +364,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           setBookingForm(prev => ({
             ...prev,
             tourId: transformedTour.id,
-            totalAmount: transformedTour.price // Use display price for initial calculation
+            totalAmount: transformedTour.price
           }));
 
           showAlert('Tour loaded successfully', 'success', 3000);
@@ -392,14 +376,12 @@ export default function TourDetailPage({ params }: TourPageProps) {
         setError(err?.message || 'Failed to load tour');
         showAlert(`Error loading tour: ${err || 'Unknown error'}`, 'error');
         
-        // Fallback data
         setTour({
           id: 0,
           title: 'Tour Not Found',
           shortDescription: 'Tour could not be loaded',
           description: 'This tour data could not be loaded from the server.',
           price: 0,
-          basePrice: 0,
           duration: 0,
           difficulty: 'Unknown',
           minGroupSize: 0,
@@ -424,7 +406,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     fetchTourData();
   }, [validTourId]);
 
-  // Fetch reviews
   useEffect(() => {
     const fetchReviews = async () => {
       if (validTourId === null) return;
@@ -454,26 +435,22 @@ export default function TourDetailPage({ params }: TourPageProps) {
     fetchReviews();
   }, [validTourId]);
 
-  // Calculate tour total with new pricing structure
+  // Calculate total with display price and 4% tax
   const calculateTourTotal = () => {
     if (tour && bookingForm.numberOfParticipants > 0) {
-      // Use base price for calculation
-      const basePricePerPerson = tour.basePrice || getBasePriceFromDisplay(tour.price);
-      return calculateBookingTotal(basePricePerPerson, bookingForm.numberOfParticipants, false);
+      return calculateBookingTotal(tour.price, bookingForm.numberOfParticipants, false, true);
     }
     return 0;
   };
 
-  // Get price breakdown for display
+  // Get price breakdown showing display price + 4% tax
   const getTourPriceBreakdown = () => {
     if (tour && bookingForm.numberOfParticipants > 0) {
-      const basePricePerPerson = tour.basePrice || getBasePriceFromDisplay(tour.price);
-      return calculatePriceBreakdown(basePricePerPerson, bookingForm.numberOfParticipants, false);
+      return calculatePriceBreakdown(tour.price, bookingForm.numberOfParticipants, false, true);
     }
     return null;
   };
 
-  // Transform form participants to backend format
   const transformParticipantsForBackend = (formParticipants: ParticipantForm[]): TourParticipant[] => {
     return formParticipants.map(participant => ({
       name: participant.name,
@@ -488,7 +465,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     }));
   };
 
-  // Updated booking validation
   const validateBooking = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
 
@@ -516,7 +492,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     return { isValid: errors.length === 0, errors };
   };
 
-  // Check if all required fields are filled
   const isBookingFormComplete = (): boolean => {
     if (!selectedSchedule) return false;
     
@@ -529,7 +504,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     );
   };
 
-  // Handle booking submission
   const handleBookingSubmit = async () => {
     const validation = validateBooking();
     if (!validation.isValid) {
@@ -553,7 +527,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
         return;
       }
 
-      // Calculate total using new pricing structure
       const totalAmount = calculateTourTotal();
 
       const bookingData: CreateTourBookingDto = {
@@ -561,7 +534,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         scheduleId: selectedSchedule!.id,
         numberOfParticipants: bookingForm.numberOfParticipants,
         participants: transformParticipantsForBackend(bookingForm.participants),
-        totalAmount: totalAmount, // Send calculated total including all fees and taxes
+        totalAmount: totalAmount,
         specialRequests: bookingForm.specialRequests || ''
       };
 
@@ -601,7 +574,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     }
   };
 
-  // Handle review submission
   const handleReviewSubmit = async (reviewData: any) => {
     try {
       setLoading(true);
@@ -628,7 +600,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     }
   };
 
-  // Create empty participant form
   const createEmptyParticipant = (): ParticipantForm => ({
     name: '',
     age: '',
@@ -640,7 +611,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     medicalConditions: ''
   });
 
-  // Update participants
   const updateParticipants = (count: number) => {
     const participants = Array(count).fill(null).map((_, index) => 
       bookingForm.participants[index] || createEmptyParticipant()
@@ -649,7 +619,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       ...bookingForm,
       numberOfParticipants: count,
       participants,
-      totalAmount: count * (tour?.price || 0) // Use display price for form display
+      totalAmount: count * (tour?.price || 0)
     });
   };
 
@@ -659,7 +629,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
     setBookingForm({ ...bookingForm, participants: updatedParticipants });
   };
 
-  // Utility functions
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -695,7 +664,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const reviewStats = getReviewStats();
   const priceBreakdown = getTourPriceBreakdown();
 
-  // Error/Loading states
   if (invalidId) {
     return (
       <div className="mt-14 bg-white min-h-screen">
@@ -757,7 +725,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
         <title>{tour?.title}</title>
       </head>
       
-      {/* Alert Notification */}
       {alert.show && (
         <AlertNotification
           message={alert.message}
@@ -773,7 +740,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
       <div className="mt-14 bg-white min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           
-          {/* Error Banner */}
           {error && tour && (
             <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
               <div className="text-yellow-800">
@@ -782,7 +748,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           )}
 
-          {/* Success Banner */}
           {bookingSuccess && createdBooking && (
             <div className="mb-6 bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
               <div className="text-green-800">
@@ -793,7 +758,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           )}
 
-          {/* Header Section */}
           <div className="mb-8">
             <h1 className="text-3xl lg:text-4xl font-bold text-[#083A85] mb-4 leading-tight">
               {tour?.title}
@@ -815,7 +779,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           </div>
 
-          {/* Photo Gallery */}
           <div className="mb-10">
             <div className="grid grid-cols-4 gap-3 h-[300px] sm:h-[500px] rounded-xl overflow-hidden relative">
               <div 
@@ -844,13 +807,10 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           </div>
 
-          {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             
-            {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
               
-              {/* Host Info */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-6 pb-8 border-b">
                 <div>
                   <h2 className="text-2xl font-bold text-[#083A85] mb-2">
@@ -926,26 +886,23 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     {priceBreakdown && (
                       <div className="border-t pt-4 space-y-2 text-sm">
                         <div className="flex justify-between text-gray-600">
-                          <span>Base Price ({bookingForm.numberOfParticipants} participants)</span>
-                          <span>${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants)}</span>
+                          <span>Tour Price ({bookingForm.numberOfParticipants} participants)</span>
+                          <span>${priceBreakdown.subtotal}</span>
                         </div>
-                        
                         <div className="flex justify-between text-gray-600">
-                          <span>Fees & Taxes</span>
-                          <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                          <span>Taxes (4%)</span>
+                          <span>+${priceBreakdown.taxes}</span>
                         </div>
                         <div className="flex justify-between font-bold text-lg border-t pt-2">
                           <span>Total</span>
                           <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Features */}
               <div className="grid md:grid-cols-2 gap-6 py-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -967,13 +924,11 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               </div>
 
-              {/* Description */}
               <div className="py-6 border-b">
                 <h2 className="text-2xl font-bold text-[#083A85] mb-4">About This Experience</h2>
                 <p className="text-gray-700 leading-relaxed text-lg">{tour?.description}</p>
               </div>
 
-              {/* Itinerary */}
               {tour?.itinerary && tour.itinerary.length > 0 && (
                 <div className="py-6 border-b">
                   <h2 className="text-2xl font-bold text-[#083A85] mb-6">Day-by-Day Itinerary</h2>
@@ -994,7 +949,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               )}
               
-              {/* Inclusions & Exclusions */}
               <div className="py-6 border-b">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
@@ -1029,7 +983,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               </div>
 
-              {/* Requirements */}
               {tour?.requirements && tour.requirements.length > 0 && (
                 <div className="py-6 border-b">
                   <h3 className="text-xl font-bold text-[#083A85] mb-4 flex items-center gap-2">
@@ -1047,7 +1000,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               )}
 
-              {/* Location */}
               <div className="py-6 border-b">
                 <h2 className="text-2xl font-bold text-[#083A85] mb-4">Meeting Point & Location</h2>
                 <div className="bg-gray-50 rounded-xl p-6">
@@ -1065,7 +1017,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               </div>
 
-              {/* Reviews Section */}
               <div className="py-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-[#083A85]">Guest Reviews</h2>
@@ -1157,7 +1108,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
               </div>
             </div>
 
-            {/* Right Column - Desktop Booking */}
+            {/* Desktop Booking Card */}
             <div className="hidden lg:block">
               <div className="sticky top-24">
                 <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-2xl bg-gradient-to-br from-white to-blue-50">
@@ -1165,12 +1116,8 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     <div>
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
-                        {tour?.basePrice && (
-                          <span className="text-lg text-gray-500 line-through">${tour.basePrice}</span>
-                        )}
                       </div>
                       <span className="text-gray-600 text-lg"> / person</span>
-                      <p className="text-xs text-gray-500">Includes 10% markup</p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-1">
@@ -1197,7 +1144,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       </select>
                     </div>
 
-                    {/* Tour Guide Info */}
                     {tour?.tourGuide && (
                       <div className="bg-white rounded-lg p-4 border">
                         <h4 className="font-bold text-gray-900 mb-3">Your Guide</h4>
@@ -1219,7 +1165,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       </div>
                     )}
 
-                    {/* Available Schedules */}
                     {tour?.schedules && tour.schedules.length > 0 && (
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-3">AVAILABLE DATES {"(click to select)"}</label>
@@ -1275,23 +1220,18 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       <div className="border-t pt-4 space-y-3">
                         <div className="space-y-2 text-sm text-gray-600 mb-3">
                           <div className="flex justify-between">
-                            <span>Base Price ({bookingForm.numberOfParticipants} participants)</span>
-                            <span>${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants)}</span>
+                            <span>Tour Price ({bookingForm.numberOfParticipants} participants)</span>
+                            <span>${priceBreakdown.subtotal}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Display Markup (10%)</span>
-                            <span>+${Math.round((priceBreakdown.basePrice) * bookingForm.numberOfParticipants * 0.10)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Fees & Taxes</span>
-                            <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
+                            <span>Taxes (4%)</span>
+                            <span>+${priceBreakdown.taxes}</span>
                           </div>
                         </div>
                         <div className="flex justify-between font-bold text-xl border-t pt-3">
                           <span>Total</span>
                           <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
                       </div>
                     )}
                   </div>
@@ -1301,7 +1241,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           </div>
         </div>
 
-        {/* Booking Modal - Updated with emergency contact fields */}
+        {/* Booking Modal */}
         {showBookingModal && (
           <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
@@ -1325,9 +1265,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     <span className="text-lg font-semibold text-[#F20C8F]">
                       ${tour?.price} × {bookingForm.numberOfParticipants} = ${(tour?.price || 0) * bookingForm.numberOfParticipants}
                     </span>
-                    {tour?.basePrice && (
-                      <span className="text-sm text-gray-500">(Display price includes 10% markup)</span>
-                    )}
                   </div>
                   {priceBreakdown && (
                     <p className="text-sm text-gray-600 mt-1">
@@ -1352,12 +1289,10 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     </select>
                   </div>
 
-                  {/* Participant Details - Updated with emergency contact */}
                   {bookingForm.participants.map((participant, index) => (
                     <div key={index} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
                       <h5 className="font-bold text-gray-900 mb-4 text-lg">Participant {index + 1}</h5>
                       
-                      {/* Basic Information */}
                       <div className="mb-6">
                         <h6 className="font-semibold text-gray-800 mb-3">Basic Information</h6>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1385,7 +1320,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                         </div>
                       </div>
 
-                      {/* Emergency Contact */}
                       <div className="mb-6">
                         <h6 className="font-semibold text-gray-800 mb-3">Emergency Contact *</h6>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1413,14 +1347,12 @@ export default function TourDetailPage({ params }: TourPageProps) {
                             <option value="Spouse">Spouse</option>
                             <option value="Sibling">Sibling</option>
                             <option value="Child">Child</option>
-                            <option value="Friend">Friend</option>
                             <option value="Partner">Partner</option>
                             <option value="Other">Other</option>
                           </select>
                         </div>
                       </div>
 
-                      {/* Additional Information */}
                       <div>
                         <h6 className="font-semibold text-gray-800 mb-3">Additional Information (Optional)</h6>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1481,7 +1413,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
           </div>
         )}
 
-        {/* Modals */}
         <ReviewModal
           isOpen={showReviewModal}
           onClose={() => setShowReviewModal(false)}

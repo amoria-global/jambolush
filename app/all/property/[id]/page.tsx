@@ -2,11 +2,12 @@
 "use client";
 import AddReviewForm from '@/app/components/forms/add-review-home';
 import AlertNotification from '@/app/components/notify';
+import CustomDatePicker from '@/app/components/forms/custome-date-picker';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
 import { decodeId, encodeId } from '@/app/utils/encoder';
-import { calculateDisplayPrice, calculateBookingTotal, getBasePriceFromDisplay, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import { calculateDisplayPrice, calculateBookingTotal, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 
 interface HousePageProps {
   params: Promise<{
@@ -130,7 +131,7 @@ const transformPropertyData = (backendProperty: PropertyInfo) => {
       2: Math.floor(backendProperty.reviewsCount * 0.02), 
       1: 0 
     },
-    // Use real blocked dates from availability
+    // Use real blocked dates from availability - convert string array to date objects
     blockedDates: backendProperty.availability?.blockedDates || [],
     availability: backendProperty.availability
   };
@@ -156,7 +157,7 @@ export default function HousePage({ params }: HousePageProps) {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = useState<any>(null);
-  const [occupiedDates, setOccupiedDates] = useState<{start: string, end: string}[]>([]);
+  const [occupiedDates, setOccupiedDates] = useState<string[]>([]);
   
   // Alert notification state
   const [alert, setAlert] = useState<AlertState>({
@@ -229,12 +230,9 @@ export default function HousePage({ params }: HousePageProps) {
           const transformedHouse = transformPropertyData(response.data.data);
           setHouse(transformedHouse);
           
-          // Convert blocked dates to occupied dates format
+          // Convert blocked dates array directly to occupiedDates
           const blocked = response.data.data.availability?.blockedDates || [];
-          setOccupiedDates(blocked.map((dateRange: any) => ({
-            start: dateRange.start || dateRange.startDate,
-            end: dateRange.end || dateRange.endDate
-          })));
+          setOccupiedDates(blocked);
 
           showAlert('Property loaded successfully', 'success', 3000);
         } else {
@@ -309,12 +307,8 @@ export default function HousePage({ params }: HousePageProps) {
 
   // Helper function to check if a single date is occupied
   const isDateInOccupiedRange = (date: string) => {
-    const checkDate = new Date(date);
-    return occupiedDates.some(period => {
-      const periodStart = new Date(period.start);
-      const periodEnd = new Date(period.end);
-      return checkDate >= periodStart && checkDate <= periodEnd;
-    });
+    // Check if the date is in the simple string array
+    return occupiedDates.includes(date);
   };
 
   // Helper function to check if a date range overlaps with occupied dates
@@ -324,14 +318,17 @@ export default function HousePage({ params }: HousePageProps) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     
-    return occupiedDates.some(period => {
-      const periodStart = new Date(period.start);
-      const periodEnd = new Date(period.end);
-      
-      return (start >= periodStart && start <= periodEnd) ||
-             (end >= periodStart && end <= periodEnd) ||
-             (start <= periodStart && end >= periodEnd);
-    });
+    // Check each day in the range
+    const currentDate = new Date(start);
+    while (currentDate < end) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      if (occupiedDates.includes(dateStr)) {
+        return true;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return false;
   };
 
   // Validate reservation data
@@ -422,26 +419,24 @@ export default function HousePage({ params }: HousePageProps) {
     hideAlert();
   };
 
-  // Calculate booking total using new pricing structure
+  // Calculate booking total using display price (no breakdown shown here)
   const calculateTotal = () => {
     if (checkInDate && checkOutDate && house) {
       const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
       if (days > 0) {
-        // Use base price for calculation
-        const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
-        return calculateBookingTotal(basePricePerNight, days, false); // false = not pay at property
+        // Use display price directly for simple calculation
+        return house.price * days;
       }
     }
     return 0;
   };
 
-  // Get price breakdown for display
+  // Get price breakdown for checkout (only shows tax)
   const getPriceBreakdown = () => {
     if (checkInDate && checkOutDate && house) {
       const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
       if (days > 0) {
-        const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
-        return calculatePriceBreakdown(basePricePerNight, days, false);
+        return calculatePriceBreakdown(house.price, days, false);
       }
     }
     return null;
@@ -474,10 +469,9 @@ export default function HousePage({ params }: HousePageProps) {
         return;
       }
 
-      // Calculate the base price per night and total
+      // Calculate the total using display price and full breakdown for backend
       const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
-      const basePricePerNight = house.basePrice || getBasePriceFromDisplay(house.price);
-      const totalPrice = calculateBookingTotal(basePricePerNight, days, false);
+      const totalPrice = calculateBookingTotal(house.price, days, false);
 
       // Prepare booking data using the decoded property ID
       const bookingData: CreatePropertyBookingDto = {
@@ -492,7 +486,7 @@ export default function HousePage({ params }: HousePageProps) {
 
       // Make API call to create booking
       api.setAuth(token);
-      const response = await api.post('/properties/bookings', bookingData);
+      const response = await api.post('/bookings/properties', bookingData);
       
       // Parse the response
       const result: BookingResponse = response.data;
@@ -887,49 +881,35 @@ export default function HousePage({ params }: HousePageProps) {
             <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
               <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
               
-              {/* Price Display with Breakdown */}
+              {/* Simplified Price Display */}
               <div className="mb-6">
                 <div className="flex items-baseline gap-2 mb-2">
                   <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
-                  {house?.basePrice && (
-                    <span className="text-sm text-gray-500 line-through">${house.basePrice}</span>
-                  )}
                 </div>
                 <p className="text-gray-600 text-base sm:text-base">per night</p>
-                <p className="text-xs text-gray-500">Includes 10% markup</p>
               </div>
               
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-base font-semibold text-gray-700 mb-2">
-                      <i className="bi bi-calendar-check mr-1"></i>
-                      Check-in Date
-                    </label>
-                    <input
-                      type="date"
-                      min={today}
-                      value={checkInDate}
-                      onChange={handleCheckInChange}
-                      disabled={bookingLoading || bookingSuccess}
-                      className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                  </div>
+                  <CustomDatePicker
+                    value={checkInDate}
+                    onChange={handleCheckInChange}
+                    min={today}
+                    occupiedDates={occupiedDates}
+                    placeholder="Select check-in date"
+                    label="Check-in Date"
+                    disabled={bookingLoading || bookingSuccess}
+                  />
                   
-                  <div>
-                    <label className="block text-base font-semibold text-gray-700 mb-2">
-                      <i className="bi bi-calendar-x mr-1"></i>
-                      Check-out Date
-                    </label>
-                    <input
-                      type="date"
-                      min={checkInDate || today}
-                      value={checkOutDate}
-                      onChange={handleCheckOutChange}
-                      disabled={bookingLoading || bookingSuccess}
-                      className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                  </div>
+                  <CustomDatePicker
+                    value={checkOutDate}
+                    onChange={handleCheckOutChange}
+                    min={checkInDate || today}
+                    occupiedDates={occupiedDates}
+                    placeholder="Select check-out date"
+                    label="Check-out Date"
+                    disabled={bookingLoading || bookingSuccess}
+                  />
                 </div>
 
                 <div>
@@ -973,37 +953,23 @@ export default function HousePage({ params }: HousePageProps) {
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
                     <div className="space-y-1">
-                      {occupiedDates.map((period, idx) => (
+                      {occupiedDates.map((date, idx) => (
                         <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
                           <i className="bi bi-calendar-x-fill text-xs"></i>
-                          <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                          <span>{new Date(date).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {checkInDate && checkOutDate && priceBreakdown && (
+                {checkInDate && checkOutDate && (
                   <div className="border-t pt-4">
-                    <div className="space-y-2 text-sm text-gray-600 mb-3">
-                      <div className="flex justify-between">
-                        <span>Base Price ({priceBreakdown.subtotal / priceBreakdown.displayPrice} nights)</span>
-                        <span>${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice))}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Display Markup (10%)</span>
-                        <span>+${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice) * 0.10)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Fees & Taxes</span>
-                        <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
-                      </div>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between text-lg font-bold">
-                      <span>Total:</span>
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Subtotal:</span>
                       <span className="text-[#F20C8F]">${calculateTotal()}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
+                    <p className="text-xs text-gray-500 mt-1">Taxes will be added at checkout</p>
                   </div>
                 )}
 
@@ -1069,48 +1035,34 @@ export default function HousePage({ params }: HousePageProps) {
             <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl sticky top-8">
               <h3 className="text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
               
-              {/* Price Display with Breakdown */}
+              {/* Simplified Price Display */}
               <div className="mb-6">
                 <div className="flex items-baseline gap-2 mb-2">
                   <p className="text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
-                  {house?.basePrice && (
-                    <span className="text-sm text-gray-500 line-through">${house.basePrice}</span>
-                  )}
                 </div>
                 <p className="text-gray-600">per night</p>
-                <p className="text-xs text-gray-500">Includes 10% markup</p>
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-calendar-check mr-1"></i>
-                    Check-in Date
-                  </label>
-                  <input
-                    type="date"
-                    min={today}
-                    value={checkInDate}
-                    onChange={handleCheckInChange}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
+                <CustomDatePicker
+                  value={checkInDate}
+                  onChange={handleCheckInChange}
+                  min={today}
+                  occupiedDates={occupiedDates}
+                  placeholder="Select check-in date"
+                  label="Check-in Date"
+                  disabled={bookingLoading || bookingSuccess}
+                />
                 
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-calendar-x mr-1"></i>
-                    Check-out Date
-                  </label>
-                  <input
-                    type="date"
-                    min={checkInDate || today}
-                    value={checkOutDate}
-                    onChange={handleCheckOutChange}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  />
-                </div>
+                <CustomDatePicker
+                  value={checkOutDate}
+                  onChange={handleCheckOutChange}
+                  min={checkInDate || today}
+                  occupiedDates={occupiedDates}
+                  placeholder="Select check-out date"
+                  label="Check-out Date"
+                  disabled={bookingLoading || bookingSuccess}
+                />
 
                 <div>
                   <label className="block text-base font-semibold text-gray-700 mb-2">
@@ -1153,37 +1105,23 @@ export default function HousePage({ params }: HousePageProps) {
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
                     <div className="space-y-1">
-                      {occupiedDates.map((period, idx) => (
+                      {occupiedDates.map((date, idx) => (
                         <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
                           <i className="bi bi-calendar-x-fill text-xs"></i>
-                          <span>{new Date(period.start).toLocaleDateString()} - {new Date(period.end).toLocaleDateString()}</span>
+                          <span>{new Date(date).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {checkInDate && checkOutDate && priceBreakdown && (
+                {checkInDate && checkOutDate && (
                   <div className="border-t pt-4">
-                    <div className="space-y-2 text-sm text-gray-600 mb-3">
-                      <div className="flex justify-between">
-                        <span>Base Price ({priceBreakdown.subtotal / priceBreakdown.displayPrice} nights)</span>
-                        <span>${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice))}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Display Markup (10%)</span>
-                        <span>+${Math.round((priceBreakdown.basePrice) * (priceBreakdown.subtotal / priceBreakdown.displayPrice) * 0.10)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Fees & Taxes</span>
-                        <span>+${priceBreakdown.cleaningFee + priceBreakdown.serviceFee + priceBreakdown.taxes}</span>
-                      </div>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between text-lg font-bold">
-                      <span>Total:</span>
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Subtotal:</span>
                       <span className="text-[#F20C8F]">${calculateTotal()}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Final breakdown shown at checkout</p>
+                    <p className="text-xs text-gray-500 mt-1">Taxes will be added at checkout</p>
                   </div>
                 )}
 

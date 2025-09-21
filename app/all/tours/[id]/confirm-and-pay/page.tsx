@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/app/api/apiService';
 import { decodeId } from '@/app/utils/encoder';
-import { calculatePriceBreakdown, getBasePriceFromDisplay, formatPrice } from '@/app/utils/pricing';
+import { calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 import AlertNotification from '@/app/components/notify';
 
 interface TourPaymentPageProps {}
@@ -101,7 +101,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
       const isPayAtTour = paymentMethod === 'pay_at_tour';
       
       // Calculate base price per person from display price
-      const basePricePerPerson = bookingData.basePricePerPerson || getBasePriceFromDisplay(bookingData.pricePerPerson);
+      const basePricePerPerson = bookingData.basePricePerPerson;
       
       // Use the pricing utility for tours (treating as 1 "night" since tours are per-person pricing)
       const updatedBreakdown = calculatePriceBreakdown(
@@ -192,7 +192,7 @@ const TourPaymentPage: React.FC<TourPaymentPageProps> = () => {
 
         // Calculate pricing - totalAmount from booking is display price
         const displayPricePerPerson = booking.totalAmount / booking.numberOfParticipants;
-        const basePricePerPerson = getBasePriceFromDisplay(displayPricePerPerson);
+        const basePricePerPerson = (displayPricePerPerson);
         
         // Calculate initial price breakdown (without pay at tour fee)
         const priceBreakdown = calculatePriceBreakdown(basePricePerPerson, booking.numberOfParticipants, false);

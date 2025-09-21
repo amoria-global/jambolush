@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../../api/apiService';
 import { decodeId } from '@/app/utils/encoder';
-import { calculatePriceBreakdown, getBasePriceFromDisplay, formatPrice } from '@/app/utils/pricing';
+import { calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
 
 interface PaymentPageProps {}
 
@@ -15,16 +15,15 @@ interface BookingData {
   checkOut: string;
   guests: number;
   nights: number;
-  totalPrice: number; // This is the display price from booking
+  totalPrice: number; // This is the display price (already includes 10% markup)
   priceBreakdown?: {
-    basePrice: number;
-    displayPrice: number;
+    price: number;
     subtotal: number;
     cleaningFee: number;
     serviceFee: number;
     taxes: number;
-    total: number;
     payAtPropertyFee?: number;
+    total: number;
   };
 }
 
@@ -54,12 +53,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   // Update price breakdown when payment method changes
   useEffect(() => {
     if (bookingData) {
-      // Get base price per night from the total display price
-      const basePricePerNight = getBasePriceFromDisplay(bookingData.totalPrice / bookingData.nights);
+      const displayPricePerNight = bookingData.totalPrice / bookingData.nights;
       const isPayAtProperty = paymentMethod === 'pay_at_property';
       
       const updatedBreakdown = calculatePriceBreakdown(
-        basePricePerNight, 
+        displayPricePerNight, 
         bookingData.nights, 
         isPayAtProperty
       );
@@ -110,9 +108,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           console.warn('Could not fetch property details:', error);
         }
 
-        // Calculate price breakdown using base price per night
-        const basePricePerNight = getBasePriceFromDisplay(booking.totalPrice / nights);
-        const priceBreakdown = calculatePriceBreakdown(basePricePerNight, nights, false);
+        // Calculate price breakdown using display price per night
+        const displayPricePerNight = booking.totalPrice / nights;
+        const priceBreakdown = calculatePriceBreakdown(displayPricePerNight, nights, false);
 
         setBookingData({
           id: booking.id,
@@ -122,7 +120,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           checkOut: booking.checkOut,
           guests: booking.guests,
           nights,
-          totalPrice: booking.totalPrice, // This is the display price from booking
+          totalPrice: booking.totalPrice, // This is the display price (already includes 10% markup)
           priceBreakdown
         });
       } else {
@@ -687,30 +685,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   )}
                   
                   <div className="space-y-3 mb-6">
-                    {/* Price Breakdown */}
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>Base Price ({bookingData.nights} nights × ${bookingData.priceBreakdown?.basePrice})</span>
-                        <span>${Math.round((bookingData.priceBreakdown?.basePrice || 0) * bookingData.nights)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>Display Markup (10%)</span>
-                        <span>+${Math.round((bookingData.priceBreakdown?.basePrice || 0) * bookingData.nights * 0.10)}</span>
-                      </div>
-                      <div className="border-t pt-2 flex justify-between text-base font-medium">
-                        <span>Subtotal (Display Price)</span>
-                        <span>${bookingData.priceBreakdown?.subtotal || 0}</span>
-                      </div>
-                    </div>
-
+                    {/* Simplified Price Breakdown */}
                     <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Cleaning Fee</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.cleaningFee || 35}</span>
+                      <span className="text-gray-600">Subtotal ({bookingData.nights} nights)</span>
+                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalPrice}</span>
                     </div>
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Service Fee</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.serviceFee || 4}</span>
-                    </div>
+                    
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600">Taxes (4%)</span>
                       <span className="font-medium">${bookingData.priceBreakdown?.taxes || 0}</span>

@@ -918,7 +918,7 @@ async getPropertyReviewStats(
    */
 // Updated processPayment method
 async processPayment(paymentData: PaymentRequest): Promise<APIResponse<BackendResponse<any>>> {
-  return this.post<BackendResponse<any>>('/payments/deposit/enhanced', paymentData);
+  return this.post<BackendResponse<any>>('/payments/deposits', paymentData);
 }
 
   /**

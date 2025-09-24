@@ -72,7 +72,6 @@ function LoginContent() {
           'localhost:3000',
           'https://app.jambolush.com',
           'https://jambolush.com',
-          'http://jambolush.com'
         ];
         
         if (url.origin === window.location.origin || trustedDomains.some(domain => url.host === domain)) {
@@ -89,7 +88,7 @@ function LoginContent() {
       }
     }
     
-    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -156,8 +155,8 @@ function LoginContent() {
         setTimeout(() => {
           const currentRedirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
           const resetPasswordUrl = currentRedirect 
-            ? `/all/reset-password?email=${encodeURIComponent(email)}&step=otp&redirect=${encodeURIComponent(currentRedirect)}` 
-            : `/all/reset-password?email=${encodeURIComponent(email)}&step=otp`;
+            ? `/all/reset-password?email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(currentRedirect)}` 
+            : `/all/reset-password?email=${encodeURIComponent(email)}`;
           router.push(resetPasswordUrl);
         }, 2000);
         

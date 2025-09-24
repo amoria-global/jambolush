@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useRef, ChangeEvent, KeyboardEvent, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import api from '../../api/apiService';
 import AlertNotification from '@/app/components/notify';
 
 export default function ResetPasswordPage() {
-  // Router and search params
+  // Router
   const router = useRouter();
-  const searchParams = useSearchParams();
   
   // State management for the form
   const [currentStep, setCurrentStep] = useState('otp'); // 'otp', 'reset', 'success'
@@ -28,13 +27,26 @@ export default function ResetPasswordPage() {
   const [canResendOtp, setCanResendOtp] = useState(false);
   const [isOtpExpired, setIsOtpExpired] = useState(false);
   
+  // URL parameters state
+  const [urlParams, setUrlParams] = useState<URLSearchParams | null>(null);
+  
   const otpRefs = useRef<HTMLInputElement[]>([]);
+
+  // Get URL parameters on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setUrlParams(params);
+    }
+  }, []);
 
   // Get email and other params from URL on component mount
   useEffect(() => {
-    const emailParam = searchParams.get('email');
-    const stepParam = searchParams.get('step');
-    const otpParam = searchParams.get('otp');
+    if (!urlParams) return; // Wait for URL params to be loaded
+    
+    const emailParam = urlParams.get('email');
+    const stepParam = urlParams.get('step');
+    const otpParam = urlParams.get('otp');
     
     if (emailParam) {
       setEmail(decodeURIComponent(emailParam));
@@ -52,7 +64,13 @@ export default function ResetPasswordPage() {
     if (currentStep === 'otp') {
       startOtpTimer();
     }
-  }, [searchParams]);
+  }, [urlParams, currentStep]);
+
+  // Helper function to get URL parameter
+  const getUrlParam = (key: string): string | null => {
+    if (!urlParams) return null;
+    return urlParams.get(key);
+  };
 
   const handleNotificationClose = () => {
     setNotify(null);
@@ -159,7 +177,7 @@ export default function ResetPasswordPage() {
   };
 
   const handleBackToLogin = () => {
-    const redirect = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+    const redirect = getUrlParam('redirect') || getUrlParam('returnUrl') || getUrlParam('return_to');
     if (redirect) {
       router.push(`/all/login?redirect=${encodeURIComponent(redirect)}`);
     } else {

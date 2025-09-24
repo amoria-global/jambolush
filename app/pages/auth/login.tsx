@@ -88,7 +88,7 @@ function LoginContent() {
     }
     
 
-    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'http://localhost:3001';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {

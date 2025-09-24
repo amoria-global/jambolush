@@ -92,7 +92,7 @@ const ErrorMessage = ({ message, onRetry }: { message: string; onRetry: () => vo
     <div className="max-w-md mx-auto">
       <i className="bi bi-exclamation-triangle text-6xl text-red-400 mb-4"></i>
       <h2 className="text-xl font-bold text-gray-700 mb-2">Something went wrong</h2>
-      <p className="text-sm text-gray-500 mb-6">{message}</p>
+      <p className="text-base text-gray-500 mb-6">{message}</p>
       <button
         onClick={onRetry}
         className="px-6 py-3 bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
@@ -141,7 +141,7 @@ const TourCard = ({
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
           {tour.isBestseller && (
             <div className="absolute top-2 left-2">
-              <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-sm font-semibold shadow-lg">
+              <span className="bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white px-2 py-1 rounded-md text-base font-semibold shadow-lg">
                 Best Seller
               </span>
             </div>
@@ -169,8 +169,8 @@ const TourCard = ({
         <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
           <div className="flex items-center mb-2">
             <StarIcon />
-            <span className="text-sm font-bold ml-1">{tour.rating}</span>
-            <span className="text-sm text-blue-100 ml-1.5">({tour.reviews})</span>
+            <span className="text-base font-bold ml-1">{tour.rating}</span>
+            <span className="text-base text-blue-100 ml-1.5">({tour.reviews})</span>
           </div>
           <h3 className="text-sm font-bold mb-2 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
             {tour.title}
@@ -180,11 +180,11 @@ const TourCard = ({
             <p className="truncate">{tour.location}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-3">
-            <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
+            <div className="flex items-center bg-black/50 rounded-lg px-2 py-1 backdrop-blur-xl">
               <ClockIcon />
               <span className="text-xs text-white">{tour.duration}</span>
             </div>
-            <div className="flex items-center bg-black/50 rounded px-2 py-1 backdrop-blur-xl">
+            <div className="flex items-center bg-black/50 rounded-lg px-2 py-1 backdrop-blur-xl">
               <CheckIcon />
               <span className="text-xs text-white">Free cancellation</span>
             </div>
@@ -461,7 +461,7 @@ export default function BrowseToursPage() {
                 key={category}
                 onClick={() => setActiveFilter(category)}
                 disabled={loading}
-                className={`px-3 py-2 text-sm font-semibold rounded-full border transition-all duration-200 disabled:opacity-50 ${
+                className={`px-3 py-2 text-base font-semibold rounded-full border transition-all duration-200 disabled:opacity-50 ${
                   activeFilter === category
                     ? 'bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white border-[#F20C8F] shadow-lg'
                     : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 hover:border-gray-400 cursor-pointer'
@@ -478,21 +478,21 @@ export default function BrowseToursPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               disabled={loading}
-              className="w-full sm:w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-1/2 border border-gray-400 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             />
-            <i className="bi bi-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 sm:right-auto sm:left-[45%]"></i>
+            <i className="bi bi-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 sm:right-auto sm:left-[45%]"></i>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <span className="text-sm font-semibold text-gray-700">
+          <span className="text-base font-bold text-gray-700">
             {loading ? 'Loading...' : `${totalResults} results found`}
           </span>
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             disabled={loading}
-            className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#F20C8F] bg-white min-w-[200px] disabled:opacity-50"
+            className="text-gray-700 border border-gray-400 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#F20C8F] bg-white min-w-[200px] disabled:opacity-50 cursor-pointer"
           >
             <option value="Featured">Sort by: Featured</option>
             <option value="Price (low to high)">Sort by: Price (low to high)</option>
@@ -545,7 +545,7 @@ export default function BrowseToursPage() {
                           key={pageNumber}
                           onClick={() => setCurrentPage(pageNumber)}
                           disabled={loading}
-                          className={`px-3 py-2 border rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 ${
+                          className={`px-3 py-2 border rounded-lg text-base font-semibold transition-all duration-200 disabled:opacity-50 ${
                             currentPage === pageNumber 
                               ? 'bg-gradient-to-r from-[#F20C8F] to-[#F20C8F]/90 text-white border-[#F20C8F]' 
                               : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
@@ -564,7 +564,7 @@ export default function BrowseToursPage() {
                     Next
                   </button>
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-base text-gray-600">
                   Page {currentPage} of {totalPages}
                 </div>
               </div>
@@ -577,7 +577,7 @@ export default function BrowseToursPage() {
             <div className="max-w-md mx-auto">
               <i className="bi bi-search text-6xl text-gray-300 mb-4"></i>
               <h2 className="text-xl font-bold text-gray-700 mb-2">No tours found</h2>
-              <p className="text-sm text-gray-500 mb-6">
+              <p className="text-base text-gray-500 mb-6">
                 Try adjusting your filters or search terms to find your next adventure!
               </p>
               <button

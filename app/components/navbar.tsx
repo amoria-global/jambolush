@@ -97,8 +97,13 @@ const Navbar = () => {
         setUser(null);
         setUserSession(null);
       }
-    } catch (error) {
-      console.error('Failed to fetch user session:', error);
+    } catch (error: any) {
+      console.error('Failed to fetch user session:', {
+        message: error?.message || 'Unknown error',
+        status: error?.status,
+        data: error?.data,
+        error
+      });
       // Clear invalid token
       localStorage.removeItem('authToken');
       setIsLoggedIn(false);

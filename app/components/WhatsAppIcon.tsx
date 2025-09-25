@@ -14,7 +14,7 @@ export default function WhatsAppIcon({ phoneNumber }: WhatsAppIconProps) {
     <button
       onClick={openWhatsApp}
       aria-label="Chat on WhatsApp"
-      className="fixed bottom-20 right-4 p-7 rounded-full bg-green-500 text-white shadow-lg hover:bg-green-600 transition-transform transform hover:scale-110 z-50 flex items-center justify-center w-12 h-12 cursor-pointer"
+      className="fixed bottom-17 right-4 p-7 rounded-full bg-green-500 text-white shadow-lg hover:bg-green-600 transition-transform transform hover:scale-110 z-50 flex items-center justify-center w-12 h-12 cursor-pointer"
     >
       <i className="bi bi-whatsapp text-xl"></i>
     </button>

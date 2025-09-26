@@ -14,7 +14,7 @@ declare global {
     google: any;
   }
 }
-
+ 
 // Loading component for Suspense fallback
 function LoginSkeleton() {
   return (
@@ -88,7 +88,7 @@ function LoginContent() {
       }
     }
     
-    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -201,7 +201,7 @@ function LoginContent() {
         }
       }
       
-      const userData = response.data?.user || response.data;
+      const userData = response.data?.user;
       handleUserRedirect(userData, accessToken, refreshToken);
       
     } catch (error: any) {
@@ -273,7 +273,7 @@ function LoginContent() {
     
     try {
       const result = await api.post('/auth/google', { token: response.credential });
-      const token = result.data?.token || result.data?.accessToken;
+      const token = result.data?.accessToken;
       const refreshToken = result.data.refreshToken;
       
       if (token) {
@@ -282,7 +282,7 @@ function LoginContent() {
           localStorage.setItem('refreshToken', refreshToken);
         }
         
-        const userData = result.data?.user || result.data;
+        const userData = result.data?.user;
         const userStatus = userData?.status;
         
         if (userStatus === 'active') {

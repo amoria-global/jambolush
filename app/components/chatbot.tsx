@@ -93,8 +93,13 @@ const qaData = [
     { keywords: ['update my profile information'], answer: 'Go to “Account Settings” in your dashboard.' },
     { keywords: ['guests protected'], answer: 'Yes, Jambolush Guest Protection covers major issues like fraud or misrepresentation.' },
     { keywords: ['book for business trips'], answer: 'Absolutely. Many listings are suited for business travelers.' },
-    { keywords: ['deactivate my guest account'], answer: 'From your account settings, select “Deactivate Account.”' },
+    { keywords: ['deactivate my guest account'], answer: 'From your account settings, select "Deactivate Account."' },
     { keywords: ['private feedback to jambolush'], answer: 'Yes, after your stay, you can send private feedback to help improve the platform.' },
+    { keywords: ['check tour availability', 'tour booking', 'book tour'], answer: 'Browse available tours on our tours page, check dates and availability, then proceed with booking. Tours include city tours, cultural experiences, adventure tours, and more.' },
+    { keywords: ['pricing display', 'tour pricing', 'property pricing'], answer: 'All prices shown include a 10% service fee and are displayed transparently. There are no hidden fees - what you see is what you pay.' },
+    { keywords: ['confirm and pay', 'payment process'], answer: 'After selecting your dates and preferences, you\'ll be taken to a secure payment page where you can review your booking details and complete payment via our approved payment gateways.' },
+    { keywords: ['how it works', 'platform process'], answer: 'Getting started is easy: 1) Search & Explore listings 2) Login or Sign up 3) Book & Pay securely 4) Check in & Enjoy your experience. We handle all the details!' },
+    { keywords: ['mobile app', 'app features'], answer: 'Jambolush is mobile-friendly and available as both a website and mobile app with features like push notifications, offline access, and seamless booking.' },
     //more about guests to be added later
     // 3. Field Agents
     { keywords: ['who are field agents'], answer: 'Field agents are trusted representatives who verify properties, assist hosts with onboarding, and provide ground support to ensure listings meet Jambolush standards.' },
@@ -136,16 +141,21 @@ const qaData = [
     { keywords: ['attract more bookings as guide'], answer: 'Upload quality photos, write engaging tour descriptions, and maintain excellent reviews.' },
     { keywords: ['guide insurance'], answer: 'Jambolush offers liability coverage for guides during tours.' },
     { keywords: ['guide support languages'], answer: 'Support is available in English, French, and more are being added.' },
-    { keywords: ['deactivate guide account'], answer: 'Go to account settings and select “Deactivate.”' },
+    { keywords: ['deactivate guide account'], answer: 'Go to account settings and select "Deactivate."' },
+    { keywords: ['freelance tour guide', 'self-employed guide'], answer: 'As a freelance tour guide, you can set your own rates and schedule, maintain direct client relationships, and have complete business autonomy. You\'ll need to upload your National ID for verification.' },
+    { keywords: ['company tour guide', 'employed guide'], answer: 'Company tour guides enjoy stable salary and benefits, company-provided training, marketing support, and professional development opportunities. You\'ll need to upload company registration documents.' },
+    { keywords: ['tour guide documents', 'guide verification'], answer: 'Freelancers need to upload National ID for verification. Company guides need to upload Company Registration documents. All documents are securely processed.' },
+    { keywords: ['guide application process'], answer: 'Choose between freelancer or company guide, fill in your details including services offered (city tours, cultural tours, adventure tours, etc.), upload required documents, and complete verification.' },
     //more about tour-guides to be added later
     // 5. General & Platform
-    { keywords: ['hello', 'hi', 'hey', 'greetings'], answer: "Hello there! It's great to hear from you. How can I help you with Jambolush today?" },
+    { keywords: ['hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon', 'good evening'], answer: "Hello there! It's great to hear from you. How can I help you with Jambolush today?" },
+    { keywords: ['help', 'can you help', 'i need help', 'assistance', 'support'], answer: "Of course! I'm here to help you with anything related to Jambolush. You can ask me about booking stays, listing properties, becoming a tour guide, or any other questions about our platform. What would you like to know?" },
     { keywords: ['thank you', 'thanks', 'thanks a lot', 'thx', 'ty', 'much appreciated'], answer: "You're welcome! I'm here to help do you have any other questions about Jambolush?" },
-    { keywords: ['what is jambolush','why jambolush','more about'], answer: 'Jambolush is a platform that connects Hosts, Guests, Tour Guides, and Field Agents to create seamless travel, accommodation, and cultural experiences.' },
-    { keywords: ['who can use jambolush'], answer: 'Anyone looking to book stays, tours, or work as a host, guide, or agent.' },
-    { keywords: ['jambolush free to join', 'is jambolush free to join'], answer: 'Yes, signing up is free. Small fees apply only when bookings or earnings are made.' },
-    { keywords: ['how does jambolush make money'], answer: 'Through service fees on bookings and transactions between users.' },
-    { keywords: ['which countries is jambolush available'], answer: 'Jambolush is expanding globally, starting with Africa and other travel hotspots.' },
+    { keywords: ['what is jambolush', 'tell me about jambolush', 'about jambolush', 'jambolush platform', 'what does jambolush do', 'explain jambolush', 'jambolush info', 'jambolush information', 'describe jambolush', 'why jambolush', 'more about', 'what jambolush', 'jambolush?', 'jambolush'], answer: 'Jambolush is a comprehensive platform that connects travelers with verified property owners, local hosts, and trusted tourism service providers worldwide. We offer accommodation bookings, guided tours, and authentic travel experiences, making it easy to find your perfect place to stay or explore new destinations.' },
+    { keywords: ['who can use jambolush', 'who uses jambolush', 'jambolush users', 'target audience'], answer: 'Anyone looking to book stays, tours, or work as a host, guide, or agent. Whether you\'re a traveler seeking accommodations, a property owner wanting to list, or a local guide offering tours.' },
+    { keywords: ['jambolush free to join', 'is jambolush free to join', 'free signup', 'cost to join', 'registration cost', 'free to sign up'], answer: 'Yes, signing up is completely free! Small service fees only apply when you make bookings or earn money through the platform.' },
+    { keywords: ['how does jambolush make money', 'jambolush business model', 'revenue model', 'platform fees'], answer: 'Jambolush earns through small service fees on bookings and transactions between users. We only succeed when you do!' },
+    { keywords: ['which countries is jambolush available', 'where is jambolush available', 'jambolush locations', 'global availability', 'supported countries'], answer: 'Jambolush is expanding globally, starting with Africa and other travel hotspots. We support multiple languages including English, French, Spanish, Swahili, and Kinyarwanda.' },
     { keywords: ['use jambolush on mobile'], answer: 'Yes, Jambolush is mobile-friendly and available as an app and website.' },
     { keywords: ['jambolush ensure safety'], answer: 'Through ID verification, secure payments, reviews, and a 24/7 support system.' },
     { keywords: ['personal information safe'], answer: 'Yes, Jambolush follows strict data protection and privacy policies.' },
@@ -160,8 +170,13 @@ const qaData = [
     { keywords: ["how can i register"], answer: "To register on Jambolush, go to the website or app, click 'Sign Up', choose your role (Host, Guest, Tour Guide, or Agent), fill in your details, verify your email or phone, complete your profile, agree to the terms, and start using the platform." },
     { keywords: ['jambolush blog'], answer: 'Visit our blog for travel tips, host stories, and platform updates.' },
     { keywords: ['why login '], answer: 'login to acces your jambolush account you can join as host,field agent,tour-guide, and guest' },
-    { keywords: ['jambolush careers', 'work at jambolush', 'job at jambolush'], answer: 'Check the “Careers” page for current openings and application details.' },
+    { keywords: ['jambolush careers', 'work at jambolush', 'job at jambolush'], answer: 'Check the "Careers" page for current openings and application details. We offer remote work opportunities from anywhere in the world!' },
     { keywords: ['jambolush affiliate program', 'affiliate'], answer: 'Yes, join our affiliate program to earn commissions by referring new users.' },
+    { keywords: ['become service provider', 'join platform'], answer: 'You can join as a Property Owner, Field Agent, or Tour Guide. Visit our "Become a Host" page to choose your role and start the application process.' },
+    { keywords: ['property categories', 'listing types'], answer: 'You can list various property types including Residential Houses, Apartments/Condos, Commercial Properties, Land/Plots, Vacation Rentals, Industrial Properties, Office Spaces, and Retail Spaces.' },
+    { keywords: ['tour categories', 'tour types'], answer: 'Tour guides can offer City Tours, Cultural Tours, Nature/Wildlife Tours, Historical Sites, Adventure Tours, Food Tours, Photography Tours, and Custom Tours.' },
+    { keywords: ['document upload', 'verification process'], answer: 'All documents are uploaded securely and processed for verification. You can upload JPEG, PNG, or PDF files up to 5MB. We protect your personal information throughout the process.' },
+    { keywords: ['countries available', 'global availability'], answer: 'Jambolush is expanding globally, starting with Africa and other travel hotspots. We support multiple languages including English, French, Spanish, Swahili, and Kinyarwanda.' },
     
     // About Jambolush
     { keywords: ['jambolush mission', 'mission', 'company mission', 'what is jambolush mission'], answer: "Our mission is to provide seamless access to versatile living and working spaces that inspire productivity, creativity, and community, making finding and sharing spaces effortless, safe, and enjoyable for everyone." },
@@ -178,6 +193,9 @@ const qaData = [
     { keywords: ['reviews jambolush', 'ratings', 'feedback', 'clutch reviews', 'goodfirms reviews', 'g2 reviews'], answer: "Jambolush has received excellent reviews across Clutch, GoodFirms, and G2, reflecting our commitment to quality, user satisfaction, and dependable service." },
     { keywords: ['home office jambolush', 'home office corner', 'workspace', 'office spaces'], answer: "Jambolush offers flexible home office spaces designed for productivity, comfort, and convenience, catering to individuals and teams." },
     { keywords: ['vacation jambolush', 'vacation spots', 'holiday stays', 'relaxation'], answer: "Jambolush provides unique vacation spaces where users can relax, recharge, and enjoy memorable experiences in inspiring environments." },
+    { keywords: ['working hours', 'contact hours', 'support hours'], answer: "Our office hours are Monday - Friday, 9:00 AM - 6:00 PM EAT (East Africa Time). However, our platform support is available 24/7." },
+    { keywords: ['office location', 'headquarters'], answer: "Our office is located in Kigali, Rwanda. You can contact us via email at info@jambolush.com or visit our contact page for more details." },
+    { keywords: ['getting started guide', 'new user'], answer: "Visit our 'Get Started' page to learn how to use Jambolush based on your role. Whether you're looking to book, host, or guide, we have step-by-step instructions to help you." },
     { keywords: ['sitemap', 'site map', 'site structure', 'website navigation', 'pages list', 'site map roles', 'what pages are on jambolush'], answer: "The Jambolush sitemap serves as a complete guide to all platform sections. It helps users navigate easily to Home, Main Page, About Us, Careers, Press, Blog, Investors, Account (Login, Sign Up, Profile), Trips, Wishlist, Gift Cards, Refer a Friend, Destinations (USA, Europe, Asia, Africa, Oceania, South America), Experiences (Online, Local, Adventure, Culture, Food & Drink), Support & Community (Help Center, FAQ, Contact Support, Safety, Community Guidelines), Partners, Sustainability / ESG, Policies & Legal (Terms, Privacy, Cookies, Refund, Cancellation, Compliance, Disclaimer), Hosting (Become a Host, Hosting Tools, Resources, Host Safety, Hosting Standards, Experiences for Work), and Mobile Apps (iOS, Android, Mobile Web, App Features, Push Notifications)." },
     { keywords: ['jambolush press', 'press', 'media', 'news', 'in the news', 'press kit'], answer: "The Jambolush Press page offers the latest news, media resources, and press kits for journalists and media professionals interested in our platform." },
     
@@ -237,6 +255,33 @@ const qaData = [
     { section: "Privacy Policy 11 - Contact", keywords: ["Privacy Policy  11", "eleventh Privacy Policy ", "contact"], answer: "Users may contact the Data Protection Officer at info@jambolush.com for rights requests or complaints." },
     { keywords: ["jambolush privacy", "privacy policy", "data protection", "how is my data used", "how is my information protected", "privacy rules", "jambolush data privacy", "personal information safety", "security of my data", "privacy terms", "confidentiality policy", "user data policy", "how does jambolush handle my info", "who can see my data", "privacy guidelines"], answer: "Jambolush takes your privacy seriously. You can learn how your data is collected, used, and protected by visiting our Privacy Policy page. If you have specific questions, our support team is always happy to help!" },
 
+    // Platform features and functionality
+    { keywords: ['search properties', 'browse listings', 'property search'], answer: 'Use our search bar to browse properties by location, keywords, or browse by tabs (All, Spot, Stay). You can apply filters like "Under $500", "Pet Friendly", "Parking", "Furnished", or "Near Metro".' },
+    { keywords: ['instant book', 'quick booking'], answer: 'Some properties offer Instant Book for immediate reservations, while others require host approval. Look for the instant book badge on listings.' },
+    { keywords: ['wishlist', 'save properties', 'favorites'], answer: 'You can save properties to your wishlist by clicking the heart icon. Access your saved properties anytime from your guest dashboard.' },
+    { keywords: ['virtual tour', '3d tours'], answer: 'Many properties offer virtual tours and 3D walkthroughs so you can explore spaces before booking. Look for the virtual tour option on property listings.' },
+    { keywords: ['property photos', 'view all photos'], answer: 'Click on any property to view detailed photos, or use the "View All Photos" option to see the complete gallery of each listing.' },
+    { keywords: ['neighborhood info', 'area information'], answer: 'Each property listing includes neighborhood information, nearby attractions, and local amenities to help you choose the perfect location.' },
+    { keywords: ['minimum stay', 'booking duration'], answer: 'Minimum stay requirements vary by property and are set by individual hosts. This information is clearly displayed on each listing.' },
+    { keywords: ['guest requirements', 'booking rules'], answer: 'Each property has specific house rules and guest requirements. Always read these carefully before booking to ensure a smooth stay.' },
+    { keywords: ['accessibility', 'disabled access'], answer: 'Jambolush is committed to accessibility. Many properties offer accessible features, and you can filter for accessibility options during your search.' },
+    { keywords: ['business travel', 'corporate booking'], answer: 'Many of our listings are perfect for business travelers. Look for properties with workspace amenities, reliable wifi, and business-friendly locations.' },
+    { keywords: ['tour search', 'find tours', 'browse tours'], answer: 'Browse tours by category (Mountains, National Parks, City Tours, Adventure, Cultural, Wildlife, etc.), search by location, or sort by price and rating to find your perfect experience.' },
+    { keywords: ['tour duration', 'how long tours'], answer: 'Tour durations vary from single-day experiences to multi-day adventures. Each tour listing clearly shows the duration and what\'s included.' },
+    { keywords: ['bestseller tours', 'popular tours'], answer: 'Look for tours marked with the "Best Seller" badge - these are our most popular and highly-rated experiences chosen by fellow travelers.' },
+    { keywords: ['free cancellation', 'cancel tour'], answer: 'Many tours offer free cancellation. Check the cancellation policy on each tour listing for specific terms and conditions.' },
+    { keywords: ['tour ratings', 'tour reviews'], answer: 'All tours show ratings and review counts from verified guests. Read detailed reviews to learn about other travelers\' experiences.' },
+    { keywords: ['response time', 'support response'], answer: 'Our support team typically responds within a few hours during business hours. For urgent matters, we provide priority support to active bookings.' },
+    { keywords: ['cookies', 'cookie policy'], answer: 'We use cookies to improve your experience. You can manage your cookie preferences through our cookie settings. See our Cookie Policy for detailed information.' },
+    { keywords: ['newsletter', 'updates', 'subscribe'], answer: 'Subscribe to our newsletter to get exclusive updates, special offers, and travel inspiration delivered to your inbox. You can subscribe from our footer or contact page.' },
+
+    // Common question patterns
+    { keywords: ['how do i', 'how to', 'how can i'], answer: 'I can help you with many things on Jambolush! You can ask me about booking stays, listing properties, becoming a host or tour guide, payments, cancellations, or any other platform features. What specifically would you like to know how to do?' },
+    { keywords: ['what can i do', 'features', 'capabilities', 'what does this do'], answer: 'Jambolush offers many features! You can book accommodations, find tours, list your property, become a tour guide, search with filters, save favorites, read reviews, and much more. What are you interested in exploring?' },
+    { keywords: ['i want to', 'i need to', 'looking for'], answer: 'Great! I can help you with whatever you\'re looking for on Jambolush. Whether you want to book a stay, list a property, find tours, or learn about our services - just let me know what you have in mind!' },
+    { keywords: ['problem', 'issue', 'error', 'not working'], answer: 'I\'m sorry to hear you\'re experiencing an issue! For technical problems or account issues, please contact our support team at info@jambolush.com or through the contact page. For general questions about how things work, I\'m happy to help!' },
+    { keywords: ['price', 'cost', 'fee', 'expensive', 'cheap'], answer: 'Jambolush pricing varies by property and tour. All prices shown include our 10% service fee with no hidden costs. You can filter by price range to find options that fit your budget. Would you like to know more about pricing for a specific service?' }
+
 ];
 
 
@@ -288,16 +333,46 @@ const JambolushChatbot: React.FC = () => {
     const input = userInput.toLowerCase().trim();
 
     // Find the first matching answer based on keywords.
-    const match = qaData.find(qa => 
-      qa.keywords.some(keyword => input.includes(keyword.toLowerCase()))
+    // Try exact matches first, then partial matches
+    let match = qaData.find(qa =>
+      qa.keywords.some(keyword => {
+        const keywordLower = keyword.toLowerCase();
+        return input === keywordLower || input.includes(keywordLower);
+      })
     );
+
+    // If no match found, try more flexible matching for key phrases
+    if (!match) {
+      match = qaData.find(qa =>
+        qa.keywords.some(keyword => {
+          const keywordLower = keyword.toLowerCase();
+          const inputWords = input.split(' ');
+          const keywordWords = keywordLower.split(' ');
+
+          // Check if most keyword words are present in input
+          const matchedWords = keywordWords.filter(word =>
+            inputWords.some(inputWord => inputWord.includes(word) || word.includes(inputWord))
+          );
+
+          return matchedWords.length >= Math.ceil(keywordWords.length * 0.6); // 60% match threshold
+        })
+      );
+    }
 
     if (match) {
       return match.answer;
     }
     
-    // A more direct fallback response, inspired by Chatbot12.tsx
-    return `I'm not sure about that one! You might find a detailed answer in our Help Center or by contacting Jambolush support. In the meantime, is there anything else I can assist you with?`;
+    // Improved fallback response with helpful suggestions
+    return `I'm not sure about that specific question, but I'd love to help! Here are some things I can assist you with:
+
+• **Booking & Stays**: How to search, book, and manage accommodations
+• **Hosting**: Listing properties and becoming a host
+• **Tours & Guides**: Finding tours or becoming a tour guide
+• **Platform Features**: Search filters, payments, reviews, and more
+• **Account Help**: Registration, verification, and settings
+
+Try asking me something like "How do I book a property?" or "Tell me about becoming a host." You can also contact our support team at info@jambolush.com for detailed assistance!`;
   };
 
   const handleSendMessage = (text: string) => {

@@ -4,26 +4,24 @@ import api from '@/app/api/api-conn';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import AlertNotification from '@/app/components/notify'; // Update this import path
+import { useLanguage } from '@/app/lib/LanguageContext';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
 
 // Main Signup Page Component
-function SignupPage({ 
-  isLangOpen, 
-  setIsLangOpen, 
-  currentLang, 
-  setCurrentLang, 
-  languages, 
-  getCurrentLanguage 
-}: { 
+function SignupPage({
+  isLangOpen,
+  setIsLangOpen,
+  languages,
+  getCurrentLanguage
+}: {
   isLangOpen: boolean;
   setIsLangOpen: (open: boolean) => void;
-  currentLang: string;
-  setCurrentLang: (lang: string) => void;
-  languages: Array<{code: string, name: string, flag: string}>;
+  languages: Array<{code: string, name: string, flag: string, nativeName: string}>;
   getCurrentLanguage: () => any;
 }) {
+  const { t, changeLanguage } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -342,7 +340,7 @@ function SignupPage({
                 <button
                   key={lang.code}
                   onClick={() => {
-                    setCurrentLang(lang.code);
+                    changeLanguage(lang.code);
                     setIsLangOpen(false);
                   }}
                   className="w-full text-left px-3 py-2 text-base text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
@@ -363,47 +361,47 @@ function SignupPage({
                 </div>
             </div>
             <h1 className="text-white text-2xl font-bold mb-1">
-                Start <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Your Journey</span>
+                {t('footer.bookU')}
             </h1>
             <h2 className="text-white/90 text-2xl font-bold mb-2">
-                Create <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Memories</span>
+                {t('footer.bookS')}
             </h2>
         </div>
 
         {/* Mobile Form */}
         <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-t-3xl border-t border-white/20 px-6 pt-6 overflow-y-auto">
             <div className="max-w-sm mx-auto">
-                <h3 className="text-white text-lg font-bold mb-1 text-center">Create Account</h3>
-                <p className="text-white/70 text-base mb-6 text-center">Join JamboLush and start your adventure</p>
+                <h3 className="text-white text-lg font-bold mb-1 text-center">{t('auth.createAccount')}</h3>
+                <p className="text-white/70 text-base mb-6 text-center">{t('hero.subtitle')}</p>
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-white/90 text-base font-medium mb-1.5">First Name</label>
+                            <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.firstName')}</label>
                             <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
                         </div>
                         <div>
-                            <label className="block text-white/90 text-base font-medium mb-1.5">Last Name</label>
+                            <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.lastName')}</label>
                             <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Doe" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-white/90 text-base font-medium mb-1.5">Email Address</label>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.email')}</label>
                         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
                     </div>
                     <div>
-                        <label className="block text-white/90 text-base font-medium mb-1.5">Phone Number (Optional)</label>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.phone')}</label>
                         <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter your phone number" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" />
                     </div>
                     <div>
-                        <label className="block text-white/90 text-base font-medium mb-1.5">Country (Optional)</label>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.country')}</label>
                         <input type="text" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Enter your country" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" />
                     </div>
                     <div>
-                        <label className="block text-white/90 text-base font-medium mb-1.5">Password</label>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.password')}</label>
                         <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
                     </div>
                     <div>
-                        <label className="block text-white/90 text-base font-medium mb-1.5">Confirm Password</label>
+                        <label className="block text-white/90 text-base font-medium mb-1.5">{t('forms.confirmPassword')}</label>
                         <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm your password" className="w-full px-3 py-2.5 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-1 focus:ring-white/20 text-base" required />
                          {password && confirmPassword && password !== confirmPassword && (
                             <p className="text-red-300 text-base mt-1">Passwords do not match</p>
@@ -414,15 +412,15 @@ function SignupPage({
                         <label htmlFor="terms-mobile" className="text-white/80 text-base">I agree to the <button className="text-blue-300 underline">Terms</button> & <button className="text-blue-300 underline">Policy</button></label>
                     </div>
                     <button type="button" onClick={handleSubmit} disabled={!isFormValid || loading} className={`w-full py-2.5 px-4 rounded-lg font-semibold text-base transition-all duration-300 ${ isFormValid && !loading ? 'bg-gradient-to-r from-white to-gray-100 text-gray-800' : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60' }`}>
-                        {loading ? 'Creating Account...' : 'Create Account'}
+                        {loading ? t('auth.accountCreated') : t('auth.createAccount')}
                     </button>
                     <div className="text-center text-base">
                       <span className="text-white/70">Already have an account? </span>
-                      <a href="/all/login" className="text-blue-300 hover:text-blue-200 font-medium">Sign in</a>
+                      <a href="/all/login" className="text-blue-300 hover:text-blue-200 font-medium">{t('nav.signIn')}</a>
                     </div>
                     <div className="text-center text-base">
                       <span className="text-white/70">Want to become a service provider? </span>
-                      <a href="/all/become-host" className="text-blue-300 hover:text-blue-200 font-medium">Join as Host</a>
+                      <a href="/all/become-host" className="text-blue-300 hover:text-blue-200 font-medium">{t('nav.becomeHost')}</a>
                     </div>
                     <div className="relative my-4">
                       <div className="flex items-center">
@@ -443,7 +441,7 @@ function SignupPage({
                             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
-                        <span className="font-medium">{googleLoading ? 'Signing up...' : 'Sign up with Google'}</span>
+                        <span className="font-medium">{googleLoading ? t('auth.signupSuccess') : 'Sign up with Google'}</span>
                     </button>
                 </div>
                 <div className="pb-20"></div>
@@ -492,7 +490,7 @@ function SignupPage({
                   <button
                     key={lang.code}
                     onClick={() => {
-                      setCurrentLang(lang.code);
+                      changeLanguage(lang.code);
                       setIsLangOpen(false);
                     }}
                     className="w-full text-left cursor-pointer px-4 py-2 text-base text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
@@ -550,8 +548,8 @@ function SignupPage({
         <div className="w-full max-w-md relative z-10 py-8">
           <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
-              <h3 className="text-white text-2xl font-bold mb-2">Create Account</h3>
-              <p className="text-white/70 text-base">Join JamboLush and start your adventure</p>
+              <h3 className="text-white text-2xl font-bold mb-2">{t('auth.createAccount')}</h3>
+              <p className="text-white/70 text-base">{t('hero.subtitle')}</p>
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
@@ -822,27 +820,26 @@ declare global {
 
 // Main Signup App Component
 export default function SignupApp() {
+  const { t, currentLanguage } = useLanguage();
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState('en');
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' }
+    { code: 'en', name: t('languages.en'), flag: '🇺🇸', nativeName: 'English' },
+    { code: 'es', name: t('languages.es'), flag: '🇪🇸', nativeName: 'Español' },
+    { code: 'fr', name: t('languages.fr'), flag: '🇫🇷', nativeName: 'Français' },
+    { code: 'sw', name: t('languages.sw'), flag: '🇹🇿', nativeName: 'Kiswahili' },
+    { code: 'rw', name: t('languages.rw'), flag: '🇷🇼', nativeName: 'Kinyarwanda' }
   ];
 
   const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === currentLang);
+    return languages.find(lang => lang.code === currentLanguage.code) || languages[0];
   };
 
   return (
     <>
-      <SignupPage 
+      <SignupPage
         isLangOpen={isLangOpen}
         setIsLangOpen={setIsLangOpen}
-        currentLang={currentLang}
-        setCurrentLang={setCurrentLang}
         languages={languages}
         getCurrentLanguage={getCurrentLanguage}
       />

@@ -66,7 +66,7 @@ export default function Footer({ onOpenCookieModal }: FooterProps) {
                     <li>
                     <Link href="/all/get-started" className="text-base text-white/70 hover:text-white transition-colors duration-200 flex items-center group">
                       <span className="group-hover:translate-x-1 transition-transform duration-200">
-                        {t('Get Started')}
+                        {t('common.getStarted')}
                       </span>
                     </Link>
                     

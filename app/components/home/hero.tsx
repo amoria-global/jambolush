@@ -311,7 +311,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                           e.stopPropagation();
                           handleLocationSelect(suggestion);
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-blue-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-blue-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0 cursor-pointer"
                       >
                         <i className="bi bi-geo-alt text-gray-400"></i>
                         {suggestion}
@@ -356,7 +356,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
                           e.stopPropagation();
                           handleSearchSelect(suggestion);
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-pink-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                        className="w-full px-4 py-3 text-left hover:bg-pink-50 text-gray-700 text-base transition-colors duration-150 flex items-center gap-3 border-b border-gray-100 last:border-b-0 cursor-pointer"
                       >
                         <i className="bi bi-search text-gray-400"></i>
                         {suggestion}
@@ -382,7 +382,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
               <div className="mt-4 text-center">
                 <button
                   onClick={clearSearch}
-                  className="text-gray-600 hover:text-gray-800 underline text-sm"
+                  className="text-gray-600 hover:text-gray-800 underline text-sm cursor-pointer"
                 >
                   {t('hero.buttons.clearFilters')}
                 </button>

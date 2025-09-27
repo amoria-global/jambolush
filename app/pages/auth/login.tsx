@@ -4,6 +4,7 @@ import api from '@/app/api/apiService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import AlertNotification from '@/app/components/notify'; // Update this import path
+import { useLanguage } from '@/app/lib/LanguageContext';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
@@ -30,6 +31,7 @@ function LoginSkeleton() {
 
 // Main Login Component (without useSearchParams)
 function LoginContent() {
+  const { t, currentLanguage, changeLanguage } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,7 +40,6 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState('en');
   const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
   const [showPasswordField, setShowPasswordField] = useState(false);
   const [userNeedsPassword, setUserNeedsPassword] = useState(false);
@@ -47,13 +48,14 @@ function LoginContent() {
   const searchParams = useSearchParams();
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
-    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇹🇿' }
+    { code: 'en', name: t('languages.en'), flag: '🇺🇸', nativeName: 'English' },
+    { code: 'fr', name: t('languages.fr'), flag: '🇫🇷', nativeName: 'Français' },
+    { code: 'es', name: t('languages.es'), flag: '🇪🇸', nativeName: 'Español' },
+    { code: 'sw', name: t('languages.sw'), flag: '🇹🇿', nativeName: 'Kiswahili' },
+    { code: 'rw', name: t('languages.rw'), flag: '🇷🇼', nativeName: 'Ikinyarwanda' }
   ];
 
-  const getCurrentLanguage = () => languages.find(lang => lang.code === currentLang);
+  const getCurrentLanguage = () => languages.find(lang => lang.code === currentLanguage.code) || languages[0];
 
   const handleNotificationClose = () => {
     setNotify(null);
@@ -507,7 +509,7 @@ function LoginContent() {
                 <button
                   key={lang.code}
                   onClick={() => {
-                    setCurrentLang(lang.code);
+                    changeLanguage(lang.code);
                     setIsLangOpen(false);
                   }}
                   className="w-full text-left px-3 py-2 text-xs text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
@@ -530,13 +532,13 @@ function LoginContent() {
             </div>
           </div>
           <h1 className="text-white text-2xl font-bold mb-1">
-            Book <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Unique</span>
+            {t('footer.bookU')}
           </h1>
           <h2 className="text-white/90 text-2xl font-bold mb-2">
-            Stay <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">Inspired</span>
+            {t('footer.bookS')}
           </h2>
           <p className="text-white/60 text-xs px-4">
-            Discover extraordinary places and create unforgettable memories
+            {t('hero.subtitle')}
           </p>
           
           {redirectInfo && (
@@ -551,9 +553,9 @@ function LoginContent() {
         </div>
         <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-t-3xl border-t border-white/20 px-6 pt-6 overflow-y-auto">
           <div className="max-w-sm mx-auto">
-            <h3 className="text-white text-lg font-bold mb-1 text-center">Welcome Back</h3>
+            <h3 className="text-white text-lg font-bold mb-1 text-center">{t('auth.welcomeBack')}</h3>
             <p className="text-white/70 text-xs mb-6 text-center">
-              {!showPasswordField ? 'Enter your email to continue' : 'Enter your password to sign in'}
+              {!showPasswordField ? t('forms.email') : t('forms.password')}
             </p>
             
             {/* Back button for password step */}
@@ -733,7 +735,7 @@ function LoginContent() {
                   <button
                     key={lang.code}
                     onClick={() => {
-                      setCurrentLang(lang.code);
+                      changeLanguage(lang.code);
                       setIsLangOpen(false);
                     }}
                     className="w-full text-left cursor-pointer px-4 py-2 text-base text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"
@@ -802,7 +804,7 @@ function LoginContent() {
                 <button
                   key={lang.code}
                   onClick={() => {
-                    setCurrentLang(lang.code);
+                    changeLanguage(lang.code);
                     setIsLangOpen(false);
                   }}
                   className="w-full text-left px-3 py-2 text-xs text-white hover:bg-white/20 flex items-center space-x-2 transition-colors duration-200"

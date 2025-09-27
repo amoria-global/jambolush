@@ -41,7 +41,8 @@
     "agreement": "Acuerdos",
     "about": "Acerca de",
     "help": "Ayuda",
-    "support": "Soporte"
+    "support": "Soporte",
+    "getStarted": "Comenzar"
   },
   "booking": {
     "bookNow": "Reservar Ahora",
@@ -293,6 +294,163 @@
     "description": "Únete a miles de usuarios satisfechos que han encontrado su lugar perfecto con JamboLush",
     "startButton": "Comenzar a Explorar",
     "learnButton": "Aprender Más"
+  }
+},
+"becomeHost": {
+  "roleSelection": {
+    "title": "Conviértete en Proveedor de Servicios",
+    "subtitle": "Elige tu rol y comienza tu viaje con nosotros. Ya seas propietario, agente de campo o guía turístico.",
+    "host": {
+      "title": "Propietario",
+      "description": "Lista tus propiedades, conecta con compradores o inquilinos potenciales, y gestiona tu cartera inmobiliaria."
+    },
+    "agent": {
+      "title": "Agente de Campo",
+      "description": "Ayuda a los clientes a encontrar su propiedad perfecta, proporciona orientación experta y gana comisiones competitivas."
+    },
+    "tourguide": {
+      "title": "Guía Turístico",
+      "description": "Ofrece tours guiados inolvidables, muestra atracciones locales y comparte tu pasión por los viajes."
+    }
+  },
+  "tourGuideType": {
+    "title": "Elige tu Tipo de Guía Turístico",
+    "subtitle": "Selecciona tu estado laboral para continuar",
+    "freelancer": {
+      "title": "Freelancer (Trabajador Independiente)",
+      "description": "Guía turístico independiente trabajando por cuenta propia",
+      "features": [
+        "Establece tus propias tarifas y horarios",
+        "Relaciones directas con clientes",
+        "Control total sobre tus servicios",
+        "Mayor potencial de ingresos",
+        "Autonomía empresarial completa"
+      ]
+    },
+    "company": {
+      "title": "Empresa",
+      "description": "Trabajando como empresa turística",
+      "features": [
+        "Salario estable y beneficios",
+        "Entrenamiento proporcionado por la empresa",
+        "Marketing y apoyo al cliente",
+        "Reservas grupales y recursos",
+        "Oportunidades de desarrollo profesional"
+      ]
+    },
+    "requirements": {
+      "title": "Requisitos de Documentos",
+      "freelancer": "Necesitas subir la Cédula de Identidad para verificación",
+      "company": "Necesitas subir el documento de Registro de Empresa para verificación"
+    }
+  },
+  "forms": {
+    "personalInfo": "Información Personal",
+    "locationInfo": "Información de Ubicación",
+    "professionalInfo": "Información Profesional",
+    "employmentType": "Tipo de Empleo",
+    "fullName": "Nombre Completo",
+    "emailAddress": "Dirección de Correo",
+    "phoneNumber": "Número de Teléfono",
+    "country": "País",
+    "state": "Estado",
+    "province": "Provincia",
+    "city": "Ciudad",
+    "streetAddress": "Dirección",
+    "zipCode": "Código Postal",
+    "postalCode": "Código Postal",
+    "postcode": "Código Postal",
+    "experienceLevel": "Nivel de Experiencia",
+    "propertyCategories": "Categorías de Propiedades",
+    "servicesOffered": "Servicios Ofrecidos",
+    "nationalIdNumber": "Número de Cédula Nacional",
+    "uploadNationalId": "Subir Documento de Cédula Nacional (Vista Frontal y Trasera)",
+    "companyName": "Nombre de la Empresa",
+    "companyRegistration": "Número de Registro de Empresa",
+    "uploadCompanyDoc": "Subir Documento de Registro de Empresa",
+    "continueApplication": "Continuar Solicitud",
+    "checkingInfo": "Verificando...",
+    "signingIn": "Iniciando Sesión...",
+    "creating": "Creando Cuenta...",
+    "uploading": "Subiendo Documentos...",
+    "submitting": "Enviando...",
+    "continue": "Continuar",
+    "changeEmail": "Cambiar correo"
+  },
+  "success": {
+    "title": "¡Solicitud Enviada!",
+    "description": "¡Tu solicitud ha sido enviada exitosamente!",
+    "verifyDescription": "Por favor revisa tu correo para verificar tu cuenta y configurar tu contraseña para completar el proceso.",
+    "verifyButton": "Verificar Cuenta y Configurar Contraseña",
+    "submitAnother": "Enviar Otra Solicitud"
+  }
+},
+"cookies": {
+  "title": "Usamos cookies para mejorar tu experiencia. Puedes personalizar tu configuración abajo.",
+  "manageCookies": "Gestionar Cookies",
+  "privacyOverview": "Resumen de Privacidad",
+  "cookiePreferences": "Preferencias de Cookies",
+  "preferencesDescription": "Estas cookies siempre deben estar habilitadas para que podamos guardar tus preferencias.",
+  "strictlyNecessary": "Estrictamente Necesarias",
+  "analyticsCookies": "Cookies de Análisis",
+  "marketingCookies": "Cookies de Marketing",
+  "privacyDescription": "Este sitio web usa cookies para proporcionarte la mejor experiencia de usuario. Las cookies ayudan a reconocerte cuando regresas y nos permiten entender qué secciones son más útiles.",
+  "privacyPolicyLink": "Política de Privacidad",
+  "enableAll": "Habilitar Todas",
+  "saveSettings": "Guardar Configuración",
+  "agreeAndClose": "Aceptar y Cerrar"
+},
+"sitemap": {
+  "title": "Mapa del Sitio",
+  "sections": {
+    "home": "Inicio",
+    "account": "Cuenta",
+    "destinations": "Destinos",
+    "experiences": "Experiencias",
+    "support": "Soporte y Comunidad",
+    "policies": "Políticas y Legal",
+    "hosting": "Hospedaje",
+    "mobileApps": "Aplicaciones Móviles"
+  },
+  "links": {
+    "mainPage": "Página Principal",
+    "aboutUs": "Acerca de Nosotros",
+    "careers": "Carreras",
+    "press": "Prensa",
+    "blog": "Blog",
+    "investors": "Inversores",
+    "login": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "profile": "Perfil",
+    "trips": "Viajes",
+    "wishlist": "Lista de Deseos",
+    "giftCards": "Tarjetas de Regalo",
+    "referFriend": "Recomendar Amigo",
+    "helpCenter": "Centro de Ayuda",
+    "faq": "Preguntas Frecuentes",
+    "contactSupport": "Contactar Soporte",
+    "safety": "Seguridad",
+    "communityGuidelines": "Guías de Comunidad",
+    "partners": "Socios",
+    "sustainability": "Sostenibilidad / ESG",
+    "termsConditions": "Términos y Condiciones",
+    "privacyPolicy": "Política de Privacidad",
+    "cookiesPolicy": "Política de Cookies",
+    "refundPolicy": "Política de Reembolso",
+    "cancellationPolicy": "Política de Cancelación",
+    "compliance": "Cumplimiento",
+    "disclaimer": "Descargo de Responsabilidad",
+    "becomeHost": "Convertirse en Anfitrión",
+    "hostingTools": "Herramientas de Hospedaje",
+    "resources": "Recursos",
+    "hostSafety": "Seguridad del Anfitrión",
+    "hostingStandards": "Estándares de Hospedaje",
+    "experiencesForWork": "Experiencias para el Trabajo",
+    "iosApp": "App de iOS",
+    "androidApp": "App de Android",
+    "mobileWeb": "Web Móvil",
+    "appFeatures": "Características de la App",
+    "pushNotifications": "Notificaciones Push"
   }
 },
 "contact": {
@@ -596,6 +754,42 @@
       "content": "JamboLush implementa medidas de seguridad robustas y estándar de la industria para proteger datos de usuarios y asegurar transacciones seguras. Esto incluye encriptación SSL para asegurar datos en tránsito, cumplimiento PCI DSS para proteger información de pagos, y monitoreo continuo de fraude para detectar y prevenir actividad sospechosa. Además de estas protecciones, los usuarios son responsables de mantener la seguridad de sus propias cuentas, lo que incluye usar contraseñas fuertes, mantener credenciales de acceso confidenciales, y reportar prontamente cualquier acceso no autorizado. Juntas, estas medidas ayudan a proteger tanto la plataforma como sus usuarios contra amenazas de seguridad y mal uso."
     }
   }
+},
+"tours": {
+  "searchPlaceholder": "Buscar tours, actividades...",
+  "sortByFeatured": "Destacados",
+  "sortByPriceLowHigh": "Precio (bajo a alto)",
+  "sortByRating": "Calificación"
+},
+"becomeHost": {
+  "joinPlatform": "Únete a Nuestra Plataforma",
+  "fillDetails": "Por favor, completa tus datos para comenzar",
+  "applicationTitles": {
+    "host": "Solicitud de Propietario",
+    "agent": "Solicitud de Agente de Campo",
+    "tourguide": "Solicitud de Guía Turístico",
+    "freelance": "Freelance",
+    "company": "Empresa"
+  },
+  "formSections": {
+    "personalInfo": "Información Personal",
+    "locationInfo": "Información de Ubicación",
+    "professionalInfo": "Información Profesional",
+    "employmentType": "Tipo de Empleo"
+  },
+  "address": {
+    "state": "Estado",
+    "province": "Provincia",
+    "city": "Ciudad",
+    "streetAddress": "Dirección",
+    "zipCode": "Código Postal",
+    "postalCode": "Código Postal",
+    "postcode": "Código Postal"
+  }
+},
+"getStarted": {
+  "title": "Comenzando en Jambolush",
+  "subtitle": "Jambolush es una plataforma dinámica que conecta usuarios con espacios únicos para vivir y trabajar, así como experiencias. Selecciona un rol a continuación para ver cómo puedes comenzar."
 }
 
   }

@@ -252,10 +252,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
       {/* Content */}
       <div className="relative z-10 pt-12 text-center text-white px-3 w-full max-w-4xl mx-auto">
         <h1 className="text-lg md:text-2xl font-bold mb-3">
-          Find Your Perfect Experiences and Spaces accross the world
+          Find Your Perfect Experience and Spaces in East African Region
         </h1>
         <p className="text-sm max-w-[180px] sm:max-w-full mx-auto md:text-base mb-6 opacity-90">
-          Unlock premium spaces and unforgettable experiences with Jambolush
+          Unlock premium spaces and unforgettable experience with Jambolush
         </p>
         
         {/* Enhanced Search Container */}

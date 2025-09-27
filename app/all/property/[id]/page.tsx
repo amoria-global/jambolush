@@ -233,8 +233,6 @@ export default function HousePage({ params }: HousePageProps) {
           // Convert blocked dates array directly to occupiedDates
           const blocked = response.data.data.availability?.blockedDates || [];
           setOccupiedDates(blocked);
-
-          showAlert('Property loaded successfully', 'success', 3000);
         } else {
           throw new Error(response.data.message || 'Failed to fetch property');
         }

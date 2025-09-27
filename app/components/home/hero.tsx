@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const tabs: Tab[] = [
-    { value: '', label: 'Properties', icon: 'bi-house-door' },
+    { value: '', label: 'Stay', icon: 'bi-house-door' },
     { value: 'tours', label: 'Tours', icon: 'bi-compass', isRoute: true, route: '/all/tours' },
   ];
 
@@ -211,7 +211,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
     setSearchKeyword('');
     setPriceRange('');
     setBedrooms('');
-    setSelectedTab('properties');
+    setSelectedTab('');
   };
 
   useEffect(() => {
@@ -252,10 +252,10 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
       {/* Content */}
       <div className="relative z-10 pt-12 text-center text-white px-3 w-full max-w-4xl mx-auto">
         <h1 className="text-lg md:text-2xl font-bold mb-3">
-          Find Your Perfect Home accross the world
+          Find Your Perfect Experiences and Spaces accross the world
         </h1>
         <p className="text-sm max-w-[180px] sm:max-w-full mx-auto md:text-base mb-6 opacity-90">
-          Unlock premium properties and unforgettable experiences with Amoria
+          Unlock premium spaces and unforgettable experiences with Jambolush
         </p>
         
         {/* Enhanced Search Container */}
@@ -457,7 +457,16 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
             </div>
           </div>
         </div>
-        
+
+        {/* Trust Indicators */}
+        <div className="mt-4 sm:mt-6 flex flex-wrap justify-center gap-4 md:gap-8 text-white">
+          <div className="flex items-center gap-2">
+            <i className="bi bi-circle text-base"></i>
+            <span className="text-xs md:text-sm">Discover. Connect. Stay</span>
+          </div>
+          
+        </div>
+
       </div>
     </div>
   );

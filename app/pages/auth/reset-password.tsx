@@ -97,7 +97,7 @@ export default function ResetPasswordPage() {
   };
 
   const startOtpTimer = () => {
-    setOtpTimer(120);
+    setOtpTimer(80);
     setCanResendOtp(false);
     setIsOtpExpired(false);
     

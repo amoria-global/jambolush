@@ -40,7 +40,8 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
+  const [currentLang, setCurrentLang] = useState('en');
+  const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string, position?: string} | null>(null);
   const [showPasswordField, setShowPasswordField] = useState(false);
   const [userNeedsPassword, setUserNeedsPassword] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
@@ -90,7 +91,7 @@ function LoginContent() {
       }
     }
     
-    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -167,9 +168,21 @@ function LoginContent() {
       }
 
       // User exists and has password - show password field
-      setShowPasswordField(true);
-      setNotify({type: "success", message: userData.message || "Account found! Please enter your password."});
-      setLoading(false);
+      if (userData.status === 'pending' && userData.userType !== 'guest') { 
+        setNotify({type: "info", message: "Your account is pending verification. You will receive email when you're approved."});
+        setLoading(false);
+        return;
+       }
+
+       if (userData.status !== 'active' && userData.status  !== 'pending' ) { 
+          setNotify({type: "warning", message: `Your account status is '${userData.status}'. Please contact support.`});
+          setLoading(false);
+          return;
+       }
+
+       setShowPasswordField(true);
+       //setNotify({type: "success", message: userData.message || "Account found! Please enter your password."});
+       setLoading(false);
       
     } catch (error: any) {
       console.error('Error checking user status:', error);
@@ -483,9 +496,9 @@ function LoginContent() {
           <AlertNotification
             message={notify.message}
             type={notify.type}
-            position="top-center"
+            position="top-right"
             duration={5000}
-            size="md"
+            size="lg"
             showProgress={true}
             autoHide={true}
             onClose={handleNotificationClose}
@@ -707,9 +720,9 @@ function LoginContent() {
         <AlertNotification
           message={notify.message}
           type={notify.type}
-          position="top-center"
+          position="top-right"
           duration={5000}
-          size="md"
+          size="lg"
           showProgress={true}
           autoHide={true}
           onClose={handleNotificationClose}

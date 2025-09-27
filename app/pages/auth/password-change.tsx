@@ -42,8 +42,12 @@ const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({ isOpen, onClo
     setError('');
 
     try {
+      const pendingEmail = localStorage.getItem('pendingVerificationEmail');
+      const token = localStorage.getItem('authToken');
       // Use your API service to update password
-      const response = await api.put('/auth/me/password', {
+      const response = await api.post('/auth/setup-password', {
+        email: pendingEmail,
+        token, // Include token if required by your API
         newPassword: newPassword,
         confirmPassword: confirmPassword
       });

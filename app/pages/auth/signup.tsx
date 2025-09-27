@@ -769,7 +769,7 @@ function SignupPage({
             <div className="text-center mt-3">
               <span className="text-white/70 text-base">Want to become a service provider? </span>
               <a 
-                href="/hosts/become" 
+                href="/all/become-host" 
                 className="group text-blue-300 text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
               >
                 <span className="relative">Join as Host</span>

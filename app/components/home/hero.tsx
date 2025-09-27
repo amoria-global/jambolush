@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   const tabs: Tab[] = [
-    { value: '', label: 'Stay', icon: 'bi-house-door' },
+    { value: '', label: 'Spaces', icon: 'bi-house-door' },
     { value: 'tours', label: 'Tours', icon: 'bi-compass', isRoute: true, route: '/all/tours' },
   ];
 

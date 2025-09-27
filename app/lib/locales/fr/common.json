@@ -41,7 +41,8 @@
     "agreement": "Accords",
     "about": "À Propos",
     "help": "Aide",
-    "support": "Support"
+    "support": "Support",
+    "getStarted": "Commencer"
   },
   "booking": {
     "bookNow": "Réserver Maintenant",
@@ -292,6 +293,90 @@
     "description": "Rejoignez des milliers d'utilisateurs satisfaits qui ont trouvé leur endroit parfait avec JamboLush",
     "startButton": "Commencer à Explorer",
     "learnButton": "En Savoir Plus"
+  }
+},
+"becomeHost": {
+  "roleSelection": {
+    "title": "Devenir Fournisseur de Services",
+    "subtitle": "Choisissez votre rôle et commencez votre voyage avec nous. Que vous soyez propriétaire, agent de terrain ou guide touristique.",
+    "host": {
+      "title": "Propriétaire",
+      "description": "Listez vos propriétés, connectez-vous avec des acheteurs ou locataires potentiels, et gérez votre portefeuille immobilier."
+    },
+    "agent": {
+      "title": "Agent de Terrain",
+      "description": "Aidez les clients à trouver leur propriété parfaite, fournissez des conseils d'expert et gagnez des commissions compétitives."
+    },
+    "tourguide": {
+      "title": "Guide Touristique",
+      "description": "Offrez des visites guidées inoubliables, présentez les attractions locales et partagez votre passion pour le voyage."
+    }
+  },
+  "forms": {
+    "personalInfo": "Informations Personnelles",
+    "locationInfo": "Informations de Localisation",
+    "professionalInfo": "Informations Professionnelles",
+    "employmentType": "Type d'Emploi",
+    "fullName": "Nom Complet",
+    "emailAddress": "Adresse Email",
+    "phoneNumber": "Numéro de Téléphone",
+    "country": "Pays",
+    "state": "État",
+    "province": "Province",
+    "city": "Ville",
+    "streetAddress": "Adresse",
+    "zipCode": "Code Postal",
+    "postalCode": "Code Postal",
+    "postcode": "Code Postal",
+    "experienceLevel": "Niveau d'Expérience",
+    "propertyCategories": "Catégories de Propriétés",
+    "servicesOffered": "Services Offerts",
+    "continue": "Continuer",
+    "changeEmail": "Changer l'email"
+  }
+},
+"cookies": {
+  "title": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos paramètres ci-dessous.",
+  "manageCookies": "Gérer les Cookies",
+  "privacyOverview": "Aperçu de la Confidentialité",
+  "cookiePreferences": "Préférences des Cookies",
+  "preferencesDescription": "Ces cookies doivent toujours être activés pour que nous puissions sauvegarder vos préférences.",
+  "strictlyNecessary": "Strictement Nécessaires",
+  "analyticsCookies": "Cookies d'Analyse",
+  "marketingCookies": "Cookies de Marketing",
+  "privacyDescription": "Ce site web utilise des cookies pour vous fournir la meilleure expérience utilisateur. Les cookies aident à vous reconnaître quand vous revenez et nous permettent de comprendre quelles sections sont les plus utiles.",
+  "privacyPolicyLink": "Politique de Confidentialité",
+  "enableAll": "Activer Tout",
+  "saveSettings": "Sauvegarder les Paramètres",
+  "agreeAndClose": "Accepter et Fermer"
+},
+"sitemap": {
+  "title": "Plan du Site",
+  "sections": {
+    "home": "Accueil",
+    "account": "Compte",
+    "destinations": "Destinations",
+    "experiences": "Expériences",
+    "support": "Support et Communauté",
+    "policies": "Politiques et Légal",
+    "hosting": "Hébergement",
+    "mobileApps": "Applications Mobiles"
+  },
+  "links": {
+    "mainPage": "Page Principale",
+    "aboutUs": "À Propos de Nous",
+    "careers": "Carrières",
+    "press": "Presse",
+    "blog": "Blog",
+    "investors": "Investisseurs",
+    "login": "Se Connecter",
+    "signUp": "S'Inscrire",
+    "profile": "Profil",
+    "trips": "Voyages",
+    "wishlist": "Liste de Souhaits",
+    "giftCards": "Cartes Cadeaux",
+    "referFriend": "Recommander un Ami",
+    "becomeHost": "Devenir Hôte"
   }
 },
 "contact": {
@@ -674,5 +759,41 @@
       "content": "JamboLush implémente des mesures de sécurité robustes et standard de l'industrie pour protéger les données utilisateur et assurer des transactions sûres. Cela inclut le chiffrement SSL pour sécuriser les données en transit, la conformité PCI DSS pour protéger les informations de paiement, et la surveillance continue de fraude pour détecter et prévenir l'activité suspecte. En plus de ces protections, les utilisateurs sont responsables de maintenir la sécurité de leurs propres comptes, ce qui inclut utiliser des mots de passe forts, garder les identifiants de connexion confidentiels, et rapporter promptement tout accès non autorisé. Ensemble, ces mesures aident à protéger à la fois la plateforme et ses utilisateurs contre les menaces de sécurité et le mauvais usage."
     }
   }
+},
+"tours": {
+  "searchPlaceholder": "Rechercher tours, activités...",
+  "sortByFeatured": "En vedette",
+  "sortByPriceLowHigh": "Prix (bas à élevé)",
+  "sortByRating": "Évaluation"
+},
+"becomeHost": {
+  "joinPlatform": "Rejoignez Notre Plateforme",
+  "fillDetails": "Veuillez remplir vos détails pour commencer",
+  "applicationTitles": {
+    "host": "Candidature Propriétaire",
+    "agent": "Candidature Agent de Terrain",
+    "tourguide": "Candidature Guide Touristique",
+    "freelance": "Indépendant",
+    "company": "Entreprise"
+  },
+  "formSections": {
+    "personalInfo": "Informations Personnelles",
+    "locationInfo": "Informations de Localisation",
+    "professionalInfo": "Informations Professionnelles",
+    "employmentType": "Type d'Emploi"
+  },
+  "address": {
+    "state": "État",
+    "province": "Province",
+    "city": "Ville",
+    "streetAddress": "Adresse",
+    "zipCode": "Code Postal",
+    "postalCode": "Code Postal",
+    "postcode": "Code Postal"
+  }
+},
+"getStarted": {
+  "title": "Commencer sur Jambolush",
+  "subtitle": "Jambolush est une plateforme dynamique connectant les utilisateurs avec des espaces de vie et de travail uniques, ainsi que des expériences. Sélectionnez un rôle ci-dessous pour voir comment vous pouvez commencer."
 }
 }

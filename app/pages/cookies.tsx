@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useLanguage } from '@/app/lib/LanguageContext';
 
 interface CookiesConsentProps {
   onClose?: () => void;
 }
 
 const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"cookies" | "privacy">("cookies");
   const [strictlyNecessary, setStrictlyNecessary] = useState(true);
   const [analytics, setAnalytics] = useState(false);
@@ -144,7 +146,7 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
         <div className="flex justify-between items-center border-b p-4 sm:p-6 pr-16">
           <p className="text-gray-800 text-base sm:text-base flex items-center gap-2">
             <i className="bi bi-cookie text-pink-600 text-lg"></i>
-            We use cookies to improve your experience. You can customize your settings below.
+            {t('cookies.message')}
           </p>
         </div>
 
@@ -160,7 +162,7 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
               }`}
               onClick={() => setActiveTab("cookies")}
             >
-              Manage Cookies
+              {t('cookies.manageCookies')}
             </button>
             <button
               className={`px-4 py-2 text-base font-medium cursor-pointer transition-colors ${
@@ -170,7 +172,7 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
               }`}
               onClick={() => setActiveTab("privacy")}
             >
-              Privacy Overview
+              {t('cookies.privacyOverview')}
             </button>
           </div>
 
@@ -178,25 +180,25 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
           <div className="mt-4 p-4 sm:p-6">
             {activeTab === "cookies" ? (
               <div>
-                <h3 className="text-lg font-semibold mb-2">Cookie Preferences</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('cookies.cookiePreferences')}</h3>
                 <p className="text-gray-600 text-base mb-4">
-                  These cookies should always be enabled so that we can save your preferences.
+                  {t('cookies.preferenceDescription')}
                 </p>
 
                 {/* Toggles - maintaining original grid layout */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <Toggle
-                    label="Strictly Necessary"
+                    label={t('cookies.strictlyNecessary')}
                     enabled={strictlyNecessary}
                     setEnabled={setStrictlyNecessary}
                   />
                   <Toggle
-                    label="Analytics Cookies"
+                    label={t('cookies.analyticsCookies')}
                     enabled={analytics}
                     setEnabled={setAnalytics}
                   />
                   <Toggle
-                    label="Marketing Cookies"
+                    label={t('cookies.marketingCookies')}
                     enabled={marketing}
                     setEnabled={setMarketing}
                   />
@@ -204,15 +206,16 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
               </div>
             ) : (
               <div>
-                <h3 className="text-lg font-semibold mb-2">Privacy Overview</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('cookies.privacyOverview')}</h3>
                 <p className="text-gray-600 text-base mb-3">
-                  This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.{" "}
+                  {t('cookies.privacyDescription')}{
                   <a
                     href="/all/privacy-policy"
                     className="text-pink-600 underline cursor-pointer hover:text-pink-700 transition-colors"
                   >
-                    Privacy Policy
+                    {t('cookies.privacyPolicy')}
                   </a>
+                  }
                 </p>
               </div>
             )}
@@ -225,19 +228,19 @@ const CookiesConsent = ({ onClose }: CookiesConsentProps) => {
             onClick={handleEnableAll}
             className="px-4 py-2 rounded-xl bg-gray-100 text-gray-700 shadow-sm hover:bg-gray-200 transition cursor-pointer"
           >
-            Enable All
+            {t('cookies.enableAll')}
           </button>
           <button
             onClick={handleSaveSettings}
             className="px-4 py-2 rounded-xl bg-gray-200 text-gray-800 shadow-sm hover:bg-gray-300 transition cursor-pointer"
           >
-            Save Settings
+            {t('cookies.saveSettings')}
           </button>
           <button
             onClick={handleAgreeAndClose}
             className="px-6 py-2 rounded-xl bg-pink-600 text-white shadow-lg hover:bg-pink-700 transition font-semibold cursor-pointer"
           >
-            Agree and Close
+            {t('cookies.agreeAndClose')}
           </button>
         </div>
       </div>
@@ -260,7 +263,7 @@ const Toggle = ({
       <button
         onClick={() => {
             // Strictly Necessary cookies cannot be disabled
-            if (label !== "Strictly Necessary") {
+            if (!label.includes("Strictly") && !label.includes("Necesario") && !label.includes("Nécessaire")) {
                 setEnabled(!enabled)
             }
         }}

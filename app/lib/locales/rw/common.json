@@ -41,7 +41,8 @@
     "agreement": "Amasezerano",
     "about": "Ibyerekeye",
     "help": "Ubufasha",
-    "support": "Ubufasha bushoboka"
+    "support": "Ubufasha bushoboka",
+    "getStarted": "Tangira"
   },
   "booking": {
     "bookNow": "Kubika Ubu",
@@ -292,6 +293,163 @@
     "description": "Jya mu bantu ibihumbi banyuze muri JamboLush bageze ku byifuzo byabo",
     "startButton": "Tangira Kumenya",
     "learnButton": "Menya Ibindi"
+  }
+},
+"becomeHost": {
+  "roleSelection": {
+    "title": "Kuba Utanga Serivisi",
+    "subtitle": "Hitamo uruhare rwawe tangira urugendo rwawe natwe. Uba uri nyir'umutungo, umukozi wo mu murima, cyangwa umunyamugayo w'ubukerarugendo.",
+    "host": {
+      "title": "Nyir'umutungo",
+      "description": "Shyira ku rutonde umutungo wawe, uhuze n'abaguzi cyangwa abakodesha bashobora, kandi ucunge ubwishingizi bwawe bw'umutungo."
+    },
+    "agent": {
+      "title": "Umukozi wo mu Murima",
+      "description": "Fasha abakiriya kubona umutungo wabo ukwiye, utange ubuyobozi bw'inzobere, kandi ubone komisiyo ikwiye."
+    },
+    "tourguide": {
+      "title": "Umunyamugayo w'Ubukerarugendo",
+      "description": "Tanga ubukerarugendo butaribagirwa, werekane ahantu hazwi h'aho uherereye, kandi usangire urukundo rwawe rw'ingendo."
+    }
+  },
+  "tourGuideType": {
+    "title": "Hitamo Ubwoko bw'Umunyamugayo w'Ubukerarugendo",
+    "subtitle": "Hitamo uko ukora kugira ngo ukomeze",
+    "freelancer": {
+      "title": "Umunyamurimo Wigenga (Ukora ku giti cye)",
+      "description": "Umunyamugayo w'ubukerarugendo ukora ku giti cye",
+      "features": [
+        "Gena igiciro n'amategeko yawe bwite",
+        "Ubone isano itaziguye n'abakiriya",
+        "Genzura byuzuye serivisi zawe",
+        "Ubushobozi bwo kwinjiza amafaranga menshi",
+        "Kwigenga kwuzuye mu bucuruzi"
+      ]
+    },
+    "company": {
+      "title": "Ikigo",
+      "description": "Gukora nk'ikigo cy'ubukerarugendo",
+      "features": [
+        "Umushahara uhamye n'inyungu",
+        "Amahugurwa atangwa n'ikigo",
+        "Kwamamaza no gufasha abakiriya",
+        "Kubika amatsinda n'ibikoresho",
+        "Amahirwe yo gutera imbere mu mwuga"
+      ]
+    },
+    "requirements": {
+      "title": "Ibisabwa by'Inyandiko",
+      "freelancer": "Ukeneye kohereza Indangamuntu kugira ngo wemezwe",
+      "company": "Ukeneye kohereza inyandiko yo kwiyandikisha ikigo kugira ngo wemezwe"
+    }
+  },
+  "forms": {
+    "personalInfo": "Amakuru y'Umuntu ku Giti Cye",
+    "locationInfo": "Amakuru y'Aho Uherereye",
+    "professionalInfo": "Amakuru y'Umwuga",
+    "employmentType": "Ubwoko bw'Akazi",
+    "fullName": "Amazina Yose",
+    "emailAddress": "Aderesi ya Imeri",
+    "phoneNumber": "Nimero ya Telefoni",
+    "country": "Igihugu",
+    "state": "Leta",
+    "province": "Intara",
+    "city": "Umujyi",
+    "streetAddress": "Aderesi y'Umuhanda",
+    "zipCode": "Kode ya ZIP",
+    "postalCode": "Kode ya Posita",
+    "postcode": "Kode ya Posita",
+    "experienceLevel": "Urwego rw'Uburambe",
+    "propertyCategories": "Ubwoko bw'Umutungo",
+    "servicesOffered": "Serivisi Zitangwa",
+    "nationalIdNumber": "Nimero y'Indangamuntu",
+    "uploadNationalId": "Shyiramo Inyandiko y'Indangamuntu (Imbere n'Inyuma)",
+    "companyName": "Izina ry'Ikigo",
+    "companyRegistration": "Nimero yo Kwiyandikisha Ikigo",
+    "uploadCompanyDoc": "Shyiramo Inyandiko yo Kwiyandikisha Ikigo",
+    "continueApplication": "Komeza Gusaba",
+    "checkingInfo": "Gusuzuma...",
+    "signingIn": "Kwinjira...",
+    "creating": "Kurema Konti...",
+    "uploading": "Kohereza Inyandiko...",
+    "submitting": "Kohereza...",
+    "continue": "Komeza",
+    "changeEmail": "Hindura imeri"
+  },
+  "success": {
+    "title": "Gusaba Kwoherejewe!",
+    "description": "Gusaba kwawe kwoherejewe neza!",
+    "verifyDescription": "Nyamuneka reba mu meri yawe kugira ngo wemeze konti yawe kandi ushyireho ijambo ry'ibanga kugira ngo urangize ibikorwa.",
+    "verifyButton": "Kwemeza Konti no Gushyiraho Ijambo ry'Ibanga",
+    "submitAnother": "Ohereza Ubusaba Bubundi"
+  }
+},
+"cookies": {
+  "title": "Dukoresha cookies kugira ngo tunozeke uburambe bwawe. Urashobora guhuza igenamiterere ryawe hepfo.",
+  "manageCookies": "Gucunga Cookies",
+  "privacyOverview": "Incamake y'Ubuziko",
+  "cookiePreferences": "Ibyifuzo bya Cookies",
+  "preferencesDescription": "Izi cookies zigomba gushyirwaho buri gihe kugira ngo dushobore kubika ibyifuzo byawe.",
+  "strictlyNecessary": "Bikenewe Cyane",
+  "analyticsCookies": "Cookies z'Isesengura",
+  "marketingCookies": "Cookies z'Ubwiyamamaze",
+  "privacyDescription": "Uru rubuga rukoresha cookies kugira ngo rugutangire uburambe bwiza bw'umukoresha. Cookies zifasha kugukumenyekanisha iyo usubiraga kandi zikatumenya ahantu h'ingirakamaro.",
+  "privacyPolicyLink": "Gahunda y'Ubuziko",
+  "enableAll": "Kwemeranya Byose",
+  "saveSettings": "Kubika Igenamiterere",
+  "agreeAndClose": "Kwemera no Gufunga"
+},
+"sitemap": {
+  "title": "Ikarita y'Urubuga",
+  "sections": {
+    "home": "Intangiriro",
+    "account": "Konti",
+    "destinations": "Ahantu Hagana",
+    "experiences": "Uburambe",
+    "support": "Ubufasha n'Umuryango",
+    "policies": "Amabwiriza n'Amategeko",
+    "hosting": "Kwakira",
+    "mobileApps": "Porogaramu z'Igikoresho"
+  },
+  "links": {
+    "mainPage": "Urupapuro Rw'ibanze",
+    "aboutUs": "Ibyerekeye",
+    "careers": "Imirimo",
+    "press": "Itangazamakuru",
+    "blog": "Blog",
+    "investors": "Abashoramari",
+    "login": "Kwinjira",
+    "signUp": "Kwiyandikisha",
+    "profile": "Umwirondoro",
+    "trips": "Ingendo",
+    "wishlist": "Urutonde rw'Ibyifuzo",
+    "giftCards": "Amakarita y'Impano",
+    "referFriend": "Kwerekeza Inshuti",
+    "helpCenter": "Ikigo cy'Ubufasha",
+    "faq": "Ibibazo Bikunze Kubazwa",
+    "contactSupport": "Vugana n'Ubufasha",
+    "safety": "Umutekano",
+    "communityGuidelines": "Amabwiriza y'Umuryango",
+    "partners": "Abafatanyabikorwa",
+    "sustainability": "Iterambere rirambye / ESG",
+    "termsConditions": "Amabwiriza n'Amasezerano",
+    "privacyPolicy": "Gahunda y'Ubuziko",
+    "cookiesPolicy": "Gahunda ya Cookies",
+    "refundPolicy": "Gahunda yo Gusubiza",
+    "cancellationPolicy": "Gahunda yo Guhagarika",
+    "compliance": "Gukurikiza Amategeko",
+    "disclaimer": "Kwiraho Inshingano",
+    "becomeHost": "Kuba Umusangwa",
+    "hostingTools": "Ibikoresho byo Kwakira",
+    "resources": "Ibikoresho",
+    "hostSafety": "Umutekano w'Umusangwa",
+    "hostingStandards": "Ibipimo byo Kwakira",
+    "experiencesForWork": "Uburambe bw'Akazi",
+    "iosApp": "Porogaramu ya iOS",
+    "androidApp": "Porogaramu ya Android",
+    "mobileWeb": "Urubuga rw'Igikoresho",
+    "appFeatures": "Ibintu by'Porogaramu",
+    "pushNotifications": "Ubutumwa bw'Icyamamaza"
   }
 },
 "contact": {
@@ -674,5 +832,41 @@
       "content": "JamboLush ishyira mu bikorwa ingamba z'umutekano zikomeye kandi z'ikimuga cy'inganda kurinda amakuru y'abakoresha no kwirinda ubucuruzi bwiza. Ibi bikubiyemo gusiba kwa SSL kurinda amakuru mu rwendo, gukurikiza PCI DSS kurinda amakuru y'ubwishyu, no gukurikirana burigihe ubusobe kugirango bamenye kandi birinde ibikorwa bikekwaho. Usibye izi nzira zo kuringaniza, abakoresha bafite isuzuma ryo kubungabunga umutekano wa konti zabo bwite, bikaba harimo gukoresha amagambo y'ibanga akomeye, kubungabunga ibimenyetso byo kwinjira mu mabanga, no gutangazamo byihutiraho kwinjira kwose kutemewe. Hamwe, izi ngamba zifasha kurinda urubuga n'abakoresha barwo kurwanya iterabwoba ry'umutekano n'ubukoresha nabi."
     }
   }
+},
+"tours": {
+  "searchPlaceholder": "Shakisha urugendo, ibikorwa...",
+  "sortByFeatured": "Bikomeye",
+  "sortByPriceLowHigh": "Igiciro (ntoya kugeza kiri hejuru)",
+  "sortByRating": "Igipimo"
+},
+"becomeHost": {
+  "joinPlatform": "Injira ku Rukiko Rwacu",
+  "fillDetails": "Nyamuneka uzuza amakuru yawe kugirango utangire",
+  "applicationTitles": {
+    "host": "Icyifuzo cy'Umutunzi w'Umutungo",
+    "agent": "Icyifuzo cy'Umukozi w'Ihuriro",
+    "tourguide": "Icyifuzo cy'Umunyamakuru w'Ubukerarugendo",
+    "freelance": "Ukora kw'ubuntu",
+    "company": "Ikigo"
+  },
+  "formSections": {
+    "personalInfo": "Amakuru Yihariye",
+    "locationInfo": "Amakuru y'Ahantu",
+    "professionalInfo": "Amakuru y'Umwuga",
+    "employmentType": "Ubwoko bw'Akazi"
+  },
+  "address": {
+    "state": "Leta",
+    "province": "Intara",
+    "city": "Umujyi",
+    "streetAddress": "Aderesi y'Umuhanda",
+    "zipCode": "Kode y'Iposita",
+    "postalCode": "Kode y'Iposita",
+    "postcode": "Kode y'Iposita"
+  }
+},
+"getStarted": {
+  "title": "Gutangira kuri Jambolush",
+  "subtitle": "Jambolush ni urubuga rukomeye ruhuza abakoresha n'ahantu hihariye ho gutura no gukora, hamwe n'uburambe. Hitamo uruhare hano hepfo urebe uko ushobora gutangira."
 }
 }

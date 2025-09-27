@@ -41,7 +41,8 @@
     "agreement": "Agreements",
     "about": "About",
     "help": "Help",
-    "support": "Support"
+    "support": "Support",
+    "getStarted": "Get Started"
   },
   "booking": {
     "bookNow": "Book Now",
@@ -675,6 +676,306 @@
       "title": "19. Security & Fraud Protection",
       "content": "JamboLush implements robust, industry-standard security measures to protect user data and ensure safe transactions. This includes SSL encryption to secure data in transit, PCI DSS compliance to protect payment information, and continuous fraud monitoring to detect and prevent suspicious activity. In addition to these protections, users are responsible for maintaining the security of their own accounts, which includes using strong passwords, keeping login credentials confidential, and promptly reporting any unauthorized access. Together, these measures help safeguard both the platform and its users against security threats and misuse."
     }
+  }
+},
+"caseStudy": {
+  "title": "Case Studies",
+  "subtitle": "Explore real-life examples of how JAMBOLUSH has transformed work and living environments for individuals, teams, and businesses.",
+  "sections": {
+    "startup": {
+      "title": "Startup Workspace Transformation",
+      "description": "We helped a tech startup redesign their office layout for productivity and collaboration. With JAMBOLUSH, they found flexible spaces that adapted to their growth.",
+      "learnMore": "Learn more →"
+    }
+  },
+  "cta": {
+    "title": "Want to See More?",
+    "description": "Check out our detailed case studies to understand how JAMBOLUSH supports different industries and teams.",
+    "button": "Contact Us"
+  }
+},
+"discoverHow": {
+  "title": "Discover How JAMBOLUSH Works",
+  "subtitle": "Learn step by step how JAMBOLUSH connects people to opportunities, providing seamless booking, trust, and flexibility for everyone.",
+  "steps": {
+    "browse": {
+      "title": "1. Browse Listings",
+      "description": "Explore a variety of options tailored to your needs, from cozy rooms to spacious properties."
+    },
+    "connect": {
+      "title": "2. Connect Instantly",
+      "description": "Contact property owners directly through our secure messaging system."
+    },
+    "book": {
+      "title": "3. Book with Confidence",
+      "description": "Enjoy secure transactions and transparent booking terms for peace of mind."
+    }
+  },
+  "cta": {
+    "button": "Explore More →"
+  }
+},
+"exploreMore": {
+  "title": "Explore More with JAMBOLUSH",
+  "subtitle": "Discover unique spaces and opportunities for productivity, creativity, and collaboration. Learn how our platform can help you find the perfect environment to thrive.",
+  "sections": {
+    "flexible": {
+      "title": "Flexible Spaces",
+      "description": "Our spaces are designed to adapt to your needs, whether you are working solo, collaborating with a team, or hosting an event.",
+      "link": "Discover how →"
+    },
+    "inspiring": {
+      "title": "Inspiring Environments",
+      "description": "We carefully curate spaces that foster creativity, collaboration, and focus. Every environment is optimized for productivity.",
+      "link": "Learn more →"
+    }
+  },
+  "cta": {
+    "title": "Join Our Community",
+    "description": "Connect with like-minded individuals, explore new spaces, and maximize your potential. Become part of the JAMBOLUSH family today.",
+    "button": "Contact Us"
+  }
+},
+"learnMore": {
+  "title": "Learn More",
+  "subtitle": "Dive deeper into the features, benefits, and unique aspects of JAMBOLUSH. Gain insights on how we empower individuals and businesses.",
+  "sections": {
+    "flexible": {
+      "title": "Flexible Solutions",
+      "description": "Learn how our platform provides adaptable solutions for work and living spaces that cater to evolving needs.",
+      "link": "Discover how →"
+    },
+    "inspiring": {
+      "title": "Inspiring Environments",
+      "description": "We carefully curate spaces that foster creativity, collaboration, and focus. Every environment is optimized for productivity.",
+      "link": "Explore more →"
+    }
+  },
+  "cta": {
+    "title": "Stay Informed",
+    "description": "Keep up to date with our latest updates, features, and tips to get the most out of JAMBOLUSH.",
+    "button": "Contact Us"
+  }
+},
+"becomeHost": {
+  "roleSelection": {
+    "title": "Become a Service Provider",
+    "subtitle": "Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.",
+    "host": {
+      "title": "Property Owner",
+      "description": "List your properties, connect with potential buyers or renters, and manage your real estate portfolio."
+    },
+    "agent": {
+      "title": "Field Agent",
+      "description": "Help clients find their perfect property, provide expert guidance, and earn competitive commissions."
+    },
+    "tourguide": {
+      "title": "Tour Guide",
+      "description": "Offer unforgettable guided tours, showcase local attractions, and share your passion for travel."
+    }
+  },
+  "tourGuideType": {
+    "title": "Choose Your Tour Guide Type",
+    "subtitle": "Select your employment status to continue",
+    "freelancer": {
+      "title": "Freelancer (Self-Employed)",
+      "description": "Independent tour guide working for yourself",
+      "features": [
+        "Set your own rates and schedule",
+        "Direct client relationships",
+        "Full control over your services",
+        "Higher earning potential",
+        "Complete business autonomy"
+      ]
+    },
+    "company": {
+      "title": "Company",
+      "description": "Working as a tour company",
+      "features": [
+        "Stable salary and benefits",
+        "Company-provided training",
+        "Marketing and client support",
+        "Group bookings and resources",
+        "Professional development opportunities"
+      ]
+    },
+    "requirements": {
+      "title": "Document Requirements",
+      "freelancer": "Need to upload National ID for verification",
+      "company": "Need to upload Company Registration document for verification"
+    }
+  },
+  "forms": {
+    "personalInfo": "Personal Information",
+    "locationInfo": "Location Information",
+    "professionalInfo": "Professional Information",
+    "employmentType": "Employment Type",
+    "fullName": "Full Name",
+    "emailAddress": "Email Address",
+    "phoneNumber": "Phone Number",
+    "country": "Country",
+    "state": "State",
+    "province": "Province",
+    "city": "City",
+    "streetAddress": "Street Address",
+    "zipCode": "ZIP Code",
+    "postalCode": "Postal Code",
+    "postcode": "Postcode",
+    "experienceLevel": "Experience Level",
+    "propertyCategories": "Property Categories",
+    "servicesOffered": "Services Offered",
+    "nationalIdNumber": "National ID Number",
+    "uploadNationalId": "Upload National ID Document (Front & Back View)",
+    "companyName": "Company Name",
+    "companyRegistration": "Company Registration Number",
+    "uploadCompanyDoc": "Upload Company Registration Document",
+    "continueApplication": "Continue Application",
+    "checkingInfo": "Checking...",
+    "signingIn": "Signing In...",
+    "creating": "Creating Account...",
+    "uploading": "Uploading Documents...",
+    "submitting": "Submitting...",
+    "continue": "Continue",
+    "changeEmail": "Change email",
+    "applicationTitles": {
+      "host": "Property Owner Application",
+      "agent": "Field Agent Application",
+      "tourguide": "Tour Guide Application",
+      "freelance": "Freelance",
+      "company": "Company"
+    },
+    "formSections": {
+      "personalInfo": "Personal Information",
+      "locationInfo": "Location Information",
+      "professionalInfo": "Professional Information",
+      "employmentType": "Employment Type"
+    },
+    "documentUpload": {
+      "selectFile": "Click to upload document",
+      "fileFormats": "JPEG, PNG or PDF (max 5MB)",
+      "fileSelected": "File selected:",
+      "clickToChange": "Click to change",
+      "uploading": "Uploading...",
+      "required": "*"
+    },
+    "address": {
+      "state": "State",
+      "province": "Province",
+      "city": "City",
+      "streetAddress": "Street Address",
+      "zipCode": "ZIP Code",
+      "postalCode": "Postal Code",
+      "postcode": "Postcode"
+    },
+    "joinPlatform": "Join Our Platform",
+    "fillDetails": "Please fill in your details to get started",
+    "applicationTitles": {
+      "host": "Property Owner Application",
+      "agent": "Field Agent Application",
+      "tourguide": "Tour Guide Application",
+      "freelance": "Freelance",
+      "company": "Company"
+    },
+    "formSections": {
+      "personalInfo": "Personal Information",
+      "locationInfo": "Location Information",
+      "professionalInfo": "Professional Information",
+      "employmentType": "Employment Type"
+    },
+    "address": {
+      "state": "State",
+      "province": "Province",
+      "city": "City",
+      "streetAddress": "Street Address",
+      "zipCode": "ZIP Code",
+      "postalCode": "Postal Code",
+      "postcode": "Postcode"
+    }
+  },
+  "success": {
+    "title": "Application Submitted!",
+    "description": "Your application has been submitted successfully!",
+    "verifyDescription": "Please check your email to verify your account and set up your password to complete the process.",
+    "verifyButton": "Verify Account & Set Password",
+    "submitAnother": "Submit Another Application"
+  }
+},
+"cookies": {
+  "title": "We use cookies to improve your experience. You can customize your settings below.",
+  "manageCookies": "Manage Cookies",
+  "privacyOverview": "Privacy Overview",
+  "cookiePreferences": "Cookie Preferences",
+  "preferencesDescription": "These cookies should always be enabled so that we can save your preferences.",
+  "strictlyNecessary": "Strictly Necessary",
+  "analyticsCookies": "Analytics Cookies",
+  "marketingCookies": "Marketing Cookies",
+  "privacyDescription": "This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.",
+  "privacyPolicyLink": "Privacy Policy",
+  "enableAll": "Enable All",
+  "saveSettings": "Save Settings",
+  "agreeAndClose": "Agree and Close"
+},
+"tours": {
+  "searchPlaceholder": "Search tours, activities...",
+  "sortByFeatured": "Featured",
+  "sortByPriceLowHigh": "Price (low to high)",
+  "sortByRating": "Rating"
+},
+"getStarted": {
+  "title": "Getting Started on Jambolush",
+  "subtitle": "Jambolush is a dynamic platform connecting users with unique living and working spaces, as well as experiences. Select a role below to see how you can get started."
+},
+"sitemap": {
+  "title": "Sitemap",
+  "sections": {
+    "home": "Home",
+    "account": "Account",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "support": "Support & Community",
+    "policies": "Policies & Legal",
+    "hosting": "Hosting",
+    "mobileApps": "Mobile Apps"
+  },
+  "links": {
+    "mainPage": "Main Page",
+    "aboutUs": "About Us",
+    "careers": "Careers",
+    "press": "Press",
+    "blog": "Blog",
+    "investors": "Investors",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "profile": "Profile",
+    "trips": "Trips",
+    "wishlist": "Wishlist",
+    "giftCards": "Gift Cards",
+    "referFriend": "Refer a Friend",
+    "helpCenter": "Help Center",
+    "faq": "FAQ",
+    "contactSupport": "Contact Support",
+    "safety": "Safety",
+    "communityGuidelines": "Community Guidelines",
+    "partners": "Partners",
+    "sustainability": "Sustainability / ESG",
+    "termsConditions": "Terms & Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "cookiesPolicy": "Cookies Policy",
+    "refundPolicy": "Refund Policy",
+    "cancellationPolicy": "Cancellation Policy",
+    "compliance": "Compliance",
+    "disclaimer": "Disclaimer",
+    "becomeHost": "Become a Host",
+    "hostingTools": "Hosting Tools",
+    "resources": "Resources",
+    "hostSafety": "Host Safety",
+    "hostingStandards": "Hosting Standards",
+    "experiencesForWork": "Experiences for Work",
+    "iosApp": "iOS App",
+    "androidApp": "Android App",
+    "mobileWeb": "Mobile Web",
+    "appFeatures": "App Features",
+    "pushNotifications": "Push Notifications"
   }
 }
 

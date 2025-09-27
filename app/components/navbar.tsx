@@ -337,7 +337,7 @@ const Navbar = () => {
                     </a>
                     <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
                       <i className="bi bi-gear mr-3"></i>
-                      Settings
+                      {t('nav.settings')}
                     </a>
                     <hr className="my-1" />
                     <button 

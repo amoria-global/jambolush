@@ -41,7 +41,8 @@
     "agreement": "Makubaliano",
     "about": "Kuhusu",
     "help": "Msaada",
-    "support": "Uongozi"
+    "support": "Uongozi",
+    "getStarted": "Anza"
   },
   "booking": {
     "bookNow": "Hifadhi Sasa",
@@ -292,6 +293,90 @@
     "description": "Jiunge na maelfu ya watumiaji wenye furaha ambao wamepata mahali pao kamili na JamboLush",
     "startButton": "Anza Kugundua",
     "learnButton": "Jifunze Zaidi"
+  }
+},
+"becomeHost": {
+  "roleSelection": {
+    "title": "Kuwa Mtoa Huduma",
+    "subtitle": "Chagua jukumu lako na uanze safari yako nasi. Iwe ni mmiliki wa mali, wakala wa uwandani, au mwongozaji wa utalii.",
+    "host": {
+      "title": "Mmiliki wa Mali",
+      "description": "Orodhesha mali zako, unganisha na wanunuzi au wakodishaji watarajiwa, na udhibiti mkoba wako wa mali."
+    },
+    "agent": {
+      "title": "Wakala wa Uwandani",
+      "description": "Saidia wateja kupata mali yao kamili, toa mwongozo wa kitaalamu, na pata ushuru wa ushindani."
+    },
+    "tourguide": {
+      "title": "Mwongozaji wa Utalii",
+      "description": "Toa uongozaji wa safari zisizosahaulika, onyesha vivutio vya mitaa, na shiriki shauku yako ya usafiri."
+    }
+  },
+  "forms": {
+    "personalInfo": "Maelezo ya Kibinafsi",
+    "locationInfo": "Maelezo ya Mahali",
+    "professionalInfo": "Maelezo ya Kitaalamu",
+    "employmentType": "Aina ya Ajira",
+    "fullName": "Jina Kamili",
+    "emailAddress": "Anwani ya Barua Pepe",
+    "phoneNumber": "Nambari ya Simu",
+    "country": "Nchi",
+    "state": "Jimbo",
+    "province": "Mkoa",
+    "city": "Mji",
+    "streetAddress": "Anwani ya Mtaa",
+    "zipCode": "Msimbo wa Posta",
+    "postalCode": "Msimbo wa Posta",
+    "postcode": "Msimbo wa Posta",
+    "experienceLevel": "Kiwango cha Uzoefu",
+    "propertyCategories": "Aina za Mali",
+    "servicesOffered": "Huduma Zinazotolewa",
+    "continue": "Endelea",
+    "changeEmail": "Badilisha barua pepe"
+  }
+},
+"cookies": {
+  "title": "Tunatumia cookies kuboresha uzoefu wako. Unaweza kubadilisha mipangilio yako hapa chini.",
+  "manageCookies": "Dhibiti Cookies",
+  "privacyOverview": "Muhtasari wa Faragha",
+  "cookiePreferences": "Mapendeleo ya Cookies",
+  "preferencesDescription": "Cookies hizi zinapaswa kuwa zimewashwa kila wakati ili tuweze kuhifadhi mapendeleo yako.",
+  "strictlyNecessary": "Muhimu Sana",
+  "analyticsCookies": "Cookies za Uchanganuzi",
+  "marketingCookies": "Cookies za Masoko",
+  "privacyDescription": "Tovuti hii inatumia cookies kukupa uzoefu bora wa mtumiaji. Cookies zinasaidia kukutambua unaporejerudia na kutusaidia kuelewa sehemu zipi ni muhimu zaidi.",
+  "privacyPolicyLink": "Sera ya Faragha",
+  "enableAll": "Wezesha Zote",
+  "saveSettings": "Hifadhi Mipangilio",
+  "agreeAndClose": "Kubali na Funga"
+},
+"sitemap": {
+  "title": "Ramani ya Tovuti",
+  "sections": {
+    "home": "Nyumbani",
+    "account": "Akaunti",
+    "destinations": "Marudio",
+    "experiences": "Uzoefu",
+    "support": "Msaada na Jumuiya",
+    "policies": "Sera na Kisheria",
+    "hosting": "Upokezi",
+    "mobileApps": "Programu za Simu"
+  },
+  "links": {
+    "mainPage": "Ukurasa Mkuu",
+    "aboutUs": "Kuhusu Sisi",
+    "careers": "Kazi",
+    "press": "Vyombo vya Habari",
+    "blog": "Blog",
+    "investors": "Wawekezaji",
+    "login": "Ingia",
+    "signUp": "Jisajili",
+    "profile": "Wasifu",
+    "trips": "Safari",
+    "wishlist": "Orodha ya Matakwa",
+    "giftCards": "Kadi za Zawadi",
+    "referFriend": "Rejelea Rafiki",
+    "becomeHost": "Kuwa Mpokezi"
   }
 },
 "contact": {
@@ -674,5 +759,41 @@
       "content": "JamboLush inatekeleza hatua za usalama za kiwango cha juu na za kiwango cha sekta kulinda data za watumiaji na kuhakikisha miamala salama. Hii ni pamoja na usimbaji wa SSL kulinda data zinazosafiri, kufuata PCI DSS kulinda maelezo ya malipo, na ufuatiliaji endelevu wa udanganyifu kutambua na kuzuia shughuli za mashaka. Zaidi ya ulinzi huu, watumiaji wana jukumu la kudumisha usalama wa akaunti zao wenyewe, ambalo linajumuisha kutumia manenosiri makuu, kuweka vitambulisho vya kuingia kwa siri, na kuripoti haraka ufikiaji wowote usioidhinishwa. Pamoja, hatua hizi zinasaidia kulinda jukwaa na watumiaji wake dhidi ya vitisho vya usalama na matumizi mabaya."
     }
   }
+},
+"tours": {
+  "searchPlaceholder": "Tafuta safari, shughuli...",
+  "sortByFeatured": "Zinazovutia",
+  "sortByPriceLowHigh": "Bei (chini hadi juu)",
+  "sortByRating": "Ukadiriaji"
+},
+"becomeHost": {
+  "joinPlatform": "Jiunge na Jukwaa Letu",
+  "fillDetails": "Tafadhali jaza maelezo yako ili kuanza",
+  "applicationTitles": {
+    "host": "Ombi la Mmiliki Mali",
+    "agent": "Ombi la Wakala wa Uwandani",
+    "tourguide": "Ombi la Kiongozi wa Utalii",
+    "freelance": "Huru",
+    "company": "Kampuni"
+  },
+  "formSections": {
+    "personalInfo": "Maelezo ya Kibinafsi",
+    "locationInfo": "Maelezo ya Eneo",
+    "professionalInfo": "Maelezo ya Kitaaluma",
+    "employmentType": "Aina ya Ajira"
+  },
+  "address": {
+    "state": "Jimbo",
+    "province": "Mkoa",
+    "city": "Jiji",
+    "streetAddress": "Anuani ya Mtaa",
+    "zipCode": "Msimbo wa Posta",
+    "postalCode": "Msimbo wa Posta",
+    "postcode": "Msimbo wa Posta"
+  }
+},
+"getStarted": {
+  "title": "Kuanza kwenye Jambolush",
+  "subtitle": "Jambolush ni jukwaa lenye nguvu linalounganisha watumiaji na maeneo ya kipekee ya kuishi na kufanya kazi, pamoja na uzoefu. Chagua jukumu hapo chini ili uone jinsi unavyoweza kuanza."
 }
 }

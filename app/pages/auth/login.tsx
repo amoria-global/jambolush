@@ -54,6 +54,7 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('en');
   const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string, position?: string} | null>(null);
   const [showPasswordField, setShowPasswordField] = useState(false);
   const [userNeedsPassword, setUserNeedsPassword] = useState(false);

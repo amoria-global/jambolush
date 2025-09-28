@@ -729,7 +729,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         <AlertNotification
           message={alert.message}
           type={alert.type}
-          position="top-center"
+          position="bottom-right"
           duration={alert.duration}
           onClose={hideAlert}
           showProgress={true}

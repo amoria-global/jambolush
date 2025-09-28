@@ -131,7 +131,41 @@
     "passwordReset": "Nenosiri limewekwa upya",
     "emailVerification": "Uthibitisho wa Barua Pepe",
     "verifyEmail": "Thibitisha Barua Pepe",
-    "resendVerification": "Tuma Uthibitisho Tena"
+    "resendVerification": "Tuma Uthibitisho Tena",
+    "changeEmail": "Badilisha barua pepe",
+    "rememberMe": "Nikumbuke",
+    "forgotPasswordQuestion": "Umesahau nenosiri?",
+    "emailAddress": "Anwani ya Barua Pepe",
+    "password": "Nenosiri",
+    "continue": "Endelea",
+    "signIn": "Ingia",
+    "checking": "Inakagua...",
+    "signingIn": "Inaingia...",
+    "dontHaveAccount": "Huna akaunti?",
+    "createOne": "Tengeneza moja",
+    "orContinueWith": "Au endelea na",
+    "signInWithGoogle": "Ingia na Google",
+    "enterEmailToContinue": "Weka anwani yako ya barua pepe ili kuendelea",
+    "enterPasswordToSignIn": "Weka nenosiri lako ili kuingia",
+    "firstName": "Jina la Kwanza",
+    "lastName": "Jina la Mwisho",
+    "phoneNumber": "Nambari ya Simu",
+    "country": "Nchi",
+    "confirmPassword": "Thibitisha Nenosiri",
+    "createPassword": "Tengeneza nenosiri",
+    "confirmYourPassword": "Thibitisha nenosiri lako",
+    "passwordsDoNotMatch": "Manenosiri hayafanani",
+    "termsOfService": "Masharti ya Huduma",
+    "privacyPolicy": "Sera ya Faragha",
+    "and": "na",
+    "acceptTerms": "Ninakubali",
+    "creatingAccount": "Inatengeneza Akaunti...",
+    "alreadyHaveAccount": "Tayari una akaunti?",
+    "signInLink": "Ingia",
+    "wantToBecomeServiceProvider": "Unataka kuwa mtoa huduma?",
+    "joinAsHost": "Jiunge kama Mwenyeji",
+    "orSignUpWith": "Au jisajili na",
+    "signUpWithGoogle": "Jisajili na Google"
   },
   "search": {
     "searchProperties": "Tafuta Mali",
@@ -299,41 +333,35 @@
   "roleSelection": {
     "title": "Kuwa Mtoa Huduma",
     "subtitle": "Chagua jukumu lako na uanze safari yako nasi. Iwe ni mmiliki wa mali, wakala wa uwandani, au mwongozaji wa utalii.",
-    "host": {
-      "title": "Mmiliki wa Mali",
-      "description": "Orodhesha mali zako, unganisha na wanunuzi au wakodishaji watarajiwa, na udhibiti mkoba wako wa mali."
+    "host": { "title": "Mmiliki wa Mali", "description": "Orodhesha mali zako, unganisha na wanunuzi au wakodishaji watarajiwa, na udhibiti mkoba wako wa mali." },
+    "agent": { "title": "Wakala wa Uwandani", "description": "Saidia wateja kupata mali yao kamili, toa mwongozo wa kitaalamu, na pata ushuru wa ushindani." },
+    "tourguide": { "title": "Mwongozaji wa Utalii", "description": "Toa uongozaji wa safari zisizosahaulika, onyesha vivutio vya mitaa, na shiriki shauku yako ya usafiri." }
+  },
+  "tourGuideType": {
+    "title": "Chagua Aina Yako ya Mwongozo wa Utalii", "subtitle": "Chagua hali yako ya ajira ili kuendelea",
+    "freelancer": {
+      "title": "Mfanyakazi Huru (Aliyejiajiri)", "description": "Mwongozo wa utalii huru anayejifanyia kazi",
+      "features": ["Weka viwango na ratiba zako mwenyewe", "Mahusiano ya moja kwa moja na wateja", "Udhibiti kamili juu ya huduma zako", "Uwezo mkubwa wa mapato", "Uhuru kamili wa biashara"]
     },
-    "agent": {
-      "title": "Wakala wa Uwandani",
-      "description": "Saidia wateja kupata mali yao kamili, toa mwongozo wa kitaalamu, na pata ushuru wa ushindani."
+    "company": {
+      "title": "Kampuni", "description": "Kufanya kazi kama kampuni ya utalii",
+      "features": ["Mshahara thabiti na marupurupu", "Mafunzo yanayotolewa na kampuni", "Uuzaji na usaidizi kwa wateja", "Uhifadhi wa vikundi na rasilimali", "Fursa za maendeleo ya kitaaluma"]
     },
-    "tourguide": {
-      "title": "Mwongozaji wa Utalii",
-      "description": "Toa uongozaji wa safari zisizosahaulika, onyesha vivutio vya mitaa, na shiriki shauku yako ya usafiri."
-    }
+    "requirements": { "title": "Mahitaji ya Hati", "freelancer": "Unahitaji kupakia Kitambulisho cha Taifa kwa uthibitisho", "company": "Unahitaji kupakia hati ya Usajili wa Kampuni kwa uthibitisho" }
   },
   "forms": {
-    "personalInfo": "Maelezo ya Kibinafsi",
-    "locationInfo": "Maelezo ya Mahali",
-    "professionalInfo": "Maelezo ya Kitaalamu",
-    "employmentType": "Aina ya Ajira",
-    "fullName": "Jina Kamili",
-    "emailAddress": "Anwani ya Barua Pepe",
-    "phoneNumber": "Nambari ya Simu",
-    "country": "Nchi",
-    "state": "Jimbo",
-    "province": "Mkoa",
-    "city": "Mji",
-    "streetAddress": "Anwani ya Mtaa",
-    "zipCode": "Msimbo wa Posta",
-    "postalCode": "Msimbo wa Posta",
-    "postcode": "Msimbo wa Posta",
-    "experienceLevel": "Kiwango cha Uzoefu",
-    "propertyCategories": "Aina za Mali",
-    "servicesOffered": "Huduma Zinazotolewa",
-    "continue": "Endelea",
-    "changeEmail": "Badilisha barua pepe"
-  }
+    "personalInfo": "Taarifa Binafsi", "locationInfo": "Taarifa ya Mahali", "professionalInfo": "Taarifa ya Kitaalamu", "employmentType": "Aina ya Ajira", "experienceLevel": "Kiwango cha Uzoefu", "email": "Barua Pepe", "firstName": "Jina la Kwanza", "lastName": "Jina la Mwisho", "phone": "Nambari ya Simu", "dateOfBirth": "Tarehe ya Kuzaliwa", "country": "Nchi", "state": "Jimbo/Mkoa", "city": "Jiji", "streetAddress": "Anwani ya Mtaa", "zipCode": "Msimbo wa Posta", "aboutYou": "Kuhusu Wewe", "aboutYouPlaceholder": "Eleza uzoefu wako, sifa zako, na kwanini ungekuwa mwongozo mzuri wa utalii.", "languagesSpoken": "Lugha Unazozungumza", "languagesSpokenPlaceholder": "Orodhesha lugha unazozungumza na kiwango chako cha ufasaha (mfano: Kiingereza - Kiwango cha Kati)",
+    "experienceLevels": ["Anayeanza (miaka 0-1)", "Mdogo (miaka 1-3)", "Kiwango cha Kati (miaka 3-5)", "Mwandamizi (miaka 5-10)", "Mtaalamu (miaka 10+)"],
+    "propertyCategories": "Aina za Mali", "propertyCategoriesOptions": ["Nyumba za Makazi", "Vyumba/Kondo", "Mali za Biashara", "Viwanja", "Kukodisha kwa Likizo", "Mali za Viwandani", "Nafasi za Ofisi", "Nafasi za Rejareja"],
+    "servicesOffered": "Huduma Zinazotolewa", "servicesOfferedOptions": ["Ziara za Jiji", "Ziara za Utamaduni", "Ziara za Asili/Wanyamapori", "Maeneo ya Kihistoria", "Ziara za Vituko", "Ziara za Vyakula", "Ziara za Upigaji Picha", "Ziara Maalum"],
+    "nationalIdNumber": "Nambari ya Kitambulisho cha Taifa", "uploadNationalId": "Pakia Hati ya Kitambulisho cha Taifa (Mbele na Nyuma)", "companyName": "Jina la Kampuni", "companyRegistration": "Nambari ya Usajili wa Kampuni", "uploadCompanyDoc": "Pakia Hati ya Usajili wa Kampuni",
+    "continueApplication": "Endelea na Maombi", "checkingInfo": "Inakagua...", "signingIn": "Inaingia...", "creating": "Inatengeneza Akaunti...", "uploading": "Inapakia Hati", "submitting": "Inawasilisha",
+    "joinPlatform": "Jiunge na Jukwaa Letu", "fillDetails": "Tafadhali jaza maelezo yako ili kuanza",
+    "applicationTitles": { "host": "Maombi ya Mmiliki wa Mali", "agent": "Maombi ya Wakala wa Uwandani", "tourguide": "Maombi ya Mwongozo wa Utalii", "freelancer": "Mfanyakazi Huru", "company": "Kampuni" },
+    "documentUpload": { "selectFile": "Bofya kupakia hati", "fileFormats": "JPEG, PNG au PDF (isizidi 5MB)", "fileSelected": "Faili imechaguliwa:", "clickToChange": "Bofya kubadilisha", "uploading": "Inapakia" },
+    "address": { "state": "Jimbo", "province": "Mkoa", "city": "Jiji", "streetAddress": "Anwani ya Mtaa", "zipCode": "Msimbo wa ZIP", "postalCode": "Msimbo wa Posta", "postcode": "Msimbo wa Posta" }
+  },
+  "success": { "title": "Maombi Yamewasilishwa!", "description": "Maombi yako yamewasilishwa kikamilifu!", "verifyDescription": "Tafadhali angalia barua pepe yako ili kuthibitisha akaunti yako na kuweka nenosiri lako ili kukamilisha mchakato.", "verifyButton": "Thibitisha Akaunti na Weka Nenosiri", "submitAnother": "Wasilisha Maombi Mengine" }
 },
 "cookies": {
   "title": "Tunatumia cookies kuboresha uzoefu wako. Unaweza kubadilisha mipangilio yako hapa chini.",
@@ -351,33 +379,57 @@
   "agreeAndClose": "Kubali na Funga"
 },
 "sitemap": {
-  "title": "Ramani ya Tovuti",
-  "sections": {
-    "home": "Nyumbani",
-    "account": "Akaunti",
-    "destinations": "Marudio",
-    "experiences": "Uzoefu",
-    "support": "Msaada na Jumuiya",
-    "policies": "Sera na Kisheria",
-    "hosting": "Upokezi",
-    "mobileApps": "Programu za Simu"
-  },
-  "links": {
-    "mainPage": "Ukurasa Mkuu",
-    "aboutUs": "Kuhusu Sisi",
-    "careers": "Kazi",
-    "press": "Vyombo vya Habari",
-    "blog": "Blog",
-    "investors": "Wawekezaji",
-    "login": "Ingia",
-    "signUp": "Jisajili",
-    "profile": "Wasifu",
-    "trips": "Safari",
-    "wishlist": "Orodha ya Matakwa",
-    "giftCards": "Kadi za Zawadi",
-    "referFriend": "Rejelea Rafiki",
-    "becomeHost": "Kuwa Mpokezi"
-  }
+    "title": "Ramani ya Tovuti",
+    "sections": {
+      "home": "Nyumbani",
+      "account": "Akaunti",
+      "destinations": "Maeneo",
+      "experiences": "Uzoefu",
+      "support": "Msaada na Jamii",
+      "policies": "Sera na Sheria",
+      "hosting": "Uenyeji",
+      "mobileApps": "Programu za Simu"
+    },
+    "links": {
+      "mainPage": "Ukurasa Mkuu",
+      "aboutUs": "Kuhusu Sisi",
+      "careers": "Kazi",
+      "press": "Vyombo vya Habari",
+      "blog": "Blogu",
+      "investors": "Wawekezaji",
+      "login": "Ingia",
+      "signUp": "Jisajili",
+      "profile": "Wasifu",
+      "trips": "Safari",
+      "wishlist": "Orodha ya Matamanio",
+      "giftCards": "Kadi za Zawadi",
+      "referFriend": "Pendekeza Rafiki",
+      "helpCenter": "Kituo cha Msaada",
+      "faq": "Maswali Yanayoulizwa Mara kwa Mara",
+      "contactSupport": "Wasiliana na Usaidizi",
+      "safety": "Usalama",
+      "communityGuidelines": "Miongozo ya Jamii",
+      "partners": "Washirika",
+      "sustainability": "Uendelevu / ESG",
+      "termsConditions": "Masharti na Vigezo",
+      "privacyPolicy": "Sera ya Faragha",
+      "cookiesPolicy": "Sera ya Vidakuzi",
+      "refundPolicy": "Sera ya Marejesho",
+      "cancellationPolicy": "Sera ya Kughairi",
+      "compliance": "Utiifu",
+      "disclaimer": "Kanusho",
+      "becomeHost": "Kuwa Mwenyeji",
+      "hostingTools": "Zana za Uenyeji",
+      "resources": "Rasilimali",
+      "hostSafety": "Usalama wa Mwenyeji",
+      "hostingStandards": "Viwango vya Uenyeji",
+      "experiencesForWork": "Uzoefu kwa ajili ya Kazi",
+      "iosApp": "Programu ya iOS",
+      "androidApp": "Programu ya Android",
+      "mobileWeb": "Wavuti ya Simu",
+      "appFeatures": "Vipengele vya Programu",
+      "pushNotifications": "Arifa za Push"
+    }
 },
 "contact": {
   "header": {
@@ -766,34 +818,81 @@
   "sortByPriceLowHigh": "Bei (chini hadi juu)",
   "sortByRating": "Ukadiriaji"
 },
-"becomeHost": {
-  "joinPlatform": "Jiunge na Jukwaa Letu",
-  "fillDetails": "Tafadhali jaza maelezo yako ili kuanza",
-  "applicationTitles": {
-    "host": "Ombi la Mmiliki Mali",
-    "agent": "Ombi la Wakala wa Uwandani",
-    "tourguide": "Ombi la Kiongozi wa Utalii",
-    "freelance": "Huru",
-    "company": "Kampuni"
-  },
-  "formSections": {
-    "personalInfo": "Maelezo ya Kibinafsi",
-    "locationInfo": "Maelezo ya Eneo",
-    "professionalInfo": "Maelezo ya Kitaaluma",
-    "employmentType": "Aina ya Ajira"
-  },
-  "address": {
-    "state": "Jimbo",
-    "province": "Mkoa",
-    "city": "Jiji",
-    "streetAddress": "Anuani ya Mtaa",
-    "zipCode": "Msimbo wa Posta",
-    "postalCode": "Msimbo wa Posta",
-    "postcode": "Msimbo wa Posta"
+  "getStarted": {
+    "title": "Kuanza kwenye Jambolush",
+    "subtitle": "Jambolush ni jukwaa lenye nguvu linalounganisha watumiaji na maeneo ya kipekee ya kuishi na kufanyia kazi, pamoja na uzoefu. Chagua jukumu hapa chini ili uone jinsi unavyoweza kuanza.",
+    "gettingStartedAs": "Kuanza kama {{title}}",
+    "proTip": "Dokezo la Kitaalamu:",
+    "roles": {
+      "guest": {
+        "title": "Wageni",
+        "description": "Gundua nyumba za kipekee, safari za kitalii, na uzoefu. Hifadhi makazi yako, simamia safari zako, na usafiri kwa urahisi.",
+        "tip": "Fungua zawadi za usafiri! Alika marafiki kwenye Jambolush ili upate mikopo na utumie Kadi za Zawadi kufanya uhifadhi uwe rahisi zaidi.",
+        "steps": [
+          "Anza kwa kufungua akaunti yako kwenye tovuti ya Jambolush, tafuta kitufe cha “jisajili” kwenye Ukurasa wa Mwanzo.",
+          "Baada ya kuingia, nenda kwenye \"Wasifu\" ili uchague “hariri wasifu” kuongeza picha na taarifa zako binafsi.",
+          "Nenda kwenye kichupo cha \"Malipo\" ili uongeze kwa usalama njia yako ya malipo unayopendelea kwa uhifadhi rahisi.",
+          "Tembelea \"Mipangilio\" ili usanidi mapendeleo yako ya arifa na maelezo mengine ya akaunti.",
+          "Kutoka Ukurasa wa Mwanzo, tumia upau mkuu wa utafutaji kwa kuchagua \"Kukaa\" kwa makazi au \"Mahali\" kwa maeneo ya kuvutia. Weka eneo na maneno muhimu ili kupata unachotafuta. Kwa shughuli za kuongozwa, bofya kitufe cha \"Tafuta Safari\" kwenye menyu ya juu.",
+          "Unapopata kitu unachopenda, kihifadhi kwenye \"Orodha ya Matamanio\" ili kulinganisha chaguo zako unazopenda.",
+          "Ukishakuwa tayari, chagua tarehe zako na ukamilishe uhifadhi wako.",
+          "KWA SAFARI: Ukishakuwa tayari, kamilisha uhifadhi wako kwa kubofya kitufe cha “HIFADHI SASA”.",
+          "Baada ya HIFADHI SASA na HIFADHI, unaweza kuendelea kukamilisha mchakato wa malipo.",
+          "Baada ya kuhifadhi, pata maelezo yote ya safari yako na usimamie makazi yako chini ya \"Uhifadhi Wangu\".",
+          "Tumia kichupo cha \"Ratiba\" kuona mtazamo rahisi wa kalenda ya safari zako zote zijazo.",
+          "Ikiwa utahitaji msaada, sehemu ya \"Msaada na Usaidizi\" ipo kwa ajili ya kukusaidia."
+        ]
+      },
+      "propertyOwner": {
+        "title": "Mmiliki wa Mali",
+        "description": "Orodhesha mali zako, ungana na wanunuzi au wapangaji watarajiwa, na dhibiti jalada lako la mali isiyohamishika.",
+        "tip": "Kughairi kodi na marejesho.",
+        "steps": [
+          "Anza kwa kubofya kitufe cha “kuwa mwenyeji” na uchague \"Mmiliki wa Mali\" kama jukumu lako.",
+          "Jaza fomu ya maombi na maelezo yako yanayohitajika.",
+          "Wasilisha maombi na weka nenosiri salama kwa akaunti yako.",
+          "Subiri timu yetu ya usimamizi ipitie na kuidhinisha maombi yako.",
+          "Ukipata arifa ya idhini, ingia kwenye Dashibodi yako mpya ya Mwenyeji.",
+          "Kwanza, nenda kwenye \"Wasifu\" wako ili kuongeza picha na wasifu, ambayo husaidia kujenga uaminifu kwa wageni.",
+          "Nenda kwenye \"Mali Zangu\" ili kuongeza orodha yako ya kwanza. Pakia picha, andika maelezo, weka bei yako, na sasisha upatikanaji wako.",
+          "Mali yako inapokuwa hewani, dhibiti uhifadhi wote unaoingia kutoka kwenye kichupo cha \"Uhifadhi\".",
+          "Baada ya mgeni kukamilisha kukaa kwake, fuatilia malipo yako na uangalie historia chini ya kichupo cha \"Mapato\".",
+          "Tumia kichupo cha \"Takwimu\" kufuatilia utendaji wako, viwango vya umiliki, na mapato ili kuboresha orodha yako."
+        ]
+      },
+      "tourGuide": {
+        "title": "Mwongozaji wa Utalii",
+        "description": "Shiriki shauku yako na maarifa ya ndani. Ongoza safari zisizosahaulika, ungana na wasafiri kutoka kote ulimwenguni, na pata pesa ukifanya kile unachopenda.",
+        "tip": "Daima weka kalenda yako ya upatikanaji na maelezo ya safari yakiwa yamesasishwa. Mwongozaji aliyeandaliwa vizuri na wazi anapata uaminifu zaidi na uhifadhi wa mara kwa mara.",
+        "steps": [
+          "Anza kwa kubofya kitufe cha \"kuwa mwenyeji\" na uchague \"MWONGOZAJI WA UTALII\" kama jukumu lako.",
+          "Jaza maombi na maelezo yako na utaalamu ili timu yetu ipitie.",
+          "Maombi yako yakishaidhinishwa, unaweza kuingia kwenye Dashibodi yako mpya ya Mwongozaji wa Utalii.",
+          "Kwanza, nenda kwenye \"Wasifu\" wako ili upakie picha ya kitaalamu na uandike wasifu wa kuvutia ili kuvutia wasafiri.",
+          "Fuatilia mapato yako, malipo yanayosubiri, na miamala iliyokamilika. Pitia historia yako ya kamisheni na uombe malipo moja kwa moja kwenye akaunti yako iliyounganishwa kwa uwazi kamili.",
+          "Dhibiti safari zako zote mahali pamoja kwa kuunda, kuhariri, au kuziondoa. Ongeza maelezo kama maelezo, bei, na upatikanaji huku ukifuatilia uhifadhi na utendaji ili kukuza biashara yako.",
+          "Kaa umejipanga na mtazamo wa kalenda wa safari zako zote zijazo. Zuia tarehe zisizopatikana, rekebisha nafasi za muda, na ulandanishe na kalenda yako binafsi ili kuepuka migongano.",
+          "Tazama maoni na ukadiriaji kutoka kwa wageni ili kuimarisha sifa yako. Angazia maoni chanya na tumia maoni yenye kujenga kuboresha safari zako."
+        ]
+      },
+      "fieldAgent": {
+        "title": "Wakala wa Uwandani",
+        "description": "Saidia wateja kupata mali yao kamili, toa mwongozo wa kitaalamu, na pata kamisheni za ushindani.",
+        "tip": "Kuweka kalenda yako ikiwa imesasishwa huongeza mwonekano wako, hujenga uaminifu na waenyeji na wageni, na hukusaidia kupata mapato zaidi, haraka.",
+        "steps": [
+          "Anza kwa kubofya kitufe cha \"kuwa mwenyeji\" na uchague \"Wakala wa Uwandani\" kama jukumu lako.",
+          "Jaza fomu ya maombi ya awali na taarifa zako za kitaaluma.",
+          "Faulu kwa mafanikio \"Tathmini ya Wakala wa Uwandani wa Jambolush\" ili kuonyesha ujuzi na ufaafu wako.",
+          "Baada ya kufaulu tathmini, subiri timu yetu ya usimamizi ipitie na kutoa idhini ya mwisho.",
+          "Ukishaidhinishwa, utaarifiwa. Kisha unaweza kuingia kwenye Dashibodi yako rasmi ya Wakala.",
+          "Kwanza, nenda kwenye \"Wasifu\" wako ili upakie picha ya kitaalamu na wasifu ili kujenga uaminifu.",
+          "Nenda kwenye kichupo cha “Mapato” ili kuona mapato yako na uunganishe akaunti yako ya benki kwa malipo ya kamisheni.",
+          "Jifahamishe na kichupo cha \"Wateja\", ambapo utasimamia orodha yako ya wateja na mawasiliano.",
+          "Tumia sehemu ya \"Mali\" kutafuta kwenye mtandao orodha zinazolingana na mahitaji ya wateja wako.",
+          "Saidia wateja wako na uhifadhi na ufuatilie hali zao katika sehemu ya \"Uhifadhi\".",
+          "Fuatilia maendeleo yako, kiwango cha mafanikio, na vipimo muhimu kwenye dashibodi yako ya \"Utendaji\"."
+        ]
+      }
+    }
   }
-},
-"getStarted": {
-  "title": "Kuanza kwenye Jambolush",
-  "subtitle": "Jambolush ni jukwaa lenye nguvu linalounganisha watumiaji na maeneo ya kipekee ya kuishi na kufanya kazi, pamoja na uzoefu. Chagua jukumu hapo chini ili uone jinsi unavyoweza kuanza."
-}
 }

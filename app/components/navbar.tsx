@@ -374,18 +374,6 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
-            {/* Book a Tour Mobile - First item for prominence */}
-            <button 
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                router.push('/all/tours');
-              }}
-              className="w-full flex items-center px-2 py-1 bg-gradient-to-r from-[#083A85]/70 to-[#F20C8F] text-white text-sm font-medium rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-            >
-              <i className="bi bi-binoculars mr-2"></i>
-              {t('nav.findTour')}
-            </button>
-
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`p-2 cursor-pointer rounded-lg transition-colors duration-300 ${
@@ -447,6 +435,19 @@ const Navbar = () => {
                   </div>
                 )}
               </div>
+
+               {/* Book a Tour Mobile - First item for prominence */}
+               
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  router.push('/all/tours');
+                }}
+                className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
+                >
+                <i className="bi bi-binoculars mr-2"></i>
+                {t('nav.findTour')}
+              </button>
 
               {/* Become a Host Mobile */}
               <button 

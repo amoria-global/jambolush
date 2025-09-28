@@ -131,7 +131,50 @@
     "passwordReset": "Contraseña restablecida",
     "emailVerification": "Verificación de Email",
     "verifyEmail": "Verificar Email",
-    "resendVerification": "Reenviar Verificación"
+    "resendVerification": "Reenviar Verificación",
+    "changeEmail": "Cambiar email",
+    "rememberMe": "Recordarme",
+    "forgotPasswordQuestion": "¿Olvidaste tu contraseña?",
+    "emailAddress": "Dirección de Email",
+    "password": "Contraseña",
+    "continue": "Continuar",
+    "signIn": "Iniciar Sesión",
+    "checking": "Verificando...",
+    "signingIn": "Iniciando Sesión...",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "createOne": "Crear una",
+    "orContinueWith": "O continuar con",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "enterEmailToContinue": "Ingresa tu email para continuar",
+    "enterPasswordToSignIn": "Ingresa tu contraseña para iniciar sesión",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phoneNumber": "Número de Teléfono",
+    "country": "País",
+    "confirmPassword": "Confirmar Contraseña",
+    "createPassword": "Crear una contraseña",
+    "confirmYourPassword": "Confirma tu contraseña",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "termsOfService": "Términos de Servicio",
+    "privacyPolicy": "Política de Privacidad",
+    "and": "y",
+    "agreeToTerms": "Al crear una cuenta, aceptas nuestros",
+    "setNewPassword": "Establecer Nueva Contraseña",
+    "newPassword": "Nueva Contraseña",
+    "confirmNewPassword": "Confirmar Nueva Contraseña",
+    "resetYourPassword": "Restablece tu contraseña",
+    "sendResetLink": "Enviar Enlace de Restablecimiento",
+    "resetLinkSent": "Enlace de restablecimiento enviado a tu correo",
+    "checkYourEmail": "Revisa tu correo para las instrucciones de restablecimiento",
+    "backToLogin": "Volver al Inicio de Sesión",
+    "signingUp": "Registrándose...",
+    "creatingAccount": "Creando Cuenta...",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "signInLink": "Iniciar sesión",
+    "wantToBecomeServiceProvider": "¿Quieres convertirte en proveedor de servicios?",
+    "joinAsHost": "Únete como Anfitrión",
+    "orSignUpWith": "O regístrate con",
+    "signUpWithGoogle": "Registrarse con Google"
   },
   "search": {
     "searchProperties": "Buscar Propiedades",
@@ -300,90 +343,36 @@
   "roleSelection": {
     "title": "Conviértete en Proveedor de Servicios",
     "subtitle": "Elige tu rol y comienza tu viaje con nosotros. Ya seas propietario, agente de campo o guía turístico.",
-    "host": {
-      "title": "Propietario",
-      "description": "Lista tus propiedades, conecta con compradores o inquilinos potenciales, y gestiona tu cartera inmobiliaria."
-    },
-    "agent": {
-      "title": "Agente de Campo",
-      "description": "Ayuda a los clientes a encontrar su propiedad perfecta, proporciona orientación experta y gana comisiones competitivas."
-    },
-    "tourguide": {
-      "title": "Guía Turístico",
-      "description": "Ofrece tours guiados inolvidables, muestra atracciones locales y comparte tu pasión por los viajes."
-    }
+    "host": { "title": "Propietario", "description": "Lista tus propiedades, conecta con compradores o inquilinos potenciales, y gestiona tu cartera inmobiliaria." },
+    "agent": { "title": "Agente de Campo", "description": "Ayuda a los clientes a encontrar su propiedad perfecta, proporciona orientación experta y gana comisiones competitivas." },
+    "tourguide": { "title": "Guía Turístico", "description": "Ofrece tours guiados inolvidables, muestra atracciones locales y comparte tu pasión por los viajes." }
   },
   "tourGuideType": {
     "title": "Elige tu Tipo de Guía Turístico",
     "subtitle": "Selecciona tu estado laboral para continuar",
     "freelancer": {
-      "title": "Freelancer (Trabajador Independiente)",
-      "description": "Guía turístico independiente trabajando por cuenta propia",
-      "features": [
-        "Establece tus propias tarifas y horarios",
-        "Relaciones directas con clientes",
-        "Control total sobre tus servicios",
-        "Mayor potencial de ingresos",
-        "Autonomía empresarial completa"
-      ]
+      "title": "Freelancer (Trabajador Independiente)", "description": "Guía turístico independiente trabajando por cuenta propia",
+      "features": ["Establece tus propias tarifas y horarios", "Relaciones directas con clientes", "Control total sobre tus servicios", "Mayor potencial de ingresos", "Autonomía empresarial completa"]
     },
     "company": {
-      "title": "Empresa",
-      "description": "Trabajando como empresa turística",
-      "features": [
-        "Salario estable y beneficios",
-        "Entrenamiento proporcionado por la empresa",
-        "Marketing y apoyo al cliente",
-        "Reservas grupales y recursos",
-        "Oportunidades de desarrollo profesional"
-      ]
+      "title": "Empresa", "description": "Trabajando como empresa turística",
+      "features": ["Salario estable y beneficios", "Entrenamiento proporcionado por la empresa", "Marketing y apoyo al cliente", "Reservas grupales y recursos", "Oportunidades de desarrollo profesional"]
     },
-    "requirements": {
-      "title": "Requisitos de Documentos",
-      "freelancer": "Necesitas subir la Cédula de Identidad para verificación",
-      "company": "Necesitas subir el documento de Registro de Empresa para verificación"
-    }
+    "requirements": { "title": "Requisitos de Documentos", "freelancer": "Necesitas subir la Cédula de Identidad para verificación", "company": "Necesitas subir el documento de Registro de Empresa para verificación" }
   },
   "forms": {
-    "personalInfo": "Información Personal",
-    "locationInfo": "Información de Ubicación",
-    "professionalInfo": "Información Profesional",
-    "employmentType": "Tipo de Empleo",
-    "fullName": "Nombre Completo",
-    "emailAddress": "Dirección de Correo",
-    "phoneNumber": "Número de Teléfono",
-    "country": "País",
-    "state": "Estado",
-    "province": "Provincia",
-    "city": "Ciudad",
-    "streetAddress": "Dirección",
-    "zipCode": "Código Postal",
-    "postalCode": "Código Postal",
-    "postcode": "Código Postal",
-    "experienceLevel": "Nivel de Experiencia",
-    "propertyCategories": "Categorías de Propiedades",
-    "servicesOffered": "Servicios Ofrecidos",
-    "nationalIdNumber": "Número de Cédula Nacional",
-    "uploadNationalId": "Subir Documento de Cédula Nacional (Vista Frontal y Trasera)",
-    "companyName": "Nombre de la Empresa",
-    "companyRegistration": "Número de Registro de Empresa",
-    "uploadCompanyDoc": "Subir Documento de Registro de Empresa",
-    "continueApplication": "Continuar Solicitud",
-    "checkingInfo": "Verificando...",
-    "signingIn": "Iniciando Sesión...",
-    "creating": "Creando Cuenta...",
-    "uploading": "Subiendo Documentos...",
-    "submitting": "Enviando...",
-    "continue": "Continuar",
-    "changeEmail": "Cambiar correo"
+    "personalInfo": "Información Personal", "locationInfo": "Información de Ubicación", "professionalInfo": "Información Profesional", "employmentType": "Tipo de Empleo", "experienceLevel": "Nivel de Experiencia", "email": "Correo Electrónico", "phone": "Número de Teléfono", "firstName": "Nombre", "lastName": "Apellido", "dateOfBirth": "Fecha de Nacimiento", "country": "País", "state": "Estado/Provincia", "city": "Ciudad", "streetAddress": "Dirección", "zipCode": "Código Postal",
+    "experienceLevels": ["Nivel de Entrada (0-1 años)", "Junior (1-3 años)", "Nivel Medio (3-5 años)", "Senior (5-10 años)", "Experto (10+ años)"],
+    "propertyCategories": "Categorías de Propiedades", "propertyCategoriesOptions": ["Casas Residenciales", "Apartamentos/Condominios", "Propiedades Comerciales", "Terrenos/Lotes", "Alquileres Vacacionales", "Propiedades Industriales", "Espacios de Oficina", "Espacios Comerciales"],
+    "servicesOffered": "Servicios Ofrecidos", "servicesOfferedOptions": ["Tours por la Ciudad", "Tours Culturales", "Tours de Naturaleza/Vida Silvestre", "Sitios Históricos", "Tours de Aventura", "Tours Gastronómicos", "Tours de Fotografía", "Tours Personalizados"],
+    "nationalIdNumber": "Número de Cédula Nacional", "uploadNationalId": "Subir Documento de Cédula Nacional (Vista Frontal y Trasera)", "companyName": "Nombre de la Empresa", "companyRegistration": "Número de Registro de Empresa", "uploadCompanyDoc": "Subir Documento de Registro de Empresa",
+    "continueApplication": "Continuar Solicitud", "checkingInfo": "Verificando...", "signingIn": "Iniciando Sesión...", "creating": "Creando Cuenta...", "uploading": "Subiendo Documentos", "submitting": "Enviando",
+    "joinPlatform": "Únete a Nuestra Plataforma", "fillDetails": "Por favor, completa tus datos para comenzar",
+    "applicationTitles": { "host": "Solicitud de Propietario", "agent": "Solicitud de Agente de Campo", "tourguide": "Solicitud de Guía Turístico", "freelancer": "Freelance", "company": "Empresa" },
+    "documentUpload": { "selectFile": "Haz clic para subir documento", "fileFormats": "JPEG, PNG o PDF (máx 5MB)", "fileSelected": "Archivo seleccionado:", "clickToChange": "Haz clic para cambiar", "uploading": "Subiendo" },
+    "address": { "state": "Estado", "province": "Provincia", "city": "Ciudad", "streetAddress": "Dirección", "zipCode": "Código Postal", "postalCode": "Código Postal", "postcode": "Código Postal" }
   },
-  "success": {
-    "title": "¡Solicitud Enviada!",
-    "description": "¡Tu solicitud ha sido enviada exitosamente!",
-    "verifyDescription": "Por favor revisa tu correo para verificar tu cuenta y configurar tu contraseña para completar el proceso.",
-    "verifyButton": "Verificar Cuenta y Configurar Contraseña",
-    "submitAnother": "Enviar Otra Solicitud"
-  }
+  "success": { "title": "¡Solicitud Enviada!", "description": "¡Tu solicitud ha sido enviada exitosamente!", "verifyDescription": "Por favor revisa tu correo para verificar tu cuenta y configurar tu contraseña para completar el proceso.", "verifyButton": "Verificar Cuenta y Configurar Contraseña", "submitAnother": "Enviar Otra Solicitud" }
 },
 "cookies": {
   "title": "Usamos cookies para mejorar tu experiencia. Puedes personalizar tu configuración abajo.",
@@ -761,38 +750,87 @@
   "sortByPriceLowHigh": "Precio (bajo a alto)",
   "sortByRating": "Calificación"
 },
-"becomeHost": {
-  "joinPlatform": "Únete a Nuestra Plataforma",
-  "fillDetails": "Por favor, completa tus datos para comenzar",
-  "applicationTitles": {
-    "host": "Solicitud de Propietario",
-    "agent": "Solicitud de Agente de Campo",
-    "tourguide": "Solicitud de Guía Turístico",
-    "freelance": "Freelance",
-    "company": "Empresa"
-  },
-  "formSections": {
-    "personalInfo": "Información Personal",
-    "locationInfo": "Información de Ubicación",
-    "professionalInfo": "Información Profesional",
-    "employmentType": "Tipo de Empleo"
-  },
-  "address": {
-    "state": "Estado",
-    "province": "Provincia",
-    "city": "Ciudad",
-    "streetAddress": "Dirección",
-    "zipCode": "Código Postal",
-    "postalCode": "Código Postal",
-    "postcode": "Código Postal"
+
+  "getStarted": {
+    "title": "Comenzando en Jambolush",
+    "subtitle": "Jambolush es una plataforma dinámica que conecta a usuarios con espacios únicos para vivir y trabajar, así como con experiencias. Selecciona un rol a continuación para ver cómo puedes comenzar.",
+    "gettingStartedAs": "Comenzando como {{title}}",
+    "proTip": "Consejo Profesional:",
+    "roles": {
+      "guest": {
+        "title": "Huéspedes",
+        "description": "Explora hogares, tours y experiencias únicas. Reserva tu estancia, gestiona tus viajes y viaja con facilidad.",
+        "tip": "¡Desbloquea recompensas de viaje! Invita a amigos a Jambolush para ganar créditos y usa Tarjetas de Regalo para que reservar sea aún más fácil.",
+        "steps": [
+          "Comienza creando tu cuenta en el sitio web de Jambolush, encuentra el botón “Registrarse” en la página de inicio.",
+          "Después de iniciar sesión, navega a \"Perfil\" para elegir “editar perfil” y añadir una foto y tu información personal.",
+          "Ve a la pestaña \"Pagos\" para añadir de forma segura tu método de pago preferido para reservar fácilmente.",
+          "Visita \"Configuración\" para configurar tus preferencias de notificación y otros detalles de la cuenta.",
+          "Desde la página de inicio, usa la barra de búsqueda principal seleccionando \"Estadía\" para alojamientos o \"Lugar\" para puntos de interés. Introduce una ubicación y palabras clave para encontrar lo que buscas. Para actividades guiadas, haz clic en el botón \"Buscar un Tour\" en el menú superior.",
+          "Cuando encuentres algo que te guste, guárdalo en tu \"Lista de Deseos\" para comparar tus opciones favoritas.",
+          "Una vez que estés listo, selecciona tus fechas y completa tu reserva.",
+          "PARA TOURS: Una vez que estés listo, completa tu reserva haciendo clic en el botón “RESERVAR AHORA”.",
+          "Después de RESERVAR AHORA y CONSERVAR, puedes proceder a completar el proceso de pago.",
+          "Después de reservar, encuentra todos los detalles de tu viaje y gestiona tu estancia en \"Mis Reservas\".",
+          "Usa la pestaña \"Horario\" para ver un calendario conveniente de todos tus próximos viajes.",
+          "Si alguna vez necesitas ayuda, la sección \"Ayuda y Soporte\" está disponible para asistirte."
+        ]
+      },
+      "propertyOwner": {
+        "title": "Propietario",
+        "description": "Lista tus propiedades, conecta con posibles compradores o inquilinos y gestiona tu cartera de bienes raíces.",
+        "tip": "Cancelación de impuestos y reembolsos.",
+        "steps": [
+          "Comienza haciendo clic en el botón “conviértete en anfitrión” y seleccionando \"Propietario\" como tu rol.",
+          "Completa el formulario de solicitud con los detalles requeridos.",
+          "Envía la solicitud y establece una contraseña segura para tu cuenta.",
+          "Espera a que nuestro equipo de administración revise y apruebe tu solicitud.",
+          "Una vez que recibas una notificación de aprobación, inicia sesión en tu nuevo Panel de Anfitrión.",
+          "Primero, navega a tu \"Perfil\" para añadir una foto y una biografía, lo que ayuda a generar confianza con los huéspedes.",
+          "Ve a \"Mis Propiedades\" para añadir tu primer listado. Sube fotos, escribe una descripción, establece tu precio y actualiza tu disponibilidad.",
+          "Una vez que tu propiedad esté activa, gestiona todas las reservas entrantes desde la pestaña \"Reservas\".",
+          "Después de que un huésped complete su estancia, haz un seguimiento de tus pagos y consulta el historial en la pestaña \"Ganancias\".",
+          "Usa la pestaña \"Analíticas\" para monitorear tu rendimiento, tasas de ocupación e ingresos para optimizar tu listado."
+        ]
+      },
+      "tourGuide": {
+        "title": "Guía Turístico",
+        "description": "Comparte tu pasión y conocimiento local. Dirige tours inolvidables, conecta con viajeros de todo el mundo y gana dinero haciendo lo que amas.",
+        "tip": "Mantén siempre actualizado tu calendario de disponibilidad y los detalles de tus tours. Un guía bien preparado y transparente gana más confianza y reservas recurrentes.",
+        "steps": [
+          "Comienza haciendo clic en el botón \"conviértete en anfitrión\" y seleccionando \"GUÍA TURÍSTICO\" como tu rol.",
+          "Completa la solicitud con tus detalles y experiencia para que nuestro equipo la revise.",
+          "Una vez que tu solicitud sea aprobada, podrás iniciar sesión en tu nuevo Panel de Guía Turístico.",
+          "Primero, navega a tu \"Perfil\" para subir una foto profesional y escribir una biografía atractiva para atraer a los viajeros.",
+          "Haz un seguimiento de tus ingresos, pagos pendientes y transacciones completadas. Revisa tu historial de comisiones y solicita pagos directamente a tu cuenta vinculada con total transparencia.",
+          "Gestiona todos tus tours en un solo lugar creando, editando o despublicando. Añade detalles como descripciones, precios y disponibilidad mientras sigues las reservas y el rendimiento para hacer crecer tu negocio.",
+          "Mantente organizado con una vista de calendario de todos tus próximos tours. Bloquea fechas no disponibles, ajusta horarios y sincroniza con tu calendario personal para evitar conflictos.",
+          "Consulta los comentarios y calificaciones de los huéspedes para fortalecer tu reputación. Destaca las reseñas positivas y utiliza los comentarios constructivos para mejorar tus tours."
+        ]
+      },
+      "fieldAgent": {
+        "title": "Agente de Campo",
+        "description": "Ayuda a los clientes a encontrar su propiedad perfecta, proporciona orientación experta y gana comisiones competitivas.",
+        "tip": "Mantener tu calendario actualizado aumenta tu visibilidad, construye confianza con anfitriones y huéspedes, y te ayuda a ganar más, más rápido.",
+        "steps": [
+          "Comienza haciendo clic en el botón \"conviértete en anfitrión\" y seleccionando \"Agente de Campo\" como tu rol.",
+          "Completa el formulario de solicitud inicial con tu información profesional.",
+          "Supera con éxito la \"Evaluación de Agente de Campo de Jambolush\" para demostrar tus habilidades e idoneidad.",
+          "Después de pasar la evaluación, espera a que nuestro equipo de administración revise y otorgue la aprobación final.",
+          "Una vez aprobado, serás notificado. Luego podrás iniciar sesión en tu Panel de Agente oficial.",
+          "Primero, navega a tu \"Perfil\" para subir una foto profesional y una biografía para construir credibilidad.",
+          "Ve a la pestaña “Ganancias” para ver tus ingresos y conectar tu cuenta bancaria para los pagos de comisiones.",
+          "Familiarízate con la pestaña \"Clientes\", donde gestionarás tu lista de clientes y comunicaciones.",
+          "Usa la sección \"Propiedades\" para buscar en la red listados que coincidan con las necesidades de tus clientes.",
+          "Asiste a tus clientes con las reservas y sigue su estado en la sección \"Reservas\".",
+          "Monitorea tu progreso, tasa de éxito y métricas clave en tu panel de \"Rendimiento\"."
+        ]
+      }
+    }
   }
-},
-"getStarted": {
-  "title": "Comenzando en Jambolush",
-  "subtitle": "Jambolush es una plataforma dinámica que conecta usuarios con espacios únicos para vivir y trabajar, así como experiencias. Selecciona un rol a continuación para ver cómo puedes comenzar."
 }
 
-  }
+
 
 
 

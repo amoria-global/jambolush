@@ -354,8 +354,8 @@ const Home = () => {
             {!hasMore && houses.length > 0 && (
               <div className="text-center mt-8 text-gray-500">
                 {totalCount > 0 
-                  ? `You've seen all ${totalCount} properties`
-                  : "You've reached the end of results"
+                  ? `All up`
+                  : "All ups"
                 }
               </div>
             )}

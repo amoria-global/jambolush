@@ -131,7 +131,42 @@
     "passwordReset": "Password reset",
     "emailVerification": "Email Verification",
     "verifyEmail": "Verify Email",
-    "resendVerification": "Resend Verification"
+    "resendVerification": "Resend Verification",
+    "changeEmail": "Change email",
+    "rememberMe": "Remember me",
+    "forgotPasswordQuestion": "Forgot password?",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "continue": "Continue",
+    "signIn": "Sign In",
+    "checking": "Checking...",
+    "signingIn": "Signing In...",
+    "dontHaveAccount": "Don't have an account?",
+    "createOne": "Create one",
+    "orContinueWith": "Or continue with",
+    "signInWithGoogle": "Sign in with Google",
+    "enterEmailToContinue": "Enter your email to continue",
+    "enterPasswordToSignIn": "Enter your password to sign in",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "country": "Country",
+    "confirmPassword": "Confirm Password",
+    "createPassword": "Create a password",
+    "confirmYourPassword": "Confirm your password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "and": "and",
+    "agreeToTerms": "By signing up, you agree to our",
+    "signingUp": "Signing Up...",
+    "creatingAccount": "Creating Account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "wantToBecomeServiceProvider": "Want to become a service provider?",
+    "joinAsHost": "Join as Host",
+    "orSignUpWith": "Or sign up with",
+    "signUpWithGoogle": "Sign up with Google"
   },
   "search": {
     "searchProperties": "Search Properties",
@@ -757,7 +792,159 @@
     "button": "Contact Us"
   }
 },
-"becomeHost": {
+"cookies": {
+  "title": "We use cookies to improve your experience. You can customize your settings below.",
+  "manageCookies": "Manage Cookies",
+  "privacyOverview": "Privacy Overview",
+  "cookiePreferences": "Cookie Preferences",
+  "preferencesDescription": "These cookies should always be enabled so that we can save your preferences.",
+  "strictlyNecessary": "Strictly Necessary",
+  "analyticsCookies": "Analytics Cookies",
+  "marketingCookies": "Marketing Cookies",
+  "privacyDescription": "This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.",
+  "privacyPolicyLink": "Privacy Policy",
+  "enableAll": "Enable All",
+  "saveSettings": "Save Settings",
+  "agreeAndClose": "Agree and Close"
+},
+
+"tours": {
+  "searchPlaceholder": "Search tours, activities...",
+  "sortByFeatured": "Featured",
+  "sortByPriceLowHigh": "Price (low to high)",
+  "sortByRating": "Rating"
+},
+  "getStarted": {
+    "title": "Getting Started on Jambolush",
+    "subtitle": "Jambolush is a dynamic platform connecting users with unique living and working spaces, as well as experiences. Select a role below to see how you can get started.",
+    "gettingStartedAs": "Getting Started as a {{title}}",
+    "proTip": "Pro Tip:",
+    "roles": {
+      "guest": {
+        "title": "Guests",
+        "description": "Explore unique homes, tours, and experiences. Book your stay, manage your trips, and travel with ease.",
+        "tip": "Unlock travel rewards! Invite friends to Jambolush to earn credits to use Gift Cards to make booking even easier.",
+        "steps": [
+          "Start by creating your account on the Jambolush website find “signup” button on Home",
+          "After signing in, navigate to \"Profile\" to choose “edit profile” to add a photo and your personal information.",
+          "Go to the \"Payments\" tab to securely add your preferred payment method for easy booking.",
+          "Visit \"Settings\" to configure your notification preferences and other account details.",
+          "From the Home page, use the main search bar by selecting Stay for \"accommodations\" or \"Spot\" for points of interest. Enter a location and keywords to find what you are looking for. For guided activities, click the \"Find a Tour\" button in the top menu.",
+          "When you find something you love, save it to your \"Wishlist\" to compare your favorite options.",
+          "Once you are ready, select your dates and complete your reservation.",
+          "FOR TOUR:Once you are ready, complete your reservation by placing “BOOK NOW” button",
+          "After BOOK NOW and PRESERVE you can go to complete the payment process",
+          "After booking, find all your trip details and manage your stay under \"My Bookings\".",
+          "Use the \"Schedule\" tab to see a convenient calendar view of all your upcoming trips.",
+          "If you ever need help, the \"Help & Support\" section is available to assist you."
+        ]
+      },
+      "propertyOwner": {
+        "title": "Property Owner",
+        "description": "List your properties, connect with potential buyers or renters, and manage your real estate portfolio.",
+        "tip": "Tax cancellation and refunds.",
+        "steps": [
+          "Begin by clicking the “become a host” button and selecting \"Property Owner\" as your role.",
+          "Complete the application form with your required details.",
+          "Submit the application and set a secure password for your account.",
+          "Wait for our admin team to review and approve your application.",
+          "Once you get an approval notification, sign in to your new Host Dashboard.",
+          "First, navigate to your \"Profile\" to add a photo and bio, which helps build trust with guests.",
+          "Go to \"My Properties\" to add your first listing. Upload photos, write a description, set your price, and update your availability.",
+          "Once your property is live, manage all incoming reservations from the \"Bookings\" tab.",
+          "After a guest completes their stay, track your payments and view history under \"Earnings\" tab.",
+          "Use the \"Analytics\" tab to monitor your performance, occupancy rates, and revenue to optimize your listing."
+        ]
+      },
+      "tourGuide": {
+        "title": "Tour Guide",
+        "description": "Share your passion and local knowledge. Lead unforgettable tours, connect with travelers from around the world, and earn money doing what you love.",
+        "tip": "Always keep your availability calendar and tour details up to date. A well-prepared and transparent guide earns more trust and repeat bookings.",
+        "steps": [
+          "Begin by clicking the become a host button and selecting \"TOUR GUIDE\" as your role.",
+          "Complete the application with your details and expertise for our team to review.",
+          "Once your application is approved, you can sign in to your new Tour Guide Dashboard.",
+          "First, navigate to your \"Profile\" to upload a professional photo and write a compelling bio to attract travelers.",
+          "Track your income, pending payouts, and completed transactions. Review your commission history and request payments directly to your linked account with full transparency.",
+          "Manage all your tours in one place by creating, editing, or unlisting them. Add details like descriptions, pricing, and availability while tracking bookings and performance to grow your business.",
+          "Stay organized with a calendar view of all your upcoming tours. Block unavailable dates, adjust time slots, and sync with your personal calendar to avoid conflicts.",
+          "View feedback and ratings from guests to strengthen your reputation. Highlight positive reviews and use constructive feedback to improve your tours."
+        ]
+      },
+      "fieldAgent": {
+        "title": "Field Agent",
+        "description": "Help clients find their perfect property, provide expert guidance, and earn competitive commissions.",
+        "tip": "Keep your calendar updated it boosts your visibility, builds trust with hosts and guests, and helps you earn more, faster.",
+        "steps": [
+          "Begin by clicking the become a host button and selecting \"Field Agent\" as your role.",
+          "Complete the initial application form with your professional information.",
+          "Successfully pass the \"Jambolush Field Agent Assessment\" to demonstrate your skills and suitability.",
+          "After passing the assessment, wait for our admin team to review and grant final approval.",
+          "Once approved, you will be notified. You can then sign in to your official Agent Dashboard.",
+          "First, navigate to your \"Profile\" to upload a professional photo and bio to build credibility.",
+          "Go to the “Earnings” tab to view your income and connect your bank account for commission payouts.",
+          "Familiarize yourself with the \"Clients\" tab, where you will manage your client list and communications.",
+          "Use the \"Properties\" section to search the network for listings that match your clients' needs.",
+          "Assist your clients with reservations and track their status in the \"Bookings\" section.",
+          "Monitor your progress, success rate, and key metrics on your \"Performance\" dashboard."
+        ]
+      }
+    }
+  },
+  "sitemap": {
+    "title": "Site Map",
+    "sections": {
+      "home": "Home",
+      "account": "Account",
+      "destinations": "Destinations",
+      "experiences": "Experiences",
+      "support": "Support",
+      "policies": "Policies",
+      "hosting": "Hosting",
+      "mobileApps": "Mobile Apps"
+    },
+    "links": {
+      "mainPage": "Main Page",
+      "aboutUs": "About Us",
+      "careers": "Careers",
+      "press": "Press",
+      "blog": "Blog",
+      "investors": "Investors",
+      "login": "Login",
+      "signUp": "Sign Up",
+      "profile": "Profile",
+      "trips": "Trips",
+      "wishlist": "Wishlist",
+      "giftCards": "Gift Cards",
+      "referFriend": "Refer a Friend",
+      "helpCenter": "Help Center",
+      "faq": "FAQ",
+      "contactSupport": "Contact Support",
+      "safety": "Safety",
+      "communityGuidelines": "Community Guidelines",
+      "partners": "Partners",
+      "sustainability": "Sustainability",
+      "termsConditions": "Terms & Conditions",
+      "privacyPolicy": "Privacy Policy",
+      "cookiesPolicy": "Cookies Policy",
+      "refundPolicy": "Refund Policy",
+      "cancellationPolicy": "Cancellation Policy",
+      "compliance": "Compliance",
+      "disclaimer": "Disclaimer",
+      "becomeHost": "Become a Host",
+      "hostingTools": "Hosting Tools",
+      "resources": "Resources",
+      "hostSafety": "Host Safety",
+      "hostingStandards": "Hosting Standards",
+      "experiencesForWork": "Experiences for Work",
+      "iosApp": "iOS App",
+      "androidApp": "Android App",
+      "mobileWeb": "Mobile Web",
+      "appFeatures": "App Features",
+      "pushNotifications": "Push Notifications"
+    }
+  },
+  "becomeHost": {
   "roleSelection": {
     "title": "Become a Service Provider",
     "subtitle": "Choose your role and start your journey with us. Whether you're a property owner, field agent, or tour guide.",
@@ -809,21 +996,33 @@
     "personalInfo": "Personal Information",
     "locationInfo": "Location Information",
     "professionalInfo": "Professional Information",
-    "employmentType": "Employment Type",
     "fullName": "Full Name",
-    "emailAddress": "Email Address",
-    "phoneNumber": "Phone Number",
-    "country": "Country",
-    "state": "State",
-    "province": "Province",
-    "city": "City",
-    "streetAddress": "Street Address",
-    "zipCode": "ZIP Code",
-    "postalCode": "Postal Code",
-    "postcode": "Postcode",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "password": "Create Password",
+    "confirmPassword": "Confirm Password",
+    "selectRole": "Select Your Role",
+    "selectTourType": "Select Tour Guide Type",
+    "dateOfBirth": "Date of Birth",
+    "employmentType": "Employment Type",
     "experienceLevel": "Experience Level",
+    "experienceLevels": [
+      "Entry Level (0-1 years)",
+      "Junior (1-3 years)",
+      "Mid-Level (3-5 years)",
+      "Senior (5-10 years)",
+      "Expert (10+ years)"
+    ],
     "propertyCategories": "Property Categories",
+    "propertyCategoriesOptions": [
+      "Residential Houses", "Apartments/Condos", "Commercial Properties", "Land/Plots",
+      "Vacation Rentals", "Industrial Properties", "Office Spaces", "Retail Spaces"
+    ],
     "servicesOffered": "Services Offered",
+    "servicesOfferedOptions": [
+      "City Tours", "Cultural Tours", "Nature/Wildlife Tours", "Historical Sites",
+      "Adventure Tours", "Food Tours", "Photography Tours", "Custom Tours"
+    ],
     "nationalIdNumber": "National ID Number",
     "uploadNationalId": "Upload National ID Document (Front & Back View)",
     "companyName": "Company Name",
@@ -833,63 +1032,28 @@
     "checkingInfo": "Checking...",
     "signingIn": "Signing In...",
     "creating": "Creating Account...",
-    "uploading": "Uploading Documents...",
-    "submitting": "Submitting...",
-    "continue": "Continue",
-    "changeEmail": "Change email",
-    "applicationTitles": {
-      "host": "Property Owner Application",
-      "agent": "Field Agent Application",
-      "tourguide": "Tour Guide Application",
-      "freelance": "Freelance",
-      "company": "Company"
-    },
-    "formSections": {
-      "personalInfo": "Personal Information",
-      "locationInfo": "Location Information",
-      "professionalInfo": "Professional Information",
-      "employmentType": "Employment Type"
-    },
-    "documentUpload": {
-      "selectFile": "Click to upload document",
-      "fileFormats": "JPEG, PNG or PDF (max 5MB)",
-      "fileSelected": "File selected:",
-      "clickToChange": "Click to change",
-      "uploading": "Uploading...",
-      "required": "*"
-    },
-    "address": {
-      "state": "State",
-      "province": "Province",
-      "city": "City",
-      "streetAddress": "Street Address",
-      "zipCode": "ZIP Code",
-      "postalCode": "Postal Code",
-      "postcode": "Postcode"
-    },
+    "uploading": "Uploading Documents",
+    "submitting": "Submitting",
     "joinPlatform": "Join Our Platform",
     "fillDetails": "Please fill in your details to get started",
     "applicationTitles": {
       "host": "Property Owner Application",
       "agent": "Field Agent Application",
       "tourguide": "Tour Guide Application",
-      "freelance": "Freelance",
+      "freelancer": "Freelance",
       "company": "Company"
     },
-    "formSections": {
-      "personalInfo": "Personal Information",
-      "locationInfo": "Location Information",
-      "professionalInfo": "Professional Information",
-      "employmentType": "Employment Type"
+    "documentUpload": {
+      "selectFile": "Click to upload document",
+      "fileFormats": "JPEG, PNG or PDF (max 5MB)",
+      "fileSelected": "File selected:",
+      "clickToChange": "Click to change",
+      "uploading": "Uploading"
     },
     "address": {
-      "state": "State",
-      "province": "Province",
-      "city": "City",
-      "streetAddress": "Street Address",
-      "zipCode": "ZIP Code",
-      "postalCode": "Postal Code",
-      "postcode": "Postcode"
+      "state": "State", "province": "Province", "city": "City",
+      "streetAddress": "Street Address", "zipCode": "ZIP Code",
+      "postalCode": "Postal Code", "postcode": "Postcode"
     }
   },
   "success": {
@@ -899,86 +1063,7 @@
     "verifyButton": "Verify Account & Set Password",
     "submitAnother": "Submit Another Application"
   }
-},
-"cookies": {
-  "title": "We use cookies to improve your experience. You can customize your settings below.",
-  "manageCookies": "Manage Cookies",
-  "privacyOverview": "Privacy Overview",
-  "cookiePreferences": "Cookie Preferences",
-  "preferencesDescription": "These cookies should always be enabled so that we can save your preferences.",
-  "strictlyNecessary": "Strictly Necessary",
-  "analyticsCookies": "Analytics Cookies",
-  "marketingCookies": "Marketing Cookies",
-  "privacyDescription": "This website uses cookies to provide you with the best user experience. Cookies help recognize you when you return and allow us to understand which sections are most useful.",
-  "privacyPolicyLink": "Privacy Policy",
-  "enableAll": "Enable All",
-  "saveSettings": "Save Settings",
-  "agreeAndClose": "Agree and Close"
-},
-"tours": {
-  "searchPlaceholder": "Search tours, activities...",
-  "sortByFeatured": "Featured",
-  "sortByPriceLowHigh": "Price (low to high)",
-  "sortByRating": "Rating"
-},
-"getStarted": {
-  "title": "Getting Started on Jambolush",
-  "subtitle": "Jambolush is a dynamic platform connecting users with unique living and working spaces, as well as experiences. Select a role below to see how you can get started."
-},
-"sitemap": {
-  "title": "Sitemap",
-  "sections": {
-    "home": "Home",
-    "account": "Account",
-    "destinations": "Destinations",
-    "experiences": "Experiences",
-    "support": "Support & Community",
-    "policies": "Policies & Legal",
-    "hosting": "Hosting",
-    "mobileApps": "Mobile Apps"
-  },
-  "links": {
-    "mainPage": "Main Page",
-    "aboutUs": "About Us",
-    "careers": "Careers",
-    "press": "Press",
-    "blog": "Blog",
-    "investors": "Investors",
-    "login": "Login",
-    "signUp": "Sign Up",
-    "profile": "Profile",
-    "trips": "Trips",
-    "wishlist": "Wishlist",
-    "giftCards": "Gift Cards",
-    "referFriend": "Refer a Friend",
-    "helpCenter": "Help Center",
-    "faq": "FAQ",
-    "contactSupport": "Contact Support",
-    "safety": "Safety",
-    "communityGuidelines": "Community Guidelines",
-    "partners": "Partners",
-    "sustainability": "Sustainability / ESG",
-    "termsConditions": "Terms & Conditions",
-    "privacyPolicy": "Privacy Policy",
-    "cookiesPolicy": "Cookies Policy",
-    "refundPolicy": "Refund Policy",
-    "cancellationPolicy": "Cancellation Policy",
-    "compliance": "Compliance",
-    "disclaimer": "Disclaimer",
-    "becomeHost": "Become a Host",
-    "hostingTools": "Hosting Tools",
-    "resources": "Resources",
-    "hostSafety": "Host Safety",
-    "hostingStandards": "Hosting Standards",
-    "experiencesForWork": "Experiences for Work",
-    "iosApp": "iOS App",
-    "androidApp": "Android App",
-    "mobileWeb": "Mobile Web",
-    "appFeatures": "App Features",
-    "pushNotifications": "Push Notifications"
-  }
 }
-
 }
 
 

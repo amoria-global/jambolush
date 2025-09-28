@@ -3,15 +3,18 @@
 import React from "react";
 import Link from "next/link";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useLanguage } from '../lib/LanguageContext'; // 👈 Import useLanguage hook
 
 const SitemapPage: React.FC = () => {
+  const { t } = useLanguage(); // 👈 Initialize the hook
+
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center">
       <div className="w-full max-w-7xl px-4 md:px-12 py-13">
         {/* Page Title */}
         <h1 className="text-3xl md:text-4xl font-bold text-blue-900 mb-12 mt-6 text-center">
           <i className="bi bi-sitemap mr-2"></i>
-          Sitemap
+          {t('sitemap.title')}
         </h1>
 
         {/* Sitemap Grid */}
@@ -21,15 +24,15 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-house-door-fill text-pink-500 mr-2"></i>
-              Home
+              {t('sitemap.sections.home')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="/" className="hover:text-blue-900">Main Page</Link></li>
-              <li><Link href="/all/about" className="hover:text-blue-900">About Us</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Careers</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Press</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Blog</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Investors</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.mainPage')}</Link></li>
+              <li><Link href="/all/about" className="hover:text-blue-900">{t('sitemap.links.aboutUs')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.careers')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.press')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.blog')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.investors')}</Link></li>
             </ul>
           </div>
 
@@ -37,16 +40,16 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-person-fill text-pink-500 mr-2"></i>
-              Account
+              {t('sitemap.sections.account')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="/" className="hover:text-blue-900">Login</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Sign Up</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Profile</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Trips</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Wishlist</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Gift Cards</Link></li>
-              <li><Link href="/" className="hover:text-blue-900">Refer a Friend</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.login')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.signUp')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.profile')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.trips')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.wishlist')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.giftCards')}</Link></li>
+              <li><Link href="/" className="hover:text-blue-900">{t('sitemap.links.referFriend')}</Link></li>
             </ul>
           </div>
 
@@ -54,8 +57,9 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-geo-alt-fill text-pink-500 mr-2"></i>
-              Destinations
+              {t('sitemap.sections.destinations')}
             </h2>
+            {/* Note: Specific destination links are not in the JSON files and remain static. */}
             <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">USA</Link></li>
               <li><Link href="" className="hover:text-blue-900">Europe</Link></li>
@@ -70,8 +74,9 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-calendar-event-fill text-pink-500 mr-2"></i>
-              Experiences
+              {t('sitemap.sections.experiences')}
             </h2>
+            {/* Note: Specific experience links are not in the JSON files and remain static. */}
             <ul className="space-y-2 text-gray-600 text-base">
               <li><Link href="" className="hover:text-blue-900">Online Experiences</Link></li>
               <li><Link href="" className="hover:text-blue-900">Local Experiences</Link></li>
@@ -85,16 +90,16 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-question-circle-fill text-pink-500 mr-2"></i>
-              Support & Community
+              {t('sitemap.sections.support')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="" className="hover:text-blue-900">Help Center</Link></li>
-              <li><Link href="" className="hover:text-blue-900">FAQ</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Contact Support</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Safety</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Community Guidelines</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Partners</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Sustainability / ESG</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.helpCenter')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.faq')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.contactSupport')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.safety')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.communityGuidelines')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.partners')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.sustainability')}</Link></li>
             </ul>
           </div>
 
@@ -102,17 +107,16 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-shield-lock-fill text-pink-500 mr-2"></i>
-                 Policies & Legal
+                 {t('sitemap.sections.policies')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="" className="hover:text-blue-900">Terms & Conditions</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Privacy Policy</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Cookies Policy</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Refund Policy</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Cancellation Policy</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Compliance</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Disclaimer</Link></li>
-
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.termsConditions')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.privacyPolicy')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.cookiesPolicy')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.refundPolicy')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.cancellationPolicy')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.compliance')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.disclaimer')}</Link></li>
             </ul>
           </div>
 
@@ -120,15 +124,15 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-building text-pink-500 mr-2"></i>
-              Hosting
+              {t('sitemap.sections.hosting')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="" className="hover:text-blue-900">Become a Host</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Hosting Tools</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Resources</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Host Safety</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Hosting Standards</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Experiences for Work</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.becomeHost')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.hostingTools')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.resources')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.hostSafety')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.hostingStandards')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.experiencesForWork')}</Link></li>
             </ul>
           </div>
 
@@ -136,19 +140,17 @@ const SitemapPage: React.FC = () => {
           <div>
             <h2 className="text-base font-semibold text-navy-800 mb-3 flex items-center">
               <i className="bi bi-phone-fill text-pink-500 mr-2"></i>
-              Mobile Apps
+              {t('sitemap.sections.mobileApps')}
             </h2>
             <ul className="space-y-2 text-gray-600 text-base">
-              <li><Link href="" className="hover:text-blue-900">iOS App</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Android App</Link></li>
-              <li><Link href="" className="hover:text-blue-900">Mobile Web</Link></li>
-              <li><Link href="" className="hover:text-blue-900">App Features</Link></li> 
-              <li><Link href="" className="hover:text-blue-900">Push Notifications</Link></li> 
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.iosApp')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.androidApp')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.mobileWeb')}</Link></li>
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.appFeatures')}</Link></li> 
+              <li><Link href="" className="hover:text-blue-900">{t('sitemap.links.pushNotifications')}</Link></li> 
             </ul>
           </div>
-
         </div>
-
       </div>
     </div>
   );

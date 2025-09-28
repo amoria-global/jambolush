@@ -131,7 +131,42 @@
     "passwordReset": "Ijambo ry'ibanga ryakozwe neza",
     "emailVerification": "Kwemeza Imeri",
     "verifyEmail": "Kwemeza Imeri",
-    "resendVerification": "Kongera Kohereza icyemeza"
+    "resendVerification": "Kongera Kohereza icyemeza",
+    "changeEmail": "Guhindura imeri",
+    "rememberMe": "Uziruke",
+    "forgotPasswordQuestion": "Wibagiwe ijambo ry'ibanga?",
+    "emailAddress": "Aderesi ya Imeri",
+    "password": "Ijambo ry'Ibanga",
+    "continue": "Komeza",
+    "signIn": "Injira",
+    "checking": "Birimo Gusuzuma...",
+    "signingIn": "Birimo Kwinjira...",
+    "dontHaveAccount": "Ntufite konti?",
+    "createOne": "Kore imwe",
+    "orContinueWith": "Cyangwa komeza na",
+    "signInWithGoogle": "Injira ukoresheje Google",
+    "enterEmailToContinue": "Shyiramo aderesi yawe ya imeri kugira ngo ukomeze",
+    "enterPasswordToSignIn": "Shyiramo ijambo ryawe ry'ibanga kugira ngo winjire",
+    "firstName": "Izina Rya Mbere",
+    "lastName": "Izina Ry'Umuryango",
+    "phoneNumber": "Numero ya Telefoni",
+    "country": "Igihugu",
+    "confirmPassword": "Emeza Ijambo ry'Ibanga",
+    "createPassword": "Kora ijambo ry'ibanga",
+    "confirmYourPassword": "Emeza ijambo ryawe ry'ibanga",
+    "passwordsDoNotMatch": "Amagambo y'ibanga ntabwo ahura",
+    "termsOfService": "Amabwiriza y'Ubufasha",
+    "privacyPolicy": "Politiki y'Ibanga",
+    "and": "na",
+    "acceptTerms": "Nemeza ko nasomye kandi nemeye",
+    "haveReadTerms": "Narasomye kandi nemeye",
+    "creatingAccount": "Birimo Gukora Konti...",
+    "alreadyHaveAccount": "Usanzwe ufite konti?",
+    "signInLink": "Injira",
+    "wantToBecomeServiceProvider": "Urashaka kuba umutanga serivisi?",
+    "joinAsHost": "Jya mu itsinda ry'abamusangwa",
+    "orSignUpWith": "Cyangwa wiyandikishe na",
+    "signUpWithGoogle": "Iyandikishe ukoresheje Google"
   },
   "search": {
     "searchProperties": "Gushakisha Imitungo",
@@ -298,26 +333,26 @@
 "becomeHost": {
   "roleSelection": {
     "title": "Kuba Utanga Serivisi",
-    "subtitle": "Hitamo uruhare rwawe tangira urugendo rwawe natwe. Uba uri nyir'umutungo, umukozi wo mu murima, cyangwa umunyamugayo w'ubukerarugendo.",
+    "subtitle": "Hitamo uruhare rwawe tangira urugendo rwawe natwe. Uba uri nyir'umutungo, Umukomisiyoneri, cyangwa Umufasha w'urugendo.",
     "host": {
       "title": "Nyir'umutungo",
       "description": "Shyira ku rutonde umutungo wawe, uhuze n'abaguzi cyangwa abakodesha bashobora, kandi ucunge ubwishingizi bwawe bw'umutungo."
     },
     "agent": {
-      "title": "Umukozi wo mu Murima",
+      "title": "Umukomisiyoneri",
       "description": "Fasha abakiriya kubona umutungo wabo ukwiye, utange ubuyobozi bw'inzobere, kandi ubone komisiyo ikwiye."
     },
     "tourguide": {
-      "title": "Umunyamugayo w'Ubukerarugendo",
+      "title": "Umufasha w'urugendo",
       "description": "Tanga ubukerarugendo butaribagirwa, werekane ahantu hazwi h'aho uherereye, kandi usangire urukundo rwawe rw'ingendo."
     }
   },
   "tourGuideType": {
-    "title": "Hitamo Ubwoko bw'Umunyamugayo w'Ubukerarugendo",
+    "title": "Hitamo Ubwoko bw'Umufasha w'urugendo",
     "subtitle": "Hitamo uko ukora kugira ngo ukomeze",
     "freelancer": {
       "title": "Umunyamurimo Wigenga (Ukora ku giti cye)",
-      "description": "Umunyamugayo w'ubukerarugendo ukora ku giti cye",
+      "description": "Umufasha w'urugendo ukora ku giti cye",
       "features": [
         "Gena igiciro n'amategeko yawe bwite",
         "Ubone isano itaziguye n'abakiriya",
@@ -400,57 +435,57 @@
   "agreeAndClose": "Kwemera no Gufunga"
 },
 "sitemap": {
-  "title": "Ikarita y'Urubuga",
-  "sections": {
-    "home": "Intangiriro",
-    "account": "Konti",
-    "destinations": "Ahantu Hagana",
-    "experiences": "Uburambe",
-    "support": "Ubufasha n'Umuryango",
-    "policies": "Amabwiriza n'Amategeko",
-    "hosting": "Kwakira",
-    "mobileApps": "Porogaramu z'Igikoresho"
-  },
-  "links": {
-    "mainPage": "Urupapuro Rw'ibanze",
-    "aboutUs": "Ibyerekeye",
-    "careers": "Imirimo",
-    "press": "Itangazamakuru",
-    "blog": "Blog",
-    "investors": "Abashoramari",
-    "login": "Kwinjira",
-    "signUp": "Kwiyandikisha",
-    "profile": "Umwirondoro",
-    "trips": "Ingendo",
-    "wishlist": "Urutonde rw'Ibyifuzo",
-    "giftCards": "Amakarita y'Impano",
-    "referFriend": "Kwerekeza Inshuti",
-    "helpCenter": "Ikigo cy'Ubufasha",
-    "faq": "Ibibazo Bikunze Kubazwa",
-    "contactSupport": "Vugana n'Ubufasha",
-    "safety": "Umutekano",
-    "communityGuidelines": "Amabwiriza y'Umuryango",
-    "partners": "Abafatanyabikorwa",
-    "sustainability": "Iterambere rirambye / ESG",
-    "termsConditions": "Amabwiriza n'Amasezerano",
-    "privacyPolicy": "Gahunda y'Ubuziko",
-    "cookiesPolicy": "Gahunda ya Cookies",
-    "refundPolicy": "Gahunda yo Gusubiza",
-    "cancellationPolicy": "Gahunda yo Guhagarika",
-    "compliance": "Gukurikiza Amategeko",
-    "disclaimer": "Kwiraho Inshingano",
-    "becomeHost": "Kuba Umusangwa",
-    "hostingTools": "Ibikoresho byo Kwakira",
-    "resources": "Ibikoresho",
-    "hostSafety": "Umutekano w'Umusangwa",
-    "hostingStandards": "Ibipimo byo Kwakira",
-    "experiencesForWork": "Uburambe bw'Akazi",
-    "iosApp": "Porogaramu ya iOS",
-    "androidApp": "Porogaramu ya Android",
-    "mobileWeb": "Urubuga rw'Igikoresho",
-    "appFeatures": "Ibintu by'Porogaramu",
-    "pushNotifications": "Ubutumwa bw'Icyamamaza"
-  }
+    "title": "Ikarita y'Urubuga",
+    "sections": {
+      "home": "Intangiriro",
+      "account": "Konti",
+      "destinations": "Ahantu Hagana",
+      "experiences": "Uburambe",
+      "support": "Ubufasha n'Umuryango",
+      "policies": "Amabwiriza n'Amategeko",
+      "hosting": "Kwakira",
+      "mobileApps": "Porogaramu z'Igikoresho"
+    },
+    "links": {
+      "mainPage": "Urupapuro Rw'ibanze",
+      "aboutUs": "Ibyerekeye",
+      "careers": "Imirimo",
+      "press": "Itangazamakuru",
+      "blog": "Blog",
+      "investors": "Abashoramari",
+      "login": "Kwinjira",
+      "signUp": "Kwiyandikisha",
+      "profile": "Umwirondoro",
+      "trips": "Ingendo",
+      "wishlist": "Urutonde rw'Ibyifuzo",
+      "giftCards": "Amakarita y'Impano",
+      "referFriend": "Kwerekeza Inshuti",
+      "helpCenter": "Ikigo cy'Ubufasha",
+      "faq": "Ibibazo Bikunze Kubazwa",
+      "contactSupport": "Vugana n'Ubufasha",
+      "safety": "Umutekano",
+      "communityGuidelines": "Amabwiriza y'Umuryango",
+      "partners": "Abafatanyabikorwa",
+      "sustainability": "Iterambere rirambye / ESG",
+      "termsConditions": "Amabwiriza n'Amasezerano",
+      "privacyPolicy": "Gahunda y'Ubuziko",
+      "cookiesPolicy": "Gahunda ya Cookies",
+      "refundPolicy": "Gahunda yo Gusubiza",
+      "cancellationPolicy": "Gahunda yo Guhagarika",
+      "compliance": "Gukurikiza Amategeko",
+      "disclaimer": "Kwiraho Inshingano",
+      "becomeHost": "Kuba Umusangwa",
+      "hostingTools": "Ibikoresho byo Kwakira",
+      "resources": "Ibikoresho",
+      "hostSafety": "Umutekano w'Umusangwa",
+      "hostingStandards": "Ibipimo byo Kwakira",
+      "experiencesForWork": "Uburambe bw'Akazi",
+      "iosApp": "Porogaramu ya iOS",
+      "androidApp": "Porogaramu ya Android",
+      "mobileWeb": "Urubuga rw'Igikoresho",
+      "appFeatures": "Ibintu by'Porogaramu",
+      "pushNotifications": "Ubutumwa bw'Icyamamaza"
+    }
 },
 "contact": {
   "header": {
@@ -600,7 +635,7 @@
     },
     "definitions": {
       "title": "1. Ibisobanuro",
-      "content": "1. Urubuga: bivuga urubuga rwa Jambolush, porogaramu y'igikoresho, n'ibikoresho byose bijyanye, tekinoloji, cyangwa sisitemu yoroshya guhuza abakerarugendo n'abatanga serivisi.\n2. Umusangwa: ni umuntu uwo ari we wese cyangwa ubucuruzi bushyira ku rutonde umutungo cyangwa aho gusengera kugira ngo bakodishe binyuze mu Rubuga.\n3. Umukoresha w'Ubukerarugendo: ni utanga serivisi zijyanye n'ubukerarugendo nk'ubugendanyi buyobowe, ibikorwa by'umuco, cyangwa ubunyangamugayo bw'ingendo buboneka ku Bashyitsi.\n4. Umushyitsi/Umukerarugendo: bivuga umuntu uwo ari we wese ubika, agashyira ku ruhande, cyangwa agura serivisi binyuze mu Rubuga.\n5. Umukozi wo mu Murima: ni uhagarariye Jambolush wemerewe ushinzwe kugenzura urutonde rw'imitungo, kwirinda ko byose byuye, no gutanga ubufasha kubatanga serivisi.\n6. Umukoresha: bikubiyemo umuntu uwo ari we wese cyangwa ikigo, harimo Abasangwa, Abashyitsi, Abakoresha b'Ubukerarugendo, n'Abakozi bo mu Murima, binjira cyangwa bakorana n'Urubuga mu buryo ubwo ari bwo bwose.\n7. Ibirimo: bivuga ibintu byose byashyizwe, byatangazwe, cyangwa byatanzwe n'Umukoresha, harimo ariko bitarenze inyandiko, amafoto, amashusho, ibitekerezo, cyangwa ubundi buryo bw'amakuru asangiwe binyuze mu Rubuga."
+      "content": "1. Urubuga: bivuga urubuga rwa Jambolush, porogaramu y'igikoresho, n'ibikoresho byose bijyanye, tekinoloji, cyangwa sisitemu yoroshya guhuza abakerarugendo n'abatanga serivisi.\n2. Umusangwa: ni umuntu uwo ari we wese cyangwa ubucuruzi bushyira ku rutonde umutungo cyangwa aho gusengera kugira ngo bakodishe binyuze mu Rubuga.\n3. Umukoresha w'Ubukerarugendo: ni utanga serivisi zijyanye n'ubukerarugendo nk'ubugendanyi buyobowe, ibikorwa by'umuco, cyangwa ubunyangamugayo bw'ingendo buboneka ku Bashyitsi.\n4. Umushyitsi/Umukerarugendo: bivuga umuntu uwo ari we wese ubika, agashyira ku ruhande, cyangwa agura serivisi binyuze mu Rubuga.\n5. Umukomisiyoneri: ni uhagarariye Jambolush wemerewe ushinzwe kugenzura urutonde rw'imitungo, kwirinda ko byose byuye, no gutanga ubufasha kubatanga serivisi.\n6. Umukoresha: bikubiyemo umuntu uwo ari we wese cyangwa ikigo, harimo Abasangwa, Abashyitsi, Abakoresha b'Ubukerarugendo, n'Abakozi bo mu Murima, binjira cyangwa bakorana n'Urubuga mu buryo ubwo ari bwo bwose.\n7. Ibirimo: bivuga ibintu byose byashyizwe, byatangazwe, cyangwa byatanzwe n'Umukoresha, harimo ariko bitarenze inyandiko, amafoto, amashusho, ibitekerezo, cyangwa ubundi buryo bw'amakuru asangiwe binyuze mu Rubuga."
     },
     "scope": {
       "title": "2. Uturere tw'Ubukoresha",
@@ -761,7 +796,7 @@
     },
     "definitions": {
       "title": "2. Ibisobanuro",
-      "content": "- Urubuga: Bivuga urubuga rwa JamboLush, porogaramu y'igikoresho, n'uburyo bwose bujyanye bukoreshwa mu gutanga ubukozi.\n- Umusangwa: Nyir'umutungo cyangwa utanga serivisi ushyira ku rutonde aho gusengera cyangwa serivisi ye ku rubuga.\n- Umushyitsi: Umukoresha ubika cyangwa ukoresha umutungo cyangwa serivisi abinyuze ku rubuga.\n- Umukoresha w'Ubukerarugendo: Ubucuruzi butanga serivisi z'ingendo cyangwa zijyanye n'ubugendanyi zuboneka byo kubika ku rubuga.\n- Umukozi wo mu Murima: Uhagarariye hafi uzwi kandi wizewe ufasha mu kwemeza umutungo no gutangiza abatanga serivisi.\n- Umunyamakoperative: Uwo ari we wese w'abantu bo ku ruhande bemejwe bakorana na JamboLush gushyigikira ubukozi bwayo.\n- Inzira y'Ubwishyu Yemejwe: Abatanga serivisi z'ubwishyu zifite umutekano kandi zenganijwe ku mugaragaro zikoreshwa gukora ubucuruzi ku rubuga."
+      "content": "- Urubuga: Bivuga urubuga rwa JamboLush, porogaramu y'igikoresho, n'uburyo bwose bujyanye bukoreshwa mu gutanga ubukozi.\n- Umusangwa: Nyir'umutungo cyangwa utanga serivisi ushyira ku rutonde aho gusengera cyangwa serivisi ye ku rubuga.\n- Umushyitsi: Umukoresha ubika cyangwa ukoresha umutungo cyangwa serivisi abinyuze ku rubuga.\n- Umukoresha w'Ubukerarugendo: Ubucuruzi butanga serivisi z'ingendo cyangwa zijyanye n'ubugendanyi zuboneka byo kubika ku rubuga.\n- Umukomisiyoneri: Uhagarariye hafi uzwi kandi wizewe ufasha mu kwemeza umutungo no gutangiza abatanga serivisi.\n- Umunyamakoperative: Uwo ari we wese w'abantu bo ku ruhande bemejwe bakorana na JamboLush gushyigikira ubukozi bwayo.\n- Inzira y'Ubwishyu Yemejwe: Abatanga serivisi z'ubwishyu zifite umutekano kandi zenganijwe ku mugaragaro zikoreshwa gukora ubucuruzi ku rubuga."
     },
     "scope": {
       "title": "3. Icyerekezo",
@@ -839,34 +874,84 @@
   "sortByPriceLowHigh": "Igiciro (ntoya kugeza kiri hejuru)",
   "sortByRating": "Igipimo"
 },
-"becomeHost": {
-  "joinPlatform": "Injira ku Rukiko Rwacu",
-  "fillDetails": "Nyamuneka uzuza amakuru yawe kugirango utangire",
-  "applicationTitles": {
-    "host": "Icyifuzo cy'Umutunzi w'Umutungo",
-    "agent": "Icyifuzo cy'Umukozi w'Ihuriro",
-    "tourguide": "Icyifuzo cy'Umunyamakuru w'Ubukerarugendo",
-    "freelance": "Ukora kw'ubuntu",
-    "company": "Ikigo"
-  },
-  "formSections": {
-    "personalInfo": "Amakuru Yihariye",
-    "locationInfo": "Amakuru y'Ahantu",
-    "professionalInfo": "Amakuru y'Umwuga",
-    "employmentType": "Ubwoko bw'Akazi"
-  },
-  "address": {
-    "state": "Leta",
-    "province": "Intara",
-    "city": "Umujyi",
-    "streetAddress": "Aderesi y'Umuhanda",
-    "zipCode": "Kode y'Iposita",
-    "postalCode": "Kode y'Iposita",
-    "postcode": "Kode y'Iposita"
+
+  "getStarted": {
+    "title": "Gutangira kuri Jambolush",
+    "subtitle": "Jambolush ni urubuga rukomeye ruhuza abakoresha n'ahantu hihariye ho gutura no gukora, hamwe n'uburambe. Hitamo uruhare hano hepfo urebe uko ushobora gutangira.",
+    "gettingStartedAs": "Gutangira nka {{title}}",
+    "proTip": "Inama y'impuguke:",
+    "roles": {
+      "guest": {
+        "title": "Abashyitsi",
+        "description": "Shakisha amazu yihariye, ingendo, n'uburambe. Bika aho ukama, genzura ingendo zawe, kandi ugende mu buryo bworoshye.",
+        "tip": "Fungura ibihembo by'ingendo! Tumira inshuti kuri Jambolush kugira ngo ubone amanota kandi ukoreshe amakarita y'impano kugira ngo kubika byorohere.",
+        "steps": [
+          "Tangira ufungura konti yawe ku rubuga rwa Jambolush, shakisha buto ya “Iyandikishe” ku ipaji ntangiriro.",
+          "Nyuma yo kwinjira, jya kuri \"Umwirondoro\" uhitemo “hindura umwirondoro” wongeremo ifoto n'amakuru yawe bwite.",
+          "Jya ku gice cya \"Kwishyura\" kugira ngo wongeremo uburyo bwawe bwo kwishyura mu mutekano woroshya kubika.",
+          "Sura \"Igenamiterere\" kugira ngo uhindure uburyo bwo kumenyeshwa n'ibindi bijyanye na konti yawe.",
+          "Kuva ku ipaji ntangiriro, koresha akabariro k'ishakisha k'ibanze uhitamo \"Kuguma\" ku bijyanye n'amacumbi cyangwa \"Ahantu\" ku hantu h'ingenzi. Andika aho hantu n'amagambo y'ingenzi kugira ngo ubone icyo ushaka. Ku bikorwa biyobowe, kanda buto ya \"Shakisha Urugendo\" mu ibarizo ryo hejuru.",
+          "Iyo ubonye ikintu ukunze, kibike mu \"Urutonde rw'Ibyifuzo\" kugira ngo ugereranye amahitamo yawe.",
+          "Iyo wamaze kwitegura, hitamo amatariki yawe maze urangize kubika.",
+          "KU RUGENDO: Iyo witeguye, rangiza kubika ukanda buto ya “BIKA NONE”.",
+          "Nyuma yo gukanda BIKA NONE no KOMEZA, ushobora gukomeza ukishyura.",
+          "Nyuma yo kubika, shakisha amakuru yose y'urugendo rwawe kandi ugenzure aho ukama munsi y'\"Ububiko Bwanjye\".",
+          "Koresha igice cya \"Gahunda\" kugira ngo ubone kalendari yoroshye y'ingendo zawe zose ziri imbere.",
+          "Niba ukeneye ubufasha, igice cy'\"Ubufasha n'Inkunga\" kirahari kugufasha."
+        ]
+      },
+      "propertyOwner": {
+        "title": "Nyir'umutungo",
+        "description": "Shyira ku rutonde imitungo yawe, huza n'abaguzi cyangwa abakodesha, kandi ucunge umutungo wawe.",
+        "tip": "Gukuraho imisoro no gusubizwa amafaranga.",
+        "steps": [
+          "Tangira ukanda buto ya “kuba umusangwa” maze uhitemo \"Nyir'umutungo\" nk'uruhare rwawe.",
+          "Uzuza urupapuro rusaba wandikamo amakuru yawe asabwa.",
+          "Ohereza ubusabe maze ushyireho ijambo ry'ibanga rikomeye kuri konti yawe.",
+          "Tegereza itsinda ryacu ry'ubuyobozi risuzume kandi ryemeze ubusabe bwawe.",
+          "Iyo umaze kubona ubutumwa bw'iyemezwa, injira mu Imbonerahamwe yawe nshya y'Umusangwa.",
+          "Ubwa mbere, jya kuri \"Umwirondoro\" wawe wongeremo ifoto n'umwirondoro, bifasha kubaka icyizere ku bashyitsi.",
+          "Jya kuri \"Imitungo Yanjye\" wongeremo urutonde rwawe rwa mbere. Shyiramo amafoto, andika ibisobanuro, shyiraho igiciro, kandi uvugurure igihe uboneka.",
+          "Iyo umutungo wawe uri ku murongo, genzura ibyabitswe byose biza mu gice cy'\"Ibyabitswe\".",
+          "Nyuma y'uko umushyitsi arangije kuguma, kurikirana amafaranga yawe kandi urebe amateka mu gice cy'\"Amafaranga Yinjijwe\".",
+          "Koresha igice cy'\"Isesengura\" kugira ngo ukurikirane imikorere yawe, igipimo cy'abantu baza, n'amafaranga winjiza kugira ngo unoze urutonde rwawe."
+        ]
+      },
+      "tourGuide": {
+        "title": "Umufasha w'urugendo",
+        "description": "Sangiza ishyaka ryawe n'ubumenyi bw'aho utuye. Yobora ingendo zitazibagirana, huza n'abagenzi bo ku isi yose, kandi winjize amafaranga ukora icyo ukunda.",
+        "tip": "Buri gihe jya uvugurura kalendari yawe y'igihe uboneka n'amakuru y'urugendo. Umunyamugayo witeguye neza kandi ugaragaza ukuri abona icyizere cyinshi n'abakiriya bagaruka.",
+        "steps": [
+          "Tangira ukanda buto ya \"kuba umusangwa\" maze uhitemo \"Umufasha w'urugendo\" nk'uruhare rwawe.",
+          "Uzuza ubusabe wandikamo amakuru yawe n'uburambe kugira ngo itsinda ryacu ribisuzume.",
+          "Iyo ubusabe bwawe bwemejwe, ushobora kwinjira mu Imbonerahamwe yawe nshya y'Umufasha w'urugendo.",
+          "Ubwa mbere, jya kuri \"Umwirondoro\" wawe ushyiremo ifoto y'umwuga kandi wandike umwirondoro ushimishije kugira ngo ukurure abagenzi.",
+          "Kurikirana amafaranga winjiza, ibyishyurwa bitegerejwe, n'ibyakozwe. Suzuma amateka ya komisiyo yawe kandi usabe kwishyurwa kuri konti yawe ihuza mu mucyo wose.",
+          "Genzura ingendo zawe zose ahantu hamwe uzirema, uzihindura, cyangwa uzikuraho. Ongeraho amakuru nk'ibisobanuro, ibiciro, n'igihe uboneka mu gihe ukurikirana ibyabitswe n'imikorere kugira ngo uteze imbere ubucuruzi bwawe.",
+          "Komeza gutunganya na kalendari y'ingendo zawe zose ziri imbere. Funga amatariki utaboneka, hindura amasaha, kandi uhuze na kalendari yawe bwite kugira ngo wirinde amakimbirane.",
+          "Reba ibitekerezo n'amanota by'abashyitsi kugira ngo ukomeze isura yawe. Shyira ahagaragara ibitekerezo byiza kandi ukoreshe ibitekerezo byubaka kugira ngo unoze ingendo zawe."
+        ]
+      },
+      "fieldAgent": {
+        "title": "Umukomisiyoneri",
+        "description": "Fasha abakiriya kubona umutungo wabo ukwiye, tanga ubuyobozi bw'inzobere, kandi ubone komisiyo ikwiye.",
+        "tip": "Kugira kalendari ivuguruye byongera kumenyekana kwawe, byubaka icyizere ku basangwa n'abashyitsi, kandi bigufasha kwinjiza byinshi, vuba.",
+        "steps": [
+          "Tangira ukanda buto ya \"kuba umusangwa\" maze uhitemo \"Umukomisiyoneri\" nk'uruhare rwawe.",
+          "Uzuza urupapuro rusaba rw'ibanze wandikamo amakuru yawe y'umwuga.",
+          "Tsinda neza \"Isuzuma ry'Umukomisiyoneri wa Jambolush\" kugira ngo werekane ubuhanga bwawe n'ubushobozi.",
+          "Nyuma yo gutsinda isuzuma, tegerereza itsinda ryacu ry'ubuyobozi risuzume kandi ritange iyemezwa rya nyuma.",
+          "Iyo byemejwe, uzamenyeshwa. Hanyuma ushobora kwinjira mu Imbonerahamwe yawe yemewe y'Umukozi.",
+          "Ubwa mbere, jya kuri \"Umwirondoro\" wawe ushyiremo ifoto y'umwuga n'umwirondoro kugira ngo wubake icyizere.",
+          "Jya ku gice cy'“Amafaranga Yinjijwe” kugira ngo urebe amafaranga winjiza kandi uhuze konti yawe ya banki kugira ngo wishyurwe komisiyo.",
+          "Menyera igice cy'\"Abakiriya\", aho uzagenzura urutonde rw'abakiriya bawe n'itumanaho.",
+          "Koresha igice cy'\"Imitungo\" kugira ngo ushakishe mu murongo urutonde ruhuye n'ibyo abakiriya bawe bakeneye.",
+          "Fasha abakiriya bawe kubika kandi ukurikirane uko bihagaze mu gice cy'\"Ibyabitswe\".",
+          "Kurikirana iterambere ryawe, igipimo cy'intsinzi, n'ibipimo by'ingenzi ku Imbonerahamwe yawe y'\"Imikorere\"."
+        ]
+      }
+    }
   }
-},
-"getStarted": {
-  "title": "Gutangira kuri Jambolush",
-  "subtitle": "Jambolush ni urubuga rukomeye ruhuza abakoresha n'ahantu hihariye ho gutura no gukora, hamwe n'uburambe. Hitamo uruhare hano hepfo urebe uko ushobora gutangira."
 }
-}
+
+

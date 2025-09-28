@@ -131,7 +131,42 @@
     "passwordReset": "Mot de passe réinitialisé",
     "emailVerification": "Vérification par E-mail",
     "verifyEmail": "Vérifier l'E-mail",
-    "resendVerification": "Renvoyer la Vérification"
+    "resendVerification": "Renvoyer la Vérification",
+    "changeEmail": "Changer l'email",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPasswordQuestion": "Mot de passe oublié ?",
+    "emailAddress": "Adresse E-mail",
+    "password": "Mot de Passe",
+    "continue": "Continuer",
+    "signIn": "Se Connecter",
+    "checking": "Vérification...",
+    "signingIn": "Connexion...",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "createOne": "Créer un",
+    "orContinueWith": "Ou continuer avec",
+    "signInWithGoogle": "Se connecter avec Google",
+    "enterEmailToContinue": "Entrez votre email pour continuer",
+    "enterPasswordToSignIn": "Entrez votre mot de passe pour vous connecter",
+    "firstName": "Prénom",
+    "lastName": "Nom de Famille",
+    "phoneNumber": "Numéro de Téléphone",
+    "country": "Pays",
+    "confirmPassword": "Confirmer le Mot de Passe",
+    "createPassword": "Créer un mot de passe",
+    "confirmYourPassword": "Confirmez votre mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "termsOfService": "Conditions de Service",
+    "privacyPolicy": "Politique de Confidentialité",
+    "and": "et",
+    "acceptTerms": "En créant un compte, vous acceptez nos",
+    "signingUp": "Inscription...",
+    "creatingAccount": "Création du Compte...",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signInLink": "Se connecter",
+    "wantToBecomeServiceProvider": "Voulez-vous devenir fournisseur de services ?",
+    "joinAsHost": "Rejoindre en tant qu'Hôte",
+    "orSignUpWith": "Ou s'inscrire avec",
+    "signUpWithGoogle": "S'inscrire avec Google"
   },
   "search": {
     "searchProperties": "Rechercher des Propriétés",
@@ -299,41 +334,36 @@
   "roleSelection": {
     "title": "Devenir Fournisseur de Services",
     "subtitle": "Choisissez votre rôle et commencez votre voyage avec nous. Que vous soyez propriétaire, agent de terrain ou guide touristique.",
-    "host": {
-      "title": "Propriétaire",
-      "description": "Listez vos propriétés, connectez-vous avec des acheteurs ou locataires potentiels, et gérez votre portefeuille immobilier."
+    "host": { "title": "Propriétaire", "description": "Listez vos propriétés, connectez-vous avec des acheteurs ou locataires potentiels, et gérez votre portefeuille immobilier." },
+    "agent": { "title": "Agent de Terrain", "description": "Aidez les clients à trouver leur propriété parfaite, fournissez des conseils d'expert et gagnez des commissions compétitives." },
+    "tourguide": { "title": "Guide Touristique", "description": "Offrez des visites guidées inoubliables, présentez les attractions locales et partagez votre passion pour le voyage." }
+  },
+  "tourGuideType": {
+    "title": "Choisissez Votre Type de Guide Touristique",
+    "subtitle": "Sélectionnez votre statut d'emploi pour continuer",
+    "freelancer": {
+      "title": "Freelance (Indépendant)", "description": "Guide touristique indépendant travaillant à son compte",
+      "features": ["Fixez vos propres tarifs et horaires", "Relations directes avec les clients", "Contrôle total sur vos services", "Potentiel de revenus plus élevé", "Autonomie commerciale complète"]
     },
-    "agent": {
-      "title": "Agent de Terrain",
-      "description": "Aidez les clients à trouver leur propriété parfaite, fournissez des conseils d'expert et gagnez des commissions compétitives."
+    "company": {
+      "title": "Entreprise", "description": "Travaillant en tant qu'entreprise de tourisme",
+      "features": ["Salaire stable et avantages sociaux", "Formation fournie par l'entreprise", "Marketing et support client", "Réservations de groupe et ressources", "Opportunités de développement professionnel"]
     },
-    "tourguide": {
-      "title": "Guide Touristique",
-      "description": "Offrez des visites guidées inoubliables, présentez les attractions locales et partagez votre passion pour le voyage."
-    }
+    "requirements": { "title": "Exigences Documentaires", "freelancer": "Vous devez télécharger une pièce d'identité nationale pour vérification", "company": "Vous devez télécharger le document d'enregistrement de l'entreprise pour vérification" }
   },
   "forms": {
-    "personalInfo": "Informations Personnelles",
-    "locationInfo": "Informations de Localisation",
-    "professionalInfo": "Informations Professionnelles",
-    "employmentType": "Type d'Emploi",
-    "fullName": "Nom Complet",
-    "emailAddress": "Adresse Email",
-    "phoneNumber": "Numéro de Téléphone",
-    "country": "Pays",
-    "state": "État",
-    "province": "Province",
-    "city": "Ville",
-    "streetAddress": "Adresse",
-    "zipCode": "Code Postal",
-    "postalCode": "Code Postal",
-    "postcode": "Code Postal",
-    "experienceLevel": "Niveau d'Expérience",
-    "propertyCategories": "Catégories de Propriétés",
-    "servicesOffered": "Services Offerts",
-    "continue": "Continuer",
-    "changeEmail": "Changer l'email"
-  }
+    "personalInfo": "Informations Personnelles", "locationInfo": "Informations de Localisation", "professionalInfo": "Informations Professionnelles", "employmentType": "Type d'Emploi", "experienceLevel": "Niveau d'Expérience", "email": "Adresse E-mail", "password": "Mot de Passe", "firstName": "Prénom", "lastName": "Nom de Famille", "phone": "Numéro de Téléphone", "dateOfBirth": "Date de Naissance", 
+    "experienceLevels": ["Débutant (0-1 ans)", "Junior (1-3 ans)", "Intermédiaire (3-5 ans)", "Senior (5-10 ans)", "Expert (10+ ans)"],
+    "propertyCategories": "Catégories de Propriétés", "propertyCategoriesOptions": ["Maisons Résidentielles", "Appartements/Condos", "Propriétés Commerciales", "Terrains/Parcelles", "Locations de Vacances", "Propriétés Industrielles", "Espaces de Bureau", "Espaces de Vente au Détail"],
+    "servicesOffered": "Services Offerts", "servicesOfferedOptions": ["Visites de Ville", "Visites Culturelles", "Visites Nature/Faune", "Sites Historiques", "Visites d'Aventure", "Visites Gastronomiques", "Visites Photographiques", "Visites Personnalisées"],
+    "nationalIdNumber": "Numéro de Carte d'Identité Nationale", "uploadNationalId": "Télécharger la Carte d'Identité (Recto & Verso)", "companyName": "Nom de l'Entreprise", "companyRegistration": "Numéro d'Immatriculation de l'Entreprise", "uploadCompanyDoc": "Télécharger le Document d'Immatriculation",
+    "continueApplication": "Continuer la Candidature", "checkingInfo": "Vérification...", "signingIn": "Connexion...", "creating": "Création du Compte...", "uploading": "Téléchargement...", "submitting": "Envoi...",
+    "joinPlatform": "Rejoignez Notre Plateforme", "fillDetails": "Veuillez remplir vos informations pour commencer",
+    "applicationTitles": { "host": "Candidature de Propriétaire", "agent": "Candidature d'Agent de Terrain", "tourguide": "Candidature de Guide Touristique", "freelancer": "Freelance", "company": "Entreprise" },
+    "documentUpload": { "selectFile": "Cliquez pour télécharger", "fileFormats": "JPEG, PNG ou PDF (max 5Mo)", "fileSelected": "Fichier sélectionné :", "clickToChange": "Cliquez pour changer", "uploading": "Téléchargement" },
+    "address": { "state": "État", "province": "Province", "city": "Ville", "streetAddress": "Adresse", "zipCode": "Code Postal", "postalCode": "Code Postal", "postcode": "Code Postal" }
+  },
+  "success": { "title": "Candidature Envoyée !", "description": "Votre candidature a été envoyée avec succès !", "verifyDescription": "Veuillez vérifier votre e-mail pour valider votre compte et configurer votre mot de passe.", "verifyButton": "Vérifier le Compte et Définir le Mot de Passe", "submitAnother": "Soumettre une Autre Candidature" }
 },
 "cookies": {
   "title": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez personnaliser vos paramètres ci-dessous.",
@@ -351,34 +381,59 @@
   "agreeAndClose": "Accepter et Fermer"
 },
 "sitemap": {
-  "title": "Plan du Site",
-  "sections": {
-    "home": "Accueil",
-    "account": "Compte",
-    "destinations": "Destinations",
-    "experiences": "Expériences",
-    "support": "Support et Communauté",
-    "policies": "Politiques et Légal",
-    "hosting": "Hébergement",
-    "mobileApps": "Applications Mobiles"
-  },
-  "links": {
-    "mainPage": "Page Principale",
-    "aboutUs": "À Propos de Nous",
-    "careers": "Carrières",
-    "press": "Presse",
-    "blog": "Blog",
-    "investors": "Investisseurs",
-    "login": "Se Connecter",
-    "signUp": "S'Inscrire",
-    "profile": "Profil",
-    "trips": "Voyages",
-    "wishlist": "Liste de Souhaits",
-    "giftCards": "Cartes Cadeaux",
-    "referFriend": "Recommander un Ami",
-    "becomeHost": "Devenir Hôte"
-  }
+    "title": "Plan du Site",
+    "sections": {
+      "home": "Accueil",
+      "account": "Compte",
+      "destinations": "Destinations",
+      "experiences": "Expériences",
+      "support": "Support et Communauté",
+      "policies": "Politiques et Légal",
+      "hosting": "Hébergement",
+      "mobileApps": "Applications Mobiles"
+    },
+    "links": {
+      "mainPage": "Page Principale",
+      "aboutUs": "À Propos de Nous",
+      "careers": "Carrières",
+      "press": "Presse",
+      "blog": "Blog",
+      "investors": "Investisseurs",
+      "login": "Se Connecter",
+      "signUp": "S'Inscrire",
+      "profile": "Profil",
+      "trips": "Voyages",
+      "wishlist": "Liste de Souhaits",
+      "giftCards": "Cartes Cadeaux",
+      "referFriend": "Recommander un Ami",
+      "helpCenter": "Centre d'Aide",
+      "faq": "FAQ",
+      "contactSupport": "Contacter le Support",
+      "safety": "Sécurité",
+      "communityGuidelines": "Directives de la Communauté",
+      "partners": "Partenaires",
+      "sustainability": "Durabilité / ESG",
+      "termsConditions": "Conditions Générales",
+      "privacyPolicy": "Politique de Confidentialité",
+      "cookiesPolicy": "Politique des Cookies",
+      "refundPolicy": "Politique de Remboursement",
+      "cancellationPolicy": "Politique d'Annulation",
+      "compliance": "Conformité",
+      "disclaimer": "Avis de non-responsabilité",
+      "becomeHost": "Devenir Hôte",
+      "hostingTools": "Outils d'Hébergement",
+      "resources": "Ressources",
+      "hostSafety": "Sécurité de l'Hôte",
+      "hostingStandards": "Normes d'Hébergement",
+      "experiencesForWork": "Expériences pour le Travail",
+      "iosApp": "App iOS",
+      "androidApp": "App Android",
+      "mobileWeb": "Web Mobile",
+      "appFeatures": "Fonctionnalités de l'App",
+      "pushNotifications": "Notifications Push"
+    }
 },
+
 "contact": {
   "header": {
     "title": "Entrez en Contact",
@@ -766,34 +821,83 @@
   "sortByPriceLowHigh": "Prix (bas à élevé)",
   "sortByRating": "Évaluation"
 },
-"becomeHost": {
-  "joinPlatform": "Rejoignez Notre Plateforme",
-  "fillDetails": "Veuillez remplir vos détails pour commencer",
-  "applicationTitles": {
-    "host": "Candidature Propriétaire",
-    "agent": "Candidature Agent de Terrain",
-    "tourguide": "Candidature Guide Touristique",
-    "freelance": "Indépendant",
-    "company": "Entreprise"
-  },
-  "formSections": {
-    "personalInfo": "Informations Personnelles",
-    "locationInfo": "Informations de Localisation",
-    "professionalInfo": "Informations Professionnelles",
-    "employmentType": "Type d'Emploi"
-  },
-  "address": {
-    "state": "État",
-    "province": "Province",
-    "city": "Ville",
-    "streetAddress": "Adresse",
-    "zipCode": "Code Postal",
-    "postalCode": "Code Postal",
-    "postcode": "Code Postal"
+
+  "getStarted": {
+    "title": "Commencer sur Jambolush",
+    "subtitle": "Jambolush est une plateforme dynamique qui met en relation les utilisateurs avec des espaces de vie et de travail uniques, ainsi que des expériences. Sélectionnez un rôle ci-dessous pour voir comment vous pouvez commencer.",
+    "gettingStartedAs": "Commencer en tant que {{title}}",
+    "proTip": "Conseil de pro :",
+    "roles": {
+      "guest": {
+        "title": "Invités",
+        "description": "Explorez des maisons, des visites et des expériences uniques. Réservez votre séjour, gérez vos voyages et voyagez en toute simplicité.",
+        "tip": "Débloquez des récompenses de voyage ! Invitez des amis sur Jambolush pour gagner des crédits et utilisez des cartes-cadeaux pour faciliter encore plus la réservation.",
+        "steps": [
+          "Commencez par créer votre compte sur le site de Jambolush en trouvant le bouton « S'inscrire » sur la page d'accueil.",
+          "Après vous être connecté, allez dans \"Profil\" pour choisir “modifier le profil” afin d'ajouter une photo et vos informations personnelles.",
+          "Allez à l'onglet \"Paiements\" pour ajouter en toute sécurité votre méthode de paiement préférée pour une réservation facile.",
+          "Visitez les \"Paramètres\" pour configurer vos préférences de notification et autres détails de compte.",
+          "Depuis la page d'accueil, utilisez la barre de recherche principale en sélectionnant \"Séjour\" pour les hébergements ou \"Lieu\" pour les points d'intérêt. Entrez un lieu et des mots-clés pour trouver ce que vous cherchez. Pour les activités guidées, cliquez sur le bouton \"Trouver un Tour\" dans le menu supérieur.",
+          "Lorsque vous trouvez quelque chose qui vous plaît, enregistrez-le dans votre \"Liste de Souhaits\" pour comparer vos options préférées.",
+          "Une fois que vous êtes prêt, sélectionnez vos dates et finalisez votre réservation.",
+          "POUR LES TOURS : Une fois prêt, finalisez votre réservation en cliquant sur le bouton « RÉSERVER MAINTENANT ».",
+          "Après avoir cliqué sur RÉSERVER MAINTENANT et PRÉSERVER, vous pouvez procéder au paiement.",
+          "Après la réservation, retrouvez tous les détails de votre voyage et gérez votre séjour sous \"Mes Réservations\".",
+          "Utilisez l'onglet \"Calendrier\" pour voir un aperçu pratique de tous vos voyages à venir.",
+          "Si vous avez besoin d'aide, la section \"Aide & Support\" est disponible pour vous assister."
+        ]
+      },
+      "propertyOwner": {
+        "title": "Propriétaire",
+        "description": "Listez vos propriétés, connectez-vous avec des acheteurs ou locataires potentiels, et gérez votre portefeuille immobilier.",
+        "tip": "Annulation des taxes et remboursements.",
+        "steps": [
+          "Commencez en cliquant sur le bouton « devenir hôte » et en sélectionnant \"Propriétaire\" comme rôle.",
+          "Remplissez le formulaire de candidature avec les informations requises.",
+          "Soumettez la candidature et définissez un mot de passe sécurisé pour votre compte.",
+          "Attendez que notre équipe administrative examine et approuve votre candidature.",
+          "Une fois que vous recevez une notification d'approbation, connectez-vous à votre nouveau tableau de bord d'hôte.",
+          "D'abord, allez dans votre \"Profil\" pour ajouter une photo et une biographie, ce qui aide à instaurer la confiance avec les invités.",
+          "Allez dans \"Mes Propriétés\" pour ajouter votre première annonce. Téléchargez des photos, rédigez une description, fixez votre prix et mettez à jour votre disponibilité.",
+          "Une fois votre propriété en ligne, gérez toutes les réservations entrantes depuis l'onglet \"Réservations\".",
+          "Après le séjour d'un invité, suivez vos paiements et consultez l'historique sous l'onglet \"Revenus\".",
+          "Utilisez l'onglet \"Analytiques\" pour suivre vos performances, taux d'occupation et revenus afin d'optimiser votre annonce."
+        ]
+      },
+      "tourGuide": {
+        "title": "Guide Touristique",
+        "description": "Partagez votre passion et vos connaissances locales. Organisez des visites inoubliables, rencontrez des voyageurs du monde entier et gagnez de l'argent en faisant ce que vous aimez.",
+        "tip": "Gardez toujours votre calendrier de disponibilité et les détails de vos visites à jour. Un guide bien préparé et transparent gagne plus de confiance et de réservations répétées.",
+        "steps": [
+          "Commencez en cliquant sur le bouton \"devenir hôte\" et en sélectionnant \"GUIDE TOURISTIQUE\" comme rôle.",
+          "Remplissez la candidature avec vos informations et votre expertise pour examen par notre équipe.",
+          "Une fois votre candidature approuvée, vous pourrez vous connecter à votre nouveau tableau de bord de Guide Touristique.",
+          "D'abord, allez dans votre \"Profil\" pour télécharger une photo professionnelle et rédiger une biographie convaincante pour attirer les voyageurs.",
+          "Suivez vos revenus, paiements en attente et transactions terminées. Consultez votre historique de commissions et demandez des paiements directement sur votre compte lié en toute transparence.",
+          "Gérez toutes vos visites en un seul endroit en les créant, modifiant ou retirant. Ajoutez des détails comme les descriptions, les tarifs et la disponibilité tout en suivant les réservations et les performances pour développer votre activité.",
+          "Restez organisé avec un calendrier de toutes vos visites à venir. Bloquez les dates indisponibles, ajustez les créneaux horaires et synchronisez avec votre calendrier personnel pour éviter les conflits.",
+          "Consultez les commentaires et évaluations des invités pour renforcer votre réputation. Mettez en avant les avis positifs et utilisez les commentaires constructifs pour améliorer vos visites."
+        ]
+      },
+      "fieldAgent": {
+        "title": "Agent de Terrain",
+        "description": "Aidez les clients à trouver leur propriété idéale, fournissez des conseils d'expert et gagnez des commissions compétitives.",
+        "tip": "Garder votre calendrier à jour augmente votre visibilité, renforce la confiance avec les hôtes et les invités, et vous aide à gagner plus, plus rapidement.",
+        "steps": [
+          "Commencez en cliquant sur le bouton \"devenir hôte\" et en sélectionnant \"Agent de Terrain\" comme rôle.",
+          "Remplissez le formulaire de candidature initial avec vos informations professionnelles.",
+          "Réussissez l'\"Évaluation d'Agent de Terrain Jambolush\" pour démontrer vos compétences et votre adéquation.",
+          "Après avoir réussi l'évaluation, attendez que notre équipe administrative examine et donne son approbation finale.",
+          "Une fois approuvé, vous serez notifié. Vous pourrez alors vous connecter à votre tableau de bord officiel d'Agent.",
+          "D'abord, allez dans votre \"Profil\" pour télécharger une photo professionnelle et une biographie pour renforcer votre crédibilité.",
+          "Allez à l'onglet “Revenus” pour voir vos revenus et connecter votre compte bancaire pour les paiements de commissions.",
+          "Familiarisez-vous avec l'onglet \"Clients\", où vous gérerez votre liste de clients et vos communications.",
+          "Utilisez la section \"Propriétés\" pour rechercher sur le réseau des annonces correspondant aux besoins de vos clients.",
+          "Assistez vos clients avec les réservations et suivez leur statut dans la section \"Réservations\".",
+          "Suivez vos progrès, votre taux de réussite et vos indicateurs clés sur votre tableau de bord \"Performance\"."
+        ]
+      }
+    }
   }
-},
-"getStarted": {
-  "title": "Commencer sur Jambolush",
-  "subtitle": "Jambolush est une plateforme dynamique connectant les utilisateurs avec des espaces de vie et de travail uniques, ainsi que des expériences. Sélectionnez un rôle ci-dessous pour voir comment vous pouvez commencer."
 }
-}
+

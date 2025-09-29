@@ -8,6 +8,7 @@ import { useState, useEffect, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
 import { decodeId, encodeId } from '@/app/utils/encoder';
 import { calculateDisplayPrice, calculateBookingTotal, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import Head from 'next/head';
 
 interface HousePageProps {
   params: Promise<{
@@ -172,9 +173,20 @@ export default function HousePage({ params }: HousePageProps) {
 
   const router = useRouter();
   const pathname = usePathname();
-  
+
   // Get today's date for min date attribute
   const today = new Date().toISOString().split('T')[0];
+
+  // Fallback image URL for when images fail to load
+  const fallbackImageUrl = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop';
+
+  // Handle image load errors
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    if (target.src !== fallbackImageUrl) {
+      target.src = fallbackImageUrl;
+    }
+  };
 
   // Validate and decode property ID
   useEffect(() => {
@@ -279,7 +291,8 @@ export default function HousePage({ params }: HousePageProps) {
         
         if (response.data.success) {
           // Transform backend review data to frontend format
-          const transformedReviews = response.data.map((review: any) => ({
+          const reviewsData = Array.isArray(response.data.data) ? response.data.data : [];
+          const transformedReviews: Review[] = reviewsData.map((review: any) => ({
             id: review.id,
             name: review.userName || review.guestName || 'Anonymous',
             date: new Date(review.createdAt).toLocaleDateString('en-US', { 
@@ -706,9 +719,9 @@ export default function HousePage({ params }: HousePageProps) {
 
   return (
     <>
-      <head>
+      <Head>
         <title>{house?.title}</title>
-      </head>
+      </Head>
       
       {/* Alert Notification */}
       {alert.show && (
@@ -777,15 +790,16 @@ export default function HousePage({ params }: HousePageProps) {
 
           {/* Photos Section */}
           <div className="mb-8 sm:mb-12">
-            {house?.photos && house.photos.length > 0 && (
+            {house?.photos && house.photos.length > 0 ? (
               <>
                 {/* Mobile: Single large image with carousel */}
                 <div className="block sm:hidden">
                   <div className="relative h-64 rounded-xl overflow-hidden">
-                    <img 
-                      src={house.photos[selectedPhoto]}
+                    <img
+                      src={house.photos[selectedPhoto] || fallbackImageUrl}
                       alt={`House view ${selectedPhoto + 1}`}
                       className="w-full h-full object-cover"
+                      onError={handleImageError}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
@@ -813,20 +827,21 @@ export default function HousePage({ params }: HousePageProps) {
                 <div className="hidden sm:block lg:hidden">
                   <div className="grid grid-cols-2 gap-2 h-[400px] rounded-xl overflow-hidden relative">
                     {house.photos.slice(0, 4).map((photo: string, idx: number) => (
-                      <div 
-                        key={idx} 
+                      <div
+                        key={idx}
                         className="relative group cursor-pointer overflow-hidden"
-                        onClick={() => setSelectedPhoto(idx)}
+                        onClick={() => router.push(`${pathname}/photos`)}
                       >
-                        <img 
-                          src={photo}
+                        <img
+                          src={photo || fallbackImageUrl}
                           alt={`House view ${idx + 1}`}
                           className="w-full h-full object-cover"
+                          onError={handleImageError}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
                       </div>
                     ))}
-                    <button 
+                    <button
                       className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-base font-medium"
                       onClick={() => router.push(`${pathname}/photos`)}
                     >
@@ -836,32 +851,41 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 </div>
 
-                {/* Desktop: 4x4 grid */}
+                {/* Desktop: 4x4 grid with main large card and 4 horizontal cards */}
                 <div className="hidden lg:block">
                   <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
-                    <div className="col-span-2 row-span-2 relative group cursor-pointer" onClick={() => setSelectedPhoto(0)}>
-                      <img 
-                        src={house.photos[0]}
+                    {/* Main large card (2x2) */}
+                    <div
+                      className="col-span-2 row-span-2 relative group cursor-pointer"
+                      onClick={() => router.push(`${pathname}/photos`)}
+                    >
+                      <img
+                        src={house.photos[0] || fallbackImageUrl}
                         alt="Primary house view"
                         className="w-full h-full object-cover"
+                        onError={handleImageError}
                       />
                       <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
                     </div>
-                    {house.photos.slice(1).map((photo: string, idx: number) => (
-                      <div 
-                        key={idx} 
+
+                    {/* Four horizontal parallel cards - only show first 4 after main */}
+                    {house.photos.slice(1, 5).map((photo: string, idx: number) => (
+                      <div
+                        key={idx}
                         className="relative group cursor-pointer overflow-hidden"
-                        onClick={() => setSelectedPhoto(idx + 1)}
+                        onClick={() => router.push(`${pathname}/photos`)}
                       >
-                        <img 
-                          src={photo}
+                        <img
+                          src={photo || fallbackImageUrl}
                           alt={`House view ${idx + 2}`}
                           className="w-full h-full object-cover"
+                          onError={handleImageError}
                         />
                         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
                       </div>
                     ))}
-                    <button 
+
+                    <button
                       className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer"
                       onClick={() => router.push(`${pathname}/photos`)}
                     >
@@ -871,6 +895,15 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 </div>
               </>
+            ) : (
+              <div className="flex justify-center items-center h-64 bg-gray-100 rounded-xl">
+                <div className="text-center">
+                  <div className="text-gray-400 mb-2">
+                    <i className="bi bi-image text-4xl"></i>
+                  </div>
+                  <p className="text-gray-500">No photos available</p>
+                </div>
+              </div>
             )}
           </div>
 

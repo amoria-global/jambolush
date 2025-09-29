@@ -85,7 +85,7 @@ const PrivacyPage: React.FC = () => {
 
   const contactInfo = [
     { icon: 'bi bi-person-fill', text: t('privacy.contact.dpo') },
-    { icon: 'bi bi-envelope-fill', text: 'info@jambolush.com', link: 'mailto:info@jambolush.com' },
+    { icon: 'bi bi-envelope-fill', text: 'privacy@jambolush.com', link: 'mailto:privacy@jambolush.com' },
     { icon: 'bi bi-geo-alt-fill', text: t('privacy.contact.location') },
     { icon: 'bi bi-telephone-fill', text: '+250788 437 347', link: 'tel:+250788437347' },
   ];

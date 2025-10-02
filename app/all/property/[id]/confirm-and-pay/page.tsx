@@ -256,7 +256,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         agentId: undefined, // Set if you have agent system
         splitRules: {
           host: 78.95,      // Host gets 78.95%
-          agent: 4.39,      // Agent gets 8.77%
+          agent: 4.38,      // Agent gets 8.77%
           platform: 16.67   // Platform gets 12.28%
         },
         billingInfo: {

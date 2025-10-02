@@ -427,7 +427,7 @@ function LoginContent() {
     }
 
     if (verificationStatus !== 'verified') {
-      const dashboardBase = 'app.jambolush.com';
+      const dashboardBase = 'https://app.jambolush.com';
       switch (userRole) {
         case 'host':
           setNotify({ type: "warning", message: "Please complete your KYC verification." });

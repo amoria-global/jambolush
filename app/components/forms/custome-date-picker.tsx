@@ -93,7 +93,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   const formatDisplayDate = (dateStr: string): string => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
+    // Parse as local date, not UTC
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-indexed
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 

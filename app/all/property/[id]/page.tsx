@@ -482,7 +482,8 @@ export default function HousePage({ params }: HousePageProps) {
 
       // Calculate the total using display price and full breakdown for backend
       const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
-      const totalPrice = calculateBookingTotal(house.price, days, false);
+      const totalPrice = calculateTotal();
+      
 
       // Prepare booking data using the decoded property ID
       const bookingData: CreatePropertyBookingDto = {
@@ -977,20 +978,6 @@ export default function HousePage({ params }: HousePageProps) {
                       <i className="bi bi-exclamation-triangle-fill mr-2"></i>
                       {bookingError}
                     </p>
-                  </div>
-                )}
-
-                {occupiedDates.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
-                    <div className="space-y-1">
-                      {occupiedDates.map((date, idx) => (
-                        <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
-                          <i className="bi bi-calendar-x-fill text-xs"></i>
-                          <span>{new Date(date).toLocaleDateString()}</span>
-                        </div>
-                      ))}
-                    </div>
                   </div>
                 )}
 

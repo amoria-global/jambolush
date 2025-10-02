@@ -11,7 +11,7 @@ interface BookingData {
   id: string;
   propertyId: number;
   propertyName: string;
-  hostId: number; // Add hostId for escrow
+  hostId: number;
   checkIn: string;
   checkOut: string;
   guests: number;
@@ -28,6 +28,8 @@ interface BookingData {
   };
 }
 
+const USD_TO_RWF_RATE = 1499.9;
+
 const PaymentPage: React.FC<PaymentPageProps> = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,18 +41,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
-
-  // Form data states
-  const [cardData, setCardData] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardholderName: ''
-  });
-
-  const [mobileData, setMobileData] = useState({
-    phoneNumber: ''
-  });
 
   // Fetch current user
   useEffect(() => {
@@ -72,7 +62,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   // Update price breakdown when payment method changes
   useEffect(() => {
     if (bookingData) {
-      
       const displayPricePerNight = bookingData.totalPrice / bookingData.nights;
       const isPayAtProperty = paymentMethod === 'pay_at_property';
       
@@ -116,7 +105,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         );
 
         let propertyName = 'Property Booking';
-        let hostId = booking.hostId || 1; // Default to 1 if not provided
+        let hostId = booking.hostId || 1;
         
         try {
           const propertyResponse = await api.getProperty(booking.propertyId);
@@ -157,78 +146,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     }
   };
 
-  const handleCardInputChange = (field: string, value: string) => {
-    let formattedValue = value;
-
-    if (field === 'cardNumber') {
-      formattedValue = value.replace(/\s/g, '').replace(/(.{4})/g, '$1 ').trim();
-      if (formattedValue.length > 19) formattedValue = formattedValue.substring(0, 19);
-    }
-
-    if (field === 'expiryDate') {
-      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
-      if (formattedValue.length > 5) formattedValue = formattedValue.substring(0, 5);
-    }
-
-    if (field === 'cvv') {
-      formattedValue = value.replace(/\D/g, '');
-      if (formattedValue.length > 4) formattedValue = formattedValue.substring(0, 4);
-    }
-
-    setCardData(prev => ({ ...prev, [field]: formattedValue }));
-    
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const handleMobileInputChange = (value: string) => {
-    let formattedValue = value;
-    
-    if (paymentMethod === 'momo' && !value.startsWith('+250')) {
-      formattedValue = value.replace(/^\+?250?/, '+250 ');
-    } else if (paymentMethod === 'mpesa' && !value.startsWith('+254')) {
-      formattedValue = value.replace(/^\+?254?/, '+254 ');
-    }
-
-    setMobileData({ phoneNumber: formattedValue });
-    if (errors.phoneNumber) {
-      setErrors(prev => ({ ...prev, phoneNumber: '' }));
-    }
-  };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!paymentMethod) {
-      newErrors.paymentMethod = 'Please select a payment method';
-    }
-
-    if (paymentMethod === 'card') {
-      if (!cardData.cardNumber.replace(/\s/g, '')) {
-        newErrors.cardNumber = 'Card number is required';
-      } else if (cardData.cardNumber.replace(/\s/g, '').length < 13) {
-        newErrors.cardNumber = 'Card number is too short';
-      }
-
-      if (!cardData.cardholderName) {
-        newErrors.cardholderName = 'Cardholder name is required';
-      }
-
-      if (!cardData.expiryDate) {
-        newErrors.expiryDate = 'Expiry date is required';
-      }
-
-      if (!cardData.cvv) {
-        newErrors.cvv = 'CVV is required';
-      }
-    }
-
-    if (paymentMethod && ['momo', 'airtel', 'mpesa'].includes(paymentMethod)) {
-      if (!mobileData.phoneNumber) {
-        newErrors.phoneNumber = 'Phone number is required';
-      }
-    }
+    // Payment method validation removed - auto-proceed to payment gateway
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -244,12 +165,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setErrors({});
 
       const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalPrice;
+      
+      // Convert USD to RWF for processing
+      const finalAmountRWF = Math.round(finalAmount * USD_TO_RWF_RATE);
 
       // ==================== ESCROW INTEGRATION ====================
       // Create deposit through Pesapal Escrow API
       const depositPayload = {
-        amount: finalAmount,
-        currency: 'USD', // US Dollar
+        amount: finalAmountRWF,
+        currency: 'RWF',
         reference: `BOOKING-${bookingData.id}-${Date.now()}`,
         description: `Payment for ${bookingData.propertyName}`,
         hostId: bookingData.hostId,
@@ -261,9 +185,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         },
         billingInfo: {
           email: currentUser.email,
-          phone: mobileData.phoneNumber || currentUser.phone || '+250788123456',
-          firstName: currentUser.firstName || cardData.cardholderName?.split(' ')[0] || 'Guest',
-          lastName: currentUser.lastName || cardData.cardholderName?.split(' ').slice(1).join(' ') || 'User',
+          phone: currentUser.phone || '+250788123456',
+          firstName: currentUser.firstName || 'Guest',
+          lastName: currentUser.lastName || 'User',
           countryCode: 'RW'
         }
       };
@@ -341,7 +265,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   return (
     <>
       <head>
-        <title>Confirm and Pay - Secure Escrow Payment</title>
+        <title>Confirm and Pay - Secure Payment</title>
       </head>
       <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4">
         
@@ -366,26 +290,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         `}</style>
         
         <div className="max-w-7xl mx-auto mt-14">
-          {/* Escrow Security Banner */}
-          <div className="mb-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <i className="bi bi-shield-check text-2xl text-green-600 mr-3"></i>
-              <div>
-                <h3 className="font-semibold text-gray-900">Secure Escrow Payment</h3>
-                <p className="text-sm text-gray-600">
-                  Your payment is protected in escrow until check-in is confirmed. 
-                  Funds are held securely and only released to the host after successful check-in.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             
             {/* Left Side - Payment Form */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               
               {/* Step 1: Payment Method Selection */}
+              {/* 
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
@@ -454,40 +365,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 </div>
                 {errors.paymentMethod && <p className="error-message mt-2">{errors.paymentMethod}</p>}
               </div>
+              */}
 
-              {/* Step 2: Payment Details */}
-              {paymentMethod && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
-                      style={{ backgroundColor: '#F20C8F' }}>
-                      2
-                    </div>
-                    <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
-                      Enter payment details
-                    </h2>
-                  </div>
-
-                  {(paymentMethod === 'momo' || paymentMethod === 'airtel') && (
-                    <div>
-                      <label className="block text-base font-medium mb-2">Phone Number *</label>
-                      <input
-                        type="tel"
-                        placeholder="+250 7XX XXX XXX"
-                        value={mobileData.phoneNumber}
-                        onChange={(e) => handleMobileInputChange(e.target.value)}
-                        className={`w-full p-3 border rounded-lg text-base ${errors.phoneNumber ? 'error-input' : 'border-gray-300'}`}
-                      />
-                      {errors.phoneNumber && <p className="error-message">{errors.phoneNumber}</p>}
-                      <p className="text-base text-gray-500 mt-2">
-                        Enter your {paymentMethod === 'momo' ? 'MTN Mobile Money' : 'Airtel Money'} number
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Order Summary and Submit */}
+              {/* Payment Summary and Submit */}
               {bookingData && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
@@ -515,7 +395,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </div>
                     
                     <div className="border-t pt-3 flex justify-between">
-                      <span className="font-semibold" style={{ color: '#083A85' }}>Total (Held in Escrow)</span>
+                      <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
                       <span className="font-bold text-lg" style={{ color: '#083A85' }}>
                         ${bookingData.priceBreakdown?.total || bookingData.totalPrice}
                       </span>
@@ -541,7 +421,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       </>
                     ) : (
                       <>
-                        <i className="bi bi-shield-check mr-2"></i>
+                        <i className="bi bi-lock-fill mr-2"></i>
                         Pay ${bookingData.priceBreakdown?.total || bookingData.totalPrice} Securely
                       </>
                     )}
@@ -549,7 +429,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   
                   <p className="text-base text-gray-500 mt-4 text-center">
                     <i className="bi bi-lock-fill mr-1"></i>
-                    Secured by Pesapal Escrow • Funds protected until check-in
+                    Secured payment gateway
                   </p>
                 </div>
               )}
@@ -598,12 +478,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </>
                 )}
 
-                <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <div className="flex items-start">
-                    <i className="bi bi-shield-check text-green-600 mr-2 mt-1"></i>
-                    <div className="text-xs text-green-800">
-                      <div className="font-semibold mb-1">Escrow Protection</div>
-                      <div>Your payment is held securely until check-in is confirmed</div>
+                    <i className="bi bi-shield-check text-blue-600 mr-2 mt-1"></i>
+                    <div className="text-xs text-blue-800">
+                      <div className="font-semibold mb-1">Secure Payment</div>
+                      <div>Your payment information is encrypted and secure</div>
                     </div>
                   </div>
                 </div>

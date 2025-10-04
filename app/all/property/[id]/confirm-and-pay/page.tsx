@@ -28,19 +28,25 @@ interface BookingData {
   };
 }
 
-const USD_TO_RWF_RATE = 1499.9;
+interface HostDetails {
+  email: string;
+  name: string;
+  phone: string;
+}
 
 const PaymentPage: React.FC<PaymentPageProps> = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'momo' | 'airtel' | 'mpesa' | 'pay_at_property' | null>(null);
-  const [isLoggedIn] = useState(true);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
+  const [hostDetails, setHostDetails] = useState<HostDetails | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
+  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   // Fetch current user
   useEffect(() => {
@@ -49,8 +55,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         const response = await api.get('/auth/me');
         if (response.data && response.data.success) {
           setCurrentUser(response.data.data);
+          // Pre-fill phone number if available
+          if (response.data.data.phone) {
+            setPhoneNumber(response.data.data.phone);
+          }
         } else if (response.data) {
           setCurrentUser(response.data);
+          if (response.data.phone) {
+            setPhoneNumber(response.data.phone);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -59,24 +72,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     fetchUser();
   }, []);
 
-  // Update price breakdown when payment method changes
-  useEffect(() => {
-    if (bookingData) {
-      const displayPricePerNight = bookingData.totalPrice / bookingData.nights;
-      const isPayAtProperty = paymentMethod === 'pay_at_property';
-      
-      const updatedBreakdown = calculatePriceBreakdown(
-        displayPricePerNight, 
-        bookingData.nights, 
-        isPayAtProperty
-      );
-      
-      setBookingData(prev => prev ? {
-        ...prev,
-        priceBreakdown: updatedBreakdown
-      } : null);
-    }
-  }, [paymentMethod, bookingData?.totalPrice, bookingData?.nights]);
 
   // Load booking data
   useEffect(() => {
@@ -106,12 +101,31 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
         let propertyName = 'Property Booking';
         let hostId = booking.hostId || 1;
-        
+        let hostData: HostDetails | null = null;
+
         try {
           const propertyResponse = await api.getProperty(booking.propertyId);
           if (propertyResponse.data.success && propertyResponse.data.data) {
             propertyName = propertyResponse.data.data.name || propertyName;
             hostId = propertyResponse.data.data.hostId || hostId;
+
+            // Fetch host details
+            if (hostId) {
+              try {
+                const hostResponse = await api.get(`/users/${hostId}`);
+                if (hostResponse.data.success && hostResponse.data.data) {
+                  const host = hostResponse.data.data;
+                  hostData = {
+                    email: host.email || 'host@example.com',
+                    name: `${host.firstName || 'Host'} ${host.lastName || 'Name'}`,
+                    phone: host.phone || '+250788123456'
+                  };
+                  setHostDetails(hostData);
+                }
+              } catch (error) {
+                console.warn('Could not fetch host details:', error);
+              }
+            }
           }
         } catch (error) {
           console.warn('Could not fetch property details:', error);
@@ -149,10 +163,31 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Payment method validation removed - auto-proceed to payment gateway
+    if (!paymentMethod) {
+      newErrors.paymentMethod = 'Please select a payment method';
+    }
+
+    if (paymentMethod === 'momo') {
+      if (!momoProvider) {
+        newErrors.momoProvider = 'Please select a mobile money provider';
+      }
+      if (!phoneNumber || phoneNumber.trim() === '') {
+        newErrors.phoneNumber = 'Phone number is required for mobile money';
+      } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
+        newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormComplete = () => {
+    if (!paymentMethod) return false;
+    if (paymentMethod === 'momo') {
+      return momoProvider !== null && phoneNumber.trim() !== '';
+    }
+    return true; // Card only needs payment method selected
   };
 
   const handleSubmit = async () => {
@@ -165,64 +200,87 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setErrors({});
 
       const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalPrice;
-      
-      // Convert USD to RWF for processing
-      const finalAmountRWF = Math.round(finalAmount * USD_TO_RWF_RATE);
 
-      // ==================== ESCROW INTEGRATION ====================
-      // Create deposit through Pesapal Escrow API
+      // Determine endpoint based on payment method
+      const endpoint = paymentMethod === 'card'
+        ? '/payments/deposits'
+        : '/payments/xentripay/deposits';
+
+      // Build payload matching backend expectations
       const depositPayload = {
-        amount: finalAmountRWF,
-        currency: 'RWF',
-        reference: `BOOKING-${bookingData.id}-${Date.now()}`,
+        // User (buyer) information
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        userName: `${currentUser.firstName} ${currentUser.lastName}`,
+        userPhone: paymentMethod === 'momo' ? phoneNumber : (currentUser.phone || '+250788123456'),
+
+        // Recipient (seller/host) information
+        recipientId: bookingData.hostId,
+        recipientEmail: hostDetails?.email || 'host@example.com',
+        recipientName: hostDetails?.name || 'Host Name',
+        recipientPhone: hostDetails?.phone || '+250788123456',
+
+        // Transaction details
+        amount: finalAmount,
         description: `Payment for ${bookingData.propertyName}`,
-        hostId: bookingData.hostId,
-        agentId: undefined, // Set if you have agent system
-        splitRules: {
-          host: 78.95,      // Host gets 78.95%
-          agent: 4.38,      // Agent gets 8.77%
-          platform: 16.67   // Platform gets 12.28%
-        },
-        billingInfo: {
-          email: currentUser.email,
-          phone: currentUser.phone || '+250788123456',
-          firstName: currentUser.firstName || 'Guest',
-          lastName: currentUser.lastName || 'User',
-          countryCode: 'RW'
+        paymentMethod,
+        platformFeePercentage: undefined, // Backend will use default
+
+        // Metadata
+        metadata: {
+          bookingType: 'property',
+          bookingId: bookingData.id,
+          propertyId: bookingData.propertyId,
+          checkIn: bookingData.checkIn,
+          checkOut: bookingData.checkOut,
+          nights: bookingData.nights,
+          guests: bookingData.guests,
+          propertyName: bookingData.propertyName,
+          momoProvider: paymentMethod === 'momo' ? momoProvider : undefined
         }
       };
 
-      console.log('[PAYMENT] Creating escrow deposit:', depositPayload);
+      console.log('[PAYMENT] Creating deposit:', {
+        endpoint,
+        paymentMethod,
+        amount: finalAmount
+      });
 
-      // Call Pesapal Escrow API
-      const response = await api.post('/payments/deposits', depositPayload);
+      // Call appropriate deposit endpoint
+      const response = await api.post(endpoint, depositPayload);
 
       if (response.data.success) {
-        const { transaction, checkoutUrl } = response.data.data;
-        
-        console.log('[PAYMENT] Escrow deposit created:', transaction);
-        console.log('[PAYMENT] Redirecting to Pesapal:', checkoutUrl);
+        const { transactionId, status, redirectUrl, instructions } = response.data.data;
 
-        // Store transaction ID in session/local storage for callback
-        sessionStorage.setItem('escrow_transaction_id', transaction.id);
-        sessionStorage.setItem('booking_id', bookingData.id);
+        console.log('[PAYMENT] Deposit created:', { transactionId, status });
 
-        // Redirect to Pesapal payment page
-        window.location.href = checkoutUrl;
+        // Store transaction ID for callback
+        sessionStorage.setItem('payment_transaction_id', transactionId);
+        sessionStorage.setItem('property_booking_id', bookingData.id);
+
+        if (paymentMethod === 'card' && redirectUrl) {
+          // Redirect to payment gateway for card
+          window.location.href = redirectUrl;
+        } else if (paymentMethod === 'momo') {
+          // For MoMo, show instructions and redirect to status page
+          if (instructions) {
+            alert(instructions);
+          }
+          router.push(`/payment/pending?tx=${transactionId}`);
+        }
       } else {
-        setErrors({ 
-          general: response.data.message || 'Failed to create payment. Please try again.' 
+        setErrors({
+          general: response.data.message || 'Failed to create payment. Please try again.'
         });
       }
     } catch (error: any) {
-      console.error('[PAYMENT] Escrow deposit error:', error);
-      
-      const errorMessage = JSON.stringify(error.data.error.details.errors[0]) || 
-                          error?.response?.data?.error?.message || 
+      console.error('[PAYMENT] Deposit error:', error);
+
+      const errorMessage = error?.response?.data?.error?.message ||
                           error?.response?.data?.message ||
-                          error?.message || 
+                          error?.message ||
                           'Payment failed. Please try again.';
-      
+
       setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
@@ -271,17 +329,27 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         
         <style jsx>{`
           @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
-          
-          input:focus {
+
+          input[type="text"]:focus,
+          input[type="tel"]:focus {
             outline: none;
             border-color: #F20C8F;
             box-shadow: 0 0 0 3px rgba(242, 12, 143, 0.1);
           }
-          
+
+          input[type="radio"]:checked {
+            accent-color: #F20C8F;
+          }
+
+          input[type="radio"]:focus {
+            outline: 2px solid #F20C8F;
+            outline-offset: 2px;
+          }
+
           .error-input {
             border-color: #ef4444 !important;
           }
-          
+
           .error-message {
             color: #ef4444;
             font-size: 0.875rem;
@@ -292,80 +360,115 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         <div className="max-w-7xl mx-auto mt-14">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             
-            {/* Left Side - Payment Form */}
+            {/* Left Side - Payment Summary */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-              
-              {/* Step 1: Payment Method Selection */}
-              {/* 
+
+              {/* Payment Method Selection */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-base font-medium text-white mr-3"
-                    style={{ backgroundColor: '#F20C8F' }}>
-                    1
-                  </div>
-                  <h2 className="text-lg font-semibold" style={{ color: '#083A85' }}>
-                    Select payment method
-                  </h2>
-                </div>
-                
-                <div className="space-y-3">
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'momo' ? '#F20C8F' : '#e5e7eb' }}>
+                <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
+                  Select Payment Method
+                </h2>
+
+                {errors.paymentMethod && (
+                  <p className="error-message mb-3">{errors.paymentMethod}</p>
+                )}
+
+                <div className="space-y-4">
+                  <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="radio"
-                      name="payment-method"
+                      name="paymentMethod"
                       value="momo"
                       checked={paymentMethod === 'momo'}
-                      onChange={() => setPaymentMethod('momo')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
+                      onChange={() => {
+                        setPaymentMethod('momo');
+                        setErrors({});
+                      }}
+                      className="h-5 w-5 cursor-pointer"
                     />
-                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Mobile Money (MoMo)</div>
-                      <div className="text-base text-gray-500">MTN Mobile Money - Secure & Fast</div>
-                    </div>
+                    <span className="text-base">Mobile Money (MTN / Airtel)</span>
                   </label>
-                  
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'airtel' ? '#F20C8F' : '#e5e7eb' }}>
+
+                  {paymentMethod === 'momo' && (
+                    <div className="ml-8 space-y-4 pt-2">
+                      {errors.momoProvider && (
+                        <p className="error-message">{errors.momoProvider}</p>
+                      )}
+
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="momoProvider"
+                            value="MTN"
+                            checked={momoProvider === 'MTN'}
+                            onChange={() => {
+                              setMomoProvider('MTN');
+                              setErrors({});
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          <span>MTN MoMo</span>
+                        </label>
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="momoProvider"
+                            value="AIRTEL"
+                            checked={momoProvider === 'AIRTEL'}
+                            onChange={() => {
+                              setMomoProvider('AIRTEL');
+                              setErrors({});
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          <span>Airtel Money</span>
+                        </label>
+                      </div>
+
+                      <div className="pt-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={phoneNumber}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                            setErrors({});
+                          }}
+                          placeholder="e.g., 0788123456"
+                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-all ${
+                            errors.phoneNumber ? 'error-input' : 'border-gray-300'
+                          }`}
+                        />
+                        {errors.phoneNumber && (
+                          <p className="error-message">{errors.phoneNumber}</p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-1">
+                          Enter your mobile money number
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="radio"
-                      name="payment-method"
-                      value="airtel"
-                      checked={paymentMethod === 'airtel'}
-                      onChange={() => setPaymentMethod('airtel')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
-                    />
-                    <i className="bi bi-phone mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Airtel Money</div>
-                      <div className="text-base text-gray-500">Airtel Mobile Money</div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center p-3 sm:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-gray-300"
-                    style={{ borderColor: paymentMethod === 'card' ? '#F20C8F' : '#e5e7eb' }}>
-                    <input
-                      type="radio"
-                      name="payment-method"
+                      name="paymentMethod"
                       value="card"
                       checked={paymentMethod === 'card'}
-                      onChange={() => setPaymentMethod('card')}
-                      className="mr-3"
-                      style={{ accentColor: '#F20C8F' }}
+                      onChange={() => {
+                        setPaymentMethod('card');
+                        setMomoProvider(null);
+                        setErrors({});
+                      }}
+                      className="h-5 w-5 cursor-pointer"
                     />
-                    <i className="bi bi-credit-card mr-3 text-xl" style={{ color: '#083A85' }}></i>
-                    <div className="flex-1">
-                      <div className="font-medium">Credit/Debit Card</div>
-                      <div className="text-base text-gray-500">Visa, Mastercard, Amex</div>
-                    </div>
+                    <span className="text-base">Credit/Debit Card</span>
                   </label>
                 </div>
-                {errors.paymentMethod && <p className="error-message mt-2">{errors.paymentMethod}</p>}
               </div>
-              */}
 
               {/* Payment Summary and Submit */}
               {bookingData && (
@@ -402,15 +505,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     </div>
                   </div>
                   
-                  <button 
+                  <button
                     onClick={handleSubmit}
-                    disabled={loading}
+                    disabled={loading || !isFormComplete()}
                     className={`w-full py-3 px-6 rounded-lg text-white font-medium transition-all ${
-                      loading 
-                        ? 'bg-gray-400 cursor-not-allowed' 
+                      loading || !isFormComplete()
+                        ? 'bg-gray-400 cursor-not-allowed'
                         : 'cursor-pointer hover:opacity-90'
                     }`}
-                    style={loading ? {} : { backgroundColor: '#F20C8F' }}>
+                    style={(loading || !isFormComplete()) ? {} : { backgroundColor: '#F20C8F' }}>
                     {loading ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

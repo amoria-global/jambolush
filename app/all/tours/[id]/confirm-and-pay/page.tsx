@@ -47,7 +47,11 @@ interface TourBookingData {
   };
 }
 
-const USD_TO_RWF_RATE = 1499.9;
+interface HostDetails {
+  email: string;
+  name: string;
+  phone: string;
+}
 
 const TourPaymentPage: React.FC = () => {
   const router = useRouter();
@@ -56,8 +60,12 @@ const TourPaymentPage: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState<TourBookingData | null>(null);
+  const [hostDetails, setHostDetails] = useState<HostDetails | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
+  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   // Fetch current user
   useEffect(() => {
@@ -66,8 +74,15 @@ const TourPaymentPage: React.FC = () => {
         const response = await api.get('/auth/me');
         if (response.data && response.data.success) {
           setCurrentUser(response.data.data);
+          // Pre-fill phone number if available
+          if (response.data.data.phone) {
+            setPhoneNumber(response.data.data.phone);
+          }
         } else if (response.data) {
           setCurrentUser(response.data);
+          if (response.data.phone) {
+            setPhoneNumber(response.data.phone);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -100,6 +115,7 @@ const TourPaymentPage: React.FC = () => {
         
         let tourDetails: any = null;
         let hostId = booking.hostId || 1;
+        let hostData: HostDetails | null = null;
         
         try {
           const tourResponse = await api.get(`/tours/${booking.tourId}`);
@@ -114,6 +130,24 @@ const TourPaymentPage: React.FC = () => {
               images: tour.images
             };
             hostId = tour.hostId || hostId;
+
+            // Fetch host details
+            if (hostId) {
+              try {
+                const hostResponse = await api.get(`/users/${hostId}`);
+                if (hostResponse.data.success && hostResponse.data.data) {
+                  const host = hostResponse.data.data;
+                  hostData = {
+                    email: host.email || 'host@example.com',
+                    name: `${host.firstName || 'Host'} ${host.lastName || 'Name'}`,
+                    phone: host.phone || '+250788123456'
+                  };
+                  setHostDetails(hostData);
+                }
+              } catch (error) {
+                console.warn('Could not fetch host details:', error);
+              }
+            }
           }
         } catch (error) {
           console.warn('Could not fetch tour details:', error);
@@ -186,8 +220,32 @@ const TourPaymentPage: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+
+    if (!paymentMethod) {
+      newErrors.paymentMethod = 'Please select a payment method';
+    }
+
+    if (paymentMethod === 'momo') {
+      if (!momoProvider) {
+        newErrors.momoProvider = 'Please select a mobile money provider';
+      }
+      if (!phoneNumber || phoneNumber.trim() === '') {
+        newErrors.phoneNumber = 'Phone number is required for mobile money';
+      } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
+        newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormComplete = () => {
+    if (!paymentMethod) return false;
+    if (paymentMethod === 'momo') {
+      return momoProvider !== null && phoneNumber.trim() !== '';
+    }
+    return true; // Card only needs payment method selected
   };
 
   const handleSubmit = async () => {
@@ -200,66 +258,80 @@ const TourPaymentPage: React.FC = () => {
       setErrors({});
 
       const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalAmount;
-      
-      // Convert USD to RWF for processing
-      const finalAmountRWF = Math.round(finalAmount * USD_TO_RWF_RATE);
 
-      // ==================== ESCROW INTEGRATION ====================
-      // Create deposit through Pesapal Escrow API
+      // Determine endpoint based on payment method
+      const endpoint = paymentMethod === 'card' 
+        ? '/payments/deposits'
+        : '/payments/xentripay/deposits';
+
+      // Build payload matching backend expectations
       const depositPayload = {
-        amount: finalAmountRWF,
-        currency: 'RWF',
-        reference: `TOUR-${bookingData.id}-${Date.now()}`,
+        // User (buyer) information
+        userId: currentUser.id,
+        userEmail: currentUser.email,
+        userName: `${currentUser.firstName} ${currentUser.lastName}`,
+        userPhone: paymentMethod === 'momo' ? phoneNumber : (currentUser.phone || '+250788123456'),
+        
+        // Recipient (seller/host) information
+        recipientId: bookingData.hostId,
+        recipientEmail: hostDetails?.email || 'host@example.com',
+        recipientName: hostDetails?.name || 'Host Name',
+        recipientPhone: hostDetails?.phone || '+250788123456',
+        
+        // Transaction details
+        amount: finalAmount,
         description: `Payment for ${bookingData.tourTitle}`,
-        hostId: bookingData.hostId,
-        agentId: undefined, // Set if you have agent system
-        splitRules: {
-          host: 78.95,      // Host gets 78.95%
-          agent: 4.38,      // Agent gets 4.38%
-          platform: 16.67   // Platform gets 16.67%
-        },
-        billingInfo: {
-          email: currentUser.email,
-          phone: currentUser.phone || '+250788123456',
-          firstName: currentUser.firstName || 'Guest',
-          lastName: currentUser.lastName || 'User',
-          countryCode: 'RW'
-        },
-        // Tour-specific metadata
+        paymentMethod,
+        platformFeePercentage: undefined, // Backend will use default
+        
+        // Metadata
         metadata: {
           bookingType: 'tour',
+          bookingId: bookingData.id,
           tourId: bookingData.tourId,
           scheduleId: bookingData.scheduleId,
           numberOfParticipants: bookingData.numberOfParticipants,
           scheduleDate: bookingData.scheduleDate,
-          tourTitle: bookingData.tourTitle
+          tourTitle: bookingData.tourTitle,
+          momoProvider: paymentMethod === 'momo' ? momoProvider : undefined
         }
       };
 
-      console.log('[PAYMENT] Creating escrow deposit:', depositPayload);
+      console.log('[PAYMENT] Creating deposit:', {
+        endpoint,
+        paymentMethod,
+        amount: finalAmount
+      });
 
-      // Call Pesapal Escrow API
-      const response = await api.post('/payments/deposits', depositPayload);
+      // Call appropriate deposit endpoint
+      const response = await api.post(endpoint, depositPayload);
 
       if (response.data.success) {
-        const { transaction, checkoutUrl } = response.data.data;
+        const { transactionId, status, redirectUrl, instructions } = response.data.data;
         
-        console.log('[PAYMENT] Escrow deposit created:', transaction);
-        console.log('[PAYMENT] Redirecting to Pesapal:', checkoutUrl);
+        console.log('[PAYMENT] Deposit created:', { transactionId, status });
 
-        // Store transaction ID in session/local storage for callback
-        sessionStorage.setItem('escrow_transaction_id', transaction.id);
+        // Store transaction ID for callback
+        sessionStorage.setItem('payment_transaction_id', transactionId);
         sessionStorage.setItem('tour_booking_id', bookingData.id);
 
-        // Redirect to Pesapal payment page
-        window.location.href = checkoutUrl;
+        if (paymentMethod === 'card' && redirectUrl) {
+          // Redirect to payment gateway for card
+          window.location.href = redirectUrl;
+        } else if (paymentMethod === 'momo') {
+          // For MoMo, show instructions and redirect to status page
+          if (instructions) {
+            alert(instructions);
+          }
+          router.push(`/payment/status?tx=${transactionId}`);
+        }
       } else {
         setErrors({ 
           general: response.data.message || 'Failed to create payment. Please try again.' 
         });
       }
     } catch (error: any) {
-      console.error('[PAYMENT] Escrow deposit error:', error);
+      console.error('[PAYMENT] Deposit error:', error);
       
       const errorMessage = error?.response?.data?.error?.message || 
                           error?.response?.data?.message ||
@@ -323,10 +395,20 @@ const TourPaymentPage: React.FC = () => {
         <style jsx>{`
           @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
           
-          input:focus {
+          input[type="text"]:focus,
+          input[type="tel"]:focus {
             outline: none;
             border-color: #F20C8F;
             box-shadow: 0 0 0 3px rgba(242, 12, 143, 0.1);
+          }
+
+          input[type="radio"]:checked {
+            accent-color: #F20C8F;
+          }
+
+          input[type="radio"]:focus {
+            outline: 2px solid #F20C8F;
+            outline-offset: 2px;
           }
           
           .error-input {
@@ -345,6 +427,113 @@ const TourPaymentPage: React.FC = () => {
             
             {/* Left Side - Payment Summary */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+              
+              {/* Payment Method Selection */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
+                  Select Payment Method
+                </h2>
+                
+                {errors.paymentMethod && (
+                  <p className="error-message mb-3">{errors.paymentMethod}</p>
+                )}
+                
+                <div className="space-y-4">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="momo"
+                      checked={paymentMethod === 'momo'}
+                      onChange={() => {
+                        setPaymentMethod('momo');
+                        setErrors({});
+                      }}
+                      className="h-5 w-5 cursor-pointer"
+                    />
+                    <span className="text-base">Mobile Money (MTN / Airtel)</span>
+                  </label>
+                  
+                  {paymentMethod === 'momo' && (
+                    <div className="ml-8 space-y-4 pt-2">
+                      {errors.momoProvider && (
+                        <p className="error-message">{errors.momoProvider}</p>
+                      )}
+                      
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="momoProvider" 
+                            value="MTN"
+                            checked={momoProvider === 'MTN'}
+                            onChange={() => {
+                              setMomoProvider('MTN');
+                              setErrors({});
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          <span>MTN MoMo</span>
+                        </label>
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="momoProvider" 
+                            value="AIRTEL"
+                            checked={momoProvider === 'AIRTEL'}
+                            onChange={() => {
+                              setMomoProvider('AIRTEL');
+                              setErrors({});
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          <span>Airtel Money</span>
+                        </label>
+                      </div>
+
+                      <div className="pt-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={phoneNumber}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                            setErrors({});
+                          }}
+                          placeholder="e.g., 0788123456"
+                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-all ${
+                            errors.phoneNumber ? 'error-input' : 'border-gray-300'
+                          }`}
+                        />
+                        {errors.phoneNumber && (
+                          <p className="error-message">{errors.phoneNumber}</p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-1">
+                          Enter your mobile money number
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="card"
+                      checked={paymentMethod === 'card'}
+                      onChange={() => {
+                        setPaymentMethod('card');
+                        setMomoProvider(null);
+                        setErrors({});
+                      }}
+                      className="h-5 w-5 cursor-pointer"
+                    />
+                    <span className="text-base">Credit/Debit Card</span>
+                  </label>
+                </div>
+              </div>
               
               {/* Payment Summary and Submit */}
               {bookingData && (
@@ -383,13 +572,13 @@ const TourPaymentPage: React.FC = () => {
                   
                   <button 
                     onClick={handleSubmit}
-                    disabled={loading}
+                    disabled={loading || !isFormComplete()}
                     className={`w-full py-3 px-6 rounded-lg text-white font-medium transition-all ${
-                      loading 
+                      loading || !isFormComplete()
                         ? 'bg-gray-400 cursor-not-allowed' 
                         : 'cursor-pointer hover:opacity-90'
                     }`}
-                    style={loading ? {} : { backgroundColor: '#F20C8F' }}>
+                    style={(loading || !isFormComplete()) ? {} : { backgroundColor: '#F20C8F' }}>
                     {loading ? (
                       <>
                         <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

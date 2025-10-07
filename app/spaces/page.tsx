@@ -1,9 +1,11 @@
 "use client";
-import { useState, useEffect, useCallback } from 'react';
+
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import HouseCard from "../components/home/houseCard";
 import { api } from "../api/api-conn";
 
+// Define TypeScript interfaces
 interface Property {
   id: number;
   name: string;
@@ -36,14 +38,11 @@ interface HouseCardProperty {
   availability?: string;
 }
 
-interface PropertiesData {
-  properties: Property[];
-  total?: number;
-  totalPages?: number;
-  currentPage?: number;
-}
-
-const SpacesPage = () => {
+//=================================================================
+// STEP 1: All your original logic goes into this new component.
+// It uses the searchParams hook and will be wrapped by Suspense.
+//=================================================================
+const SpacesContent = () => {
   const searchParams = useSearchParams();
   const [houses, setHouses] = useState<HouseCardProperty[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,7 +51,7 @@ const SpacesPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  // Filter states
+  // Filter states are initialized here using the hook
   const [search, setSearch] = useState<string>(searchParams.get('search') || '');
   const [location, setLocation] = useState<string>(searchParams.get('location') || '');
   const [priceRange, setPriceRange] = useState<string>(searchParams.get('priceRange') || '');
@@ -63,6 +62,9 @@ const SpacesPage = () => {
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  // The rest of your functions (transformProperty, fetchProperties, etc.)
+  // and the entire JSX return statement go here, unchanged.
 
   const transformProperty = useCallback((backendProperty: Property): HouseCardProperty => {
     return {
@@ -522,6 +524,60 @@ const SpacesPage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+
+//=================================================================
+// STEP 2: Create a loading skeleton for the fallback UI.
+//=================================================================
+const LoadingSkeleton = () => {
+    return (
+        <div className="mt-18 p-2">
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Simplified header part */}
+                <div className="mb-8 animate-pulse">
+                    <div className="h-6 w-32 bg-gray-200 rounded mb-4"></div>
+                    <div className="h-8 w-48 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-5 w-64 bg-gray-200 rounded"></div>
+                </div>
+                {/* Search Bar Skeleton */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6 animate-pulse">
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <div className="flex-1 bg-gray-200 h-11 rounded-lg"></div>
+                        <div className="flex-1 bg-gray-200 h-11 rounded-lg"></div>
+                        <div className="w-28 bg-gray-200 h-11 rounded-lg"></div>
+                        <div className="w-32 bg-gray-200 h-11 rounded-lg"></div>
+                    </div>
+                </div>
+                {/* Grid Skeleton */}
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 auto-rows-fr">
+                    {Array.from({ length: 12 }).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                            <div className="bg-gray-300 h-40 rounded-t-xl"></div>
+                            <div className="bg-gray-100 p-3 rounded-b-xl">
+                                <div className="bg-gray-300 h-4 rounded mb-2"></div>
+                                <div className="bg-gray-300 h-3 rounded mb-2"></div>
+                                <div className="bg-gray-300 h-3 rounded w-2/3"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+//=================================================================
+// STEP 3: The main page export now just wraps the content
+// component in a Suspense boundary.
+//=================================================================
+const SpacesPage = () => {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <SpacesContent />
+    </Suspense>
   );
 };
 

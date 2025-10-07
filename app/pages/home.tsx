@@ -56,7 +56,7 @@ const TourCard = ({ tour }: { tour: Tour }) => {
   const encodedId = tour.id ? encodeId(tour.id.toString()) : '';
 
   return (
-    <Link href={`/all/tours/${encodedId}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
+    <Link href={`/tours/${encodedId}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
       <div
         className="relative h-48 bg-cover bg-center bg-gray-200"
         style={{ backgroundImage: `url(${tour.image})` }}

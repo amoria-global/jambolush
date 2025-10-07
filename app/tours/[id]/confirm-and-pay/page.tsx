@@ -1,29 +1,48 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import api from '../../../../api/apiService';
+import api from '@/app/api/apiService';
 import { decodeId } from '@/app/utils/encoder';
-import { calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import { calculatePriceBreakdown } from '@/app/utils/pricing';
 
-interface PaymentPageProps {}
-
-interface BookingData {
+interface TourBookingData {
   id: string;
-  propertyId: number;
-  propertyName: string;
+  tourId: number;
+  tourTitle: string;
   hostId: number;
-  checkIn: string;
-  checkOut: string;
-  guests: number;
-  nights: number;
-  totalPrice: number;
+  scheduleId: string;
+  scheduleDate: string;
+  scheduleStartTime: string;
+  scheduleEndTime: string;
+  numberOfParticipants: number;
+  participants: Array<{
+    name: string;
+    age: number;
+    emergencyContact: {
+      name: string;
+      phone: string;
+      relationship: string;
+    };
+  }>;
+  totalAmount: number;
+  pricePerPerson: number;
+  basePricePerPerson: number;
+  status: string;
+  specialRequests?: string;
+  tourDetails?: {
+    duration: number;
+    difficulty: string;
+    locationCity: string;
+    locationCountry: string;
+    meetingPoint: string;
+    images?: any;
+  };
   priceBreakdown?: {
-    price: number;
+    basePrice: number;
+    displayPrice: number;
     subtotal: number;
-    cleaningFee: number;
     serviceFee: number;
     taxes: number;
-    payAtPropertyFee?: number;
     total: number;
   };
 }
@@ -34,18 +53,18 @@ interface HostDetails {
   phone: string;
 }
 
-const PaymentPage: React.FC<PaymentPageProps> = () => {
+const TourPaymentPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [bookingData, setBookingData] = useState<BookingData | null>(null);
+  const [bookingData, setBookingData] = useState<TourBookingData | null>(null);
   const [hostDetails, setHostDetails] = useState<HostDetails | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
-  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | null>(null);
+  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
 
   // Fetch current user
@@ -72,42 +91,45 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     fetchUser();
   }, []);
 
-
   // Load booking data
   useEffect(() => {
     const decodedId = decodeId(searchParams.get('bookingId') || '');
     const bookingId = decodedId;
 
     if (bookingId) {
-      fetchBookingData(bookingId);
+      fetchTourBookingData(bookingId);
     } else {
       setErrors({ general: 'Booking ID is required' });
       setFetchingBooking(false);
     }
   }, [searchParams]);
 
-  const fetchBookingData = async (bookingId: string) => {
+  const fetchTourBookingData = async (bookingId: string) => {
     try {
       setFetchingBooking(true);
       
-      const response = await api.getBooking(bookingId);
+      const response = await api.get(`/tours/guest/bookings/${bookingId}`);
       
       if (response.data.success && response.data.data) {
         const booking = response.data.data;
         
-        const nights = Math.ceil(
-          (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) / (1000 * 60 * 60 * 24)
-        );
-
-        let propertyName = 'Property Booking';
+        let tourDetails: any = null;
         let hostId = booking.hostId || 1;
         let hostData: HostDetails | null = null;
-
+        
         try {
-          const propertyResponse = await api.getProperty(booking.propertyId);
-          if (propertyResponse.data.success && propertyResponse.data.data) {
-            propertyName = propertyResponse.data.data.name || propertyName;
-            hostId = propertyResponse.data.data.hostId || hostId;
+          const tourResponse = await api.get(`/tours/${booking.tourId}`);
+          if (tourResponse.data.success && tourResponse.data.data) {
+            const tour = tourResponse.data.data;
+            tourDetails = {
+              duration: tour.duration,
+              difficulty: tour.difficulty,
+              locationCity: tour.locationCity,
+              locationCountry: tour.locationCountry,
+              meetingPoint: tour.meetingPoint,
+              images: tour.images
+            };
+            hostId = tour.hostId || hostId;
 
             // Fetch host details
             if (hostId) {
@@ -128,32 +150,68 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             }
           }
         } catch (error) {
-          console.warn('Could not fetch property details:', error);
+          console.warn('Could not fetch tour details:', error);
         }
 
-        const displayPricePerNight = booking.totalPrice / nights;
-        const priceBreakdown = calculatePriceBreakdown(displayPricePerNight, nights, false);
+        let scheduleDetails = {
+          scheduleDate: booking.scheduleDate || 'TBD',
+          scheduleStartTime: booking.scheduleStartTime || '09:00',
+          scheduleEndTime: booking.scheduleEndTime || '17:00'
+        };
+
+        if (booking.scheduleId && tourDetails) {
+          try {
+            const scheduleResponse = await api.get(`/tours/${booking.tourId}/schedules/${booking.scheduleId}`);
+            if (scheduleResponse.data.success && scheduleResponse.data.data) {
+              const schedule = scheduleResponse.data.data;
+              scheduleDetails = {
+                scheduleDate: schedule.startDate,
+                scheduleStartTime: schedule.startTime,
+                scheduleEndTime: schedule.endTime
+              };
+            }
+          } catch (error) {
+            console.warn('Could not fetch schedule details:', error);
+          }
+        }
+
+        const displayPricePerPerson = booking.totalAmount / booking.numberOfParticipants;
+        const basePricePerPerson = displayPricePerPerson;
+        
+        const priceBreakdown = calculatePriceBreakdown(basePricePerPerson, booking.numberOfParticipants, false);
 
         setBookingData({
           id: booking.id,
-          propertyId: booking.propertyId,
-          propertyName,
+          tourId: booking.tourId,
+          tourTitle: booking.tourTitle || 'Tour Experience',
           hostId,
-          checkIn: booking.checkIn,
-          checkOut: booking.checkOut,
-          guests: booking.guests,
-          nights,
-          totalPrice: booking.totalPrice,
-          priceBreakdown
+          scheduleId: booking.scheduleId,
+          ...scheduleDetails,
+          numberOfParticipants: booking.numberOfParticipants,
+          participants: booking.participants || [],
+          totalAmount: booking.totalAmount,
+          pricePerPerson: displayPricePerPerson,
+          basePricePerPerson: basePricePerPerson,
+          status: booking.status,
+          specialRequests: booking.specialRequests,
+          tourDetails,
+          priceBreakdown: {
+            basePrice: basePricePerPerson,
+            displayPrice: displayPricePerPerson,
+            subtotal: displayPricePerPerson * booking.numberOfParticipants,
+            serviceFee: priceBreakdown.serviceFee,
+            taxes: priceBreakdown.taxes,
+            total: priceBreakdown.total
+          }
         });
       } else {
-        setErrors({ general: 'Booking not found or invalid' });
+        setErrors({ general: 'Tour booking not found or invalid' });
       }
     } catch (error: any) {
-      console.error('Failed to fetch booking:', error);
+      console.error('Failed to fetch tour booking:', error);
       const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          'Failed to load booking details';
+                             error?.message || 
+                             'Failed to load booking details';
       setErrors({ general: errorMessage });
     } finally {
       setFetchingBooking(false);
@@ -199,12 +257,12 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setLoading(true);
       setErrors({});
 
-      const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalPrice;
+      const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalAmount;
 
       // Determine endpoint based on payment method
-      const endpoint = paymentMethod === 'card'
+      const endpoint = paymentMethod === 'card' 
         ? '/payments/deposits'
-        : '/payments/xentripay/deposits';
+        : '/pawapay/deposit';// for xentripay: payments/xentripay/deposits
 
       // Build payload matching backend expectations
       const depositPayload = {
@@ -213,33 +271,49 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         userEmail: currentUser.email,
         userName: `${currentUser.firstName} ${currentUser.lastName}`,
         userPhone: paymentMethod === 'momo' ? phoneNumber : (currentUser.phone || '+250788123456'),
-
+        
         // Recipient (seller/host) information
         recipientId: bookingData.hostId,
         recipientEmail: hostDetails?.email || 'host@example.com',
         recipientName: hostDetails?.name || 'Host Name',
         recipientPhone: hostDetails?.phone || '+250788123456',
-
+        
         // Transaction details
         amount: finalAmount,
-        description: `Payment for ${bookingData.propertyName}`,
+        description: `Payment for ${bookingData.tourTitle}`,
         paymentMethod,
         platformFeePercentage: undefined, // Backend will use default
-
+        
         // Metadata
         metadata: {
-          bookingType: 'property',
+          bookingType: 'tour',
           bookingId: bookingData.id,
-          propertyId: bookingData.propertyId,
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut,
-          nights: bookingData.nights,
-          guests: bookingData.guests,
-          propertyName: bookingData.propertyName,
+          tourId: bookingData.tourId,
+          scheduleId: bookingData.scheduleId,
+          numberOfParticipants: bookingData.numberOfParticipants,
+          scheduleDate: bookingData.scheduleDate,
+          tourTitle: bookingData.tourTitle,
           momoProvider: paymentMethod === 'momo' ? momoProvider : undefined
         }
       };
-
+      
+      const pawaPayDepositPayload = {
+          amount: finalAmount,
+          currency: 'RWF', // Currency for Rwanda
+          phoneNumber: phoneNumber,
+          provider: momoProvider, // 'MTN', 'Airtel', or 'MPESA'
+          country: 'RW', // 2-letter country code
+          description: `Payment for ${bookingData.tourTitle}`,
+          internalReference: bookingData.id, // Use booking ID for reconciliation
+          metadata: {
+            bookingType: 'tour',
+            bookingId: bookingData.id,
+            tourId: bookingData.tourId,
+            scheduleId: bookingData.scheduleId,
+            userId: currentUser.id,
+          },
+      };
+      
       console.log('[PAYMENT] Creating deposit:', {
         endpoint,
         paymentMethod,
@@ -247,16 +321,16 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       });
 
       // Call appropriate deposit endpoint
-      const response = await api.post(endpoint, depositPayload);
+      const response = await api.post(endpoint, pawaPayDepositPayload);
 
       if (response.data.success) {
         const { transactionId, status, redirectUrl, instructions } = response.data.data;
-
+        
         console.log('[PAYMENT] Deposit created:', { transactionId, status });
 
         // Store transaction ID for callback
         sessionStorage.setItem('payment_transaction_id', transactionId);
-        sessionStorage.setItem('property_booking_id', bookingData.id);
+        sessionStorage.setItem('tour_booking_id', bookingData.id);
 
         if (paymentMethod === 'card' && redirectUrl) {
           // Redirect to payment gateway for card
@@ -266,25 +340,33 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           if (instructions) {
             alert(instructions);
           }
-          router.push(`/payment/pending?tx=${transactionId}`);
+          router.push(`/payment/status?tx=${transactionId}`);
         }
       } else {
-        setErrors({
-          general: response.data.message || 'Failed to create payment. Please try again.'
+        setErrors({ 
+          general: response.data.message || 'Failed to create payment. Please try again.' 
         });
       }
     } catch (error: any) {
       console.error('[PAYMENT] Deposit error:', error);
-
-      const errorMessage = error?.response?.data?.error?.message ||
-                          error?.response?.data?.message ||
-                          error?.message ||
-                          'Payment failed. Please try again.';
-
+      
+      const errorMessage = error?.response?.data?.error?.message || 
+                             error?.response?.data?.message ||
+                             error?.message || 
+                             'Payment failed. Please try again.';
+      
       setErrors({ general: errorMessage });
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   // Loading state
@@ -310,10 +392,10 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
           <p className="text-gray-600 mb-4">{errors.general}</p>
           <button 
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/tours')}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Return to Home
+            Browse Tours
           </button>
         </div>
       </div>
@@ -329,7 +411,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         
         <style jsx>{`
           @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
-
+          
           input[type="text"]:focus,
           input[type="tel"]:focus {
             outline: none;
@@ -345,11 +427,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             outline: 2px solid #F20C8F;
             outline-offset: 2px;
           }
-
+          
           .error-input {
             border-color: #ef4444 !important;
           }
-
+          
           .error-message {
             color: #ef4444;
             font-size: 0.875rem;
@@ -362,22 +444,22 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             
             {/* Left Side - Payment Summary */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-
+              
               {/* Payment Method Selection */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
                   Select Payment Method
                 </h2>
-
+                
                 {errors.paymentMethod && (
                   <p className="error-message mb-3">{errors.paymentMethod}</p>
                 )}
-
+                
                 <div className="space-y-4">
                   <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
                       value="momo"
                       checked={paymentMethod === 'momo'}
                       onChange={() => {
@@ -386,20 +468,20 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       }}
                       className="h-5 w-5 cursor-pointer"
                     />
-                    <span className="text-base">Mobile Money (MTN / Airtel)</span>
+                    <span className="text-base">Mobile Money (MTN / Airtel / M-Pesa)</span>
                   </label>
-
+                  
                   {paymentMethod === 'momo' && (
                     <div className="ml-8 space-y-4 pt-2">
                       {errors.momoProvider && (
                         <p className="error-message">{errors.momoProvider}</p>
                       )}
-
+                      
                       <div className="space-y-2">
                         <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="momoProvider"
+                          <input 
+                            type="radio" 
+                            name="momoProvider" 
                             value="MTN"
                             checked={momoProvider === 'MTN'}
                             onChange={() => {
@@ -411,9 +493,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           <span>MTN MoMo</span>
                         </label>
                         <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="momoProvider"
+                          <input 
+                            type="radio" 
+                            name="momoProvider" 
                             value="AIRTEL"
                             checked={momoProvider === 'AIRTEL'}
                             onChange={() => {
@@ -423,6 +505,20 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                             className="h-4 w-4 cursor-pointer"
                           />
                           <span>Airtel Money</span>
+                        </label>
+                        <label className="flex items-center space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="momoProvider" 
+                            value="MPESA"
+                            checked={momoProvider === 'MPESA'}
+                            onChange={() => {
+                              setMomoProvider('MPESA');
+                              setErrors({});
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          <span>M-Pesa</span>
                         </label>
                       </div>
 
@@ -451,11 +547,11 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                       </div>
                     </div>
                   )}
-
+                  
                   <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
                       value="card"
                       checked={paymentMethod === 'card'}
                       onChange={() => {
@@ -469,7 +565,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   </label>
                 </div>
               </div>
-
+              
               {/* Payment Summary and Submit */}
               {bookingData && (
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -488,8 +584,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Subtotal ({bookingData.nights} nights)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalPrice}</span>
+                      <span className="text-gray-600">Subtotal ({bookingData.numberOfParticipants} participants)</span>
+                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalAmount}</span>
                     </div>
                     
                     <div className="flex justify-between text-base">
@@ -500,17 +596,17 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     <div className="border-t pt-3 flex justify-between">
                       <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
                       <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                        ${bookingData.priceBreakdown?.total || bookingData.totalPrice}
+                        ${bookingData.priceBreakdown?.total || bookingData.totalAmount}
                       </span>
                     </div>
                   </div>
                   
-                  <button
+                  <button 
                     onClick={handleSubmit}
                     disabled={loading || !isFormComplete()}
                     className={`w-full py-3 px-6 rounded-lg text-white font-medium transition-all ${
                       loading || !isFormComplete()
-                        ? 'bg-gray-400 cursor-not-allowed'
+                        ? 'bg-gray-400 cursor-not-allowed' 
                         : 'cursor-pointer hover:opacity-90'
                     }`}
                     style={(loading || !isFormComplete()) ? {} : { backgroundColor: '#F20C8F' }}>
@@ -525,7 +621,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                     ) : (
                       <>
                         <i className="bi bi-lock-fill mr-2"></i>
-                        Pay ${bookingData.priceBreakdown?.total || bookingData.totalPrice} Securely
+                        Pay ${bookingData.priceBreakdown?.total || bookingData.totalAmount} Securely
                       </>
                     )}
                   </button>
@@ -538,35 +634,35 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
               )}
             </div>
 
-            {/* Right Side - Property Preview */}
+            {/* Right Side - Tour Preview */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-4 p-4">
                 <h3 className="font-semibold text-lg mb-3" style={{ color: '#083A85' }}>
-                  {bookingData?.propertyName || 'Property Booking'}
+                  {bookingData?.tourTitle || 'Tour Experience'}
                 </h3>
                 
                 {bookingData && (
                   <>
                     <div className="space-y-2 mb-4 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Check-in:</span>
+                        <span className="text-gray-600">Tour Date:</span>
                         <span className="font-medium">
-                          {new Date(bookingData.checkIn).toLocaleDateString()}
+                          {formatDate(bookingData.scheduleDate)}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Check-out:</span>
+                        <span className="text-gray-600">Time:</span>
                         <span className="font-medium">
-                          {new Date(bookingData.checkOut).toLocaleDateString()}
+                          {bookingData.scheduleStartTime} - {bookingData.scheduleEndTime}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Nights:</span>
-                        <span className="font-medium">{bookingData.nights}</span>
+                        <span className="text-gray-600">Participants:</span>
+                        <span className="font-medium">{bookingData.numberOfParticipants}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Guests:</span>
-                        <span className="font-medium">{bookingData.guests}</span>
+                        <span className="text-gray-600">Price per person:</span>
+                        <span className="font-medium">${bookingData.pricePerPerson}</span>
                       </div>
                     </div>
 
@@ -599,4 +695,4 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   );
 };
 
-export default PaymentPage;
+export default TourPaymentPage;

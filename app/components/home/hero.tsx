@@ -44,7 +44,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
 
   const tabs: Tab[] = [
     { value: '', label: 'Spaces', icon: 'bi-house-door' },
-    { value: 'tours', label: 'Tours', icon: 'bi-compass', isRoute: true, route: '/all/tours' },
+    { value: 'tours', label: 'Tours', icon: 'bi-compass' },
   ];
 
   const allLocations: string[] = [
@@ -163,11 +163,7 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   };
 
   const handleTabSelect = (tab: Tab): void => {
-    if (tab.isRoute && tab.route) {
-      router.push(tab.route);
-    } else {
-      setSelectedTab(tab.value);
-    }
+    setSelectedTab(tab.value);
   };
 
   const handleLocationSelect = (suggestion: string): void => {
@@ -181,22 +177,35 @@ const Hero: React.FC<HeroProps> = ({ onSearch }) => {
   };
 
   const handleSearch = (): void => {
-    // Only trigger search for properties tab, not for tours
-    if (selectedTab === 'properties') {
-      const searchPayload: PropertyFilters = {
-        type: selectedTab,
-        location: location,
-        keyword: searchKeyword,
-        priceRange: priceRange,
-        bedrooms: bedrooms,
-        amenities: []
-      };
+    const searchPayload: PropertyFilters = {
+      type: selectedTab || 'spaces',
+      location: location,
+      keyword: searchKeyword,
+      priceRange: priceRange,
+      bedrooms: bedrooms,
+      amenities: []
+    };
 
-      console.log('Property search payload:', searchPayload);
-      
-      if (onSearch) {
-        onSearch(searchPayload);
-      }
+    console.log('Search payload:', searchPayload);
+
+    if (onSearch) {
+      onSearch(searchPayload);
+    }
+
+    // Navigate to appropriate page with search params
+    const searchParams = new URLSearchParams();
+    if (location) searchParams.set('location', location);
+    if (searchKeyword) searchParams.set('keyword', searchKeyword);
+    if (priceRange) searchParams.set('priceRange', priceRange);
+    if (bedrooms) searchParams.set('bedrooms', bedrooms);
+
+    const queryString = searchParams.toString();
+    const targetPage = selectedTab === 'tours' ? '/tours' : '/spaces';
+
+    if (queryString) {
+      router.push(`${targetPage}?${queryString}`);
+    } else {
+      router.push(targetPage);
     }
   };
 

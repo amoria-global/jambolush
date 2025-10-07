@@ -517,7 +517,7 @@ export default function HousePage({ params }: HousePageProps) {
         
         // Navigate to confirm and pay page with encoded booking ID
         setTimeout(() => {
-          router.push(`/all/property/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
+          router.push(`/spaces/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
         }, 2000);
         
       } else {

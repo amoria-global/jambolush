@@ -549,7 +549,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
         
         const encodedBookingId = encodeId(result.data.id);
         setTimeout(() => {
-          router.push(`/all/tours/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
+          router.push(`/tours/${resolvedParams.id}/confirm-and-pay?bookingId=${encodedBookingId}`);
         }, 2000);
       } else {
         const errorMessage = result.message || 'Something went wrong. Please try again.';

@@ -31,6 +31,7 @@ interface UserProfile {
 interface UserSession {
   user: UserProfile;
   token: string;
+  refreshToken: string;
 }
 
 const Navbar = () => {
@@ -87,7 +88,7 @@ const Navbar = () => {
 
       if (response.data) {
         const userData = response.data;
-        setUserSession({ user: userData, token: authToken });
+        setUserSession({ user: userData, token: authToken, refreshToken: userData.refreshToken });
         setUser(userData);
         setIsLoggedIn(true);
       } else {
@@ -441,7 +442,7 @@ const Navbar = () => {
               <button 
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  router.push('/all/tours');
+                  router.push('/tours');
                 }}
                 className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
                 >
@@ -485,7 +486,7 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                  <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
                     isScrolled 
                       ? 'text-silver-600 hover:bg-silver-100' 
                       : 'text-white/80 hover:bg-white/10'

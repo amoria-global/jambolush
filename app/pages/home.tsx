@@ -58,29 +58,29 @@ const TourCard = ({ tour }: { tour: Tour }) => {
   return (
     <Link href={`/tours/${encodedId}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
       <div
-        className="relative h-48 bg-cover bg-center bg-gray-200"
+        className="relative h-40 bg-cover bg-center bg-gray-200"
         style={{ backgroundImage: `url(${tour.image})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
-        <div className="absolute bottom-2 left-2">
-          <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-2 py-1 rounded-lg text-sm font-bold shadow-lg">
+        <div className="absolute bottom-1.5 left-1.5">
+          <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-1.5 py-0.5 rounded-md text-xs font-bold shadow-lg">
             ${tour.price}/person
           </span>
         </div>
       </div>
-      <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-4 text-white h-full">
-        <div className="flex items-center mb-2">
-          <span className="text-base font-bold">{tour.rating}</span>
-          <span className="text-base text-blue-100 ml-1.5">({tour.reviews})</span>
+      <div className="bg-gradient-to-br from-[#083A85] to-[#0B4A9F] p-3 text-white h-full">
+        <div className="flex items-center mb-1.5">
+          <span className="text-sm font-bold">{tour.rating}</span>
+          <span className="text-sm text-blue-100 ml-1">({tour.reviews})</span>
         </div>
-        <h3 className="text-sm font-bold mb-2 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
+        <h3 className="text-xs font-bold mb-1.5 text-white group-hover:text-blue-100 transition-colors leading-tight line-clamp-2">
           {tour.title}
         </h3>
-        <div className="flex items-center mb-3 text-sm text-blue-100">
-          <i className="bi bi-geo-alt-fill mr-1 text-sm"></i>
+        <div className="flex items-center mb-2 text-xs text-blue-100">
+          <i className="bi bi-geo-alt-fill mr-0.5 text-xs"></i>
           <p className="truncate">{tour.location}</p>
         </div>
-        <div className="flex justify-between items-center text-xs text-blue-100">
+        <div className="flex justify-between items-center text-[10px] text-blue-100">
           <span className="truncate">{tour.duration}</span>
           <span className="text-green-300">Available</span>
         </div>
@@ -193,15 +193,15 @@ const Home = () => {
       <div className="listings-container px-4 sm:px-6 lg:px-8 py-12 max-w-[1600px] mx-auto">
         {/* Error Message */}
         {error && !loading && spaces.length === 0 && (
-          <div className="text-center py-12">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-              <div className="text-red-600 text-lg font-medium mb-2">
+          <div className="text-center py-10">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-5 max-w-md mx-auto">
+              <div className="text-red-600 text-base font-medium mb-1.5">
                 Unable to load properties
               </div>
-              <p className="text-red-500 text-sm mb-4">{error}</p>
+              <p className="text-red-500 text-sm mb-3">{error}</p>
               <button
                 onClick={retryFetch}
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                className="bg-red-600 text-white px-3 py-1.5 text-sm rounded-md hover:bg-red-700 transition-colors"
               >
                 Try Again
               </button>
@@ -214,11 +214,11 @@ const Home = () => {
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 auto-rows-fr">
             {Array.from({ length: 12 }).map((_, index) => (
               <div key={index} className="animate-pulse">
-                <div className="bg-gray-300 h-40 rounded-t-xl"></div>
-                <div className="bg-gray-100 p-3 rounded-b-xl">
-                  <div className="bg-gray-300 h-4 rounded mb-2"></div>
-                  <div className="bg-gray-300 h-3 rounded mb-2"></div>
-                  <div className="bg-gray-300 h-3 rounded w-2/3"></div>
+                <div className="bg-gray-300 h-32 rounded-t-lg"></div>
+                <div className="bg-gray-100 p-2.5 rounded-b-lg">
+                  <div className="bg-gray-300 h-3 rounded mb-1.5"></div>
+                  <div className="bg-gray-300 h-2.5 rounded mb-1.5"></div>
+                  <div className="bg-gray-300 h-2.5 rounded w-2/3"></div>
                 </div>
               </div>
             ))}
@@ -228,15 +228,15 @@ const Home = () => {
         {/* Spaces Section */}
         {!loading && spaces.length > 0 && (
           <>
-            <div className="mb-12">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">Spaces</h2>
+            <div className="mb-10">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-800">Spaces</h2>
                 <a
                   href="/spaces"
-                  className="text-[#083A85] hover:text-[#06316f] font-medium transition-colors flex items-center gap-2"
+                  className="text-[#083A85] hover:text-[#06316f] text-sm font-medium transition-colors flex items-center gap-1.5"
                 >
                   See All
-                  <i className="bi bi-arrow-right"></i>
+                  <i className="bi bi-arrow-right text-xs"></i>
                 </a>
               </div>
               <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 auto-rows-fr">
@@ -248,15 +248,15 @@ const Home = () => {
 
             {/* Tours Section */}
             {tours.length > 0 && (
-              <div className="mb-12">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Tours</h2>
+              <div className="mb-10">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold text-gray-800">Tours</h2>
                   <a
                     href="/tours"
-                    className="text-[#083A85] hover:text-[#06316f] font-medium transition-colors flex items-center gap-2"
+                    className="text-[#083A85] hover:text-[#06316f] text-sm font-medium transition-colors flex items-center gap-1.5"
                   >
                     See All
-                    <i className="bi bi-arrow-right"></i>
+                    <i className="bi bi-arrow-right text-xs"></i>
                   </a>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 auto-rows-fr">
@@ -271,16 +271,16 @@ const Home = () => {
 
         {/* No Results */}
         {!loading && spaces.length === 0 && !error && (
-          <div className="text-center py-12">
-            <div className="text-gray-500 text-lg mb-4">
+          <div className="text-center py-10">
+            <div className="text-gray-500 text-base mb-3">
               No properties found
             </div>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 text-sm mb-5">
               No properties available at the moment
             </p>
             <button
               onClick={retryFetch}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-4 py-2 text-sm rounded-md hover:bg-blue-700 transition-colors"
             >
               Refresh
             </button>

@@ -45,3 +45,5 @@ node_modules
 
 /app/generated/prisma
 >>>>>>> Stashed changes
+.env*.local
+.env

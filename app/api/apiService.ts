@@ -1,5 +1,12 @@
 // apiService.ts - Complete Frontend API service for JamboLush
 
+// Global session expiry handler - will be set by AuthContext
+let globalSessionExpiredHandler: ((redirectUrl?: string) => void) | null = null;
+
+export const setSessionExpiredHandler = (handler: (redirectUrl?: string) => void) => {
+  globalSessionExpiredHandler = handler;
+};
+
 export interface APIConfig {
   method?: string;
   headers?: Record<string, any>;
@@ -384,7 +391,13 @@ class FrontendAPIService {
 
   async request<T = any>(endpoint: string, config: APIConfig = {}): Promise<APIResponse<T>> {
     const { method = 'GET', headers = {}, body, params, timeout = 500000 } = config;
-    
+
+    // Automatically add auth token if available
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) : null;
+    if (token && !this.defaultHeaders['Authorization']) {
+      this.defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
+
     const url = this.buildURL(endpoint, params);
     const mergedHeaders = { ...this.defaultHeaders, ...headers };
     const preparedBody = this.prepareBody(body);
@@ -412,7 +425,7 @@ class FrontendAPIService {
 
       let data: T;
       const contentType = response.headers.get('content-type') || '';
-      
+
       if (contentType.includes('json')) {
         data = await response.json();
       } else if (contentType.includes('text')) {
@@ -426,6 +439,12 @@ class FrontendAPIService {
         } catch {
           data = text as T;
         }
+      }
+
+      // Handle 401 Unauthorized - Session expired
+      if (response.status === 401 && globalSessionExpiredHandler) {
+        const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
+        globalSessionExpiredHandler(currentUrl);
       }
 
       if (!response.ok) {

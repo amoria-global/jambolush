@@ -165,7 +165,16 @@
     "wantToBecomeServiceProvider": "Unataka kuwa mtoa huduma?",
     "joinAsHost": "Jiunge kama Mwenyeji",
     "orSignUpWith": "Au jisajili na",
-    "signUpWithGoogle": "Jisajili na Google"
+    "signUpWithGoogle": "Jisajili na Google",
+    "sessionExpired": "Kipindi Kimeisha",
+    "sessionExpiredMessage": "Kipindi chako kimeisha kwa sababu za usalama. Tafadhali ingia tena ili kuendelea.",
+    "loginAgain": "Ingia Tena",
+    "redirecting": "Inaelekeza...",
+    "needHelp": "Unahitaji msaada?"
+  },
+  "navigation": {
+    "goHome": "Nenda Nyumbani",
+    "contactSupport": "Wasiliana na Usaidizi"
   },
   "search": {
     "searchProperties": "Tafuta Mali",

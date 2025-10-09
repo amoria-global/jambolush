@@ -104,7 +104,7 @@ function LoginContent() {
       }
     }
     
-    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -183,9 +183,9 @@ function LoginContent() {
        }
 
        if (userData.status !== 'active' && userData.status  !== 'pending' ) { 
-          setNotify({type: "warning", message: `Your account status is '${userData.status}'. Please contact support.`});
-          setLoading(false);
-          return;
+         setNotify({type: "warning", message: `Your account status is '${userData.status}'. Please contact support.`});
+         setLoading(false);
+         return;
        }
 
        setShowPasswordField(true);
@@ -403,7 +403,22 @@ function LoginContent() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleUserRedirect = (userData: any, token?: string, refreshToken?: string) => {
-    const userRole = userData?.role || userData?.user?.role;
+    const userRole = userData?.userType || userData?.user?.userType;
+    
+    // =================================================================
+    // MODIFICATION: As requested, redirect 'guest' users to the homepage.
+    // =================================================================
+    if (userRole === 'guest') {
+        setNotify({ type: "success", message: `${t('auth.loginSuccess')}! Redirecting ...` });
+        setTimeout(() => {
+            performRedirect(token, refreshToken, '/');
+        }, 1500);
+        return;
+    }
+    // =================================================================
+    // END OF MODIFICATION
+    // =================================================================
+
     const userStatus = userData?.status || userData?.user?.status;
     const verificationStatus = userData?.verificationStatus;
     const isVerified = userData?.isVerified;
@@ -443,7 +458,9 @@ function LoginContent() {
             performRedirect(token, refreshToken, `${dashboardBase}/all/kyc`);
           }
           break;
-        case 'guest':
+        // The 'guest' case below is now effectively unreachable due to the new logic above,
+        // but is left for structural clarity.
+        case 'guest': 
           setNotify({ type: "info", message: "Please verify your account to continue." });
           performRedirect(token, refreshToken, `/all/account-verification`);
           break;
@@ -607,7 +624,6 @@ function LoginContent() {
           </div>
         </div>
       </div>
-      {/* Right Side - FIX: Added overflow-y-auto */}
       <div className="flex-1 bg-gradient-to-bl from-[#083A85] via-[#0A4694] to-[#083A85] flex items-center justify-center p-4 sm:p-8 relative overflow-y-auto">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-24 right-20 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>

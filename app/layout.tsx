@@ -6,6 +6,10 @@ import "./styles/globals.css";
 // Import i18n configuration
 import "./lib/i18n";
 import { LanguageProvider, useLanguage } from "./lib/LanguageContext";
+import { AuthProvider, useAuth } from "./lib/AuthContext";
+import { setSessionExpiredHandler as setSessionExpiredHandlerApiConn } from "./api/api-conn";
+import { setSessionExpiredHandler as setSessionExpiredHandlerApiService } from "./api/apiService";
+import SessionExpiredModal from "./components/SessionExpiredModal";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
@@ -27,9 +31,18 @@ function LayoutContent({
   const [loading, setLoading] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [showCookieModal, setShowCookieModal] = useState(false);
-  
+
   // Get current language from context
   const { currentLanguage, isLoading: langLoading } = useLanguage();
+
+  // Get auth context for session management
+  const { isSessionExpired, sessionExpiredRedirectUrl, triggerSessionExpired, clearSessionExpired } = useAuth();
+
+  // Set up global session expired handler for both API services
+  useEffect(() => {
+    setSessionExpiredHandlerApiConn(triggerSessionExpired);
+    setSessionExpiredHandlerApiService(triggerSessionExpired);
+  }, [triggerSessionExpired]);
 
   useEffect(() => {
     // Check if we're on the homepage
@@ -150,7 +163,12 @@ function LayoutContent({
             <WhatsAppIcon phoneNumber="+250788437347" />
           )}
 
-          
+          {/* Session Expired Modal */}
+          <SessionExpiredModal
+            isOpen={isSessionExpired}
+            onClose={clearSessionExpired}
+            redirectUrl={sessionExpiredRedirectUrl}
+          />
 
           {/* Cookie Modal Overlay */}
           {showCookieModal && (
@@ -162,7 +180,7 @@ function LayoutContent({
   );
 }
 
-// Main layout component with language provider
+// Main layout component with language and auth providers
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -177,11 +195,13 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
-        <LanguageProvider>
-          <LayoutContent>
-            {children}
-          </LayoutContent>
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <LayoutContent>
+              {children}
+            </LayoutContent>
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -227,11 +227,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
 
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => router.push('/')}>
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => router.push('/')}>
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
               <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
-            <span className={`font-bold text-xl transition-colors duration-300 ${
+            <span className={`font-bold text-base transition-colors duration-300 ${
               isScrolled ? 'text-[#083A85]' : 'text-black/40'
             }`}>
               {t('nav.brandName')}
@@ -245,15 +245,15 @@ const Navbar = () => {
             <div className="relative" ref={langDropdownRef}>
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
-                className={`flex items-center cursor-pointer space-x-1 px-3 py-2 rounded-lg transition-colors duration-300 ${
+                className={`flex items-center cursor-pointer space-x-1 px-2 py-1.5 rounded-lg transition-colors duration-300 ${
                   isScrolled
                     ? 'text-silver-700 hover:bg-silver-100'
                     : 'text-silver-300 hover:bg-white/10'
                 }`}
               >
-                <span className="text-base">{getCurrentLanguage()?.flag}</span>
-                <span className="text-base font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
-                <i className="bi bi-chevron-down text-base"></i>
+                <span className="text-sm">{getCurrentLanguage()?.flag}</span>
+                <span className="text-sm font-medium">{getCurrentLanguage()?.code.toUpperCase()}</span>
+                <i className="bi bi-chevron-down text-xs"></i>
               </button>
 
               {isLangOpen && (
@@ -280,45 +280,45 @@ const Navbar = () => {
             </div>
 
             {/* Book a Tour Button - Prominent positioning */}
-            <button 
-              onClick={() => router.push('/all/tours')} 
-              className="px-4 py-2 bg-[#F20C8F] text-white text-base font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
+            <button
+              onClick={() => router.push('/all/tours')}
+              className="px-3 py-1.5 bg-[#F20C8F] text-white text-sm font-semibold rounded-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
             >
-              <i className="bi bi-binoculars mr-2"></i>
+              <i className="bi bi-binoculars mr-1.5 text-sm"></i>
               {t('nav.findTour')}
             </button>
 
             {/* Become a Host Button */}
-            <button 
-              className="px-4 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer" 
+            <button
+              className="px-3 py-1.5 bg-[#F20C8F] text-white text-sm font-medium rounded-md hover:bg-[#F20C8F]/90 transition-colors duration-300 cursor-pointer"
               onClick={() => router.push('/all/become-host')}
             >
-              <i className="bi bi-house-add mr-2"></i>
+              <i className="bi bi-house-add mr-1.5 text-sm"></i>
               {t('nav.becomeHost')}
             </button>
 
             {/* Profile Section */}
             {isLoading ? (
-              <div className="w-8 h-8 rounded-full bg-silver-300 animate-pulse"></div>
+              <div className="w-7 h-7 rounded-full bg-silver-300 animate-pulse"></div>
             ) : isLoggedIn && user ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors duration-300 cursor-pointer ${
+                  className={`flex items-center space-x-1.5 px-2 py-1.5 rounded-lg transition-colors duration-300 cursor-pointer ${
                     isScrolled
                       ? 'text-silver-700 hover:bg-silver-100'
                       : 'text-silver-200 hover:bg-white/10'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
                     {user.profile ? (
-                      <img src={user.profile} alt="Profile" className="w-8 h-8 rounded-full object-cover" />
+                      <img src={user.profile} alt="Profile" className="w-7 h-7 rounded-full object-cover" />
                     ) : (
-                      <span className="text-white text-sm font-semibold">{getUserAvatar()}</span>
+                      <span className="text-white text-xs font-semibold">{getUserAvatar()}</span>
                     )}
                   </div>
-                  <span className={`${isScrolled ? 'text-silver-700' : 'text-silver-300'} text-base font-medium hidden lg:block`}>{getUserDisplayName()}</span>
-                  <i className="bi bi-chevron-down text-base"></i>
+                  <span className={`${isScrolled ? 'text-silver-700' : 'text-silver-300'} text-sm font-medium hidden lg:block`}>{getUserDisplayName()}</span>
+                  <i className="bi bi-chevron-down text-xs"></i>
                 </button>
 
                 {isProfileOpen && (
@@ -328,20 +328,47 @@ const Navbar = () => {
                       <p className="text-xs text-silver-600">{user.email}</p>
                       <p className="text-xs text-silver-500 capitalize">{user.status} • {user.userType}</p>
                     </div>
-                    <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
-                      <i className="bi bi-speedometer2 mr-3"></i>
-                      {t('nav.dashboard')}
-                    </a>
-                    <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
-                      <i className="bi bi-person mr-3"></i>
-                      {t('nav.profile')}
-                    </a>
-                    <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
-                      <i className="bi bi-gear mr-3"></i>
-                      {t('nav.settings')}
-                    </a>
+                    {user.userType === 'guest' ? (
+                      <>
+                        <a href={`https://app.jambolush.com/all/guest?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-house mr-3"></i>
+                          Dashboard
+                        </a>
+                        <a href={`https://app.jambolush.com/all/guest/bookings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-calendar-check mr-3"></i>
+                          My Bookings
+                        </a>
+                        <a href={`https://app.jambolush.com/all/guest/tour?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-map mr-3"></i>
+                          Tours & Experiences
+                        </a>
+                        <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-person mr-3"></i>
+                          {t('nav.profile')}
+                        </a>
+                        <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-gear mr-3"></i>
+                          {t('nav.settings')}
+                        </a>
+                      </>
+                    ) : (
+                      <>
+                        <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-speedometer2 mr-3"></i>
+                          {t('nav.dashboard')}
+                        </a>
+                        <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-person mr-3"></i>
+                          {t('nav.profile')}
+                        </a>
+                        <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className="flex items-center px-4 py-2 text-base text-silver-700 hover:bg-silver-100">
+                          <i className="bi bi-gear mr-3"></i>
+                          {t('nav.settings')}
+                        </a>
+                      </>
+                    )}
                     <hr className="my-1" />
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left flex items-center px-4 py-2 text-base text-red-600 hover:bg-red-50 cursor-pointer rounded-b-lg transition-colors duration-300"
                     >
@@ -355,9 +382,9 @@ const Navbar = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => {router.push('/all/login');}}
-                  className={`px-4 py-2 text-base cursor-pointer font-medium rounded-lg transition-colors duration-300 ${
-                    isScrolled 
-                      ? 'text-[#083A85] hover:bg-silver-100' 
+                  className={`px-3 py-1.5 text-sm cursor-pointer font-medium rounded-md transition-colors duration-300 ${
+                    isScrolled
+                      ? 'text-[#083A85] hover:bg-silver-100'
                       : 'text-silver-300 hover:bg-white/10'
                   }`}
                 >
@@ -365,7 +392,7 @@ const Navbar = () => {
                 </button>
                 <button
                   onClick={() => {router.push('/all/signup');}}
-                  className="px-4 py-2 bg-[#083A85] text-white text-base cursor-pointer font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
+                  className="px-3 py-1.5 bg-[#083A85] text-white text-sm cursor-pointer font-medium rounded-md hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
                   {t('nav.signUp')}
                 </button>
@@ -375,16 +402,34 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`p-2 cursor-pointer rounded-lg transition-colors duration-300 ${
-                isScrolled 
-                  ? 'text-silver-700 hover:bg-silver-100' 
-                  : 'text-white hover:bg-white/10'
-              }`}
-            >
-              <i className={`bi ${isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'} text-lg`}></i>
-            </button>
+            {/* Profile Image on Mobile */}
+            {isLoading ? (
+              <div className="w-8 h-8 rounded-full bg-silver-300 animate-pulse"></div>
+            ) : isLoggedIn && user ? (
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
+                  {user.profile ? (
+                    <img src={user.profile} alt="Profile" className="w-8 h-8 rounded-full object-cover" />
+                  ) : (
+                    <span className="text-white text-sm font-semibold">{getUserAvatar()}</span>
+                  )}
+                </div>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className={`p-2 cursor-pointer rounded-lg transition-colors duration-300 ${
+                  isScrolled
+                    ? 'text-silver-700 hover:bg-silver-100'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                <i className={`bi ${isMobileMenuOpen ? 'bi-x-lg' : 'bi-list'} text-lg`}></i>
+              </button>
+            )}
           </div>
         </div>
 
@@ -438,8 +483,8 @@ const Navbar = () => {
               </div>
 
                {/* Book a Tour Mobile - First item for prominence */}
-               
-              <button 
+
+              <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   router.push('/tours');
@@ -450,17 +495,19 @@ const Navbar = () => {
                 {t('nav.findTour')}
               </button>
 
-              {/* Become a Host Mobile */}
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  router.push('/all/become-host');
-                }}
-                className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
-              >
-                <i className="bi bi-house-add mr-2"></i>
-                {t('nav.becomeHost')}
-              </button>
+              {/* Become a Host Mobile - Only show when NOT logged in */}
+              {!isLoggedIn && !user && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    router.push('/all/become-host');
+                  }}
+                  className="w-full flex items-center px-3 py-2 bg-[#F20C8F] text-white text-base font-medium rounded-lg hover:bg-[#F20C8F]/90 transition-colors duration-300"
+                >
+                  <i className="bi bi-house-add mr-2"></i>
+                  {t('nav.becomeHost')}
+                </button>
+              )}
 
               {/* Profile Section Mobile */}
               {isLoading ? (
@@ -486,31 +533,77 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
-                    isScrolled 
-                      ? 'text-silver-600 hover:bg-silver-100' 
-                      : 'text-white/80 hover:bg-white/10'
-                  }`}>
-                    <i className="bi bi-speedometer2 mr-3"></i>
-                    {t('nav.dashboard')}
-                  </a>
-                  <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
-                    isScrolled 
-                      ? 'text-silver-600 hover:bg-silver-100' 
-                      : 'text-white/80 hover:bg-white/10'
-                  }`}>
-                    <i className="bi bi-person mr-3"></i>
-                    {t('nav.profile')}
-                  </a>
-
-                  <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
-                    isScrolled 
-                      ? 'text-silver-600 hover:bg-silver-100' 
-                      : 'text-white/80 hover:bg-white/10'
-                  }`}>
-                    <i className="bi bi-gear mr-3"></i>
-                    {t('nav.settings')}
-                  </a>
+                  {user.userType === 'guest' ? (
+                    <>
+                      <a href={`https://app.jambolush.com/all/guest?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-house mr-3"></i>
+                        Home
+                      </a>
+                      <a href={`https://app.jambolush.com/all/guest/bookings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-calendar-check mr-3"></i>
+                        My Bookings
+                      </a>
+                      <a href={`https://app.jambolush.com/all/guest/tour?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-map mr-3"></i>
+                        Tours & Experiences
+                      </a>
+                      <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-person mr-3"></i>
+                        {t('nav.profile')}
+                      </a>
+                      <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-gear mr-3"></i>
+                        {t('nav.settings')}
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <a href={`https://app.jambolush.com/all/${user.userType}?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-speedometer2 mr-3"></i>
+                        {t('nav.dashboard')}
+                      </a>
+                      <a href={`https://app.jambolush.com/all/profile?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-person mr-3"></i>
+                        {t('nav.profile')}
+                      </a>
+                      <a href={`https://app.jambolush.com/all/settings?token=${userSession?.token}&refresh_token=${userSession?.refreshToken}`} className={`flex items-center px-6 py-2 text-base rounded-lg transition-colors duration-300 ${
+                        isScrolled
+                          ? 'text-silver-600 hover:bg-silver-100'
+                          : 'text-white/80 hover:bg-white/10'
+                      }`}>
+                        <i className="bi bi-gear mr-3"></i>
+                        {t('nav.settings')}
+                      </a>
+                    </>
+                  )}
                   <button 
                     onClick={handleLogout}
                     className="w-full text-left flex items-center px-6 py-2 text-base text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300"

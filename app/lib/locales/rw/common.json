@@ -166,7 +166,16 @@
     "wantToBecomeServiceProvider": "Urashaka kuba umutanga serivisi?",
     "joinAsHost": "Jya mu itsinda ry'abamusangwa",
     "orSignUpWith": "Cyangwa wiyandikishe na",
-    "signUpWithGoogle": "Iyandikishe ukoresheje Google"
+    "signUpWithGoogle": "Iyandikishe ukoresheje Google",
+    "sessionExpired": "Igihe Cyarangiye",
+    "sessionExpiredMessage": "Igihe cyawe cyarangiye ku mpamvu z'umutekano. Nyamuneka winjire ukundi kugira ngo ukomeze.",
+    "loginAgain": "Winjire Ukundi",
+    "redirecting": "Urohereza...",
+    "needHelp": "Urakeneye ubufasha?"
+  },
+  "navigation": {
+    "goHome": "Subira Ahabanza",
+    "contactSupport": "Vugana n'Ubufasha"
   },
   "search": {
     "searchProperties": "Gushakisha Imitungo",

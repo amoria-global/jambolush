@@ -10,6 +10,10 @@
     "settings": "Paramètres",
     "signOut": "Se Déconnecter"
   },
+  "navigation": {
+    "goHome": "Aller à l'Accueil",
+    "contactSupport": "Contacter le Support"
+  },
   "languages": {
     "en": "Anglais",
     "es": "Espagnol",
@@ -166,7 +170,12 @@
     "wantToBecomeServiceProvider": "Voulez-vous devenir fournisseur de services ?",
     "joinAsHost": "Rejoindre en tant qu'Hôte",
     "orSignUpWith": "Ou s'inscrire avec",
-    "signUpWithGoogle": "S'inscrire avec Google"
+    "signUpWithGoogle": "S'inscrire avec Google",
+    "sessionExpired": "Session Expirée",
+    "sessionExpiredMessage": "Votre session a expiré pour des raisons de sécurité. Veuillez vous reconnecter pour continuer.",
+    "loginAgain": "Se Reconnecter",
+    "redirecting": "Redirection...",
+    "needHelp": "Besoin d'aide ?"
   },
   "search": {
     "searchProperties": "Rechercher des Propriétés",

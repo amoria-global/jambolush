@@ -174,7 +174,16 @@
     "wantToBecomeServiceProvider": "¿Quieres convertirte en proveedor de servicios?",
     "joinAsHost": "Únete como Anfitrión",
     "orSignUpWith": "O regístrate con",
-    "signUpWithGoogle": "Registrarse con Google"
+    "signUpWithGoogle": "Registrarse con Google",
+    "sessionExpired": "Sesión Expirada",
+    "sessionExpiredMessage": "Su sesión ha expirado por razones de seguridad. Por favor, inicie sesión nuevamente para continuar.",
+    "loginAgain": "Iniciar Sesión de Nuevo",
+    "redirecting": "Redirigiendo...",
+    "needHelp": "¿Necesita ayuda?"
+  },
+  "navigation": {
+    "goHome": "Ir al Inicio",
+    "contactSupport": "Contactar Soporte"
   },
   "search": {
     "searchProperties": "Buscar Propiedades",

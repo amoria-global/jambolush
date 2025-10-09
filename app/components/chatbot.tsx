@@ -298,7 +298,7 @@ const JambolushChatbot: React.FC = () => {
   const [isMinimized, setIsMinimized] = useState<boolean>(true);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   const primaryBlue = '#083A85';
   const primaryPink = '#F20C8F';
   
@@ -328,7 +328,7 @@ const JambolushChatbot: React.FC = () => {
     };
     setMessages(prev => [...prev, newMessage]);
   };
-  
+
   const getBotResponse = (userInput: string): string => {
     const input = userInput.toLowerCase().trim();
 
@@ -362,7 +362,7 @@ const JambolushChatbot: React.FC = () => {
     if (match) {
       return match.answer;
     }
-    
+
     // Improved fallback response with helpful suggestions
     return `I'm not sure about that specific question, but I'd love to help! Here are some things I can assist you with:
 
@@ -409,10 +409,10 @@ Try asking me something like "How do I book a property?" or "Tell me about becom
       <div className="fixed bottom-32 right-4 z-50">
         <button
           onClick={() => setIsMinimized(false)}
-          className="w-16 h-16 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer flex items-center justify-center"
+          className="w-12 h-12 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 cursor-pointer flex items-center justify-center"
           style={{ backgroundColor: primaryPink }}
         >
-          <i className="bi bi-chat-dots-fill text-3xl text-white"></i>
+          <i className="bi bi-chat-dots-fill text-xl text-white"></i>
         </button>
       </div>
     );
@@ -429,43 +429,43 @@ Try asking me something like "How do I book a property?" or "Tell me about becom
       }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 p-4 text-white flex items-center justify-between border-b border-white/10">
-        <div className="flex items-center space-x-3">
-          <div className="relative w-12 h-12">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-800">
-              <i className="bi bi-robot text-white text-2xl"></i>
+      <div className="flex-shrink-0 p-3 text-white flex items-center justify-between border-b border-white/10">
+        <div className="flex items-center space-x-2">
+          <div className="relative w-9 h-9">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center bg-blue-800">
+              <i className="bi bi-robot text-white text-lg"></i>
             </div>
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900"></div>
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-slate-900"></div>
           </div>
           <div className="flex flex-col">
-            <h3 className="text-base font-bold text-white">Amoria Assistant</h3>
-            <p className="text-sm text-green-400">Online</p>
+            <h3 className="text-sm font-bold text-white">Amoria Assistant</h3>
+            <p className="text-xs text-green-400">Online</p>
           </div>
         </div>
         <button
           onClick={() => setIsMinimized(true)}
           className="text-white/70 hover:text-white transition-colors cursor-pointer"
         >
-          <i className="bi bi-x-lg text-xl"></i>
+          <i className="bi bi-x-lg text-base"></i>
         </button>
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-3 space-y-4">
         {messages.length === 1 ? (
           <div>
             <div className="flex justify-start">
-               <div className="max-w-xs lg:max-w-md p-3 rounded-xl shadow-md bg-gray-500/50 text-white rounded-bl-none">
-                 <p className="text-sm whitespace-pre-line break-words">{messages[0].text}</p>
+               <div className="max-w-xs lg:max-w-md p-2.5 rounded-lg shadow-md bg-gray-500/50 text-white rounded-bl-none">
+                 <p className="text-xs whitespace-pre-line break-words">{messages[0].text}</p>
               </div>
             </div>
-            <p className="text-sm text-white/50 mt-6 mb-3">Quick questions:</p>
-            <div className="space-y-2">
+            <p className="text-xs text-white/50 mt-4 mb-2">Quick questions:</p>
+            <div className="space-y-1.5">
               {quickQuestions.map((q, i) => (
-                <button 
+                <button
                   key={i}
                   onClick={() => handleQuickQuestionClick(q)}
-                  className="w-full text-left p-3 cursor-pointer border border-blue-500/50 text-blue-300 rounded-lg text-sm hover:bg-blue-500/20 transition-colors"
+                  className="w-full text-left p-2 cursor-pointer border border-blue-500/50 text-blue-300 rounded-md text-xs hover:bg-blue-500/20 transition-colors"
                 >
                   {q}
                 </button>
@@ -475,14 +475,14 @@ Try asking me something like "How do I book a property?" or "Tell me about becom
         ) : (
           messages.map((message) => (
             <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs lg:max-w-md p-3 rounded-xl shadow-md ${
+              <div className={`max-w-xs lg:max-w-md p-2.5 rounded-lg shadow-md ${
                 message.sender === 'user'
                   ? 'text-white rounded-br-none'
                   : 'bg-gray-800/80 text-white rounded-bl-none'
               }`}
               style={message.sender === 'user' ? { backgroundColor: primaryBlue } : {}}>
-                <p className="text-sm whitespace-pre-line break-words">{message.text}</p>
-                <span className={`text-xs mt-1 block text-right ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
+                <p className="text-xs whitespace-pre-line break-words">{message.text}</p>
+                <span className={`text-[10px] mt-1 block text-right ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
                   {formatTime(message.timestamp)}
                 </span>
               </div>
@@ -492,11 +492,11 @@ Try asking me something like "How do I book a property?" or "Tell me about becom
         
         {isTyping && (
           <div className="flex justify-start">
-             <div className="bg-gray-800/80 p-3 rounded-xl shadow-md">
+             <div className="bg-gray-800/80 p-2.5 rounded-lg shadow-md">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
@@ -505,24 +505,24 @@ Try asking me something like "How do I book a property?" or "Tell me about becom
       </div>
 
       {/* Input */}
-      <div className="flex-shrink-0 p-4 bg-transparent border-t border-white/10">
-        <div className="flex space-x-3 items-center">
+      <div className="flex-shrink-0 p-3 bg-transparent border-t border-white/10">
+        <div className="flex space-x-2 items-center">
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
-            className="flex-1 py-2 px-4 rounded-full bg-slate-800/90 border border-white/10 text-white resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+            className="flex-1 py-1.5 px-3 rounded-full bg-slate-800/90 border border-white/10 text-white text-xs resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
             rows={1}
-            style={{ minHeight: '44px', maxHeight: '100px' }}
+            style={{ minHeight: '36px', maxHeight: '80px' }}
           />
           <button
             onClick={() => handleSendMessage(inputText)}
             disabled={!inputText.trim()}
-            className="w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full text-white font-semibold transition-all duration-200 hover:shadow-lg disabled:bg-gray-600 disabled:cursor-not-allowed cursor-pointer"
+            className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full text-white font-semibold transition-all duration-200 hover:shadow-lg disabled:bg-gray-600 disabled:cursor-not-allowed cursor-pointer"
             style={{ backgroundColor: !inputText.trim() ? 'rgb(107 114 128)' : primaryPink }}
           >
-            <i className="bi bi-send-fill"></i>
+            <i className="bi bi-send-fill text-sm"></i>
           </button>
         </div>
       </div>

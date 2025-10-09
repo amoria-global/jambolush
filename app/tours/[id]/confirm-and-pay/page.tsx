@@ -66,6 +66,8 @@ const TourPaymentPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
   const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [pollingStatus, setPollingStatus] = useState<string>('');
+  const [pollCount, setPollCount] = useState(0);
 
   // Fetch current user
   useEffect(() => {
@@ -248,6 +250,82 @@ const TourPaymentPage: React.FC = () => {
     return true; // Card only needs payment method selected
   };
 
+  const pollPaymentStatus = async (depositId: string) => {
+    const maxAttempts = 60; // Poll for max 10 minutes (every 10 seconds)
+    let attempts = 0;
+
+    const checkStatus = async (): Promise<void> => {
+      try {
+        attempts++;
+        setPollCount(attempts);
+        setPollingStatus('Checking payment status...');
+
+        console.log(`[PAYMENT] Polling attempt ${attempts}/${maxAttempts} for depositId: ${depositId}`);
+
+        const response = await api.get(`/pawapay/deposit/${depositId}`);
+
+        if (response.data.success) {
+          // Handle nested data structure: response.data.data.data
+          const depositData = response.data.data?.data || response.data.data;
+          const { status, failureReason } = depositData;
+          console.log(`[PAYMENT] Current status: ${status}`, depositData);
+
+          setPollingStatus(`Payment status: ${status}`);
+
+          // Check for final statuses
+          if (status === 'COMPLETED' || status === 'ACCEPTED') {
+            setPollingStatus('Payment successful! Redirecting...');
+            sessionStorage.setItem('payment_final_status', 'success');
+
+            // Redirect to success page
+            setTimeout(() => {
+              router.push(`/payment/success?tx=${depositId}`);
+            }, 1000);
+            return;
+          }
+
+          if (status === 'FAILED' || status === 'REJECTED' || status === 'CANCELLED') {
+            const failureMessage = failureReason?.failureMessage || 'Payment failed';
+            setPollingStatus(`Payment failed: ${failureMessage}`);
+            sessionStorage.setItem('payment_final_status', 'failed');
+            sessionStorage.setItem('payment_failure_reason', failureMessage);
+
+            // Redirect to failed page
+            setTimeout(() => {
+              router.push(`/payment/failed?tx=${depositId}&error=${encodeURIComponent(failureMessage)}`);
+            }, 2000);
+            return;
+          }
+
+          // If still pending and not exceeded max attempts, continue polling
+          if (attempts < maxAttempts) {
+            setTimeout(() => checkStatus(), 10000); // Poll every 10 seconds
+          } else {
+            // Timeout - redirect to pending page
+            setPollingStatus('Status check timeout. Please check your payment status.');
+            router.push(`/payment/pending?tx=${depositId}`);
+          }
+        } else {
+          console.error('[PAYMENT] Failed to check status:', response.data);
+          if (attempts < maxAttempts) {
+            setTimeout(() => checkStatus(), 10000);
+          }
+        }
+      } catch (error) {
+        console.error('[PAYMENT] Error polling status:', error);
+        if (attempts < maxAttempts) {
+          setTimeout(() => checkStatus(), 10000);
+        } else {
+          setPollingStatus('Error checking payment status');
+          setLoading(false);
+        }
+      }
+    };
+
+    // Start polling
+    checkStatus();
+  };
+
   const handleSubmit = async () => {
     if (!validateForm() || !bookingData || !currentUser) {
       return;
@@ -324,23 +402,25 @@ const TourPaymentPage: React.FC = () => {
       const response = await api.post(endpoint, pawaPayDepositPayload);
 
       if (response.data.success) {
-        const { transactionId, status, redirectUrl, instructions } = response.data.data;
-        
-        console.log('[PAYMENT] Deposit created:', { transactionId, status });
+        const { transactionId, depositId, status, redirectUrl, instructions } = response.data.data;
+
+        console.log('[PAYMENT] Deposit created:', { transactionId, depositId, status });
 
         // Store transaction ID for callback
-        sessionStorage.setItem('payment_transaction_id', transactionId);
+        sessionStorage.setItem('payment_transaction_id', transactionId || depositId);
         sessionStorage.setItem('tour_booking_id', bookingData.id);
 
         if (paymentMethod === 'card' && redirectUrl) {
           // Redirect to payment gateway for card
           window.location.href = redirectUrl;
         } else if (paymentMethod === 'momo') {
-          // For MoMo, show instructions and redirect to status page
+          // For MoMo, show instructions
           if (instructions) {
             alert(instructions);
           }
-          router.push(`/payment/status?tx=${transactionId}`);
+
+          // Start polling for payment status (don't redirect yet)
+          pollPaymentStatus(depositId || transactionId);
         }
       } else {
         setErrors({ 
@@ -579,6 +659,17 @@ const TourPaymentPage: React.FC = () => {
                         <i className="bi bi-exclamation-triangle-fill mr-2"></i>
                         {errors.general}
                       </p>
+                    </div>
+                  )}
+
+                  {pollingStatus && (
+                    <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                        <p className="text-blue-600 text-sm font-medium">
+                          {pollingStatus} (Check {pollCount})
+                        </p>
+                      </div>
                     </div>
                   )}
                   

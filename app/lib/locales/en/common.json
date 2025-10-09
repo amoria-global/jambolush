@@ -10,6 +10,10 @@
     "settings": "Settings",
     "signOut": "Sign out"
   },
+  "navigation": {
+    "goHome": "Go to Home",
+    "contactSupport": "Contact Support"
+  },
   "languages": {
     "en": "English",
     "es": "Spanish",
@@ -166,7 +170,12 @@
     "wantToBecomeServiceProvider": "Want to become a service provider?",
     "joinAsHost": "Join as Host",
     "orSignUpWith": "Or sign up with",
-    "signUpWithGoogle": "Sign up with Google"
+    "signUpWithGoogle": "Sign up with Google",
+    "sessionExpired": "Session Expired",
+    "sessionExpiredMessage": "Your session has expired for security reasons. Please log in again to continue.",
+    "loginAgain": "Log In Again",
+    "redirecting": "Redirecting...",
+    "needHelp": "Need help?"
   },
   "search": {
     "searchProperties": "Search Properties",

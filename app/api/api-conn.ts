@@ -4,6 +4,13 @@
 // Configuration
 const PUBLIC_API_ENDPOINT_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'http://localhost:5000/api'; // Change to your API base URL
 
+// Global session expiry handler - will be set by AuthContext
+let globalSessionExpiredHandler: ((redirectUrl?: string) => void) | null = null;
+
+export const setSessionExpiredHandler = (handler: (redirectUrl?: string) => void) => {
+  globalSessionExpiredHandler = handler;
+};
+
 // Types and Interfaces
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -75,9 +82,21 @@ class ApiLogger {
   private maxLogs = 1000; // Keep last 1000 logs
 
   log(entry: LogEntry): void {
-    // Add to logs array
+    // Skip logging in production to save memory and improve performance
+    if (process.env.NODE_ENV === 'production') {
+      // Only log errors in production
+      if (entry.error || entry.responseStatus >= 400) {
+        console.error(`API Error: ${entry.method} ${entry.endpoint}`, {
+          status: entry.responseStatus,
+          error: entry.error
+        });
+      }
+      return;
+    }
+
+    // Development logging
     this.logs.unshift(entry);
-    
+
     // Keep only max logs
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(0, this.maxLogs);
@@ -86,27 +105,27 @@ class ApiLogger {
     // Console logging with colors and formatting
     const color = this.getLogColor(entry.responseStatus);
     const duration = `${entry.duration}ms`;
-    
+
     console.group(`🌐 API ${entry.method} ${entry.endpoint}`);
     console.log(`%c${entry.method} ${entry.fullUrl}`, `color: ${color}; font-weight: bold`);
     console.log(`⏱️  Duration: ${duration}`);
     console.log(`📊 Status: ${entry.responseStatus}`);
-    
+
     if (entry.requestData) {
       console.log('📤 Request Data:', entry.requestData);
     }
-    
+
     if (entry.responseData) {
       console.log('📥 Response Data:', entry.responseData);
     }
-    
+
     if (entry.error) {
       console.error('❌ Error:', entry.error);
     }
-    
+
     console.groupEnd();
 
-    // Also store in localStorage for persistence (optional)
+    // Also store in localStorage for persistence (optional) - only in development
     try {
       const storedLogs = JSON.parse(localStorage.getItem('api_logs') || '[]');
       storedLogs.unshift(entry);
@@ -237,6 +256,12 @@ class ApiConnector {
         status: response.status,
         timestamp,
       };
+
+      // Handle 401 Unauthorized - Session expired
+      if (response.status === 401 && globalSessionExpiredHandler) {
+        const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
+        globalSessionExpiredHandler(currentUrl);
+      }
 
       // Log the request
       logger.log({

@@ -73,6 +73,7 @@ const Navbar = () => {
       
       // Get auth token from localStorage
       const authToken = localStorage.getItem('authToken');
+      const refreshToken: any = localStorage.getItem('refreshToken');
       
       if (!authToken) {
         setIsLoggedIn(false);
@@ -88,7 +89,7 @@ const Navbar = () => {
 
       if (response.data) {
         const userData = response.data;
-        setUserSession({ user: userData, token: authToken, refreshToken: userData.refreshToken });
+        setUserSession({ user: userData, token: authToken, refreshToken });
         setUser(userData);
         setIsLoggedIn(true);
       } else {

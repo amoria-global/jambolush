@@ -163,27 +163,29 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, lo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full">
         <div className="flex justify-between items-center p-6 border-b">
-          <h3 className="text-xl font-bold text-[#083A85]">Write a Review</h3>
-          <button onClick={onClose} className="text-2xl text-gray-400 hover:text-gray-600">×</button>
+          <h3 className="text-xl font-semibold">Write a review</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
+            <span className="text-xl">×</span>
+          </button>
         </div>
         
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Booking ID</label>
+            <label className="block text-sm font-medium mb-2">Booking ID</label>
             <input
               type="text"
               value={reviewData.bookingId}
               onChange={(e) => setReviewData({...reviewData, bookingId: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent"
-              placeholder="Your booking ID"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              placeholder="Enter your booking ID"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Rating</label>
+            <label className="block text-sm font-medium mb-2">Rating</label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
@@ -191,47 +193,47 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ isOpen, onClose, onSubmit, lo
                   onClick={() => setReviewData({...reviewData, rating: star})}
                   className="text-3xl focus:outline-none transition-colors"
                 >
-                  <span className={star <= reviewData.rating ? 'text-[#F20C8F]' : 'text-gray-300'}>★</span>
+                  <i className={`bi bi-star-fill ${star <= reviewData.rating ? 'text-black' : 'text-gray-300'}`}></i>
                 </button>
               ))}
             </div>
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Review Title</label>
+            <label className="block text-sm font-medium mb-2">Review title</label>
             <input
               type="text"
               value={reviewData.title}
               onChange={(e) => setReviewData({...reviewData, title: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent"
-              placeholder="Give your review a title"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              placeholder="Sum up your experience"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
+            <label className="block text-sm font-medium mb-2">Your review</label>
             <textarea
               value={reviewData.comment}
               onChange={(e) => setReviewData({...reviewData, comment: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent"
-              rows={4}
-              placeholder="Share your experience..."
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+              rows={5}
+              placeholder="Share details of your experience"
             />
           </div>
           
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex gap-3 pt-2">
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+              className="flex-1 px-4 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading || !reviewData.comment.trim()}
-              className="px-6 py-3 bg-[#F20C8F] text-white rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 transition-colors"
+              className="flex-1 px-4 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
             >
-              {loading ? 'Submitting...' : 'Submit Review'}
+              {loading ? 'Submitting...' : 'Submit'}
             </button>
           </div>
         </div>
@@ -244,24 +246,26 @@ const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-white/95 backdrop-blur-md z-50 flex flex-col">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-2xl font-bold text-gray-800">All Photos</h3>
+    <div className="fixed inset-0 bg-white z-50 flex flex-col">
+      <div className="sticky top-0 bg-white border-b p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
           <button 
             onClick={onClose}
-            className="w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-2xl transition-colors"
+            className="flex items-center gap-2 hover:text-gray-600 transition"
           >
-            ×
+            <i className="bi bi-chevron-left text-lg"></i>
+            <span className="font-medium">Back</span>
           </button>
+          <h3 className="text-lg font-medium">Tour photos</h3>
+          <div className="w-20"></div>
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-4xl mx-auto p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Array.from({length: 8}).map((_, idx) => (
-              <div key={idx} className="bg-gray-200 rounded-xl aspect-square flex items-center justify-center shadow-sm">
+              <div key={idx} className="bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center">
                 <span className="text-gray-500 font-medium">Photo {idx + 1}</span>
               </div>
             ))}
@@ -275,6 +279,7 @@ const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, 
 export default function TourDetailPage({ params }: TourPageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const pathname = usePathname();
   
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -292,6 +297,8 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [showPhotoGallery, setShowPhotoGallery] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [showAllHighlights, setShowAllHighlights] = useState(false);
+  const [showParticipantsDropdown, setShowParticipantsDropdown] = useState(false);
   
   const [bookingForm, setBookingForm] = useState({
     tourId: '',
@@ -366,8 +373,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
             tourId: transformedTour.id,
             totalAmount: transformedTour.price
           }));
-
-          showAlert('Tour loaded successfully', 'success', 3000);
         } else {
           throw new Error(response.message || 'Failed to fetch tour');
         }
@@ -637,13 +642,13 @@ export default function TourDetailPage({ params }: TourPageProps) {
     });
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty?.toLowerCase()) {
-      case 'easy': return 'text-green-600 bg-green-100';
-      case 'moderate': return 'text-yellow-600 bg-yellow-100';
-      case 'challenging': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
+  const getDifficultyBadge = (difficulty: string) => {
+    const colors = {
+      easy: 'bg-green-100 text-green-800',
+      moderate: 'bg-yellow-100 text-yellow-800',
+      challenging: 'bg-red-100 text-red-800'
+    };
+    return colors[difficulty?.toLowerCase() as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   const getReviewStats = () => {
@@ -663,6 +668,8 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
   const reviewStats = getReviewStats();
   const priceBreakdown = getTourPriceBreakdown();
+  const durationDays = Math.floor((tour?.duration || 0) / 24);
+  const durationHours = (tour?.duration || 0) % 24;
 
   if (invalidId) {
     return (
@@ -696,22 +703,22 @@ export default function TourDetailPage({ params }: TourPageProps) {
   if (loading && !tour) {
     return (
       <div className="mt-14 bg-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 lg:px-10 py-6">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-300 rounded-lg w-3/4"></div>
+            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
             <div className="flex gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-4 bg-gray-300 rounded w-24"></div>
+                <div key={i} className="h-4 bg-gray-200 rounded w-24"></div>
               ))}
             </div>
-            <div className="h-96 bg-gray-300 rounded-xl"></div>
+            <div className="h-[560px] bg-gray-200 rounded-xl"></div>
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-4">
-                <div className="h-4 bg-gray-300 rounded w-full"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
               </div>
-              <div className="h-96 bg-gray-300 rounded-xl"></div>
+              <div className="h-96 bg-gray-200 rounded-xl"></div>
             </div>
           </div>
         </div>
@@ -722,14 +729,14 @@ export default function TourDetailPage({ params }: TourPageProps) {
   return (
     <>
       <head>
-        <title>{tour?.title}</title>
+        <title>{tour?.title} - Experience</title>
       </head>
       
       {alert.show && (
         <AlertNotification
           message={alert.message}
           type={alert.type}
-          position="bottom-right"
+          position="top-center"
           duration={alert.duration}
           onClose={hideAlert}
           showProgress={true}
@@ -738,694 +745,820 @@ export default function TourDetailPage({ params }: TourPageProps) {
       )}
       
       <div className="mt-14 bg-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 lg:px-10 py-6">
           
           {error && tour && (
-            <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-              <div className="text-yellow-800">
-                <p className="text-sm font-medium">Some tour data could not be loaded. Showing limited information.</p>
+            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center text-yellow-800">
+                <i className="bi bi-exclamation-triangle-fill mr-2"></i>
+                <span className="text-sm">Some tour data could not be loaded. Showing limited information.</span>
               </div>
             </div>
           )}
 
           {bookingSuccess && createdBooking && (
-            <div className="mb-6 bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
-              <div className="text-green-800">
-                <p className="font-bold">Booking Created Successfully!</p>
-                <p className="text-sm">Booking ID: {createdBooking.id} | Status: {createdBooking.status}</p>
-                <p className="text-sm">Redirecting to confirmation...</p>
+            <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="flex items-center text-green-800">
+                <i className="bi bi-check-circle-fill mr-2 text-xl"></i>
+                <div>
+                  <p className="font-semibold">Booking Created Successfully!</p>
+                  <p className="text-sm">Booking ID: {createdBooking.id} | Status: {createdBooking.status}</p>
+                  <p className="text-sm">Redirecting to confirmation...</p>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold text-[#083A85] mb-4 leading-tight">
+          {/* Airbnb-style Title Section */}
+          <div className="mb-6">
+            <h1 className="text-[26px] font-semibold text-gray-900 mb-2">
               {tour?.title}
             </h1>
-            <div className="flex flex-wrap items-center gap-4 text-gray-700">
-              <span className="flex items-center gap-2 font-semibold">
-                <span className="text-[#F20C8F] text-xl">★</span>
-                <span>{tour?.rating || 'No rating'}</span>
-                <span className="text-gray-500">({tour?.totalReviews || 0} reviews)</span>
-              </span>
-              <span className="text-gray-300">•</span>
-              <span className="flex items-center gap-2">
-                <span className="text-[#F20C8F]">📍</span>
-                <span>{tour?.locationCity}, {tour?.locationCountry}</span>
-              </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(tour?.difficulty)}`}>
+            <div className="flex flex-wrap items-center gap-1 text-sm">
+              {tour?.rating > 0 && (
+                <>
+                  <span className="flex items-center gap-1">
+                    <i className="bi bi-star-fill text-xs"></i>
+                    <span className="font-medium">{tour.rating}</span>
+                  </span>
+                  <span className="text-gray-500">·</span>
+                  <button className="underline font-medium hover:text-black transition">
+                    {tour.totalReviews} reviews
+                  </button>
+                  <span className="text-gray-500">·</span>
+                </>
+              )}
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${getDifficultyBadge(tour?.difficulty)}`}>
                 {tour?.difficulty}
               </span>
-            </div>
-          </div>
-
-          <div className="mb-10">
-            <div className="grid grid-cols-4 gap-3 h-[300px] sm:h-[500px] rounded-xl overflow-hidden relative">
-              <div 
-                className="col-span-4 sm:col-span-2 sm:row-span-2 relative group cursor-pointer bg-gray-200 flex items-center justify-center"
-                onClick={() => setShowPhotoGallery(true)}
-              >
-                <span className="text-gray-500 text-lg">📸 Main Tour Image</span>
-                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-              </div>
-              {Array.from({length: 4}).map((_, idx) => (
-                <div 
-                  key={idx} 
-                  className="hidden sm:block relative group cursor-pointer bg-gray-200 flex items-center justify-center"
-                  onClick={() => setShowPhotoGallery(true)}
-                >
-                  <span className="text-gray-400 text-sm">Image {idx + 2}</span>
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                </div>
-              ))}
-              <button 
-                className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all font-semibold text-gray-800"
-                onClick={() => setShowPhotoGallery(true)}
-              >
-                Show all photos
+              <span className="text-gray-500">·</span>
+              <button className="underline font-medium hover:text-black transition">
+                {tour?.locationCity}, {tour?.locationCountry}
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            
-            <div className="lg:col-span-2 space-y-8">
-              
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-6 pb-8 border-b">
-                <div>
-                  <h2 className="text-2xl font-bold text-[#083A85] mb-2">
-                    {tour?.tourGuide ? 
-                      `Experience hosted by ${tour.tourGuide.firstName} ${tour.tourGuide.lastName}` :
-                      'Experience hosted by a Certified Guide'
-                    }
-                  </h2>
-                  <div className="flex flex-wrap items-center gap-4 text-gray-700">
-                    <span>{Math.floor((tour?.duration || 0) / 24)} days</span>
-                    <span className="text-gray-300">•</span>
-                    <span>Up to {tour?.maxGroupSize} guests</span>
-                    <span className="text-gray-300">•</span>
-                    <span>{tour?.difficulty} difficulty</span>
+          {/* Airbnb-style Photo Grid */}
+          <div className="mb-12">
+            <div 
+              className="grid grid-cols-4 grid-rows-2 gap-2 h-[560px] rounded-xl overflow-hidden cursor-pointer"
+              onClick={() => setShowPhotoGallery(true)}
+            >
+              {/* Main large image on left */}
+              <div className="col-span-2 row-span-2 relative group">
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center hover:brightness-95 transition duration-200">
+                  <div className="text-center">
+                    <i className="bi bi-camera text-6xl text-gray-400 mb-2"></i>
+                    <p className="text-gray-500">Main tour photo</p>
                   </div>
-                </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-[#083A85] to-[#F20C8F] rounded-full flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                  {tour?.tourGuide ? 
-                    (tour.tourGuide.firstName[0] + tour.tourGuide.lastName[0]) : 'G'
-                  }
                 </div>
               </div>
 
-              {/* Mobile Booking Card */}
-              <div className="block lg:hidden">
-                <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl bg-gradient-to-br from-white to-blue-50">
-                  <div className="flex justify-between items-baseline mb-6">
-                    <div>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
-                      </div>
-                      <span className="text-gray-600 text-lg"> / person</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[#F20C8F]">★</span>
-                        <span className="font-bold">{tour?.rating || 'No rating'}</span>
-                      </div>
-                      <span className="text-sm text-gray-600">({reviewStats.total} reviews)</span>
-                    </div>
+              {/* Four smaller images on right in 2x2 grid */}
+              {Array.from({length: 4}).map((_, idx) => (
+                <div key={idx} className="relative group overflow-hidden">
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center hover:brightness-95 transition duration-200">
+                    <span className="text-gray-500">Photo {idx + 2}</span>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">PARTICIPANTS</label>
-                      <select
-                        value={bookingForm.numberOfParticipants}
-                        onChange={(e) => updateParticipants(parseInt(e.target.value))}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                  {idx === 3 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <button 
+                        className="bg-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition flex items-center gap-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowPhotoGallery(true);
+                        }}
                       >
-                        {Array.from({ length: (tour?.maxGroupSize || 1) - (tour?.minGroupSize || 1) + 1 }, (_, i) => (
-                          <option key={i} value={(tour?.minGroupSize || 1) + i}>
-                            {(tour?.minGroupSize || 1) + i} participants
-                          </option>
-                        ))}
-                      </select>
+                        <i className="bi bi-grid-3x3-gap"></i>
+                        Show all photos
+                      </button>
                     </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-                    {bookingError && (
-                      <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded">
-                        <p className="text-red-600 text-sm font-medium">{bookingError}</p>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => setShowBookingModal(true)}
-                      disabled={!selectedSchedule}
-                      className="w-full py-4 bg-[#F20C8F] text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]"
-                    >
-                      Book Now
-                    </button>
-                    
-                    {priceBreakdown && (
-                      <div className="border-t pt-4 space-y-2 text-sm">
-                        <div className="flex justify-between text-gray-600">
-                          <span>Tour Price ({bookingForm.numberOfParticipants} participants)</span>
-                          <span>${priceBreakdown.subtotal}</span>
-                        </div>
-                        <div className="flex justify-between text-gray-600">
-                          <span>Taxes (4%)</span>
-                          <span>+${priceBreakdown.taxes}</span>
-                        </div>
-                        <div className="flex justify-between font-bold text-lg border-t pt-2">
-                          <span>Total</span>
-                          <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
+            {/* Left Content - 3 columns */}
+            <div className="lg:col-span-3">
+              {/* Tour Header */}
+              <div className="border-b pb-8 mb-8">
+                <h2 className="text-[22px] font-medium mb-1">
+                  {durationDays > 0 ? `${durationDays}-day` : `${durationHours}-hour`} experience hosted by {tour?.tourGuide ? 
+                    `${tour.tourGuide.firstName}` : 'Local Expert'}
+                </h2>
+                <div className="flex flex-wrap gap-1 text-base text-gray-700">
+                  <span>{durationDays > 0 ? `${durationDays} days` : `${durationHours} hours`}</span>
+                  <span>·</span>
+                  <span>Up to {tour?.maxGroupSize} people</span>
+                  <span>·</span>
+                  <span>Offered in English</span>
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 py-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 text-2xl">✓</span>
+              {/* Tour Highlights */}
+              <div className="border-b pb-8 mb-8 space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-calendar-x text-2xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">Free Cancellation</h3>
-                    <p className="text-gray-600 text-sm">Cancel up to 24 hours in advance for a full refund.</p>
+                    <div className="font-medium mb-1">Free cancellation</div>
+                    <div className="text-sm text-gray-600">Cancel up to 24 hours in advance for a full refund</div>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 text-2xl">💳</span>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-translate text-2xl"></i>
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">Reserve & Pay Later</h3>
-                    <p className="text-gray-600 text-sm">Keep your travel plans flexible — book your spot and pay nothing today.</p>
+                    <div className="font-medium mb-1">Offered in English</div>
+                    <div className="text-sm text-gray-600">Host speaks English fluently</div>
                   </div>
                 </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-people text-2xl"></i>
+                  </div>
+                  <div>
+                    <div className="font-medium mb-1">Small group experience</div>
+                    <div className="text-sm text-gray-600">Maximum of {tour?.maxGroupSize} participants</div>
+                  </div>
+                </div>
+                {tour?.tourGuide && (
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                      <i className="bi bi-award text-2xl"></i>
+                    </div>
+                    <div>
+                      <div className="font-medium mb-1">Expert guide</div>
+                      <div className="text-sm text-gray-600">
+                        {tour.tourGuide.totalTours} tours completed · {tour.tourGuide.rating || 'No rating yet'}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="py-6 border-b">
-                <h2 className="text-2xl font-bold text-[#083A85] mb-4">About This Experience</h2>
-                <p className="text-gray-700 leading-relaxed text-lg">{tour?.description}</p>
-              </div>
+              {/* What you'll do */}
+              <div className="border-b pb-8 mb-8">
+                <h3 className="text-[22px] font-medium mb-6">What you'll do</h3>
+                <div className="text-base leading-relaxed text-gray-800 mb-6">
+                  {tour?.description}
+                </div>
 
-              {tour?.itinerary && tour.itinerary.length > 0 && (
-                <div className="py-6 border-b">
-                  <h2 className="text-2xl font-bold text-[#083A85] mb-6">Day-by-Day Itinerary</h2>
-                  <div className="space-y-6">
+                {tour?.itinerary && tour.itinerary.length > 0 && (
+                  <div className="space-y-4 mt-6">
                     {tour.itinerary.map((item: any, index: number) => (
-                      <div key={index} className="flex gap-4">
-                        <div className="w-8 h-8 bg-[#F20C8F] rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                      <div key={index} className="flex gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium">
                           {index + 1}
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-bold text-gray-900 text-lg mb-2">{item.title}</h3>
-                          <p className="text-gray-700 mb-2">{item.description}</p>
-                          <span className="text-sm text-[#F20C8F] font-medium">Duration: {item.duration} hours</span>
+                          <div className="font-medium mb-1">{item.title}</div>
+                          <p className="text-sm text-gray-600">{item.description}</p>
+                          <span className="text-sm text-gray-500">Duration: {item.duration} hours</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-              
-              <div className="py-6 border-b">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-[#083A85] mb-4 flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      What's Included
-                    </h3>
-                    <div className="space-y-3">
-                      {(tour?.inclusions || []).map((item: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <span className="text-green-500 text-lg mt-1">✓</span>
-                          <span className="text-gray-700">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-xl font-bold text-[#083A85] mb-4 flex items-center gap-2">
-                      <span className="text-red-500">✗</span>
-                      Not Included
-                    </h3>
-                    <div className="space-y-3">
-                      {(tour?.exclusions || []).map((item: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-3">
-                          <span className="text-red-500 text-lg mt-1">✗</span>
-                          <span className="text-gray-700">{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
 
-              {tour?.requirements && tour.requirements.length > 0 && (
-                <div className="py-6 border-b">
-                  <h3 className="text-xl font-bold text-[#083A85] mb-4 flex items-center gap-2">
-                    <span className="text-yellow-500">⚠️</span>
-                    Important Requirements
-                  </h3>
-                  <div className="space-y-3">
-                    {tour.requirements.map((req: string, index: number) => (
-                      <div key={index} className="flex items-start gap-3">
-                        <span className="text-yellow-500 text-lg mt-1">•</span>
-                        <span className="text-gray-700">{req}</span>
-                      </div>
-                    ))}
-                  </div>
+              {/* What's included */}
+              <div className="border-b pb-8 mb-8">
+                <h3 className="text-[22px] font-medium mb-6">What's included</h3>
+                <div className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                  {(tour?.inclusions || []).map((item: string, idx: number) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <i className="bi bi-check-lg text-lg mt-0.5"></i>
+                      <span className="text-base">{item}</span>
+                    </div>
+                  ))}
                 </div>
-              )}
+                {tour?.exclusions && tour.exclusions.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="font-medium mb-3">Not included</h4>
+                    <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
+                      {tour.exclusions.map((item: string, idx: number) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <i className="bi bi-x-lg text-lg text-gray-400 mt-0.5"></i>
+                          <span className="text-base text-gray-600">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              <div className="py-6 border-b">
-                <h2 className="text-2xl font-bold text-[#083A85] mb-4">Meeting Point & Location</h2>
+              {/* Meeting point */}
+              <div className="border-b pb-8 mb-8">
+                <h3 className="text-[22px] font-medium mb-6">Where you'll meet</h3>
                 <div className="bg-gray-50 rounded-xl p-6">
-                  <div className="flex items-start gap-3 mb-4">
-                    <span className="text-[#F20C8F] text-xl mt-1">📍</span>
+                  <div className="flex items-start gap-3">
+                    <i className="bi bi-geo-alt text-xl"></i>
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-2">{tour?.meetingPoint}</h4>
-                      <div className="text-gray-600 space-y-1">
-                        <p>{tour?.locationAddress}</p>
+                      <div className="font-medium mb-2">{tour?.meetingPoint}</div>
+                      <div className="text-sm text-gray-600">
+                        {tour?.locationAddress && <p>{tour.locationAddress}</p>}
                         <p>{tour?.locationCity}, {tour?.locationState}</p>
                         <p>{tour?.locationCountry}</p>
                       </div>
                     </div>
                   </div>
+                  <div className="mt-4 p-3 bg-white rounded-lg border">
+                    <p className="text-sm text-gray-700">
+                      <i className="bi bi-info-circle text-blue-500 mr-2"></i>
+                      You'll receive the exact meeting point details after booking confirmation
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="py-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-[#083A85]">Guest Reviews</h2>
-                  <button 
-                    onClick={() => setShowReviewModal(true)}
-                    className="px-6 py-3 border-2 border-[#083A85] text-[#083A85] rounded-lg font-bold hover:bg-[#083A85] hover:text-white transition-all"
-                  >
-                    Write Review
-                  </button>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[#F20C8F] text-4xl">★</span>
-                    <div>
-                      <span className="text-3xl font-bold">{reviewStats.average}</span>
-                      <p className="text-gray-600">({reviewStats.total} reviews)</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex-1 w-full space-y-2">
-                    {[5, 4, 3, 2, 1].map((rating) => (
-                      <div key={rating} className="flex items-center gap-3">
-                        <span className="text-sm font-medium w-4">{rating}</span>
-                        <div className="flex-1 bg-gray-200 rounded-full h-3">
-                          <div 
-                            className="bg-[#F20C8F] h-3 rounded-full transition-all" 
-                            style={{ width: `${reviewStats.total > 0 ? (reviewStats.counts[rating as keyof typeof reviewStats.counts] / reviewStats.total) * 100 : 0}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm text-gray-600 w-8">
-                          {reviewStats.counts[rating as keyof typeof reviewStats.counts]}
-                        </span>
+              {/* Things to know */}
+              {tour?.requirements && tour.requirements.length > 0 && (
+                <div className="border-b pb-8 mb-8">
+                  <h3 className="text-[22px] font-medium mb-6">Guest requirements</h3>
+                  <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
+                    {tour.requirements.map((req: string, index: number) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <i className="bi bi-info-circle text-gray-400"></i>
+                        <span className="text-sm">{req}</span>
                       </div>
                     ))}
                   </div>
                 </div>
+              )}
 
-                {reviewsLoading ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin w-8 h-8 border-4 border-[#F20C8F] border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading reviews...</p>
-                  </div>
-                ) : reviews.length > 0 ? (
-                  <div className="space-y-6">
-                    {reviews.slice(0, showAllReviews ? reviews.length : 3).map((review, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-xl p-6">
-                        <div className="flex items-start gap-4 mb-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-[#083A85] to-[#F20C8F] rounded-full flex items-center justify-center text-white font-bold">
-                            {review.userName[0]}
+              {/* Available dates section */}
+              <div className="border-b pb-8 mb-8">
+                <h3 className="text-[22px] font-medium mb-2">Choose from available dates</h3>
+                {tour?.schedules && tour.schedules.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+                    {tour.schedules.map((schedule: Schedule) => (
+                      <div
+                        key={schedule.id}
+                        className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
+                          selectedSchedule?.id === schedule.id
+                            ? 'border-gray-900 bg-gray-50'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }`}
+                        onClick={() => {
+                          setSelectedSchedule(schedule);
+                          setBookingForm(prev => ({ ...prev, scheduleId: schedule.id }));
+                        }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium">
+                              {formatDate(schedule.startDate)}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {schedule.startTime} - {schedule.endTime}
+                            </p>
                           </div>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-bold text-[#083A85]">{review.userName}</h4>
-                                <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
-                              </div>
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <span 
-                                    key={i} 
-                                    className={`text-lg ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}
-                                  >
-                                    ★
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-gray-900">
+                              {schedule.availableSlots} spots left
+                            </p>
                           </div>
                         </div>
-                        <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                        {selectedSchedule?.id === schedule.id && (
+                          <div className="mt-3 pt-3 border-t">
+                            <i className="bi bi-check-circle-fill text-gray-900 mr-2"></i>
+                            <span className="text-sm font-medium">Selected</span>
+                          </div>
+                        )}
                       </div>
                     ))}
-                    
-                    {reviews.length > 3 && (
-                      <button 
-                        onClick={() => setShowAllReviews(!showAllReviews)}
-                        className="w-full py-3 border-2 border-[#083A85] text-[#083A85] rounded-lg font-bold hover:bg-[#083A85] hover:text-white transition-all"
-                      >
-                        {showAllReviews ? 'Show Less' : `Show All ${reviews.length} Reviews`}
-                      </button>
-                    )}
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 text-lg">No reviews yet. Be the first to review!</p>
-                  </div>
+                  <p className="text-gray-500 mt-4">No available dates at this time</p>
                 )}
               </div>
             </div>
 
-            {/* Desktop Booking Card */}
-            <div className="hidden lg:block">
+            {/* Right Sidebar - Booking Card - 2 columns */}
+            <div className="lg:col-span-2">
               <div className="sticky top-24">
-                <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-2xl bg-gradient-to-br from-white to-blue-50">
-                  <div className="flex justify-between items-baseline mb-6">
+                <div className="border rounded-xl p-6 shadow-xl">
+                  <div className="flex items-baseline justify-between mb-6">
                     <div>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-4xl font-bold text-[#F20C8F]">${tour?.price}</span>
-                      </div>
-                      <span className="text-gray-600 text-lg"> / person</span>
+                      <span className="text-[22px] font-semibold">${tour?.price?.toFixed(2)}</span>
+                      <span className="text-gray-600 ml-1">/ person</span>
                     </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[#F20C8F]">★</span>
-                        <span className="font-bold">{tour?.rating || 'No rating'}</span>
+                    {tour?.rating > 0 && (
+                      <div className="flex items-center gap-1 text-sm">
+                        <i className="bi bi-star-fill text-xs"></i>
+                        <span className="font-medium">{tour.rating}</span>
+                        <span className="text-gray-500">·</span>
+                        <span className="text-gray-500">{tour.totalReviews} reviews</span>
                       </div>
-                      <span className="text-sm text-gray-600">({reviewStats.total} reviews)</span>
+                    )}
+                  </div>
+
+                  {/* Date & Participants Selection */}
+                  <div className="space-y-4 mb-6">
+                    {selectedSchedule ? (
+                      <div className="border rounded-lg p-3">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">Selected date</p>
+                            <p className="font-medium mt-1">{formatDate(selectedSchedule.startDate)}</p>
+                            <p className="text-sm text-gray-600">{selectedSchedule.startTime} - {selectedSchedule.endTime}</p>
+                          </div>
+                          <button 
+                            onClick={() => setSelectedSchedule(null)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <i className="bi bi-x-lg"></i>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border border-gray-300 rounded-lg p-3 text-center">
+                        <p className="text-sm text-gray-500">Select a date above to continue</p>
+                      </div>
+                    )}
+
+                    <div className="border rounded-lg p-3 relative">
+                      <label className="text-[10px] font-semibold uppercase tracking-wide">Participants</label>
+                      <div 
+                        onClick={() => setShowParticipantsDropdown(!showParticipantsDropdown)}
+                        className="mt-1 text-sm cursor-pointer flex justify-between items-center"
+                      >
+                        <span>{bookingForm.numberOfParticipants} {bookingForm.numberOfParticipants === 1 ? 'person' : 'people'}</span>
+                        <i className={`bi bi-chevron-${showParticipantsDropdown ? 'up' : 'down'}`}></i>
+                      </div>
+                      {showParticipantsDropdown && (
+                        <div className="absolute left-0 right-0 top-full mt-2 bg-white border rounded-lg shadow-lg p-4 z-10">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">Participants</span>
+                            <div className="flex items-center gap-3">
+                              <button 
+                                onClick={() => updateParticipants(Math.max(tour?.minGroupSize || 1, bookingForm.numberOfParticipants - 1))}
+                                disabled={bookingForm.numberOfParticipants <= (tour?.minGroupSize || 1)}
+                                className="w-8 h-8 border rounded-full flex items-center justify-center disabled:opacity-50"
+                              >
+                                <i className="bi bi-dash"></i>
+                              </button>
+                              <span className="w-8 text-center">{bookingForm.numberOfParticipants}</span>
+                              <button 
+                                onClick={() => updateParticipants(Math.min(tour?.maxGroupSize || 10, bookingForm.numberOfParticipants + 1))}
+                                disabled={bookingForm.numberOfParticipants >= (tour?.maxGroupSize || 10)}
+                                className="w-8 h-8 border rounded-full flex items-center justify-center disabled:opacity-50"
+                              >
+                                <i className="bi bi-plus"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2">
+                            {tour?.minGroupSize && `Min: ${tour.minGroupSize} · `}
+                            Max: {tour?.maxGroupSize || 10} participants
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
-                  
+
+                  {/* Book Button */}
+                  <button
+                    onClick={() => setShowBookingModal(true)}
+                    disabled={!selectedSchedule}
+                    className={`w-full py-3 rounded-lg font-medium transition mb-3 ${
+                      !selectedSchedule
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                        : 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700'
+                    }`}
+                  >
+                    {!selectedSchedule ? 'Select date to continue' : 'Book experience'}
+                  </button>
+
+                  {selectedSchedule ? (
+                    <>
+                      <p className="text-center text-sm text-gray-600 mb-4">You won't be charged yet</p>
+                      
+                      {/* Price Breakdown */}
+                      {priceBreakdown && (
+                        <div className="space-y-3 pt-4 border-t">
+                          <div className="flex justify-between text-base">
+                            <button className="underline">
+                              ${tour?.price?.toFixed(2)} x {bookingForm.numberOfParticipants} {bookingForm.numberOfParticipants === 1 ? 'person' : 'people'}
+                            </button>
+                            <span>${priceBreakdown.subtotal.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-base">
+                            <button className="underline">Taxes</button>
+                            <span>${priceBreakdown.taxes.toFixed(2)}</span>
+                          </div>
+                          <div className="pt-3 border-t flex justify-between font-medium">
+                            <span>Total</span>
+                            <span>${calculateTourTotal().toFixed(2)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-center text-sm text-gray-600">Choose a date to see pricing</p>
+                  )}
+
+                  {bookingError && (
+                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600 text-sm flex items-center gap-2">
+                        <i className="bi bi-exclamation-triangle"></i>
+                        {bookingError}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Report listing */}
+                <div className="mt-6 text-center">
+                  <button className="text-gray-500 underline text-sm hover:text-gray-700">
+                    <i className="bi bi-flag mr-2"></i>
+                    Report this experience
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="border-t pt-12 mt-12">
+            <div className="flex items-center gap-2 mb-8">
+              <i className="bi bi-star-fill text-xl"></i>
+              <h2 className="text-[22px] font-medium">
+                {reviewStats.average} · {reviewStats.total} reviews
+              </h2>
+            </div>
+
+            {/* Rating Categories Grid */}
+            {reviewStats.total > 0 && (
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-4 mb-12 max-w-4xl">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Overall rating</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-1 w-32">
+                      <div 
+                        className="bg-gray-900 h-1 rounded-full"
+                        style={{ width: `${(parseFloat(reviewStats.average) / 5) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium w-8 text-right">
+                      {reviewStats.average}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Reviews List */}
+            {reviewsLoading ? (
+              <div className="text-center py-12">
+                <i className="bi bi-arrow-clockwise spin text-2xl mb-2"></i>
+                <p className="text-gray-600">Loading reviews...</p>
+              </div>
+            ) : reviews.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-xl">
+                <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
+                <p className="text-xl font-medium mb-2">No reviews yet</p>
+                <p className="text-gray-600 mb-6">Be the first to share your experience!</p>
+                <button 
+                  onClick={() => setShowReviewModal(true)}
+                  className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                >
+                  Write a review
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-8 mb-8">
+                  {reviews.slice(0, showAllReviews ? reviews.length : 6).map((review) => (
+                    <div key={review.id}>
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium">
+                          {review.userName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium">{review.userName}</div>
+                          <div className="text-sm text-gray-600">{formatDate(review.createdAt)}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <i key={i} className={`bi bi-star-fill text-xs ${i < review.rating ? 'text-black' : 'text-gray-300'}`}></i>
+                        ))}
+                      </div>
+                      <p className="text-gray-800 leading-relaxed">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {reviews.length > 6 && (
+                  <button 
+                    onClick={() => setShowAllReviews(!showAllReviews)}
+                    className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                  >
+                    {showAllReviews ? 'Show less' : `Show all ${reviews.length} reviews`}
+                  </button>
+                )}
+
+                <button 
+                  onClick={() => setShowReviewModal(true)}
+                  className="ml-4 px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                >
+                  Write a review
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Meet your host */}
+          {tour?.tourGuide && (
+            <div className="border-t pt-12 mt-12">
+              <div className="grid lg:grid-cols-2 gap-12">
+                <div>
+                  <h2 className="text-[22px] font-medium mb-6">Meet your host</h2>
+                  <div className="flex items-start gap-4 mb-6">
+                    <div className="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center text-white text-2xl font-medium">
+                      {tour.tourGuide.firstName[0]}{tour.tourGuide.lastName[0]}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-medium mb-1">
+                        {tour.tourGuide.firstName} {tour.tourGuide.lastName}
+                      </h3>
+                      <p className="text-sm text-gray-600">Host on RentSpaces since 2024</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 mb-8">
+                    <div className="flex items-center gap-2 text-sm">
+                      <i className="bi bi-star-fill"></i>
+                      <span>{tour.tourGuide.rating || 'New host'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <i className="bi bi-shield-check"></i>
+                      <span>Identity verified</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <i className="bi bi-award"></i>
+                      <span>{tour.tourGuide.totalTours} experiences hosted</span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-800 leading-relaxed mb-8">
+                    Hi! I'm your local expert guide passionate about sharing the best of {tour.locationCity} with 
+                    visitors from around the world. I look forward to showing you the hidden gems and stories 
+                    that make this place special.
+                  </p>
+
+                  <button className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition">
+                    Contact host
+                  </button>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="flex items-start gap-3">
+                    <i className="bi bi-shield-check text-2xl text-red-500"></i>
+                    <div>
+                      <p className="text-sm text-gray-800 leading-relaxed">
+                        To protect your payment, never transfer money or communicate outside of the RentSpaces website or app.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Things to know */}
+          <div className="border-t pt-12 mt-12 mb-12">
+            <h2 className="text-[22px] font-medium mb-8">Things to know</h2>
+            <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+              <div>
+                <h3 className="font-medium mb-4">Cancellation policy</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Free cancellation up to 24 hours before the experience starts.</p>
+                  <p>Cancel within 24 hours of your experience starting time and the full amount will be charged.</p>
+                  <button className="font-medium underline">Show more</button>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Health & safety</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Committed to health and safety process</p>
+                  <p>Small group sizes</p>
+                  <p>Physical distancing enforced</p>
+                  <button className="font-medium underline">Show more</button>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Guest requirements</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Minimum age: 12</p>
+                  <p>Max group size: {tour?.maxGroupSize}</p>
+                  <p>Experience level: {tour?.difficulty}</p>
+                  <button className="font-medium underline">Show more</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Booking Modal */}
+          {showBookingModal && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+                <div className="sticky top-0 bg-white border-b p-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-semibold">Complete your booking</h3>
+                    <button
+                      onClick={() => setShowBookingModal(false)}
+                      className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center"
+                    >
+                      <span className="text-xl">×</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+                    <h4 className="font-medium mb-2">{tour?.title}</h4>
+                    <div className="text-sm text-gray-600">
+                      <p>{selectedSchedule ? formatDate(selectedSchedule.startDate) : 'No date selected'}</p>
+                      <p className="mt-1">{bookingForm.numberOfParticipants} {bookingForm.numberOfParticipants === 1 ? 'person' : 'people'} · ${calculateTourTotal()} total</p>
+                    </div>
+                  </div>
+
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-2">PARTICIPANTS</label>
+                      <h4 className="font-medium mb-4">Number of participants</h4>
                       <select
                         value={bookingForm.numberOfParticipants}
                         onChange={(e) => updateParticipants(parseInt(e.target.value))}
-                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                       >
                         {Array.from({ length: (tour?.maxGroupSize || 1) - (tour?.minGroupSize || 1) + 1 }, (_, i) => (
                           <option key={i} value={(tour?.minGroupSize || 1) + i}>
-                            {(tour?.minGroupSize || 1) + i} participants
+                            {(tour?.minGroupSize || 1) + i} {((tour?.minGroupSize || 1) + i) === 1 ? 'participant' : 'participants'}
                           </option>
                         ))}
                       </select>
                     </div>
 
-                    {tour?.tourGuide && (
-                      <div className="bg-white rounded-lg p-4 border">
-                        <h4 className="font-bold text-gray-900 mb-3">Your Guide</h4>
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-[#083A85] to-[#F20C8F] rounded-full flex items-center justify-center text-white font-bold">
-                            {tour.tourGuide.firstName[0]}{tour.tourGuide.lastName[0]}
+                    {bookingForm.participants.map((participant, index) => (
+                      <div key={index} className="border rounded-xl p-6 bg-gray-50">
+                        <h5 className="font-medium mb-4">Participant {index + 1}</h5>
+                        
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input
+                              type="text"
+                              placeholder="Full name"
+                              value={participant.name}
+                              onChange={(e) => updateParticipant(index, 'name', e.target.value)}
+                              className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            />
+                            <input
+                              type="number"
+                              placeholder="Age"
+                              value={participant.age}
+                              onChange={(e) => updateParticipant(index, 'age', e.target.value)}
+                              className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            />
+                            <input
+                              type="email"
+                              placeholder="Email (optional)"
+                              value={participant.email}
+                              onChange={(e) => updateParticipant(index, 'email', e.target.value)}
+                              className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            />
                           </div>
-                          <div>
-                            <p className="font-semibold text-gray-900">
-                              {tour.tourGuide.firstName} {tour.tourGuide.lastName}
-                            </p>
-                            <p className="text-sm text-gray-600">{tour.tourGuide.totalTours} tours completed</p>
-                            <div className="flex items-center">
-                              <span className="text-yellow-400">★</span>
-                              <span className="ml-1 text-sm text-gray-600">{tour.tourGuide.rating || 'No rating'}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
 
-                    {tour?.schedules && tour.schedules.length > 0 && (
-                      <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-3">AVAILABLE DATES {"(click to select)"}</label>
-                        <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {tour.schedules.map((schedule: Schedule) => (
-                            <div 
-                              key={schedule.id}
-                              className={`border-2 rounded-lg p-3 cursor-pointer transition-all ${
-                                selectedSchedule?.id === schedule.id 
-                                  ? 'border-[#F20C8F] bg-pink-50' 
-                                  : 'border-gray-200 hover:border-[#083A85]'
-                              }`}
-                              onClick={() => setSelectedSchedule(schedule)}
-                            >
-                              <div className="flex justify-between items-center">
-                                <div>
-                                  <p className="font-semibold text-gray-900">
-                                    {formatDate(schedule.startDate)}
-                                  </p>
-                                  <p className="text-sm text-gray-600">
-                                    {schedule.startTime} - {schedule.endTime}
-                                  </p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-sm font-semibold text-[#F20C8F]">
-                                    {schedule.availableSlots} slots
-                                  </p>
-                                  <p className="text-xs text-gray-500">available</p>
-                                </div>
-                              </div>
+                          <div>
+                            <h6 className="font-medium mb-2 text-sm">Emergency contact</h6>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <input
+                                type="text"
+                                placeholder="Contact name"
+                                value={participant.emergencyContactName}
+                                onChange={(e) => updateParticipant(index, 'emergencyContactName', e.target.value)}
+                                className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              />
+                              <input
+                                type="tel"
+                                placeholder="Contact phone"
+                                value={participant.emergencyContactPhone}
+                                onChange={(e) => updateParticipant(index, 'emergencyContactPhone', e.target.value)}
+                                className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              />
+                              <select
+                                value={participant.emergencyContactRelationship}
+                                onChange={(e) => updateParticipant(index, 'emergencyContactRelationship', e.target.value)}
+                                className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                              >
+                                <option value="">Relationship</option>
+                                <option value="Parent">Parent</option>
+                                <option value="Spouse">Spouse</option>
+                                <option value="Sibling">Sibling</option>
+                                <option value="Child">Child</option>
+                                <option value="Partner">Partner</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Other">Other</option>
+                              </select>
                             </div>
-                          ))}
+                          </div>
+
+                          <div>
+                            <h6 className="font-medium mb-2 text-sm">Additional information (optional)</h6>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <textarea
+                                placeholder="Special requirements (dietary, accessibility, etc.)"
+                                value={participant.specialRequirements}
+                                onChange={(e) => updateParticipant(index, 'specialRequirements', e.target.value)}
+                                className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                rows={3}
+                              />
+                              <textarea
+                                placeholder="Medical conditions (allergies, medications, etc.)"
+                                value={participant.medicalConditions}
+                                onChange={(e) => updateParticipant(index, 'medicalConditions', e.target.value)}
+                                className="px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                rows={3}
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    )}
+                    ))}
+
+                    <div>
+                      <label className="block font-medium mb-2">Special requests (optional)</label>
+                      <textarea
+                        value={bookingForm.specialRequests}
+                        onChange={(e) => setBookingForm({ ...bookingForm, specialRequests: e.target.value })}
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                        rows={3}
+                        placeholder="Let your host know if you have any special requests..."
+                      />
+                    </div>
 
                     {bookingError && (
-                      <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded">
-                        <p className="text-red-600 text-sm font-medium">{bookingError}</p>
+                      <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+                        <p className="text-red-600 text-sm">{bookingError}</p>
                       </div>
                     )}
 
-                    
-                    <button
-                      onClick={() => setShowBookingModal(true)}
-                      disabled={!selectedSchedule}
-                      className={`w-full py-4 ${!selectedSchedule ? 'cursor-not-allowed bg-[#F20C8F]/50 ' : ' bg-[#F20C8F]'} text-white rounded-lg font-bold text-lg hover:bg-opacity-90 shadow-lg transition-all transform hover:scale-[1.02]`}
-                    >
-                      Book Now
-                    </button>
-
-                    {priceBreakdown && (
-                      <div className="border-t pt-4 space-y-3">
-                        <div className="space-y-2 text-sm text-gray-600 mb-3">
-                          <div className="flex justify-between">
-                            <span>Tour Price ({bookingForm.numberOfParticipants} participants)</span>
-                            <span>${priceBreakdown.subtotal}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Taxes (4%)</span>
-                            <span>+${priceBreakdown.taxes}</span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between font-bold text-xl border-t pt-3">
-                          <span>Total</span>
-                          <span className="text-[#F20C8F]">${calculateTourTotal()}</span>
-                        </div>
-                      </div>
-                    )}
+                    <div className="flex gap-4 pt-4">
+                      <button
+                        onClick={() => setShowBookingModal(false)}
+                        className="flex-1 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleBookingSubmit}
+                        disabled={bookingLoading || !isBookingFormComplete()}
+                        className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
+                      >
+                        {bookingLoading ? 'Processing...' : 'Confirm and pay'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
+
+          <ReviewModal
+            isOpen={showReviewModal}
+            onClose={() => setShowReviewModal(false)}
+            onSubmit={handleReviewSubmit}
+            loading={loading}
+          />
+
+          <PhotoGalleryModal
+            isOpen={showPhotoGallery}
+            onClose={() => setShowPhotoGallery(false)}
+            images={tour?.images}
+          />
         </div>
-
-        {/* Booking Modal */}
-        {showBookingModal && (
-          <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-bold text-[#083A85]">Complete Your Booking</h3>
-                  <button
-                    onClick={() => setShowBookingModal(false)}
-                    className="text-gray-400 hover:text-gray-600 text-3xl font-light"
-                  >
-                    ×
-                  </button>
-                </div>
-
-                <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl border-l-4 border-[#F20C8F]">
-                  <h4 className="font-bold text-[#083A85] text-lg">{tour?.title}</h4>
-                  <p className="text-gray-700">
-                    {selectedSchedule ? formatDate(selectedSchedule.startDate) : 'Please select a date above'}
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-semibold text-[#F20C8F]">
-                      ${tour?.price} × {bookingForm.numberOfParticipants} = ${(tour?.price || 0) * bookingForm.numberOfParticipants}
-                    </span>
-                  </div>
-                  {priceBreakdown && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      Final total with fees: ${calculateTourTotal()}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Number of Participants</label>
-                    <select
-                      value={bookingForm.numberOfParticipants}
-                      onChange={(e) => updateParticipants(parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] text-lg"
-                    >
-                      {Array.from({ length: (tour?.maxGroupSize || 1) - (tour?.minGroupSize || 1) + 1 }, (_, i) => (
-                        <option key={i} value={(tour?.minGroupSize || 1) + i}>
-                          {(tour?.minGroupSize || 1) + i} participants
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {bookingForm.participants.map((participant, index) => (
-                    <div key={index} className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
-                      <h5 className="font-bold text-gray-900 mb-4 text-lg">Participant {index + 1}</h5>
-                      
-                      <div className="mb-6">
-                        <h6 className="font-semibold text-gray-800 mb-3">Basic Information</h6>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <input
-                            type="text"
-                            placeholder="Full Name *"
-                            value={participant.name}
-                            onChange={(e) => updateParticipant(index, 'name', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          />
-                          <input
-                            type="number"
-                            placeholder="Age *"
-                            value={participant.age}
-                            onChange={(e) => updateParticipant(index, 'age', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          />
-                          <input
-                            type="email"
-                            placeholder="Email Address"
-                            value={participant.email}
-                            onChange={(e) => updateParticipant(index, 'email', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="mb-6">
-                        <h6 className="font-semibold text-gray-800 mb-3">Emergency Contact *</h6>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <input
-                            type="text"
-                            placeholder="Emergency Contact Name *"
-                            value={participant.emergencyContactName}
-                            onChange={(e) => updateParticipant(index, 'emergencyContactName', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          />
-                          <input
-                            type="tel"
-                            placeholder="Emergency Contact Phone *"
-                            value={participant.emergencyContactPhone}
-                            onChange={(e) => updateParticipant(index, 'emergencyContactPhone', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          />
-                          <select
-                            value={participant.emergencyContactRelationship}
-                            onChange={(e) => updateParticipant(index, 'emergencyContactRelationship', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                          >
-                            <option value="">Select Relationship *</option>
-                            <option value="Parent">Parent</option>
-                            <option value="Spouse">Spouse</option>
-                            <option value="Sibling">Sibling</option>
-                            <option value="Child">Child</option>
-                            <option value="Partner">Partner</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h6 className="font-semibold text-gray-800 mb-3">Additional Information (Optional)</h6>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <textarea
-                            placeholder="Special Requirements (dietary, accessibility, etc.)"
-                            value={participant.specialRequirements}
-                            onChange={(e) => updateParticipant(index, 'specialRequirements', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                            rows={3}
-                          />
-                          <textarea
-                            placeholder="Medical Conditions (allergies, medications, etc.)"
-                            value={participant.medicalConditions}
-                            onChange={(e) => updateParticipant(index, 'medicalConditions', e.target.value)}
-                            className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                            rows={3}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-3">Additional Special Requests (Optional)</label>
-                    <textarea
-                      value={bookingForm.specialRequests}
-                      onChange={(e) => setBookingForm({ ...bookingForm, specialRequests: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F]"
-                      rows={4}
-                      placeholder="Any additional requests for your group..."
-                    />
-                  </div>
-
-                  {bookingError && (
-                    <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
-                      <p className="text-red-600 font-medium">{bookingError}</p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-4 pt-4">
-                    <button
-                      onClick={() => setShowBookingModal(false)}
-                      className="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleBookingSubmit}
-                      disabled={bookingLoading || !isBookingFormComplete()}
-                      className="flex-1 py-3 bg-[#F20C8F] text-white rounded-lg font-bold hover:bg-opacity-90 disabled:opacity-50 transition-all"
-                    >
-                      {bookingLoading ? 'Processing...' : 'Confirm Booking'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <ReviewModal
-          isOpen={showReviewModal}
-          onClose={() => setShowReviewModal(false)}
-          onSubmit={handleReviewSubmit}
-          loading={loading}
-        />
-
-        <PhotoGalleryModal
-          isOpen={showPhotoGallery}
-          onClose={() => setShowPhotoGallery(false)}
-          images={tour?.images}
-        />
       </div>
+
+      {/* Add CSS for animations */}
+      <style jsx>{`
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </>
   );
 }

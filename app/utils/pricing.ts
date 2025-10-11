@@ -44,10 +44,13 @@ export const getOriginalPrice = (displayPrice: number): number => {
 /**
  * Calculate complete price breakdown for payment
  * Customer sees: display price + 4% tax ONLY
+ * Display price already contains 10% markup (hidden)
+ * Tax is 4% of display price (visible to customer)
+ * Total = display price + 4% tax = original * 1.10 * 1.04 = original * 1.144
  */
 export const calculatePriceBreakdown = (
-  displayPricePerNight: number, 
-  nights: number, 
+  displayPricePerNight: number,
+  nights: number,
   isPayAtProperty: boolean = false,
   isTour: boolean = false
 ): PriceBreakdown => {
@@ -55,18 +58,19 @@ export const calculatePriceBreakdown = (
   const subtotal = price * nights;
   const cleaningFee = 0; // No cleaning fee
   const serviceFee = 0; // No service fee - taxes only
-  
+
   // 4% tax calculated on display price (which already contains 10% markup)
-  const taxes = Math.round(subtotal * PRICING_CONFIG.taxRate);
-  
-  let total = subtotal + taxes; // Only subtotal + taxes
+  // Keep decimals for accurate calculation
+  const taxes = parseFloat((subtotal * PRICING_CONFIG.taxRate).toFixed(2));
+
+  let total = parseFloat((subtotal + taxes).toFixed(2)); // Only subtotal + taxes, preserve decimals
   let payAtPropertyFee = 0;
-  
+
   if (isPayAtProperty) {
-    payAtPropertyFee = Math.round(total * PRICING_CONFIG.payAtPropertyFeeRate);
-    total += payAtPropertyFee;
+    payAtPropertyFee = parseFloat((total * PRICING_CONFIG.payAtPropertyFeeRate).toFixed(2));
+    total = parseFloat((total + payAtPropertyFee).toFixed(2));
   }
-  
+
   return {
     price,
     subtotal,

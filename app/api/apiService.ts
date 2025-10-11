@@ -442,9 +442,16 @@ class FrontendAPIService {
       }
 
       // Handle 401 Unauthorized - Session expired
+      // Only trigger session expired modal if user was actually authenticated
       if (response.status === 401 && globalSessionExpiredHandler) {
-        const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
-        globalSessionExpiredHandler(currentUrl);
+        const hadAuthToken = typeof window !== 'undefined' &&
+          (localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
+
+        // Only show session expired modal if user had auth tokens
+        if (hadAuthToken) {
+          const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
+          globalSessionExpiredHandler(currentUrl);
+        }
       }
 
       if (!response.ok) {

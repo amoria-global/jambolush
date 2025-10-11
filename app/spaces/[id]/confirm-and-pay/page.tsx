@@ -44,11 +44,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [hostDetails, setHostDetails] = useState<HostDetails | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'property' | null>(null);
+  const [onlinePaymentType, setOnlinePaymentType] = useState<'momo' | 'card' | null>(null);
   const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pollingStatus, setPollingStatus] = useState<string>('');
   const [pollCount, setPollCount] = useState(0);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Fetch current user
   useEffect(() => {
@@ -57,7 +59,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         const response = await api.get('/auth/me');
         if (response.data && response.data.success) {
           setCurrentUser(response.data.data);
-          // Pre-fill phone number if available
           if (response.data.data.phone) {
             setPhoneNumber(response.data.data.phone);
           }
@@ -73,7 +74,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     };
     fetchUser();
   }, []);
-
 
   // Load booking data
   useEffect(() => {
@@ -111,7 +111,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             propertyName = propertyResponse.data.data.name || propertyName;
             hostId = propertyResponse.data.data.hostId || hostId;
 
-            // Fetch host details
             if (hostId) {
               try {
                 const hostResponse = await api.get(`/users/${hostId}`);
@@ -169,15 +168,25 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       newErrors.paymentMethod = 'Please select a payment method';
     }
 
-    if (paymentMethod === 'momo') {
-      if (!momoProvider) {
-        newErrors.momoProvider = 'Please select a mobile money provider';
+    if (paymentMethod === 'online') {
+      if (!onlinePaymentType) {
+        newErrors.onlinePaymentType = 'Please select online payment type';
       }
-      if (!phoneNumber || phoneNumber.trim() === '') {
-        newErrors.phoneNumber = 'Phone number is required for mobile money';
-      } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
-        newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+
+      if (onlinePaymentType === 'momo') {
+        if (!momoProvider) {
+          newErrors.momoProvider = 'Please select a mobile money provider';
+        }
+        if (!phoneNumber || phoneNumber.trim() === '') {
+          newErrors.phoneNumber = 'Phone number is required';
+        } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
+          newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+        }
       }
+    }
+
+    if (!agreedToTerms) {
+      newErrors.terms = 'Please agree to the terms and conditions';
     }
 
     setErrors(newErrors);
@@ -185,39 +194,45 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   };
 
   const isFormComplete = () => {
-    if (!paymentMethod) return false;
-    if (paymentMethod === 'momo') {
-      return momoProvider !== null && phoneNumber.trim() !== '';
+    if (!paymentMethod || !agreedToTerms) return false;
+    if (paymentMethod === 'property') return true;
+    if (paymentMethod === 'online') {
+      if (!onlinePaymentType) return false;
+      if (onlinePaymentType === 'momo') {
+        return momoProvider !== null && phoneNumber.trim() !== '';
+      }
+      return true;
     }
-    return true; // Card only needs payment method selected
+    return false;
+  };
+
+  const calculateFinalTotal = () => {
+    if (!bookingData) return 0;
+    const baseTotal = bookingData.priceBreakdown?.total || bookingData.totalPrice;
+    // Add 5% fee for pay at property
+    return paymentMethod === 'property' ? baseTotal * 1.05 : baseTotal;
   };
 
   const pollPaymentStatus = async (depositId: string) => {
-    const maxAttempts = 60; // Poll for max 10 minutes (every 10 seconds)
+    const maxAttempts = 60;
     let attempts = 0;
 
     const checkStatus = async (): Promise<void> => {
       try {
         attempts++;
         setPollCount(attempts);
-        setPollingStatus('Checking payment status...');
-
-        console.log(`[PAYMENT] Polling attempt ${attempts}/${maxAttempts} for depositId: ${depositId}`);
+        setPollingStatus('Verifying payment...');
 
         const response = await api.get(`/pawapay/deposit/${depositId}`);
 
         if (response.data.success) {
           const { status } = response.data.data;
-          console.log(`[PAYMENT] Current status: ${status}`);
-
+          
           setPollingStatus(`Payment status: ${status}`);
 
-          // Check for final statuses
           if (status === 'COMPLETED' || status === 'ACCEPTED') {
             setPollingStatus('Payment successful! Redirecting...');
             sessionStorage.setItem('payment_final_status', 'success');
-
-            // Redirect to success page
             setTimeout(() => {
               router.push(`/payment/success?tx=${depositId}`);
             }, 1000);
@@ -227,19 +242,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           if (status === 'FAILED' || status === 'REJECTED' || status === 'CANCELLED') {
             setPollingStatus('Payment failed. Redirecting...');
             sessionStorage.setItem('payment_final_status', 'failed');
-
-            // Redirect to failed page
             setTimeout(() => {
               router.push(`/payment/failed?tx=${depositId}`);
             }, 1000);
             return;
           }
 
-          // If still pending and not exceeded max attempts, continue polling
           if (attempts < maxAttempts) {
-            setTimeout(() => checkStatus(), 10000); // Poll every 10 seconds
+            setTimeout(() => checkStatus(), 10000);
           } else {
-            // Timeout - redirect to pending page
             setPollingStatus('Status check timeout. Please check your payment status.');
             router.push(`/payment/pending?tx=${depositId}`);
           }
@@ -260,7 +271,6 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       }
     };
 
-    // Start polling
     checkStatus();
   };
 
@@ -273,55 +283,34 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
       setLoading(true);
       setErrors({});
 
-      const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalPrice;
+      const finalAmount = calculateFinalTotal();
 
-      // Determine endpoint based on payment method
-      const endpoint = paymentMethod === 'card'
-        ? '/payments/deposits'
-        : '/pawapay/deposit';
+      if (paymentMethod === 'property') {
+        // Handle pay at property - just update booking status
+        const response = await api.post(`/bookings/${bookingData.id}/pay-at-property`, {
+          additionalFeePercentage: 5,
+          finalAmount
+        });
 
-      // Build payload matching backend expectations
-      const depositPayload = {
-        // User (buyer) information
-        userId: currentUser.id,
-        userEmail: currentUser.email,
-        userName: `${currentUser.firstName} ${currentUser.lastName}`,
-        userPhone: paymentMethod === 'momo' ? phoneNumber : (currentUser.phone || '+250788123456'),
-
-        // Recipient (seller/host) information
-        recipientId: bookingData.hostId,
-        recipientEmail: hostDetails?.email || 'host@example.com',
-        recipientName: hostDetails?.name || 'Host Name',
-        recipientPhone: hostDetails?.phone || '+250788123456',
-
-        // Transaction details
-        amount: finalAmount,
-        description: `Payment for ${bookingData.propertyName}`,
-        paymentMethod,
-        platformFeePercentage: undefined, // Backend will use default
-
-        // Metadata
-        metadata: {
-          bookingType: 'property',
-          bookingId: bookingData.id,
-          propertyId: bookingData.propertyId,
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut,
-          nights: bookingData.nights,
-          guests: bookingData.guests,
-          propertyName: bookingData.propertyName,
-          momoProvider: paymentMethod === 'momo' ? momoProvider : undefined
+        if (response.data.success) {
+          router.push(`/payment/success?method=property&booking=${bookingData.id}`);
+        } else {
+          setErrors({ general: 'Failed to process pay at property option' });
         }
-      };
+      } else {
+        // Handle online payment
+        const endpoint = onlinePaymentType === 'card'
+          ? `/payments/bookings/${bookingData.id}/checkout`
+          : '/pawapay/deposit';
 
-      const pawaPayDepositPayload = {
+        const pawaPayDepositPayload = {
           amount: finalAmount,
-          currency: 'RWF', // Currency for Rwanda
+          currency: 'USD',
           phoneNumber: phoneNumber,
-          provider: momoProvider, // 'MTN', 'AIRTEL', or 'MPESA'
-          country: 'RW', // 2-letter country code
+          provider: momoProvider,
+          country: 'RW',
           description: `Payment for ${bookingData.propertyName}`,
-          internalReference: bookingData.id, // Use booking ID for reconciliation
+          internalReference: bookingData.id,
           metadata: {
             bookingId: bookingData.id,
             propertyId: bookingData.propertyId,
@@ -329,54 +318,42 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             checkIn: bookingData.checkIn,
             checkOut: bookingData.checkOut,
           },
-      };
+        };
 
-      console.log('[PAYMENT] Creating deposit:', {
-        endpoint,
-        paymentMethod,
-        amount: finalAmount
-      });
+        const response = await api.post(endpoint, pawaPayDepositPayload);
 
-      // Call appropriate deposit endpoint
-      const response = await api.post(endpoint, pawaPayDepositPayload);
+        if (response.data.success) {
+          const { transactionId, depositId, status, redirectUrl, checkoutUrl, instructions } = response.data.data;
 
-      if (response.data.success) {
-        const { transactionId, depositId, status, redirectUrl, instructions } = response.data.data;
+          sessionStorage.setItem('payment_transaction_id', transactionId || depositId);
+          sessionStorage.setItem('property_booking_id', bookingData.id);
 
-        console.log('[PAYMENT] Deposit created:', { transactionId, depositId, status });
-
-        // Store transaction ID for callback
-        sessionStorage.setItem('payment_transaction_id', transactionId || depositId);
-        sessionStorage.setItem('property_booking_id', bookingData.id);
-
-        if (paymentMethod === 'card' && redirectUrl) {
-          // Redirect to payment gateway for card
-          window.location.href = redirectUrl;
-        } else if (paymentMethod === 'momo') {
-          // For MoMo, show instructions
-          if (instructions) {
-            alert(instructions);
+          // For card payments, use checkoutUrl (Pesapal) or redirectUrl
+          if (onlinePaymentType === 'card' && (checkoutUrl || redirectUrl)) {
+            window.location.href = checkoutUrl || redirectUrl;
+          } else if (onlinePaymentType === 'momo') {
+            if (instructions) {
+              alert(instructions);
+            }
+            pollPaymentStatus(depositId || transactionId);
           }
-
-          // Start polling for payment status (don't redirect yet)
-          pollPaymentStatus(depositId || transactionId);
+        } else {
+          setErrors({
+            general: response.data.message || 'Failed to create payment. Please try again.'
+          });
         }
-      } else {
-        setErrors({
-          general: response.data.message || 'Failed to create payment. Please try again.'
-        });
       }
     } catch (error: any) {
-      console.error('[PAYMENT] Deposit error:', error);
-
+      console.error('[PAYMENT] Error:', error);
       const errorMessage = error?.response?.data?.error?.message ||
                           error?.response?.data?.message ||
                           error?.message ||
                           'Payment failed. Please try again.';
-
       setErrors({ general: errorMessage });
     } finally {
-      setLoading(false);
+      if (paymentMethod !== 'online' || onlinePaymentType !== 'momo') {
+        setLoading(false);
+      }
     }
   };
 
@@ -385,7 +362,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#083A85] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading booking details...</p>
         </div>
       </div>
@@ -396,15 +373,15 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   if (errors.general && !bookingData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 mb-4">
-            <i className="bi bi-exclamation-triangle-fill text-4xl"></i>
+        <div className="text-center bg-white p-8 rounded-xl shadow-sm max-w-md">
+          <div className="text-red-500 mb-4">
+            <i className="bi bi-exclamation-circle text-5xl"></i>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
-          <p className="text-gray-600 mb-4">{errors.general}</p>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
+          <p className="text-gray-600 mb-6">{errors.general}</p>
           <button 
             onClick={() => router.push('/')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-3 bg-[#083A85] text-white rounded-lg hover:bg-[#062a5f] transition font-medium"
           >
             Return to Home
           </button>
@@ -413,299 +390,359 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
     );
   }
 
+  const finalTotal = calculateFinalTotal();
+
   return (
     <>
       <head>
-        <title>Confirm and Pay - Secure Payment</title>
+        <title>Confirm and pay · RentSpaces</title>
       </head>
-      <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4">
-        
-        <style jsx>{`
-          @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
+      <div className="mt-20  px-4 bg-white">
+        {/* Header */}
+        <div className="border-b">
+          <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-4 flex items-center">
+            <button 
+              onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-full transition mr-4"
+            >
+              <i className="bi bi-chevron-left text-lg"></i>
+            </button>
+            <h1 className="text-xl font-semibold">Confirm and pay</h1>
+          </div>
+        </div>
 
-          input[type="text"]:focus,
-          input[type="tel"]:focus {
-            outline: none;
-            border-color: #F20C8F;
-            box-shadow: 0 0 0 3px rgba(242, 12, 143, 0.1);
-          }
-
-          input[type="radio"]:checked {
-            accent-color: #F20C8F;
-          }
-
-          input[type="radio"]:focus {
-            outline: 2px solid #F20C8F;
-            outline-offset: 2px;
-          }
-
-          .error-input {
-            border-color: #ef4444 !important;
-          }
-
-          .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-          }
-        `}</style>
-        
-        <div className="max-w-7xl mx-auto mt-14">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
             
-            {/* Left Side - Payment Summary */}
-            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-
-              {/* Payment Method Selection */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
-                  Select Payment Method
-                </h2>
-
-                {errors.paymentMethod && (
-                  <p className="error-message mb-3">{errors.paymentMethod}</p>
-                )}
-
-                <div className="space-y-4">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="momo"
-                      checked={paymentMethod === 'momo'}
-                      onChange={() => {
-                        setPaymentMethod('momo');
-                        setErrors({});
-                      }}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    <span className="text-base">Mobile Money (MTN / Airtel / M-Pesa)</span>
-                  </label>
-
-                  {paymentMethod === 'momo' && (
-                    <div className="ml-8 space-y-4 pt-2">
-                      {errors.momoProvider && (
-                        <p className="error-message">{errors.momoProvider}</p>
-                      )}
-
-                      <div className="space-y-2">
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="momoProvider"
-                            value="MTN"
-                            checked={momoProvider === 'MTN'}
-                            onChange={() => {
-                              setMomoProvider('MTN');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>MTN MoMo</span>
-                        </label>
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="momoProvider"
-                            value="AIRTEL"
-                            checked={momoProvider === 'AIRTEL'}
-                            onChange={() => {
-                              setMomoProvider('AIRTEL');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>Airtel Money</span>
-                        </label>
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="momoProvider"
-                            value="MPESA"
-                            checked={momoProvider === 'MPESA'}
-                            onChange={() => {
-                              setMomoProvider('MPESA');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>M-Pesa</span>
-                        </label>
-                      </div>
-
-                      <div className="pt-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number
-                        </label>
-                        <input
-                          type="tel"
-                          value={phoneNumber}
-                          onChange={(e) => {
-                            setPhoneNumber(e.target.value);
-                            setErrors({});
-                          }}
-                          placeholder="e.g., 0788123456"
-                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-all ${
-                            errors.phoneNumber ? 'error-input' : 'border-gray-300'
-                          }`}
-                        />
-                        {errors.phoneNumber && (
-                          <p className="error-message">{errors.phoneNumber}</p>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          Enter your mobile money number
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="card"
-                      checked={paymentMethod === 'card'}
-                      onChange={() => {
-                        setPaymentMethod('card');
-                        setMomoProvider(null);
-                        setErrors({});
-                      }}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    <span className="text-base">Credit/Debit Card</span>
-                  </label>
+            {/* Left Side - Payment Form */}
+            <div className="lg:col-span-3">
+              
+              {/* Your trip */}
+              <div className="mb-4">
+                <h2 className="text-[22px] font-medium mb-6">Your trip</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-medium mb-2">Dates</h3>
+                    <p className="text-gray-600">
+                      {bookingData && new Date(bookingData.checkIn).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })} – {bookingData && new Date(bookingData.checkOut).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Guests</h3>
+                    <p className="text-gray-600">{bookingData?.guests} guest{bookingData?.guests !== 1 ? 's' : ''}</p>
+                  </div>
                 </div>
               </div>
 
-              {/* Payment Summary and Submit */}
-              {bookingData && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
-                    Payment Summary
-                  </h2>
-                  
-                  {errors.general && (
-                    <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
-                      <p className="text-red-600 text-sm font-medium">
-                        <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                        {errors.general}
-                      </p>
-                    </div>
-                  )}
+              {/* Choose how to pay */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-6">Choose how to pay</h2>
+                
+                {errors.paymentMethod && (
+                  <div className="mb-4 text-red-500 text-sm">{errors.paymentMethod}</div>
+                )}
 
-                  {pollingStatus && (
-                    <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                        <p className="text-blue-600 text-sm font-medium">
-                          {pollingStatus} (Check {pollCount})
+                <div className="space-y-3">
+                  {/* Pay Now Option */}
+                  <div 
+                    className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                      paymentMethod === 'online' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => {
+                      setPaymentMethod('online');
+                      setErrors({});
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === 'online'}
+                        onChange={() => setPaymentMethod('online')}
+                        className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium">Pay now</h3>
+                          <span className="text-[22px] font-semibold">
+                            ${bookingData?.priceBreakdown?.total || bookingData?.totalPrice}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Pay the full amount to confirm your reservation
                         </p>
                       </div>
                     </div>
-                  )}
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Subtotal ({bookingData.nights} nights)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalPrice}</span>
-                    </div>
-                    
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Taxes (4%)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.taxes || 0}</span>
-                    </div>
-                    
-                    <div className="border-t pt-3 flex justify-between">
-                      <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
-                      <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                        ${bookingData.priceBreakdown?.total || bookingData.totalPrice}
-                      </span>
+
+                    {paymentMethod === 'online' && (
+                      <div className="mt-6 ml-8 space-y-3">
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition ${
+                            onlinePaymentType === 'momo' 
+                              ? 'border-[#083A85] bg-blue-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => setOnlinePaymentType('momo')}
+                        >
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="onlinePayment"
+                              checked={onlinePaymentType === 'momo'}
+                              onChange={() => setOnlinePaymentType('momo')}
+                              className="w-4 h-4 accent-[#083A85]"
+                            />
+                            <span className="font-medium text-sm">Mobile Money</span>
+                          </label>
+                          
+                          {onlinePaymentType === 'momo' && (
+                            <div className="mt-4 space-y-4">
+                              <div className="grid grid-cols-3 gap-2">
+                                {['MTN', 'AIRTEL', 'MPESA'].map((provider) => (
+                                  <button
+                                    key={provider}
+                                    type="button"
+                                    onClick={() => setMomoProvider(provider as any)}
+                                    className={`p-2 text-sm rounded-lg border transition ${
+                                      momoProvider === provider
+                                        ? 'border-[#083A85] bg-[#083A85] text-white'
+                                        : 'border-gray-300 hover:border-gray-400'
+                                    }`}
+                                  >
+                                    {provider}
+                                  </button>
+                                ))}
+                              </div>
+                              <input
+                                type="tel"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                placeholder="Phone number"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
+                              />
+                              {errors.phoneNumber && (
+                                <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div 
+                          className={`border rounded-lg p-3 cursor-pointer transition ${
+                            onlinePaymentType === 'card' 
+                              ? 'border-[#083A85] bg-blue-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => setOnlinePaymentType('card')}
+                        >
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="onlinePayment"
+                              checked={onlinePaymentType === 'card'}
+                              onChange={() => setOnlinePaymentType('card')}
+                              className="w-4 h-4 accent-[#083A85]"
+                            />
+                            <span className="font-medium text-sm">Credit or debit card</span>
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Pay at Property Option */}
+                  <div 
+                    className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                      paymentMethod === 'property' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => {
+                      setPaymentMethod('property');
+                      setErrors({});
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === 'property'}
+                        onChange={() => setPaymentMethod('property')}
+                        className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium">Pay at property</h3>
+                          <div className="text-right">
+                            <span className="text-[22px] font-semibold">
+                              ${(finalTotal).toFixed(2)}
+                            </span>
+                            <p className="text-xs text-gray-500">incl. 5% service fee</p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Pay when you arrive. A 5% service fee applies for this option.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  
-                  <button
-                    onClick={handleSubmit}
-                    disabled={loading || !isFormComplete()}
-                    className={`w-full py-3 px-6 rounded-lg text-white font-medium transition-all ${
-                      loading || !isFormComplete()
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'cursor-pointer hover:opacity-90'
-                    }`}
-                    style={(loading || !isFormComplete()) ? {} : { backgroundColor: '#F20C8F' }}>
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <i className="bi bi-lock-fill mr-2"></i>
-                        Pay ${bookingData.priceBreakdown?.total || bookingData.totalPrice} Securely
-                      </>
-                    )}
-                  </button>
-                  
-                  <p className="text-base text-gray-500 mt-4 text-center">
-                    <i className="bi bi-lock-fill mr-1"></i>
-                    Secured payment gateway
-                  </p>
                 </div>
-              )}
-            </div>
+              </div>
 
-            {/* Right Side - Property Preview */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-4 p-4">
-                <h3 className="font-semibold text-lg mb-3" style={{ color: '#083A85' }}>
-                  {bookingData?.propertyName || 'Property Booking'}
-                </h3>
-                
-                {bookingData && (
-                  <>
-                    <div className="space-y-2 mb-4 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Check-in:</span>
-                        <span className="font-medium">
-                          {new Date(bookingData.checkIn).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Check-out:</span>
-                        <span className="font-medium">
-                          {new Date(bookingData.checkOut).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Nights:</span>
-                        <span className="font-medium">{bookingData.nights}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Guests:</span>
-                        <span className="font-medium">{bookingData.guests}</span>
-                      </div>
-                    </div>
+              {/* Required for your trip */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-6">Required for your trip</h2>
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <h3 className="font-medium mb-2">Message the host</h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Let the host know a little about yourself and why you're coming.
+                  </p>
+                  <textarea
+                    placeholder="Hi! I'm looking forward to staying at your place..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85] min-h-[100px]"
+                  />
+                </div>
+              </div>
 
-                    <div className="border-t pt-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">Total</span>
-                        <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                          ${bookingData.priceBreakdown?.total || 0}
-                        </span>
-                      </div>
+              {/* Cancellation policy */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-4">Cancellation policy</h2>
+                <p className="text-gray-600 mb-4">
+                  <span className="font-medium">Free cancellation before 2:00 PM on {bookingData && new Date(new Date(bookingData.checkIn).getTime() - 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.</span> After that, the reservation is non-refundable.
+                </p>
+                <button className="font-medium underline">Learn more</button>
+              </div>
+
+              {/* Ground rules */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-4">Ground rules</h2>
+                <p className="text-gray-600 mb-4">
+                  We ask every guest to remember a few simple things about what makes a great guest.
+                </p>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Follow the house rules</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Treat your Host's home like your own</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Terms */}
+              <div className="border-t pt-8">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                  />
+                  <div className="text-sm text-gray-600">
+                    I agree to the <button className="underline">House Rules</button>, <button className="underline">Cancellation Policy</button>, and <button className="underline">RentSpaces Terms</button>
+                  </div>
+                </label>
+                {errors.terms && (
+                  <p className="text-red-500 text-sm mt-2 ml-8">{errors.terms}</p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="mt-8">
+                {pollingStatus && (
+                  <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#083A85] mr-2"></div>
+                      <p className="text-[#083A85] text-sm font-medium">
+                        {pollingStatus}
+                      </p>
                     </div>
-                  </>
+                  </div>
                 )}
 
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <div className="flex items-start">
-                    <i className="bi bi-shield-check text-blue-600 mr-2 mt-1"></i>
-                    <div className="text-xs text-blue-800">
-                      <div className="font-semibold mb-1">Secure Payment</div>
-                      <div>Your payment information is encrypted and secure</div>
+                {errors.general && (
+                  <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-red-600 text-sm">
+                      <i className="bi bi-exclamation-triangle mr-2"></i>
+                      {errors.general}
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !isFormComplete()}
+                  className={`w-full py-3 rounded-lg font-medium transition-all ${
+                    loading || !isFormComplete()
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700'
+                  }`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <i className="bi bi-arrow-clockwise animate-spin"></i>
+                      Processing...
+                    </span>
+                  ) : (
+                    `Confirm and pay $${finalTotal.toFixed(2)}`
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side - Booking Summary */}
+            <div className="lg:col-span-2">
+              <div className="border rounded-xl p-6 sticky top-24">
+                <div className="flex gap-4 pb-6 border-b">
+                  <div className="w-28 h-24 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-sm mb-1">{bookingData?.propertyName}</h3>
+                    <p className="text-xs text-gray-600">Entire rental unit</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <i className="bi bi-star-fill text-xs"></i>
+                      <span className="text-xs font-medium">4.87</span>
+                      <span className="text-xs text-gray-500">(23 reviews)</span>
                     </div>
+                  </div>
+                </div>
+
+                <div className="py-6 border-b">
+                  <h3 className="font-medium mb-4">Price details</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600">
+                        ${((bookingData?.totalPrice || 0) / (bookingData?.nights || 1)).toFixed(2)} x {bookingData?.nights} nights
+                      </span>
+                      <span>${bookingData?.priceBreakdown?.subtotal?.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600 underline">Taxes</span>
+                      <span>${bookingData?.priceBreakdown?.taxes?.toFixed(2)}</span>
+                    </div>
+                    {paymentMethod === 'property' && (
+                      <div className="flex justify-between text-base">
+                        <span className="text-gray-600 underline">Pay at property fee (5%)</span>
+                        <span>${(finalTotal - (bookingData?.priceBreakdown?.total || 0)).toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-6">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total (USD)</span>
+                    <span className="text-base font-semibold">${finalTotal?.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

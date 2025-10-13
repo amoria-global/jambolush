@@ -3,12 +3,13 @@
 import AddReviewForm from '@/app/components/forms/add-review-home';
 import AlertNotification from '@/app/components/notify';
 import CustomDatePicker from '@/app/components/forms/custome-date-picker';
+import PhotoViewerModal from '@/app/components/forms/photo-viewers';
+
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import api, { PropertyInfo, PropertyImages, BackendResponse } from '@/app/api/apiService';
 import { decodeId, encodeId } from '@/app/utils/encoder';
 import { calculateDisplayPrice, calculateBookingTotal, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
-import Head from 'next/head';
 
 interface HousePageProps {
   params: Promise<{
@@ -89,52 +90,90 @@ const transformPropertyImages = (images: PropertyImages): string[] => {
   return allPhotos;
 };
 
+// Format date to "MMM DD, YYYY HH:MM:SS   X time ago"
+function formatDate(dateString: string | any, relativeOnly: boolean = false): string {
+  if (!dateString) return 'N/A';
+
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
+
+    // --- Absolute date formatting ---
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", 
+                    "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    const absolute = `${month} ${day}, ${year} ${hours}:${minutes}:${seconds}`;
+
+    // --- Relative time ---
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    let relative: string;
+    if (diffSec < 60) relative = `${diffSec} second${diffSec !== 1 ? 's' : ''} ago`;
+    else if (diffMin < 60) relative = `${diffMin} minute${diffMin !== 1 ? 's' : ''} ago`;
+    else if (diffHour < 24) relative = `${diffHour} hour${diffHour !== 1 ? 's' : ''} ago`;
+    else if (diffDay === 1) relative = 'Yesterday';
+    else if (diffDay < 7) relative = `${diffDay} day${diffDay !== 1 ? 's' : ''} ago`;
+    else if (diffDay < 30) relative = `${Math.floor(diffDay / 7)} week${Math.floor(diffDay / 7) !== 1 ? 's' : ''} ago`;
+    else if (diffDay < 365) relative = `${Math.floor(diffDay / 30)} month${Math.floor(diffDay / 30) !== 1 ? 's' : ''} ago`;
+    else relative = `${Math.floor(diffDay / 365)} year${Math.floor(diffDay / 365) !== 1 ? 's' : ''} ago`;
+
+    // Decide output
+    return relativeOnly ? relative : `${absolute}   ${relative}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Invalid Date';
+  }
+}
+
 // Transform backend PropertyInfo to frontend house format
 const transformPropertyData = (backendProperty: PropertyInfo) => {
   const photos = transformPropertyImages(backendProperty.images);
-  
+
   // Calculate display price from base price (base price + 10%)
   const basePricePerNight = backendProperty.pricePerNight;
   const displayPrice = calculateDisplayPrice(basePricePerNight);
-  
+
+  const reviewsCount = backendProperty.reviewsCount || 0;
+  const rating = backendProperty.rating || 0;
+
   return {
     title: backendProperty.name,
     bedrooms: backendProperty.beds,
     bathrooms: backendProperty.baths,
-    kitchen: 1, // Assume 1 kitchen, you can modify this logic
+    kitchen: backendProperty.features?.includes('Kitchen') ? 1 : 0,
     guests: backendProperty.maxGuests,
     price: displayPrice, // Display price for UI (base + 10%)
     basePrice: basePricePerNight, // Keep base price for calculations
     address: backendProperty.location,
-    coordinates: { lat: 25.7617, lng: -80.1918 }, // Default coordinates - you might want to add these to your backend
-    description: backendProperty.description || 'No description available.',
-    photos: photos.length > 0 ? photos : [
-      // Fallback photos if none available
-      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop'
-    ],
+    coordinates: { lat: -1.9441, lng: 30.0619 }, // Kigali coordinates
+    description: backendProperty.description || '',
+    photos: photos,
     videoUrl: backendProperty.video3D || '',
     ratings: {
-      overall: backendProperty.rating,
-      accuracy: 4.9,
-      cleanliness: 4.7,
-      checkin: 4.8,
-      communication: 5.0,
-      location: 4.6,
-      value: 4.5
+      overall: rating
     },
-    totalReviews: backendProperty.reviewsCount,
-    ratingCounts: { 
-      5: Math.floor(backendProperty.reviewsCount * 0.8), 
-      4: Math.floor(backendProperty.reviewsCount * 0.15), 
-      3: Math.floor(backendProperty.reviewsCount * 0.03), 
-      2: Math.floor(backendProperty.reviewsCount * 0.02), 
-      1: 0 
-    },
-    // Use real blocked dates from availability - convert string array to date objects
+    totalReviews: reviewsCount,
     blockedDates: backendProperty.availability?.blockedDates || [],
-    availability: backendProperty.availability
+    availability: backendProperty.availability,
+    hostName: backendProperty.hostName || '',
+    hostProfileImage: backendProperty.hostProfileImage || null,
+    features: backendProperty.features || [],
+    type: backendProperty.type || '',
+    category: backendProperty.category || '',
+    status: backendProperty.status || '',
+    isVerified: backendProperty.isVerified || false,
+    createdAt: formatDate(backendProperty.createdAt) || '',
+    
   };
 };
 
@@ -147,6 +186,8 @@ export default function HousePage({ params }: HousePageProps) {
   const [dateError, setDateError] = useState('');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [guests, setGuests] = useState(1);
+  const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
+  const [showAllFeatures, setShowAllFeatures] = useState(false);
   
   // Backend integration state
   const [house, setHouse] = useState<any>(null);
@@ -160,6 +201,10 @@ export default function HousePage({ params }: HousePageProps) {
   const [createdBooking, setCreatedBooking] = useState<any>(null);
   const [occupiedDates, setOccupiedDates] = useState<string[]>([]);
   
+  const [showPhotoViewer, setShowPhotoViewer] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+  const [backendProperty, setBackendProperty] = useState<any>(null);
+
   // Alert notification state
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -171,6 +216,11 @@ export default function HousePage({ params }: HousePageProps) {
   const [validPropertyId, setValidPropertyId] = useState<any | null>(null);
   const [invalidId, setInvalidId] = useState(false);
 
+  // Video refs and state for auto-play functionality
+  const videoRef = useRef<HTMLIFrameElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -179,6 +229,11 @@ export default function HousePage({ params }: HousePageProps) {
 
   // Fallback image URL for when images fail to load
   const fallbackImageUrl = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop';
+
+  const openPhotoViewer = (index: number = 0) => {
+    setSelectedPhotoIndex(index);
+    setShowPhotoViewer(true);
+  };
 
   // Handle image load errors
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -234,14 +289,15 @@ export default function HousePage({ params }: HousePageProps) {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Use the decoded numeric ID for API call
         const response = await api.getProperty(validPropertyId);
-        
+
         if (response.data.success) {
+          setBackendProperty(response.data.data);
           const transformedHouse = transformPropertyData(response.data.data);
           setHouse(transformedHouse);
-          
+
           // Convert blocked dates array directly to occupiedDates
           const blocked = response.data.data.availability?.blockedDates || [];
           setOccupiedDates(blocked);
@@ -253,25 +309,6 @@ export default function HousePage({ params }: HousePageProps) {
         const errorMessage = err?.message || 'Failed to load property';
         setError(errorMessage);
         showAlert(`Error: ${errorMessage}`, 'error');
-        
-        // Fallback to sample data if API fails
-        setHouse({
-          title: 'Property Not Found',
-          bedrooms: 0,
-          bathrooms: 0,
-          kitchen: 0,
-          guests: 0,
-          price: 0,
-          basePrice: 0,
-          address: 'Address not available',
-          coordinates: { lat: 25.7617, lng: -80.1918 },
-          description: 'Property data could not be loaded.',
-          photos: [],
-          videoUrl: '',
-          ratings: { overall: 0, accuracy: 0, cleanliness: 0, checkin: 0, communication: 0, location: 0, value: 0 },
-          totalReviews: 0,
-          ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-        });
       } finally {
         setLoading(false);
       }
@@ -279,6 +316,59 @@ export default function HousePage({ params }: HousePageProps) {
 
     fetchPropertyData();
   }, [validPropertyId]);
+
+  // Update page title dynamically
+  useEffect(() => {
+    if (house?.title) {
+      document.title = `${house.title} - RentSpaces`;
+    } else {
+      document.title = 'Loading Property - RentSpaces';
+    }
+  }, [house?.title]);
+
+  // Setup Intersection Observer for video auto-play
+  useEffect(() => {
+    if (!videoContainerRef.current || !house?.videoUrl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVideoPlaying) {
+            // Video is in view - attempt to play
+            if (videoRef.current) {
+              const videoSrc = videoRef.current.src;
+              // Add autoplay parameter if it's a YouTube video
+              if (videoSrc.includes('youtube.com') || videoSrc.includes('youtu.be')) {
+                if (!videoSrc.includes('autoplay=1')) {
+                  videoRef.current.src = videoSrc + (videoSrc.includes('?') ? '&' : '?') + 'autoplay=1&mute=1';
+                }
+              }
+              setIsVideoPlaying(true);
+            }
+          } else if (!entry.isIntersecting && isVideoPlaying) {
+            // Video is out of view - pause it
+            if (videoRef.current) {
+              const videoSrc = videoRef.current.src;
+              if (videoSrc.includes('autoplay=1')) {
+                videoRef.current.src = videoSrc.replace('autoplay=1&mute=1', '').replace('?&', '?').replace('?', '');
+              }
+              setIsVideoPlaying(false);
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of the video is visible
+        rootMargin: '0px'
+      }
+    );
+
+    observer.observe(videoContainerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [house?.videoUrl, isVideoPlaying]);
 
   // Fetch reviews from API
   useEffect(() => {
@@ -430,13 +520,24 @@ export default function HousePage({ params }: HousePageProps) {
     hideAlert();
   };
 
-  // Calculate booking total using display price (no breakdown shown here)
+  // Calculate number of nights
+  const calculateNights = () => {
+    if (checkInDate && checkOutDate) {
+      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      return days > 0 ? days : 0;
+    }
+    return 0;
+  };
+
+  // Calculate booking total using display price + 4% tax
+  // This is the amount customer pays and what we submit to server
   const calculateTotal = () => {
     if (checkInDate && checkOutDate && house) {
-      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      const days = calculateNights();
       if (days > 0) {
-        // Use display price directly for simple calculation
-        return house.price * days;
+        // Return total with tax: display price (includes hidden 10%) + 4% tax
+        const breakdown = calculatePriceBreakdown(house.price, days, false);
+        return calculateBookingTotal(house.price, days, false); // This includes the 4% tax
       }
     }
     return 0;
@@ -445,12 +546,17 @@ export default function HousePage({ params }: HousePageProps) {
   // Get price breakdown for checkout (only shows tax)
   const getPriceBreakdown = () => {
     if (checkInDate && checkOutDate && house) {
-      const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
+      const days = calculateNights();
       if (days > 0) {
         return calculatePriceBreakdown(house.price, days, false);
       }
     }
     return null;
+  };
+
+  // Scroll to 3D video section
+  const scrollToVideo = () => {
+    videoContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   // Create property booking via API
@@ -480,10 +586,10 @@ export default function HousePage({ params }: HousePageProps) {
         return;
       }
 
-      // Calculate the total using display price and full breakdown for backend
+      // Calculate the total using DISPLAY PRICE (includes 10% markup) for server
       const days = Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24));
-      const totalPrice = calculateTotal();
-      
+      const totalPrice = calculateTotal(); // Use display price calculation (includes 10% markup)
+
 
       // Prepare booking data using the decoded property ID
       const bookingData: CreatePropertyBookingDto = {
@@ -493,7 +599,7 @@ export default function HousePage({ params }: HousePageProps) {
         guests: guests,
         message: 'Booking request from property page',
         specialRequests: '',
-        totalPrice: totalPrice, // Send calculated total including all fees and taxes
+        totalPrice: totalPrice, // Send display price total (includes 10% markup)
       };
 
       // Make API call to create booking
@@ -627,6 +733,77 @@ export default function HousePage({ params }: HousePageProps) {
     setCreatedBooking(null);
   }, [checkInDate, checkOutDate, guests]);
 
+  // Map features from API to icons
+  const getFeatureIcon = (featureName: string): string => {
+    const iconMap: { [key: string]: string } = {
+      'wifi': 'bi-wifi',
+      'pool': 'bi-water',
+      'swimming pool': 'bi-water',
+      'gym': 'bi-heart-pulse',
+      'parking': 'bi-car-front',
+      'security': 'bi-shield-check',
+      '24/7 security': 'bi-shield-check',
+      'kitchen': 'bi-egg-fried',
+      'rooftop': 'bi-building',
+      'rooftop terrace': 'bi-building',
+      'concierge': 'bi-person-check',
+      'tv': 'bi-tv',
+      'air conditioning': 'bi-snow2',
+      'heating': 'bi-thermometer-sun',
+      'workspace': 'bi-laptop',
+      'laundry': 'bi-basket3',
+      'balcony': 'bi-door-open',
+      'garden': 'bi-tree',
+      'elevator': 'bi-arrow-up-square',
+      'fireplace': 'bi-fire',
+      'iron': 'bi-bezier',
+      'hair dryer': 'bi-wind',
+      'essentials': 'bi-basket',
+      'hangers': 'bi-hanger',
+      'bed linens': 'bi-moon-stars',
+      'towels': 'bi-moisture',
+      'hot water': 'bi-droplet-fill',
+      'smoke alarm': 'bi-exclamation-triangle',
+      'first aid kit': 'bi-bandaid',
+      'carbon monoxide alarm': 'bi-cloud-haze2'
+    };
+
+    const normalizedFeature = featureName.toLowerCase().trim();
+    return iconMap[normalizedFeature] || 'bi-check-circle';
+  };
+
+  // Process video URL to ensure it's embeddable
+  const getEmbedVideoUrl = (url: string): string => {
+    if (!url) return '';
+    
+    // Handle YouTube URLs
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
+      
+      if (url.includes('youtube.com')) {
+        const urlParams = new URLSearchParams(new URL(url).search);
+        videoId = urlParams.get('v') || '';
+      } else if (url.includes('youtu.be')) {
+        videoId = url.split('/').pop()?.split('?')[0] || '';
+      }
+      
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0&modestbranding=1`;
+      }
+    }
+    
+    // Handle Vimeo URLs
+    if (url.includes('vimeo.com')) {
+      const videoId = url.split('/').pop()?.split('?')[0];
+      if (videoId) {
+        return `https://player.vimeo.com/video/${videoId}`;
+      }
+    }
+    
+    // Return original URL if it's already an embed URL or other format
+    return url;
+  };
+
   // Invalid ID state
   if (invalidId) {
     return (
@@ -667,24 +844,24 @@ export default function HousePage({ params }: HousePageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           <div className="animate-pulse">
             {/* Title skeleton */}
-            <div className="h-8 bg-gray-300 rounded mb-4 w-3/4"></div>
+            <div className="h-8 bg-gray-200 rounded mb-4 w-3/4"></div>
             <div className="flex gap-4 mb-8">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-4 bg-gray-300 rounded w-24"></div>
+                <div key={i} className="h-4 bg-gray-200 rounded w-24"></div>
               ))}
             </div>
             
             {/* Photo skeleton */}
-            <div className="h-96 bg-gray-300 rounded-xl mb-8"></div>
+            <div className="h-96 bg-gray-200 rounded-xl mb-8"></div>
             
             {/* Content skeleton */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-4">
-                <div className="h-4 bg-gray-300 rounded w-full"></div>
-                <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                <div className="h-4 bg-gray-200 rounded w-4/6"></div>
               </div>
-              <div className="h-96 bg-gray-300 rounded-xl"></div>
+              <div className="h-96 bg-gray-200 rounded-xl"></div>
             </div>
           </div>
         </div>
@@ -717,19 +894,16 @@ export default function HousePage({ params }: HousePageProps) {
   }
 
   const priceBreakdown = getPriceBreakdown();
+  const nights = calculateNights();
 
   return (
     <>
-      <Head>
-        <title>{house?.title}</title>
-      </Head>
-      
       {/* Alert Notification */}
       {alert.show && (
         <AlertNotification
           message={alert.message}
           type={alert.type}
-          position="top-center"
+          position="top-right"
           duration={alert.duration}
           onClose={hideAlert}
           showProgress={true}
@@ -738,18 +912,8 @@ export default function HousePage({ params }: HousePageProps) {
       )}
       
       <div className="mt-14 bg-white min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 lg:px-10 py-6">
           
-          {/* Error banner if there was an error but fallback data is shown */}
-          {error && house && (
-            <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center text-yellow-800">
-                <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                <span className="text-sm">Some property data could not be loaded. Showing limited information.</span>
-              </div>
-            </div>
-          )}
-
           {/* Booking Success Message */}
           {bookingSuccess && createdBooking && (
             <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
@@ -764,143 +928,83 @@ export default function HousePage({ params }: HousePageProps) {
             </div>
           )}
           
-          {/* Title Section */}
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#083A85] mb-3 sm:mb-4 leading-tight">
+          {/* Airbnb-style Title Section */}
+          <div className="mb-6">
+            <h1 className="text-[26px] font-semibold text-gray-900 mb-2">
               {house?.title}
             </h1>
-            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-4 lg:gap-6 text-base sm:text-base text-gray-700">
-              <span className="flex items-center gap-2">
-                <i className="bi bi-door-open text-[#F20C8F] text-lg sm:text-xl"></i>
-                <span className="font-medium">{house?.bedrooms} Bedrooms</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <i className="bi bi-droplet text-[#F20C8F] text-lg sm:text-xl"></i>
-                <span className="font-medium">{house?.bathrooms} Bathrooms</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <i className="bi bi-house-door text-[#F20C8F] text-lg sm:text-xl"></i>
-                <span className="font-medium">{house?.kitchen} Kitchen</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <i className="bi bi-people text-[#F20C8F] text-lg sm:text-xl"></i>
-                <span className="font-medium">Up to {house?.guests} Guests</span>
-              </span>
+            <div className="flex flex-wrap items-center gap-1 text-sm">
+              {house?.ratings?.overall > 0 && (
+                <>
+                  <span className="flex items-center gap-1">
+                    <i className="bi bi-star-fill text-xs"></i>
+                    <span className="font-medium">{house.ratings.overall}</span>
+                  </span>
+                  <span className="text-gray-500">·</span>
+                  <button className="underline font-medium hover:text-black transition">
+                    {house.totalReviews} reviews
+                  </button>
+                  <span className="text-gray-500">·</span>
+                </>
+              )}
+              <button className="underline font-medium hover:text-black transition">
+                {house?.address}
+              </button>
             </div>
           </div>
 
-          {/* Photos Section */}
-          <div className="mb-8 sm:mb-12">
+          {/* Airbnb-style Photo Grid */}
+          <div className="mb-12">
             {house?.photos && house.photos.length > 0 ? (
-              <>
-                {/* Mobile: Single large image with carousel */}
-                <div className="block sm:hidden">
-                  <div className="relative h-64 rounded-xl overflow-hidden">
+              <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[560px] rounded-xl overflow-hidden">
+                {/* Main large image on left */}
+                <div 
+                  className="col-span-2 row-span-2 relative group cursor-pointer"
+                  onClick={() => openPhotoViewer(0)}
+                >
+                  <img
+                    src={house.photos[0] || fallbackImageUrl}
+                    alt="Main property view"
+                    className="w-full h-full object-cover hover:brightness-95 transition duration-200"
+                    onError={handleImageError}
+                  />
+                </div>
+
+                {/* Four smaller images on right in 2x2 grid */}
+                {house.photos.slice(1, 5).map((photo: string, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className="relative group overflow-hidden cursor-pointer"
+                    onClick={() => openPhotoViewer(idx + 1)}
+                  >
                     <img
-                      src={house.photos[selectedPhoto] || fallbackImageUrl}
-                      alt={`House view ${selectedPhoto + 1}`}
-                      className="w-full h-full object-cover"
+                      src={photo || fallbackImageUrl}
+                      alt={`Property view ${idx + 2}`}
+                      className="w-full h-full object-cover hover:brightness-95 transition duration-200"
                       onError={handleImageError}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                      {house.photos.map((_: string, idx: number) => (
-                        <button
-                          key={idx}
-                          onClick={() => setSelectedPhoto(idx)}
-                          className={`w-2 h-2 rounded-full transition-all ${
-                            idx === selectedPhoto ? 'bg-white' : 'bg-white/50'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <button 
-                      className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg text-base font-medium"
-                      onClick={() => router.push(`${pathname}/photos`)}
-                    >
-                      <i className="bi bi-grid-3x3-gap mr-1"></i>
-                      All photos
-                    </button>
-                  </div>
-                </div>
-
-                {/* Tablet: 2x2 grid */}
-                <div className="hidden sm:block lg:hidden">
-                  <div className="grid grid-cols-2 gap-2 h-[400px] rounded-xl overflow-hidden relative">
-                    {house.photos.slice(0, 4).map((photo: string, idx: number) => (
-                      <div
-                        key={idx}
-                        className="relative group cursor-pointer overflow-hidden"
-                        onClick={() => router.push(`${pathname}/photos`)}
+                    {idx === 3 && house.photos.length > 5 && (
+                      <div 
+                        className="absolute inset-0 bg-black/60 flex items-center justify-center"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowPhotoViewer(true);
+                        }}
                       >
-                        <img
-                          src={photo || fallbackImageUrl}
-                          alt={`House view ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={handleImageError}
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                        <button className="bg-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition flex items-center gap-2">
+                          <i className="bi bi-grid-3x3-gap"></i>
+                          Show all photos
+                        </button>
                       </div>
-                    ))}
-                    <button
-                      className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow text-base font-medium"
-                      onClick={() => router.push(`${pathname}/photos`)}
-                    >
-                      <i className="bi bi-grid-3x3-gap"></i>
-                      Show all photos
-                    </button>
+                    )}
                   </div>
-                </div>
-
-                {/* Desktop: 4x4 grid with main large card and 4 horizontal cards */}
-                <div className="hidden lg:block">
-                  <div className="grid grid-cols-4 gap-2 h-[500px] rounded-xl overflow-hidden relative">
-                    {/* Main large card (2x2) */}
-                    <div
-                      className="col-span-2 row-span-2 relative group cursor-pointer"
-                      onClick={() => router.push(`${pathname}/photos`)}
-                    >
-                      <img
-                        src={house.photos[0] || fallbackImageUrl}
-                        alt="Primary house view"
-                        className="w-full h-full object-cover"
-                        onError={handleImageError}
-                      />
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                    </div>
-
-                    {/* Four horizontal parallel cards - only show first 4 after main */}
-                    {house.photos.slice(1, 5).map((photo: string, idx: number) => (
-                      <div
-                        key={idx}
-                        className="relative group cursor-pointer overflow-hidden"
-                        onClick={() => router.push(`${pathname}/photos`)}
-                      >
-                        <img
-                          src={photo || fallbackImageUrl}
-                          alt={`House view ${idx + 2}`}
-                          className="w-full h-full object-cover"
-                          onError={handleImageError}
-                        />
-                        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                      </div>
-                    ))}
-
-                    <button
-                      className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:shadow-xl transition-shadow cursor-pointer"
-                      onClick={() => router.push(`${pathname}/photos`)}
-                    >
-                      <i className="bi bi-grid-3x3-gap"></i>
-                      <span className="text-base font-medium">Show all photos</span>
-                    </button>
-                  </div>
-                </div>
-              </>
+                ))}
+              </div>
             ) : (
-              <div className="flex justify-center items-center h-64 bg-gray-100 rounded-xl">
+              <div className="flex justify-center items-center h-[400px] bg-gray-100 rounded-xl">
                 <div className="text-center">
                   <div className="text-gray-400 mb-2">
-                    <i className="bi bi-image text-4xl"></i>
+                    <i className="bi bi-image text-5xl"></i>
                   </div>
                   <p className="text-gray-500">No photos available</p>
                 </div>
@@ -908,128 +1012,387 @@ export default function HousePage({ params }: HousePageProps) {
             )}
           </div>
 
-          {/* Mobile Booking Section - Above location */}
-          <div className="block lg:hidden mb-8">
-            <div className="border-2 border-[#083A85] rounded-xl p-4 sm:p-6 shadow-xl bg-white">
-              <h3 className="text-lg sm:text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
-              
-              {/* Simplified Price Display */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <p className="text-2xl sm:text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
+            {/* Left Content - 3 columns */}
+            <div className="lg:col-span-3">
+              {/* Property Header */}
+              <div className="border-b pb-8 mb-8">
+                <h2 className="text-[22px] font-medium mb-1">
+                  Entire home hosted by {house?.hostName}
+                </h2>
+                <div className="flex flex-wrap gap-1 text-base text-gray-700">
+                  <span>{house?.guests} guests</span>
+                  <span>·</span>
+                  <span>{house?.bedrooms} bedrooms</span>
+                  <span>·</span>
+                  <span>{house?.bedrooms} beds</span>
+                  <span>·</span>
+                  <span>{house?.bathrooms} baths</span>
                 </div>
-                <p className="text-gray-600 text-base sm:text-base">per night</p>
               </div>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              {/* Property Highlights */}
+              <div className="border-b pb-8 mb-8 space-y-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-door-open text-2xl"></i>
+                  </div>
+                  <div>
+                    <div className="font-medium mb-1">Self check-in</div>
+                    <div className="text-sm text-gray-600">Check yourself in with the lockbox.</div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-sparkles text-2xl"></i>
+                  </div>
+                  <div>
+                    <div className="font-medium mb-1">Enhanced Clean</div>
+                    <div className="text-sm text-gray-600">This host committed to enhanced cleaning process.</div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                    <i className="bi bi-calendar-x text-2xl"></i>
+                  </div>
+                  <div>
+                    <div className="font-medium mb-1">Free cancellation before check-in</div>
+                    <div className="text-sm text-gray-600">Get a full refund if you change your mind.</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="border-b pb-8 mb-8">
+                <div className="text-base leading-relaxed text-gray-800">
+                  {house?.description}
+                </div>
+              </div>
+
+              {/* What this place offers - Features from API */}
+              {house?.features && house.features.length > 0 && (
+                <div className="border-b pb-8 mb-8">
+                  <h3 className="text-[22px] font-medium mb-6">What this place offers</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {house.features.slice(0, showAllFeatures ? house.features.length : 8).map((feature: string, idx: number) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <i className={`bi ${getFeatureIcon(feature)} text-xl text-[#083A85]`}></i>
+                        <span className="text-gray-800">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {house.features.length > 8 && (
+                    <button
+                      onClick={() => setShowAllFeatures(!showAllFeatures)}
+                      className="mt-6 px-6 py-3 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all"
+                    >
+                      {showAllFeatures ? 'Show less' : `Show all ${house.features.length} features`}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Calendar Section */}
+              <div className="border-b pb-8 mb-8">
+                <h3 className="text-[22px] font-medium mb-2">{nights > 0 ? `${nights} nights` : 'Select dates'}</h3>
+                {checkInDate && checkOutDate && (
+                  <p className="text-sm text-gray-600 mb-6">
+                    {new Date(checkInDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {new Date(checkOutDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
                   <CustomDatePicker
                     value={checkInDate}
                     onChange={handleCheckInChange}
                     min={today}
                     occupiedDates={occupiedDates}
                     placeholder="Select check-in date"
-                    label="Check-in Date"
+                    label="CHECK-IN"
                     disabled={bookingLoading || bookingSuccess}
                   />
-                  
+
                   <CustomDatePicker
                     value={checkOutDate}
                     onChange={handleCheckOutChange}
                     min={checkInDate || today}
                     occupiedDates={occupiedDates}
                     placeholder="Select check-out date"
-                    label="Check-out Date"
+                    label="CHECKOUT"
                     disabled={bookingLoading || bookingSuccess}
                   />
                 </div>
-
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-people mr-1"></i>
-                    Guests
-                  </label>
-                  <select
-                    value={guests}
-                    onChange={(e) => setGuests(parseInt(e.target.value))}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-3 py-2 sm:px-4 sm:py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition text-base sm:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        {num} guest{num !== 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 {dateError && (
-                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                    <p className="text-red-600 text-base font-medium">
-                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                      {dateError}
-                    </p>
+                  <div className="mt-4 text-red-600 text-sm flex items-center gap-2">
+                    <i className="bi bi-exclamation-circle"></i>
+                    {dateError}
                   </div>
                 )}
+              </div>
+            </div>
 
-                {bookingError && (
-                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                    <p className="text-red-600 text-base font-medium">
-                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                      {bookingError}
-                    </p>
-                  </div>
-                )}
-
-                {checkInDate && checkOutDate && (
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Subtotal:</span>
-                      <span className="text-[#F20C8F]">${calculateTotal()}</span>
+            {/* Right Sidebar - Booking Card - 2 columns */}
+            <div className="lg:col-span-2">
+              <div className="sticky top-24">
+                <div className="border rounded-xl p-6 shadow-xl">
+                  <div className="flex items-baseline justify-between mb-6">
+                    <div>
+                      <span className="text-[22px] font-semibold">${house?.price?.toFixed(2)}</span>
+                      <span className="text-gray-600 ml-1">night</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Taxes will be added at checkout</p>
+                    {house?.ratings?.overall > 0 && (
+                      <div className="flex items-center gap-1 text-sm">
+                        <i className="bi bi-star-fill text-xs"></i>
+                        <span className="font-medium">{house.ratings.overall}</span>
+                        <span className="text-gray-500">·</span>
+                        <span className="text-gray-500">{house.totalReviews} reviews</span>
+                      </div>
+                    )}
                   </div>
-                )}
 
-                <button
-                  onClick={handleReserve}
-                  disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
-                  className={`w-full py-3 rounded-lg font-semibold transition text-base sm:text-base ${
-                    (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                      : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
-                  }`}
-                >
-                  {bookingLoading ? (
-                    <>
-                      <i className="bi bi-arrow-clockwise spin mr-2"></i>
-                      Creating Booking...
-                    </>
-                  ) : bookingSuccess ? (
-                    <>
-                      <i className="bi bi-check-circle-fill mr-2"></i>
-                      Booking Created!
-                    </>
+                  {/* Date Selection */}
+                  <div className="mb-4 space-y-2">
+                    <CustomDatePicker
+                      value={checkInDate}
+                      onChange={handleCheckInChange}
+                      min={today}
+                      occupiedDates={occupiedDates}
+                      placeholder="Add date"
+                      label="CHECK-IN"
+                      disabled={bookingLoading || bookingSuccess}
+                    />
+
+                    <CustomDatePicker
+                      value={checkOutDate}
+                      onChange={handleCheckOutChange}
+                      min={checkInDate || today}
+                      occupiedDates={occupiedDates}
+                      placeholder="Add date"
+                      label="CHECKOUT"
+                      disabled={bookingLoading || bookingSuccess}
+                    />
+                  </div>
+
+                  {/* Guests Selection */}
+                  <div className="border rounded-lg mb-4">
+                    <div className="p-3 relative">
+                      <label className="text-[10px] font-semibold uppercase tracking-wide">Guests</label>
+                      <div 
+                        onClick={() => setShowGuestsDropdown(!showGuestsDropdown)}
+                        className="mt-1 text-sm cursor-pointer flex justify-between items-center"
+                      >
+                        <span>{guests} guest{guests !== 1 ? 's' : ''}</span>
+                        <i className={`bi bi-chevron-${showGuestsDropdown ? 'up' : 'down'}`}></i>
+                      </div>
+                      {showGuestsDropdown && (
+                        <div className="absolute left-0 right-0 top-full mt-2 bg-white border rounded-lg shadow-lg p-4 z-10">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">Guests</span>
+                            <div className="flex items-center gap-3">
+                              <button 
+                                onClick={() => setGuests(Math.max(1, guests - 1))}
+                                disabled={guests <= 1}
+                                className="w-8 h-8 border rounded-full flex items-center justify-center disabled:opacity-50"
+                              >
+                                <i className="bi bi-dash"></i>
+                              </button>
+                              <span className="w-8 text-center">{guests}</span>
+                              <button 
+                                onClick={() => setGuests(Math.min(house?.guests || 8, guests + 1))}
+                                disabled={guests >= (house?.guests || 8)}
+                                className="w-8 h-8 border rounded-full flex items-center justify-center disabled:opacity-50"
+                              >
+                                <i className="bi bi-plus"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Reserve Button */}
+                  <button
+                    onClick={handleReserve}
+                    disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
+                    className={`w-full py-3 rounded-lg font-medium transition mb-3 ${
+                      (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                        : 'bg-[#083A85] text-white hover:from-rose-600 hover:to-pink-700'
+                    }`}
+                  >
+                    {bookingLoading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <i className="bi bi-arrow-clockwise spin"></i>
+                        Processing...
+                      </span>
+                    ) : bookingSuccess ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <i className="bi bi-check-circle-fill"></i>
+                        Booking Created!
+                      </span>
+                    ) : (
+                      'Reserve'
+                    )}
+                  </button>
+
+                  {!checkInDate || !checkOutDate ? (
+                    <p className="text-center text-sm text-gray-600">You won't be charged yet</p>
                   ) : (
                     <>
-                      <i className="bi bi-calendar-heart mr-2"></i>
-                      Reserve Now
+                      <p className="text-center text-sm text-gray-600 mb-4">You won't be charged yet</p>
+                      
+                      {/* Price Breakdown */}
+                      <div className="space-y-3 pt-4 border-t">
+                        <div className="flex justify-between text-base">
+                          <button className="underline">
+                            ${house?.price} x {nights} night{nights !== 1 ? 's' : ''}
+                          </button>
+                          <span>${priceBreakdown?.subtotal.toFixed(2)}</span>
+                        </div>
+                        {priceBreakdown && (
+                          <>
+                            <div className="flex justify-between text-base">
+                              <button className="underline">Taxes</button>
+                              <span>${priceBreakdown.taxes.toFixed(2)}</span>
+                            </div>
+                          </>
+                        )}
+                        <div className="pt-3 border-t flex justify-between font-medium">
+                          <span>Total</span>
+                          <span>${calculateTotal().toFixed(2)}</span>
+                        </div>
+                      </div>
                     </>
                   )}
-                </button>
+
+                  {bookingError && (
+                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-red-600 text-sm flex items-center gap-2">
+                        <i className="bi bi-exclamation-triangle"></i>
+                        {bookingError}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Rare find notice */}
+                <div className="flex items-center gap-2 mt-4 text-sm">
+                  <i className="bi bi-lightning-charge text-orange-500"></i>
+                  <span className="text-gray-700">
+                    <span className="font-medium">Rare find.</span> This place is usually booked.
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Address & Map Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-12">
-          <div className="lg:col-span-2">
-            <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">Location</h2>
-            <div className="flex items-start gap-2 mb-4">
-              <i className="bi bi-geo-alt-fill text-[#F20C8F] text-lg sm:text-xl mt-0.5 flex-shrink-0"></i>
-              <p className="text-gray-700 font-medium text-base sm:text-base leading-relaxed">{house?.address}</p>
+          {/* 3D Video Tour Section */}
+          {house?.videoUrl && (
+            <div ref={videoContainerRef} className="border-t pt-12 mt-12">
+              <h2 className="text-[22px] font-medium mb-2">3D Virtual Tour</h2>
+              <p className="text-gray-600 mb-6">Take an immersive tour of the property</p>
+              
+              <div className="relative w-full rounded-xl overflow-hidden bg-gray-100">
+                <div className="relative" style={{ paddingBottom: '56.25%' /* 16:9 aspect ratio */}}>
+                  <iframe
+                    ref={videoRef}
+                    src={getEmbedVideoUrl(house.videoUrl)}
+                    className="absolute top-0 left-0 w-full h-full"
+                    title="3D Property Tour"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                
+                {/* Play indicator overlay - shown when video is not playing */}
+                {!isVideoPlaying && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 shadow-lg">
+                      <i className="bi bi-play-fill text-4xl text-gray-800"></i>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="w-full h-[250px] sm:h-[300px] lg:h-[750px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl overflow-hidden shadow-lg">
+          )}
+
+          {/* Reviews Section */}
+          <div className="border-t pt-12 mt-12">
+            <div className="flex items-center gap-2 mb-8">
+              <i className="bi bi-star-fill text-xl"></i>
+              <h2 className="text-[22px] font-medium">
+                {house?.ratings?.overall || 0} · {house?.totalReviews || 0} reviews
+              </h2>
+            </div>
+
+
+            {/* Reviews List */}
+            {reviewsLoading ? (
+              <div className="text-center py-12">
+                <i className="bi bi-arrow-clockwise spin text-2xl mb-2"></i>
+                <p className="text-gray-600">Loading reviews...</p>
+              </div>
+            ) : reviews.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-xl">
+                <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
+                <p className="text-xl font-medium mb-2">No reviews yet</p>
+                <p className="text-gray-600 mb-6">Be the first to share your experience!</p>
+                <button 
+                  onClick={() => setShowReviewModal(true)}
+                  className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                >
+                  Write a review
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-8 mb-8">
+                  {reviews.slice(0, showAllReviews ? reviews.length : 6).map((review) => (
+                    <div key={review.id}>
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium">
+                          {review.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium">{review.name}</div>
+                          <div className="text-sm text-gray-600">{review.date}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <i key={i} className={`bi bi-star-fill text-xs ${i < review.rating ? 'text-black' : 'text-gray-300'}`}></i>
+                        ))}
+                      </div>
+                      <p className="text-gray-800 leading-relaxed">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {reviews.length > 6 && (
+                  <button 
+                    onClick={() => setShowAllReviews(!showAllReviews)}
+                    className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                  >
+                    {showAllReviews ? 'Show less' : `Show all ${reviews.length} reviews`}
+                  </button>
+                )}
+
+                <button 
+                  onClick={() => setShowReviewModal(true)}
+                  className="ml-4 px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                >
+                  Write a review
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Map Section */}
+          <div className="border-t pt-12 mt-12">
+            <h2 className="text-[22px] font-medium mb-6">Where you'll be</h2>
+            <div className="w-full h-[480px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden mb-4">
               <iframe
                 width="100%"
                 height="100%"
@@ -1040,292 +1403,121 @@ export default function HousePage({ params }: HousePageProps) {
                 className="w-full h-full"
               ></iframe>
             </div>
-            
-            {/* Description moved here for mobile */}
-            <div className="mt-6 lg:hidden">
-              <h3 className="text-lg font-semibold text-[#083A85] mb-3">About This Place</h3>
-              <p className="text-gray-700 text-base sm:text-base leading-relaxed">{house?.description}</p>
+            <div className="mb-8">
+              <p className="font-medium mb-2">{house?.address}</p>
+              <p className="text-gray-600 leading-relaxed">
+                We'll share the exact address after booking confirmation. The property is located in a prime area with easy access to local attractions and amenities.
+              </p>
             </div>
           </div>
 
-          {/* Desktop Booking Window */}
-          <div className="hidden lg:block lg:col-span-1">
-            <div className="border-2 border-[#083A85] rounded-xl p-6 shadow-xl sticky top-8">
-              <h3 className="text-xl font-semibold text-[#083A85] mb-4">Reserve Your Stay</h3>
-              
-              {/* Simplified Price Display */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <p className="text-3xl font-bold text-[#F20C8F]">${house?.price}</p>
-                </div>
-                <p className="text-gray-600">per night</p>
+          {/* Host Section */}
+          <div className="border-t pt-12 mt-12">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center text-white text-2xl font-medium">
+                H
               </div>
-              
-              <div className="space-y-4">
-                <CustomDatePicker
-                  value={checkInDate}
-                  onChange={handleCheckInChange}
-                  min={today}
-                  occupiedDates={occupiedDates}
-                  placeholder="Select check-in date"
-                  label="Check-in Date"
-                  disabled={bookingLoading || bookingSuccess}
-                />
-                
-                <CustomDatePicker
-                  value={checkOutDate}
-                  onChange={handleCheckOutChange}
-                  min={checkInDate || today}
-                  occupiedDates={occupiedDates}
-                  placeholder="Select check-out date"
-                  label="Check-out Date"
-                  disabled={bookingLoading || bookingSuccess}
-                />
-
-                <div>
-                  <label className="block text-base font-semibold text-gray-700 mb-2">
-                    <i className="bi bi-people mr-1"></i>
-                    Guests
-                  </label>
-                  <select
-                    value={guests}
-                    onChange={(e) => setGuests(parseInt(e.target.value))}
-                    disabled={bookingLoading || bookingSuccess}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F20C8F] focus:border-transparent transition disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    {Array.from({ length: house?.guests || 8 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        {num} guest{num !== 1 ? 's' : ''}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {dateError && (
-                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                    <p className="text-red-600 text-base font-medium">
-                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                      {dateError}
-                    </p>
-                  </div>
-                )}
-
-                {bookingError && (
-                  <div className="bg-red-50 border border-red-300 rounded-lg p-3">
-                    <p className="text-red-600 text-base font-medium">
-                      <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                      {bookingError}
-                    </p>
-                  </div>
-                )}
-
-                {occupiedDates.length > 0 && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <p className="font-semibold text-base mb-2 text-gray-700">Unavailable Dates:</p>
-                    <div className="space-y-1">
-                      {occupiedDates.map((date, idx) => (
-                        <div key={idx} className="text-xs text-red-600 flex items-center gap-1">
-                          <i className="bi bi-calendar-x-fill text-xs"></i>
-                          <span>{new Date(date).toLocaleDateString()}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {checkInDate && checkOutDate && (
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>Subtotal:</span>
-                      <span className="text-[#F20C8F]">${calculateTotal()}</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Taxes will be added at checkout</p>
-                  </div>
-                )}
-
-                <button
-                  onClick={handleReserve}
-                  disabled={!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess}
-                  className={`w-full py-3 rounded-lg font-semibold transition ${
-                    (!checkInDate || !checkOutDate || !!dateError || bookingLoading || bookingSuccess)
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                      : 'bg-[#F20C8F] text-white hover:bg-opacity-90 shadow-lg hover:shadow-xl cursor-pointer'
-                  }`}
-                >
-                  {bookingLoading ? (
-                    <>
-                      <i className="bi bi-arrow-clockwise spin mr-2"></i>
-                      Creating Booking...
-                    </>
-                  ) : bookingSuccess ? (
-                    <>
-                      <i className="bi bi-check-circle-fill mr-2"></i>
-                      Booking Created!
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-calendar-heart mr-2"></i>
-                      Reserve Now
-                    </>
-                  )}
-                </button>
-
-                <div className="pt-4 border-t">
-                  <p className="text-base text-gray-600 leading-relaxed">{house?.description}</p>
-                </div>
+              <div>
+                <h2 className="text-[22px] font-medium mb-1">Hosted by {house?.hostName}</h2>
+                <p className="text-sm text-gray-600">Since {house?.createdAt}</p>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* 3D Video Preview */}
-        {house?.videoUrl && (
-          <div className="mb-8 sm:mb-12">
-            <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4">3D Virtual Tour</h2>
-            <div className="w-full h-[250px] sm:h-[350px] lg:h-[600px] rounded-xl overflow-hidden shadow-xl">
-              {house.videoUrl.includes('youtube.com') || house.videoUrl.includes('youtu.be') ? (
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`${house.videoUrl}${house.videoUrl.includes('?') ? '&' : '?'}autoplay=1&mute=1`}
-                  title="Property Virtual Tour"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              ) : (
-                <video
-                  width="100%"
-                  height="100%"
-                  autoPlay
-                  muted
-                  loop
-                  controls
-                  className="w-full h-full object-cover"
-                >
-                  <source src={house.videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Ratings Section */}
-        <div className="mb-8 sm:mb-12">
-          <h2 className="text-xl sm:text-2xl font-semibold text-[#083A85] mb-4 sm:mb-6">Guest Ratings & Reviews</h2>
-          
-          {/* Overall Rating */}
-          <div className="bg-gray-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mb-4 sm:mb-6">
-              <div className="text-center sm:text-left">
-                <span className="text-4xl sm:text-5xl font-bold text-[#083A85]">{house?.ratings?.overall || 0}</span>
-                <div className="flex gap-1 mt-2 justify-center sm:justify-start">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <i key={star} className={`bi bi-star-fill text-[#F20C8F] text-base sm:text-lg`}></i>
-                  ))}
-                </div>
-                <p className="text-gray-600 font-medium mt-1 text-base sm:text-base">{house?.totalReviews || 0} reviews</p>
+            <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex items-center gap-2 text-sm">
+                <i className="bi bi-star-fill"></i>
+                <span>{house?.totalReviews || 0} Reviews</span>
               </div>
-              
-              {/* Rating Distribution */}
-              <div className="flex-1 w-full">
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center gap-2 sm:gap-3 mb-2">
-                    <span className="w-4 text-base font-medium">{rating}</span>
-                    <i className="bi bi-star-fill text-[#F20C8F] text-base"></i>
-                    <div className="flex-1 bg-gray-200 rounded-full h-2 sm:h-3">
-                      <div 
-                        className="bg-[#F20C8F] h-2 sm:h-3 rounded-full transition-all duration-500"
-                        style={{ width: house?.ratingCounts && house?.totalReviews ? `${(house.ratingCounts[rating as keyof typeof house.ratingCounts] / house.totalReviews) * 100}%` : '0%' }}
-                      ></div>
-                    </div>
-                    <span className="text-xs sm:text-base text-gray-600 w-8 sm:w-12 text-right">
-                      {house?.ratingCounts ? house.ratingCounts[rating as keyof typeof house.ratingCounts] : 0}
-                    </span>
-                  </div>
-                ))}
+              <div className="flex items-center gap-2 text-sm">
+                <i className="bi bi-patch-check-fill"></i>
+                <span>Identity verified</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <i className="bi bi-award"></i>
+                <span>Superhost</span>
               </div>
             </div>
-          </div>
 
-          {/* Rating Categories */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-6 sm:mb-8">
-            {Object.entries({
-              accuracy: { icon: 'bi-check-circle-fill', label: 'Accuracy' },
-              cleanliness: { icon: 'bi-stars', label: 'Cleanliness' },
-              checkin: { icon: 'bi-key-fill', label: 'Check-in' },
-              communication: { icon: 'bi-chat-dots-fill', label: 'Communication' },
-              location: { icon: 'bi-geo-alt-fill', label: 'Location' },
-              value: { icon: 'bi-tag-fill', label: 'Value' }
-            }).map(([key, { icon, label }]) => (
-              <div key={key} className="bg-white border-2 border-gray-100 rounded-xl p-3 sm:p-4 text-center hover:shadow-lg transition-shadow">
-                <i className={`bi ${icon} text-xl sm:text-2xl text-[#083A85] mb-2`}></i>
-                <p className="text-xs sm:text-base font-semibold text-gray-700">{label}</p>
-                <p className="text-lg sm:text-xl font-bold text-[#F20C8F] mt-1">
-                  {house?.ratings?.[key as keyof typeof house.ratings] || 0}
+            <div className="grid lg:grid-cols-2 gap-12">
+              <div>
+                <p className="mb-6 text-gray-800 leading-relaxed">
+                  Hi! I'm your host and I love sharing this beautiful space with guests from around the world. 
+                  I'm always available to help make your stay comfortable and memorable.
                 </p>
-              </div>
-            ))}
-          </div>
 
-          {/* Reviews Summary */}
-          <div className="border-t pt-6 sm:pt-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-semibold text-[#083A85]">Guest Reviews</h3>
-              <button className="w-full sm:w-auto px-4 sm:px-5 py-2 border-2 border-[#083A85] text-[#083A85] rounded-lg font-semibold hover:bg-[#083A85] hover:text-white transition-all text-base sm:text-base cursor-pointer"
-                      onClick={() => setShowReviewModal(true)}>
-                <i className="bi bi-plus-circle mr-2"></i>
-                Add Review
-              </button>
-            </div>
-
-            {reviewsLoading ? (
-              <div className="text-center py-8">
-                <i className="bi bi-arrow-clockwise spin text-2xl text-[#083A85] mb-2"></i>
-                <p className="text-gray-600">Loading reviews...</p>
-              </div>
-            ) : reviews.length === 0 ? (
-              <div className="text-center py-8">
-                <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
-                <p className="text-gray-600 text-lg">No reviews yet</p>
-                <p className="text-gray-500 text-sm">Be the first to share your experience!</p>
-              </div>
-            ) : (
-              <div className="space-y-4 sm:space-y-6">
-                {reviews.slice(0, showAllReviews ? reviews.length : 3).map((review) => (
-                  <div key={review.id} className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200 hover:shadow-md transition-shadow">
-                    <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-0 mb-3">
-                      <div>
-                        <p className="font-semibold text-[#083A85] text-base sm:text-base">{review.name}</p>
-                        <p className="text-xs sm:text-base text-gray-500">{review.date}</p>
-                      </div>
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <i key={i} className={`bi bi-star-fill text-base ${i < review.rating ? 'text-[#F20C8F]' : 'text-gray-300'}`}></i>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-gray-700 leading-relaxed text-base sm:text-base">{review.comment}</p>
+                <div className="space-y-4 mb-8">
+                  <div>
+                    <span className="font-medium">Response rate: </span>
+                    <span>100%</span>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div>
+                    <span className="font-medium">Response time: </span>
+                    <span>Within an hour</span>
+                  </div>
+                </div>
 
-            {reviews.length > 3 && (
-              <div className="text-center mt-6 sm:mt-8">
-                <button 
-                  onClick={() => setShowAllReviews(!showAllReviews)}
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-[#083A85] text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl text-base sm:text-base"
-                >
-                  <i className={`bi bi-${showAllReviews ? 'chevron-up' : 'chevron-down'} mr-2`}></i>
-                  {showAllReviews ? 'Show Less Reviews' : `See All ${reviews.length} Reviews`}
-                </button>
               </div>
-            )}
+
+              <div className="bg-gray-50 rounded-xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <i className="bi bi-shield-check text-2xl text-red-500"></i>
+                  <div>
+                    <p className="text-sm text-gray-800 leading-relaxed">
+                      To protect your payment, never transfer money or communicate outside of the RentSpaces website or app.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+
+          {/* Things to know */}
+          <div className="border-t pt-12 mt-12 mb-12">
+            <h2 className="text-[22px] font-medium mb-8">Things to know</h2>
+            <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+              <div>
+                <h3 className="font-medium mb-4">House rules</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Check-in: 3:00 PM - 10:00 PM</p>
+                  <p>Checkout before 11:00 AM</p>
+                  <p>{house?.guests} guests maximum</p>
+                  <p>No smoking</p>
+                  <p>No pets</p>
+                  <p>No parties or events</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Safety & property</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Smoke alarm</p>
+                  <p>Carbon monoxide alarm</p>
+                  <p>First aid kit</p>
+                  <p>Fire extinguisher</p>
+                  <p>Lock on bedroom door</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Cancellation policy</h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Free cancellation before 24 hours of check-in.</p>
+                  <p>After that, cancel before check-in and get a 50% refund, minus the service fee.</p>
+                  <button className="font-medium underline">Show more</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Photo Viewer Modal */}
+          <PhotoViewerModal
+            isOpen={showPhotoViewer}
+            onClose={() => setShowPhotoViewer(false)}
+            photos={house?.photos || []}
+            initialPhotoIndex={selectedPhotoIndex}
+            propertyTitle={house?.title || 'Property Photos'}
+            propertyImages={validPropertyId ? backendProperty?.images : undefined}
+          />
 
           {/* Add Review Modal */}
           {showReviewModal && ( 

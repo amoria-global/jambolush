@@ -68,6 +68,8 @@ const TourPaymentPage: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pollingStatus, setPollingStatus] = useState<string>('');
   const [pollCount, setPollCount] = useState(0);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [specialMessage, setSpecialMessage] = useState('');
 
   // Fetch current user
   useEffect(() => {
@@ -76,7 +78,6 @@ const TourPaymentPage: React.FC = () => {
         const response = await api.get('/auth/me');
         if (response.data && response.data.success) {
           setCurrentUser(response.data.data);
-          // Pre-fill phone number if available
           if (response.data.data.phone) {
             setPhoneNumber(response.data.data.phone);
           }
@@ -133,7 +134,6 @@ const TourPaymentPage: React.FC = () => {
             };
             hostId = tour.hostId || hostId;
 
-            // Fetch host details
             if (hostId) {
               try {
                 const hostResponse = await api.get(`/users/${hostId}`);
@@ -163,7 +163,7 @@ const TourPaymentPage: React.FC = () => {
 
         if (booking.scheduleId && tourDetails) {
           try {
-            const scheduleResponse = await api.get(`/tours/${booking.tourId}/schedules/${booking.scheduleId}`);
+            const scheduleResponse = await api.get(`/tours/${booking.tourId}/schedules`);
             if (scheduleResponse.data.success && scheduleResponse.data.data) {
               const schedule = scheduleResponse.data.data;
               scheduleDetails = {
@@ -238,46 +238,43 @@ const TourPaymentPage: React.FC = () => {
       }
     }
 
+    if (!agreedToTerms) {
+      newErrors.terms = 'Please agree to the terms and conditions';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const isFormComplete = () => {
-    if (!paymentMethod) return false;
+    if (!paymentMethod || !agreedToTerms) return false;
     if (paymentMethod === 'momo') {
       return momoProvider !== null && phoneNumber.trim() !== '';
     }
-    return true; // Card only needs payment method selected
+    return true;
   };
 
   const pollPaymentStatus = async (depositId: string) => {
-    const maxAttempts = 60; // Poll for max 10 minutes (every 10 seconds)
+    const maxAttempts = 60;
     let attempts = 0;
 
     const checkStatus = async (): Promise<void> => {
       try {
         attempts++;
         setPollCount(attempts);
-        setPollingStatus('Checking payment status...');
-
-        console.log(`[PAYMENT] Polling attempt ${attempts}/${maxAttempts} for depositId: ${depositId}`);
+        setPollingStatus('Verifying payment...');
 
         const response = await api.get(`/pawapay/deposit/${depositId}`);
 
         if (response.data.success) {
-          // Handle nested data structure: response.data.data.data
           const depositData = response.data.data?.data || response.data.data;
           const { status, failureReason } = depositData;
-          console.log(`[PAYMENT] Current status: ${status}`, depositData);
-
+          
           setPollingStatus(`Payment status: ${status}`);
 
-          // Check for final statuses
           if (status === 'COMPLETED' || status === 'ACCEPTED') {
             setPollingStatus('Payment successful! Redirecting...');
             sessionStorage.setItem('payment_final_status', 'success');
-
-            // Redirect to success page
             setTimeout(() => {
               router.push(`/payment/success?tx=${depositId}`);
             }, 1000);
@@ -290,18 +287,15 @@ const TourPaymentPage: React.FC = () => {
             sessionStorage.setItem('payment_final_status', 'failed');
             sessionStorage.setItem('payment_failure_reason', failureMessage);
 
-            // Redirect to failed page
             setTimeout(() => {
               router.push(`/payment/failed?tx=${depositId}&error=${encodeURIComponent(failureMessage)}`);
             }, 2000);
             return;
           }
 
-          // If still pending and not exceeded max attempts, continue polling
           if (attempts < maxAttempts) {
-            setTimeout(() => checkStatus(), 10000); // Poll every 10 seconds
+            setTimeout(() => checkStatus(), 10000);
           } else {
-            // Timeout - redirect to pending page
             setPollingStatus('Status check timeout. Please check your payment status.');
             router.push(`/payment/pending?tx=${depositId}`);
           }
@@ -322,7 +316,6 @@ const TourPaymentPage: React.FC = () => {
       }
     };
 
-    // Start polling
     checkStatus();
   };
 
@@ -337,89 +330,42 @@ const TourPaymentPage: React.FC = () => {
 
       const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalAmount;
 
-      // Determine endpoint based on payment method
       const endpoint = paymentMethod === 'card' 
         ? '/payments/deposits'
-        : '/pawapay/deposit';// for xentripay: payments/xentripay/deposits
+        : '/pawapay/deposit';
 
-      // Build payload matching backend expectations
-      const depositPayload = {
-        // User (buyer) information
-        userId: currentUser.id,
-        userEmail: currentUser.email,
-        userName: `${currentUser.firstName} ${currentUser.lastName}`,
-        userPhone: paymentMethod === 'momo' ? phoneNumber : (currentUser.phone || '+250788123456'),
-        
-        // Recipient (seller/host) information
-        recipientId: bookingData.hostId,
-        recipientEmail: hostDetails?.email || 'host@example.com',
-        recipientName: hostDetails?.name || 'Host Name',
-        recipientPhone: hostDetails?.phone || '+250788123456',
-        
-        // Transaction details
+      const pawaPayDepositPayload = {
         amount: finalAmount,
+        currency: 'RWF',
+        phoneNumber: phoneNumber,
+        provider: momoProvider,
+        country: 'RW',
         description: `Payment for ${bookingData.tourTitle}`,
-        paymentMethod,
-        platformFeePercentage: undefined, // Backend will use default
-        
-        // Metadata
+        internalReference: bookingData.id,
         metadata: {
           bookingType: 'tour',
           bookingId: bookingData.id,
           tourId: bookingData.tourId,
           scheduleId: bookingData.scheduleId,
-          numberOfParticipants: bookingData.numberOfParticipants,
-          scheduleDate: bookingData.scheduleDate,
-          tourTitle: bookingData.tourTitle,
-          momoProvider: paymentMethod === 'momo' ? momoProvider : undefined
-        }
+          userId: currentUser.id,
+        },
       };
-      
-      const pawaPayDepositPayload = {
-          amount: finalAmount,
-          currency: 'RWF', // Currency for Rwanda
-          phoneNumber: phoneNumber,
-          provider: momoProvider, // 'MTN', 'Airtel', or 'MPESA'
-          country: 'RW', // 2-letter country code
-          description: `Payment for ${bookingData.tourTitle}`,
-          internalReference: bookingData.id, // Use booking ID for reconciliation
-          metadata: {
-            bookingType: 'tour',
-            bookingId: bookingData.id,
-            tourId: bookingData.tourId,
-            scheduleId: bookingData.scheduleId,
-            userId: currentUser.id,
-          },
-      };
-      
-      console.log('[PAYMENT] Creating deposit:', {
-        endpoint,
-        paymentMethod,
-        amount: finalAmount
-      });
 
-      // Call appropriate deposit endpoint
       const response = await api.post(endpoint, pawaPayDepositPayload);
 
       if (response.data.success) {
-        const { transactionId, depositId, status, redirectUrl, instructions } = response.data.data;
+        const { transactionId, depositId, status, redirectUrl, checkoutUrl, instructions } = response.data.data;
 
-        console.log('[PAYMENT] Deposit created:', { transactionId, depositId, status });
-
-        // Store transaction ID for callback
         sessionStorage.setItem('payment_transaction_id', transactionId || depositId);
         sessionStorage.setItem('tour_booking_id', bookingData.id);
 
-        if (paymentMethod === 'card' && redirectUrl) {
-          // Redirect to payment gateway for card
-          window.location.href = redirectUrl;
+        // For card payments, use checkoutUrl (Pesapal) or redirectUrl
+        if (paymentMethod === 'card' && (checkoutUrl || redirectUrl)) {
+          window.location.href = checkoutUrl || redirectUrl;
         } else if (paymentMethod === 'momo') {
-          // For MoMo, show instructions
           if (instructions) {
             alert(instructions);
           }
-
-          // Start polling for payment status (don't redirect yet)
           pollPaymentStatus(depositId || transactionId);
         }
       } else {
@@ -437,16 +383,28 @@ const TourPaymentPage: React.FC = () => {
       
       setErrors({ general: errorMessage });
     } finally {
-      setLoading(false);
+      if (paymentMethod !== 'momo') {
+        setLoading(false);
+      }
     }
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
+      weekday: 'short',
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const getDifficultyBadge = (difficulty: string) => {
+    const colors = {
+      easy: 'bg-green-100 text-green-800',
+      moderate: 'bg-yellow-100 text-yellow-800',
+      challenging: 'bg-red-100 text-red-800'
+    };
+    return colors[difficulty?.toLowerCase() as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   // Loading state
@@ -454,7 +412,7 @@ const TourPaymentPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#083A85] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading booking details...</p>
         </div>
       </div>
@@ -465,15 +423,15 @@ const TourPaymentPage: React.FC = () => {
   if (errors.general && !bookingData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-600 mb-4">
-            <i className="bi bi-exclamation-triangle-fill text-4xl"></i>
+        <div className="text-center bg-white p-8 rounded-xl shadow-sm max-w-md">
+          <div className="text-red-500 mb-4">
+            <i className="bi bi-exclamation-circle text-5xl"></i>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
-          <p className="text-gray-600 mb-4">{errors.general}</p>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
+          <p className="text-gray-600 mb-6">{errors.general}</p>
           <button 
             onClick={() => router.push('/tours')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-3 bg-[#083A85] text-white rounded-lg hover:bg-[#062a5f] transition font-medium"
           >
             Browse Tours
           </button>
@@ -485,295 +443,388 @@ const TourPaymentPage: React.FC = () => {
   return (
     <>
       <head>
-        <title>Confirm and Pay - Secure Payment</title>
+        <title>Confirm and pay · Experience</title>
       </head>
-      <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4">
-        
-        <style jsx>{`
-          @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css');
-          
-          input[type="text"]:focus,
-          input[type="tel"]:focus {
-            outline: none;
-            border-color: #F20C8F;
-            box-shadow: 0 0 0 3px rgba(242, 12, 143, 0.1);
-          }
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <div className="pt-14">
+          <div className="max-w-[1280px] mx-auto px-2 sm:px-7 py-4 flex items-center">
+            <button 
+              onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-full transition mr-4"
+            >
+              <i className="bi bi-chevron-left text-lg"></i>
+            </button>
+            <h1 className="text-2xl font-semibold">Confirm and pay</h1>
+          </div>
+        </div>
 
-          input[type="radio"]:checked {
-            accent-color: #F20C8F;
-          }
-
-          input[type="radio"]:focus {
-            outline: 2px solid #F20C8F;
-            outline-offset: 2px;
-          }
-          
-          .error-input {
-            border-color: #ef4444 !important;
-          }
-          
-          .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-          }
-        `}</style>
-        
-        <div className="max-w-7xl mx-auto mt-14">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-5">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
             
-            {/* Left Side - Payment Summary */}
-            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            {/* Left Side - Payment Form */}
+            <div className="lg:col-span-3">
               
-              {/* Payment Method Selection */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
-                  Select Payment Method
-                </h2>
-                
-                {errors.paymentMethod && (
-                  <p className="error-message mb-3">{errors.paymentMethod}</p>
-                )}
-                
-                <div className="space-y-4">
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="paymentMethod" 
-                      value="momo"
-                      checked={paymentMethod === 'momo'}
-                      onChange={() => {
-                        setPaymentMethod('momo');
-                        setErrors({});
-                      }}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    <span className="text-base">Mobile Money (MTN / Airtel / M-Pesa)</span>
-                  </label>
-                  
-                  {paymentMethod === 'momo' && (
-                    <div className="ml-8 space-y-4 pt-2">
-                      {errors.momoProvider && (
-                        <p className="error-message">{errors.momoProvider}</p>
-                      )}
-                      
-                      <div className="space-y-2">
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="momoProvider" 
-                            value="MTN"
-                            checked={momoProvider === 'MTN'}
-                            onChange={() => {
-                              setMomoProvider('MTN');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>MTN MoMo</span>
-                        </label>
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="momoProvider" 
-                            value="AIRTEL"
-                            checked={momoProvider === 'AIRTEL'}
-                            onChange={() => {
-                              setMomoProvider('AIRTEL');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>Airtel Money</span>
-                        </label>
-                        <label className="flex items-center space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="momoProvider" 
-                            value="MPESA"
-                            checked={momoProvider === 'MPESA'}
-                            onChange={() => {
-                              setMomoProvider('MPESA');
-                              setErrors({});
-                            }}
-                            className="h-4 w-4 cursor-pointer"
-                          />
-                          <span>M-Pesa</span>
-                        </label>
-                      </div>
-
-                      <div className="pt-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Phone Number
-                        </label>
-                        <input
-                          type="tel"
-                          value={phoneNumber}
-                          onChange={(e) => {
-                            setPhoneNumber(e.target.value);
-                            setErrors({});
-                          }}
-                          placeholder="e.g., 0788123456"
-                          className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-all ${
-                            errors.phoneNumber ? 'error-input' : 'border-gray-300'
-                          }`}
-                        />
-                        {errors.phoneNumber && (
-                          <p className="error-message">{errors.phoneNumber}</p>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          Enter your mobile money number
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="paymentMethod" 
-                      value="card"
-                      checked={paymentMethod === 'card'}
-                      onChange={() => {
-                        setPaymentMethod('card');
-                        setMomoProvider(null);
-                        setErrors({});
-                      }}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                    <span className="text-base">Credit/Debit Card</span>
-                  </label>
+              {/* Your experience */}
+              <div className="mb-10">
+                <h2 className="text-[22px] font-medium mb-6">Your experience</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-medium mb-2">Date & Time</h3>
+                    <p className="text-gray-600">
+                      {formatDate(bookingData?.scheduleDate || '')}
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {bookingData?.scheduleStartTime} - {bookingData?.scheduleEndTime}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Participants</h3>
+                    <p className="text-gray-600">
+                      {bookingData?.numberOfParticipants} {bookingData?.numberOfParticipants === 1 ? 'person' : 'people'}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium mb-2">Meeting point</h3>
+                    <p className="text-gray-600">{bookingData?.tourDetails?.meetingPoint}</p>
+                  </div>
                 </div>
               </div>
-              
-              {/* Payment Summary and Submit */}
-              {bookingData && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-lg font-semibold mb-4" style={{ color: '#083A85' }}>
-                    Payment Summary
-                  </h2>
-                  
-                  {errors.general && (
-                    <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
-                      <p className="text-red-600 text-sm font-medium">
-                        <i className="bi bi-exclamation-triangle-fill mr-2"></i>
-                        {errors.general}
-                      </p>
-                    </div>
-                  )}
 
-                  {pollingStatus && (
-                    <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                        <p className="text-blue-600 text-sm font-medium">
-                          {pollingStatus} (Check {pollCount})
+              {/* Participant Details */}
+              {bookingData?.participants && Array.isArray(bookingData.participants) && bookingData.participants.length > 0 && (
+                <div className="border-t pt-8 pb-8">
+                  <h2 className="text-[22px] font-medium mb-6">Participant details</h2>
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <div className="space-y-4">
+                      {bookingData.participants.map((participant, idx) => (
+                        <div key={idx} className="pb-4 last:pb-0 last:border-0 border-b">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <p className="font-medium">Participant {idx + 1}</p>
+                              <p className="text-sm text-gray-600 mt-1">{participant.name}, Age: {participant.age}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Emergency: {participant.emergencyContact?.name} ({participant.emergencyContact?.relationship})
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Choose how to pay */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-6">Pay with</h2>
+                
+                {errors.paymentMethod && (
+                  <div className="mb-4 text-red-500 text-sm">{errors.paymentMethod}</div>
+                )}
+
+                <div className="space-y-3">
+                  {/* Mobile Money Option */}
+                  <div 
+                    className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                      paymentMethod === 'momo' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => {
+                      setPaymentMethod('momo');
+                      setErrors({});
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === 'momo'}
+                        onChange={() => setPaymentMethod('momo')}
+                        className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-medium">Mobile Money</h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Pay with MTN, Airtel, or M-Pesa
                         </p>
                       </div>
                     </div>
+
+                    {paymentMethod === 'momo' && (
+                      <div className="mt-6 ml-8 space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-3">Select provider</label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {['MTN', 'AIRTEL', 'MPESA'].map((provider) => (
+                              <button
+                                key={provider}
+                                type="button"
+                                onClick={() => setMomoProvider(provider as any)}
+                                className={`p-3 text-sm font-medium rounded-lg border-2 transition ${
+                                  momoProvider === provider
+                                    ? 'border-[#083A85] bg-[#083A85] text-white'
+                                    : 'border-gray-300 hover:border-gray-400'
+                                }`}
+                              >
+                                {provider === 'MPESA' ? 'M-Pesa' : provider}
+                              </button>
+                            ))}
+                          </div>
+                          {errors.momoProvider && (
+                            <p className="text-red-500 text-sm mt-2">{errors.momoProvider}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Phone number</label>
+                          <input
+                            type="tel"
+                            value={phoneNumber}
+                            onChange={(e) => {
+                              setPhoneNumber(e.target.value);
+                              setErrors({});
+                            }}
+                            placeholder="07XX XXX XXX"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
+                          />
+                          {errors.phoneNumber && (
+                            <p className="text-red-500 text-sm mt-2">{errors.phoneNumber}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Option */}
+                  <div 
+                    className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                      paymentMethod === 'card' 
+                        ? 'border-gray-900 bg-gray-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onClick={() => {
+                      setPaymentMethod('card');
+                      setErrors({});
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === 'card'}
+                        onChange={() => setPaymentMethod('card')}
+                        className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                      />
+                      <div className="flex-1">
+                        <h3 className="font-medium">Credit or debit card</h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Secure payment with Visa, Mastercard, or American Express
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message for the guide */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-6">Message for the guide</h2>
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Share any special requests or let your guide know what you're most excited about
+                  </p>
+                  <textarea
+                    value={specialMessage}
+                    onChange={(e) => setSpecialMessage(e.target.value)}
+                    placeholder="Looking forward to the experience! Any tips for first-timers?"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85] min-h-[100px]"
+                  />
+                </div>
+              </div>
+
+              {/* Cancellation policy */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-4">Cancellation policy</h2>
+                <p className="text-gray-600 mb-4">
+                  <span className="font-medium">Free cancellation up to 24 hours before the experience starts.</span> After that, no refunds will be issued.
+                </p>
+                <button className="font-medium underline">Learn more</button>
+              </div>
+
+              {/* Ground rules */}
+              <div className="border-t pt-8 pb-8">
+                <h2 className="text-[22px] font-medium mb-4">Experience rules</h2>
+                <p className="text-gray-600 mb-4">
+                  To ensure everyone has a great experience, please remember:
+                </p>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Arrive on time at the meeting point</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Follow all safety instructions from your guide</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Respect other participants and local customs</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Terms */}
+              <div className="border-t pt-8">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
+                  />
+                  <div className="text-sm text-gray-600">
+                    I agree to the <button className="underline">Experience Rules</button>, <button className="underline">Cancellation Policy</button>, and <button className="underline">RentSpaces Terms</button>
+                  </div>
+                </label>
+                {errors.terms && (
+                  <p className="text-red-500 text-sm mt-2 ml-8">{errors.terms}</p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="mt-8">
+                {pollingStatus && (
+                  <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#083A85] mr-2"></div>
+                      <p className="text-[#083A85] text-sm font-medium">
+                        {pollingStatus}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {errors.general && (
+                  <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-red-600 text-sm">
+                      <i className="bi bi-exclamation-triangle mr-2"></i>
+                      {errors.general}
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading || !isFormComplete()}
+                  className={`w-full py-3 rounded-lg font-medium transition-all ${
+                    loading || !isFormComplete()
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700'
+                  }`}
+                >
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <i className="bi bi-arrow-clockwise animate-spin"></i>
+                      Processing...
+                    </span>
+                  ) : (
+                    `Confirm and pay $${(bookingData?.priceBreakdown?.total || bookingData?.totalAmount)?.toFixed(2)}`
                   )}
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Subtotal ({bookingData.numberOfParticipants} participants)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.subtotal || bookingData.totalAmount}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side - Booking Summary */}
+            <div className="lg:col-span-2">
+              <div className="border rounded-xl p-6 sticky top-24">
+                <div className="flex gap-4 pb-6 border-b">
+                  <div className="w-28 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <i className="bi bi-compass text-3xl text-gray-400"></i>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-medium text-sm mb-1">{bookingData?.tourTitle}</h3>
+                    <p className="text-xs text-gray-600 mb-2">
+                      {bookingData?.tourDetails?.locationCity}, {bookingData?.tourDetails?.locationCountry}
+                    </p>
+                    {bookingData?.tourDetails?.difficulty && (
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getDifficultyBadge(bookingData.tourDetails.difficulty)}`}>
+                        {bookingData.tourDetails.difficulty}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="py-6 border-b">
+                  <h3 className="font-medium mb-4">Experience details</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Date</span>
+                      <span className="font-medium">
+                        {new Date(bookingData?.scheduleDate || '').toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </span>
                     </div>
-                    
-                    <div className="flex justify-between text-base">
-                      <span className="text-gray-600">Taxes (4%)</span>
-                      <span className="font-medium">${bookingData.priceBreakdown?.taxes || 0}</span>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Time</span>
+                      <span className="font-medium">
+                        {bookingData?.scheduleStartTime} - {bookingData?.scheduleEndTime}
+                      </span>
                     </div>
-                    
-                    <div className="border-t pt-3 flex justify-between">
-                      <span className="font-semibold" style={{ color: '#083A85' }}>Total</span>
-                      <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                        ${bookingData.priceBreakdown?.total || bookingData.totalAmount}
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Duration</span>
+                      <span className="font-medium">
+                        {Math.floor((bookingData?.tourDetails?.duration || 0) / 24) > 0 
+                          ? `${Math.floor((bookingData?.tourDetails?.duration || 0) / 24)} days`
+                          : `${bookingData?.tourDetails?.duration} hours`
+                        }
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Group size</span>
+                      <span className="font-medium">
+                        {bookingData?.numberOfParticipants} {bookingData?.numberOfParticipants === 1 ? 'person' : 'people'}
                       </span>
                     </div>
                   </div>
-                  
-                  <button 
-                    onClick={handleSubmit}
-                    disabled={loading || !isFormComplete()}
-                    className={`w-full py-3 px-6 rounded-lg text-white font-medium transition-all ${
-                      loading || !isFormComplete()
-                        ? 'bg-gray-400 cursor-not-allowed' 
-                        : 'cursor-pointer hover:opacity-90'
-                    }`}
-                    style={(loading || !isFormComplete()) ? {} : { backgroundColor: '#F20C8F' }}>
-                    {loading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <i className="bi bi-lock-fill mr-2"></i>
-                        Pay ${bookingData.priceBreakdown?.total || bookingData.totalAmount} Securely
-                      </>
-                    )}
-                  </button>
-                  
-                  <p className="text-base text-gray-500 mt-4 text-center">
-                    <i className="bi bi-lock-fill mr-1"></i>
-                    Secured payment gateway
-                  </p>
                 </div>
-              )}
-            </div>
 
-            {/* Right Side - Tour Preview */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-4 p-4">
-                <h3 className="font-semibold text-lg mb-3" style={{ color: '#083A85' }}>
-                  {bookingData?.tourTitle || 'Tour Experience'}
-                </h3>
-                
-                {bookingData && (
-                  <>
-                    <div className="space-y-2 mb-4 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Tour Date:</span>
-                        <span className="font-medium">
-                          {formatDate(bookingData.scheduleDate)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Time:</span>
-                        <span className="font-medium">
-                          {bookingData.scheduleStartTime} - {bookingData.scheduleEndTime}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Participants:</span>
-                        <span className="font-medium">{bookingData.numberOfParticipants}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Price per person:</span>
-                        <span className="font-medium">${bookingData.pricePerPerson}</span>
-                      </div>
+                <div className="py-6 border-b">
+                  <h3 className="font-medium mb-4">Price details</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600">
+                        ${bookingData?.pricePerPerson?.toFixed(2)} x {bookingData?.numberOfParticipants} participants
+                      </span>
+                      <span>${bookingData?.priceBreakdown?.subtotal?.toFixed(2)}</span>
                     </div>
-
-                    <div className="border-t pt-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">Total</span>
-                        <span className="font-bold text-lg" style={{ color: '#083A85' }}>
-                          ${bookingData.priceBreakdown?.total || 0}
-                        </span>
-                      </div>
+                    <div className="flex justify-between text-base">
+                      <span className="text-gray-600 underline">Taxes</span>
+                      <span>${bookingData?.priceBreakdown?.taxes?.toFixed(2)}</span>
                     </div>
-                  </>
-                )}
+                  </div>
+                </div>
 
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <div className="flex items-start">
-                    <i className="bi bi-shield-check text-blue-600 mr-2 mt-1"></i>
-                    <div className="text-xs text-blue-800">
-                      <div className="font-semibold mb-1">Secure Payment</div>
-                      <div>Your payment information is encrypted and secure</div>
+                <div className="pt-6">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total (USD)</span>
+                    <span className="text-base font-semibold">
+                      ${(bookingData?.priceBreakdown?.total || bookingData?.totalAmount)?.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Security Notice */}
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <i className="bi bi-shield-check text-[#083A85] text-lg mt-0.5"></i>
+                    <div className="text-xs text-gray-600">
+                      <p className="font-medium mb-1">Your payment is protected</p>
+                      <p>All transactions are secure and encrypted</p>
                     </div>
                   </div>
                 </div>

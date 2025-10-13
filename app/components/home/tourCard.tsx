@@ -15,7 +15,7 @@ interface NotificationState {
 interface TourProps {
   tour: {
     id: number;
-    image: string;
+    mainImage: string;
     category: string;
     type?: string;
     title: string;
@@ -126,7 +126,7 @@ const TourCard: React.FC<TourProps> = ({ tour, isInitiallyLiked = false }) => {
       <a href={`/tours/${encodedId}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
         <div
           className="relative h-40 bg-cover bg-center bg-gray-200"
-          style={{ backgroundImage: `url(${tour.image})` }}
+          style={{ backgroundImage: `url(${tour.mainImage})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
 
@@ -195,9 +195,7 @@ const TourCard: React.FC<TourProps> = ({ tour, isInitiallyLiked = false }) => {
             {tour.hostName && (
               <span className="truncate">Guide: {tour.hostName}</span>
             )}
-            {tour.availability && (
-              <span className="text-green-300">{tour.availability}</span>
-            )}
+            
           </div>
         </div>
       </a>

@@ -104,7 +104,7 @@ function LoginContent() {
       }
     }
     
-    return token ? `http://localhost:3001?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
+    return token ? `https://app.jambolush.com?token=${token}&refresh_token=${refreshToken}` : 'https://app.jambolush.com';
   };
 
   const performRedirect = (token?: string, refreshToken?: string, redirectPath?: string) => {
@@ -446,7 +446,7 @@ function LoginContent() {
       switch (userRole) {
         case 'host':
           setNotify({ type: "warning", message: "Please complete your KYC verification." });
-          performRedirect(token, refreshToken, `${dashboardBase}/all/kyc`);
+          performRedirect(token, refreshToken, `${dashboardBase}/all/kyc?token=${token}&refresh_token=${refreshToken}`);
           break;
         case 'agent':
         case 'tourguide':
@@ -455,7 +455,7 @@ function LoginContent() {
             performRedirect(token, refreshToken, `${dashboardBase}/all/${userRole}/assessment`);
           } else {
             setNotify({ type: "warning", message: "Please complete your KYC verification." });
-            performRedirect(token, refreshToken, `${dashboardBase}/all/kyc`);
+            performRedirect(token, refreshToken, `${dashboardBase}/all/kyc?token=${token}&refresh_token=${refreshToken}`);
           }
           break;
         // The 'guest' case below is now effectively unreachable due to the new logic above,

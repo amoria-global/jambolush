@@ -29,7 +29,7 @@ interface Tour {
 
 interface TourCardProperty {
   id: number;
-  image: string;
+  mainImage: string;
   category: string;
   type?: string;
   title: string;
@@ -43,6 +43,16 @@ interface TourCardProperty {
   hostName?: string;
   availability?: string;
 }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
 //=================================================================
 // STEP 1: All your original logic goes into this content component.
@@ -75,7 +85,7 @@ const ToursContent = () => {
     return {
       id: tour.id,
       title: tour.title,
-      image: tour.mainImage || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80",
+      mainImage: tour.mainImage,
       category: tour.category?.charAt(0).toUpperCase() + tour.category?.slice(1).toLowerCase() || 'Tour',
       type: tour.type || 'Experience',
       pricePerNight: `${tour.currency || '$'}${tour.price}`,

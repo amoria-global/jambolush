@@ -447,8 +447,8 @@ const TourPaymentPage: React.FC = () => {
       </head>
       <div className="min-h-screen bg-white">
         {/* Header */}
-        <div className="border-b">
-          <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-4 flex items-center">
+        <div className="pt-14">
+          <div className="max-w-[1280px] mx-auto px-2 sm:px-7 py-4 flex items-center">
             <button 
               onClick={() => router.back()}
               className="p-2 hover:bg-gray-100 rounded-full transition mr-4"
@@ -459,7 +459,7 @@ const TourPaymentPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-8">
+        <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-5">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
             
             {/* Left Side - Payment Form */}

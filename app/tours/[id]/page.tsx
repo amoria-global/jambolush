@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect, use } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import api from '@/app/api/apiService';
 import AlertNotification from '@/app/components/notify';
 import { decodeId, encodeId } from '@/app/utils/encoder';
-import { calculateDisplayPrice, calculateBookingTotal, getOriginalPrice, calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import { calculateDisplayPrice, calculateBookingTotal, calculatePriceBreakdown } from '@/app/utils/pricing';
 
 interface TourPageProps {
   params: Promise<{
@@ -81,6 +81,7 @@ interface TourGuide {
   lastName: string;
   totalTours: number;
   rating: number;
+  profileImage?: string;
 }
 
 interface AlertState {
@@ -100,10 +101,10 @@ interface ReviewModalProps {
 interface PhotoGalleryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  images?: any;
+  images?: string[];
 }
 
-// Transform backend tour data - convert original price to display price
+// Transform backend tour data
 const transformTourData = (backendTour: any) => {
   const parseJSON = (jsonString: string, fallback: any) => {
     try {
@@ -114,9 +115,6 @@ const transformTourData = (backendTour: any) => {
   };
 
   const itinerary = parseJSON(backendTour.itinerary, []);
-  const images = parseJSON(backendTour.images, {"main":[],"gallery":[]});
-
-  // Convert original price to display price (original + 10% markup)
   const displayPrice = calculateDisplayPrice(backendTour.price);
 
   return {
@@ -124,7 +122,7 @@ const transformTourData = (backendTour: any) => {
     title: backendTour.title,
     shortDescription: backendTour.shortDescription,
     description: backendTour.description,
-    price: displayPrice, // Display price shown to customer (includes hidden 10% markup)
+    price: displayPrice,
     duration: backendTour.duration,
     difficulty: backendTour.difficulty,
     minGroupSize: backendTour.minGroupSize,
@@ -142,7 +140,7 @@ const transformTourData = (backendTour: any) => {
     schedules: backendTour.schedules || [],
     tourGuide: backendTour.tourGuide,
     itinerary,
-    images
+    images: backendTour.images || { main: [], gallery: [] },
   };
 };
 
@@ -264,11 +262,13 @@ const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, 
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Array.from({length: 8}).map((_, idx) => (
-              <div key={idx} className="bg-gray-100 rounded-xl aspect-[4/3] flex items-center justify-center">
-                <span className="text-gray-500 font-medium">Photo {idx + 1}</span>
+            {images.length > 0 ? images.map((imgUrl, idx) => (
+              <div key={idx} className="bg-gray-100 rounded-xl aspect-[4/3] overflow-hidden">
+                <img src={imgUrl} alt={`Tour photo ${idx + 1}`} className="w-full h-full object-cover" />
               </div>
-            ))}
+            )) : (
+              <p className="md:col-span-2 text-center text-gray-500 py-10">No photos available.</p>
+            )}
           </div>
         </div>
       </div>
@@ -276,10 +276,10 @@ const PhotoGalleryModal: React.FC<PhotoGalleryModalProps> = ({ isOpen, onClose, 
   );
 };
 
+
 export default function TourDetailPage({ params }: TourPageProps) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const pathname = usePathname();
   
   const [tour, setTour] = useState<any>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -379,7 +379,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       } catch (err: any) {
         console.error('Failed to fetch tour:', err);
         setError(err?.message || 'Failed to load tour');
-        showAlert(`Error loading tour: ${err || 'Unknown error'}`, 'error');
+        showAlert(`Error loading tour: ${err?.message || 'Unknown error'}`, 'error');
         
         setTour({
           id: 0,
@@ -401,7 +401,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           schedules: [],
           tourGuide: null,
           itinerary: [],
-          images: {"main":[],"gallery":[]}
+          images: {main:[], gallery:[]}
         });
       } finally {
         setLoading(false);
@@ -563,7 +563,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       }
     } catch (error: any) {
       console.error('Booking creation error:', error);
-      let userMessage = error.response?.message || 'Unable to process your booking. Please try again.';
+      let userMessage = error.response?.data?.message || 'Unable to process your booking. Please try again.';
       
       if (error.response?.status === 401) {
         userMessage = 'Please log in to make a booking';
@@ -599,7 +599,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
       }
     } catch (error: any) {
       console.error('Error creating review:', error);
-      showAlert('Failed to submit review. Please try again.', 'error');
+      showAlert(error.data.message ||  'Failed to submit review. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -670,6 +670,16 @@ export default function TourDetailPage({ params }: TourPageProps) {
   const priceBreakdown = getTourPriceBreakdown();
   const durationDays = Math.floor((tour?.duration || 0) / 24);
   const durationHours = (tour?.duration || 0) % 24;
+
+  const allImages = [
+    ...(tour?.images?.main || []),
+    ...(tour?.images?.gallery || [])
+  ];
+
+  const galleryPreviewImages = [
+      ...(tour?.images?.gallery || []),
+      ...Array(Math.max(0, 4 - (tour?.images?.gallery?.length || 0))).fill(null)
+  ].slice(0, 4);
 
   if (invalidId) {
     return (
@@ -769,7 +779,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           )}
 
-          {/* Airbnb-style Title Section */}
+          {/* Title Section */}
           <div className="mb-6">
             <h1 className="text-[26px] font-semibold text-gray-900 mb-2">
               {tour?.title}
@@ -798,29 +808,34 @@ export default function TourDetailPage({ params }: TourPageProps) {
             </div>
           </div>
 
-          {/* Airbnb-style Photo Grid */}
+          {/* Photo Grid */}
           <div className="mb-12">
             <div 
               className="grid grid-cols-4 grid-rows-2 gap-2 h-[560px] rounded-xl overflow-hidden cursor-pointer"
               onClick={() => setShowPhotoGallery(true)}
             >
-              {/* Main large image on left */}
+              {/* Main large image */}
               <div className="col-span-2 row-span-2 relative group">
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center hover:brightness-95 transition duration-200">
-                  <div className="text-center">
-                    <i className="bi bi-camera text-6xl text-gray-400 mb-2"></i>
-                    <p className="text-gray-500">Main tour photo</p>
-                  </div>
+                  {tour?.images?.main?.[0] ? (
+                    <img src={tour.images.main[0]} alt={tour.title || 'Main tour image'} className='w-full h-full object-cover'/>
+                  ) : (
+                    <span className="text-gray-500">Image not available</span>
+                  )}
                 </div>
               </div>
 
-              {/* Four smaller images on right in 2x2 grid */}
-              {Array.from({length: 4}).map((_, idx) => (
+              {/* Four smaller images */}
+              {galleryPreviewImages.map((imgUrl, idx) => (
                 <div key={idx} className="relative group overflow-hidden">
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center hover:brightness-95 transition duration-200">
-                    <span className="text-gray-500">Photo {idx + 2}</span>
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={`Gallery image ${idx + 1}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <i className="bi bi-image-alt text-3xl text-gray-400"></i>
+                    )}
                   </div>
-                  {idx === 3 && (
+                  {idx === 3 && (tour?.images?.gallery?.length || 0) > 4 && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                       <button 
                         className="bg-white px-4 py-2 rounded-lg font-medium text-sm hover:bg-gray-100 transition flex items-center gap-2"
@@ -841,7 +856,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
-            {/* Left Content - 3 columns */}
+            {/* Left Content */}
             <div className="lg:col-span-3">
               {/* Tour Header */}
               <div className="border-b pb-8 mb-8">
@@ -977,7 +992,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 </div>
               </div>
 
-              {/* Things to know */}
+              {/* Guest requirements */}
               {tour?.requirements && tour.requirements.length > 0 && (
                 <div className="border-b pb-8 mb-8">
                   <h3 className="text-[22px] font-medium mb-6">Guest requirements</h3>
@@ -1040,7 +1055,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
               </div>
             </div>
 
-            {/* Right Sidebar - Booking Card - 2 columns */}
+            {/* Right Sidebar - Booking Card */}
             <div className="lg:col-span-2">
               <div className="sticky top-24">
                 <div className="border rounded-xl p-6 shadow-xl">
@@ -1079,7 +1094,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                       </div>
                     ) : (
                       <div className="border border-gray-300 rounded-lg p-3 text-center">
-                        <p className="text-sm text-gray-500">Select a date above to continue</p>
+                        <p className="text-sm text-gray-500">Select a date from the list below</p>
                       </div>
                     )}
 
@@ -1187,93 +1202,93 @@ export default function TourDetailPage({ params }: TourPageProps) {
 
           {/* Reviews Section */}
           <div className="border-t pt-12 mt-12">
-            <div className="flex items-center gap-2 mb-8">
-              <i className="bi bi-star-fill text-xl"></i>
-              <h2 className="text-[22px] font-medium">
-                {reviewStats.average} · {reviewStats.total} reviews
-              </h2>
-            </div>
+             <div className="flex items-center gap-2 mb-8">
+               <i className="bi bi-star-fill text-xl"></i>
+               <h2 className="text-[22px] font-medium">
+                 {reviewStats.average} · {reviewStats.total} reviews
+               </h2>
+             </div>
 
-            {/* Rating Categories Grid */}
-            {reviewStats.total > 0 && (
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-4 mb-12 max-w-4xl">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Overall rating</span>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-gray-200 rounded-full h-1 w-32">
-                      <div 
-                        className="bg-gray-900 h-1 rounded-full"
-                        style={{ width: `${(parseFloat(reviewStats.average) / 5) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium w-8 text-right">
-                      {reviewStats.average}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+             {/* Rating Categories Grid */}
+             {reviewStats.total > 0 && (
+               <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-4 mb-12 max-w-4xl">
+                 <div className="flex items-center justify-between">
+                   <span className="text-sm">Overall rating</span>
+                   <div className="flex items-center gap-3">
+                     <div className="flex-1 bg-gray-200 rounded-full h-1 w-32">
+                       <div 
+                         className="bg-gray-900 h-1 rounded-full"
+                         style={{ width: `${(parseFloat(reviewStats.average) / 5) * 100}%` }}
+                       />
+                     </div>
+                     <span className="text-sm font-medium w-8 text-right">
+                       {reviewStats.average}
+                     </span>
+                   </div>
+                 </div>
+               </div>
+             )}
 
-            {/* Reviews List */}
-            {reviewsLoading ? (
-              <div className="text-center py-12">
-                <i className="bi bi-arrow-clockwise spin text-2xl mb-2"></i>
-                <p className="text-gray-600">Loading reviews...</p>
-              </div>
-            ) : reviews.length === 0 ? (
-              <div className="text-center py-12 bg-gray-50 rounded-xl">
-                <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
-                <p className="text-xl font-medium mb-2">No reviews yet</p>
-                <p className="text-gray-600 mb-6">Be the first to share your experience!</p>
-                <button 
-                  onClick={() => setShowReviewModal(true)}
-                  className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
-                >
-                  Write a review
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-8 mb-8">
-                  {reviews.slice(0, showAllReviews ? reviews.length : 6).map((review) => (
-                    <div key={review.id}>
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium">
-                          {review.userName.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <div className="font-medium">{review.userName}</div>
-                          <div className="text-sm text-gray-600">{formatDate(review.createdAt)}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 mb-2">
-                        {[...Array(5)].map((_, i) => (
-                          <i key={i} className={`bi bi-star-fill text-xs ${i < review.rating ? 'text-black' : 'text-gray-300'}`}></i>
-                        ))}
-                      </div>
-                      <p className="text-gray-800 leading-relaxed">{review.comment}</p>
-                    </div>
-                  ))}
-                </div>
+             {/* Reviews List */}
+             {reviewsLoading ? (
+               <div className="text-center py-12">
+                 <i className="bi bi-arrow-clockwise spin text-2xl mb-2"></i>
+                 <p className="text-gray-600">Loading reviews...</p>
+               </div>
+             ) : reviews.length === 0 ? (
+               <div className="text-center py-12 bg-gray-50 rounded-xl">
+                 <i className="bi bi-chat-square-text text-4xl text-gray-400 mb-4"></i>
+                 <p className="text-xl font-medium mb-2">No reviews yet</p>
+                 <p className="text-gray-600 mb-6">Be the first to share your experience!</p>
+                 <button 
+                   onClick={() => setShowReviewModal(true)}
+                   className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                 >
+                   Write a review
+                 </button>
+               </div>
+             ) : (
+               <>
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-8 mb-8">
+                   {reviews.slice(0, showAllReviews ? reviews.length : 6).map((review) => (
+                     <div key={review.id}>
+                       <div className="flex items-start gap-3 mb-3">
+                         <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-medium">
+                           {review.userName.charAt(0).toUpperCase()}
+                         </div>
+                         <div>
+                           <div className="font-medium">{review.userName}</div>
+                           <div className="text-sm text-gray-600">{formatDate(review.createdAt)}</div>
+                         </div>
+                       </div>
+                       <div className="flex items-center gap-1 mb-2">
+                         {[...Array(5)].map((_, i) => (
+                           <i key={i} className={`bi bi-star-fill text-xs ${i < review.rating ? 'text-black' : 'text-gray-300'}`}></i>
+                         ))}
+                       </div>
+                       <p className="text-gray-800 leading-relaxed">{review.comment}</p>
+                     </div>
+                   ))}
+                 </div>
 
-                {reviews.length > 6 && (
-                  <button 
-                    onClick={() => setShowAllReviews(!showAllReviews)}
-                    className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
-                  >
-                    {showAllReviews ? 'Show less' : `Show all ${reviews.length} reviews`}
-                  </button>
-                )}
+                 {reviews.length > 6 && (
+                   <button 
+                     onClick={() => setShowAllReviews(!showAllReviews)}
+                     className="px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                   >
+                     {showAllReviews ? 'Show less' : `Show all ${reviews.length} reviews`}
+                   </button>
+                 )}
 
-                <button 
-                  onClick={() => setShowReviewModal(true)}
-                  className="ml-4 px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
-                >
-                  Write a review
-                </button>
-              </>
-            )}
-          </div>
+                 <button 
+                   onClick={() => setShowReviewModal(true)}
+                   className="ml-4 px-6 py-3 border border-gray-900 rounded-lg font-medium hover:bg-gray-50 transition"
+                 >
+                   Write a review
+                 </button>
+               </>
+             )}
+           </div>
 
           {/* Meet your host */}
           {tour?.tourGuide && (
@@ -1282,14 +1297,20 @@ export default function TourDetailPage({ params }: TourPageProps) {
                 <div>
                   <h2 className="text-[22px] font-medium mb-6">Meet your host</h2>
                   <div className="flex items-start gap-4 mb-6">
-                    <div className="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center text-white text-2xl font-medium">
-                      {tour.tourGuide.firstName[0]}{tour.tourGuide.lastName[0]}
+                    <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                      {tour.tourGuide.profileImage ? (
+                        <img src={tour.tourGuide.profileImage} alt={`${tour.tourGuide.firstName} ${tour.tourGuide.lastName}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white text-2xl font-medium">
+                          {tour.tourGuide.firstName?.[0]}{tour.tourGuide.lastName?.[0]}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h3 className="text-xl font-medium mb-1">
                         {tour.tourGuide.firstName} {tour.tourGuide.lastName}
                       </h3>
-                      <p className="text-sm text-gray-600">Host on RentSpaces since 2024</p>
+                      <p className="text-sm text-gray-600">Host since 2024</p>
                     </div>
                   </div>
 
@@ -1313,10 +1334,6 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     visitors from around the world. I look forward to showing you the hidden gems and stories 
                     that make this place special.
                   </p>
-
-                  <button className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition">
-                    Contact host
-                  </button>
                 </div>
 
                 <div className="bg-gray-50 rounded-xl p-6">
@@ -1389,7 +1406,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                     <h4 className="font-medium mb-2">{tour?.title}</h4>
                     <div className="text-sm text-gray-600">
                       <p>{selectedSchedule ? formatDate(selectedSchedule.startDate) : 'No date selected'}</p>
-                      <p className="mt-1">{bookingForm.numberOfParticipants} {bookingForm.numberOfParticipants === 1 ? 'person' : 'people'} · ${calculateTourTotal()} total</p>
+                      <p className="mt-1">{bookingForm.numberOfParticipants} {bookingForm.numberOfParticipants === 1 ? 'person' : 'people'} · ${calculateTourTotal().toFixed(2)} total</p>
                     </div>
                   </div>
 
@@ -1524,7 +1541,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
                         disabled={bookingLoading || !isBookingFormComplete()}
                         className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 disabled:opacity-50"
                       >
-                        {bookingLoading ? 'Processing...' : 'Confirm and pay'}
+                        {bookingLoading ? 'Processing...' : 'Confirm and proceed'}
                       </button>
                     </div>
                   </div>
@@ -1543,7 +1560,7 @@ export default function TourDetailPage({ params }: TourPageProps) {
           <PhotoGalleryModal
             isOpen={showPhotoGallery}
             onClose={() => setShowPhotoGallery(false)}
-            images={tour?.images}
+            images={allImages}
           />
         </div>
       </div>

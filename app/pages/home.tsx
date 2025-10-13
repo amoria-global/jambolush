@@ -42,7 +42,7 @@ interface HouseCardProperty {
 interface Tour {
   id: string;
   title: string;
-  image: string;
+  mainImage: string;
   price: number;
   rating: number;
   reviews: number;
@@ -59,12 +59,12 @@ const TourCard = ({ tour }: { tour: Tour }) => {
     <Link href={`/tours/${encodedId}`} className="block rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2 border border-gray-100">
       <div
         className="relative h-40 bg-cover bg-center bg-gray-200"
-        style={{ backgroundImage: `url(${tour.image})` }}
+        style={{ backgroundImage: `url(${tour.mainImage})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
         <div className="absolute bottom-1.5 left-1.5">
           <span className="bg-white/95 backdrop-blur-sm text-gray-900 px-1.5 py-0.5 rounded-md text-xs font-bold shadow-lg">
-            ${tour.price}/person
+            ${Number(tour.price * 1.10).toFixed(0)}/person
           </span>
         </div>
       </div>
@@ -117,7 +117,7 @@ const Home = () => {
     return {
       id: backendTour.id?.toString() || backendTour._id?.toString() || '',
       title: backendTour.title || 'Untitled Tour',
-      image: backendTour.image || `https://images.unsplash.com/photo-1464822759844-d150f39cbae2?w=400&h=300&fit=crop&q=80`,
+      mainImage: backendTour.mainImage || `https://images.unsplash.com/photo-1464822759844-d150f39cbae2?w=400&h=300&fit=crop&q=80`,
       price: backendTour.price || 0,
       rating: backendTour.rating || 4.5,
       reviews: backendTour.reviews || backendTour.totalReviews || 0,

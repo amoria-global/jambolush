@@ -119,7 +119,7 @@ const AddReviewForm = ({ propertyId, onClose, onAddReview }: AddReviewFormProps)
         }, 1500);
 
       } else {
-        setError(response.data.message || 'Failed to submit review');
+        setError(response.data.data.message || 'Failed to submit review');
       }
     } catch (error: any) {
       console.error('Error submitting review:', error);
@@ -138,7 +138,7 @@ const AddReviewForm = ({ propertyId, onClose, onAddReview }: AddReviewFormProps)
         } else if (message?.includes('Property ID, rating, and comment are required')) {
           setError('Please fill in all required fields.');
         } else {
-          setError(message || 'Please check your input and try again.');
+          setError(error.data.message || 'Please check your input and try again.');
         }
       } else if (error.response?.status === 404) {
         setError('Property not found.');

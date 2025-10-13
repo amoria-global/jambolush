@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '../../../api/apiService';
 import { decodeId } from '@/app/utils/encoder';
-import { calculatePriceBreakdown, formatPrice } from '@/app/utils/pricing';
+import { formatPrice } from '@/app/utils/pricing';
 
 interface PaymentPageProps {}
 
@@ -132,8 +132,21 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           console.warn('Could not fetch property details:', error);
         }
 
-        const displayPricePerNight = booking.totalPrice / nights;
-        const priceBreakdown = calculatePriceBreakdown(displayPricePerNight, nights, false);
+        const baseTotal = booking.totalPrice;
+        const basePricePerNight = baseTotal / nights;
+        const bookingSubtotal = baseTotal * 1.10;
+        const taxes = baseTotal * 0.04;
+        const total = bookingSubtotal + taxes;
+        const bookingPricePerNight = bookingSubtotal / nights;
+
+        const priceBreakdown = {
+          price: bookingPricePerNight,
+          subtotal: bookingSubtotal,
+          cleaningFee: 0,
+          serviceFee: baseTotal * 0.10,
+          taxes: taxes,
+          total: total
+        };
 
         setBookingData({
           id: booking.id,
@@ -474,7 +487,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium">Pay now</h3>
                           <span className="text-[22px] font-semibold">
-                            ${bookingData?.priceBreakdown?.total || bookingData?.totalPrice}
+                            ${(bookingData?.priceBreakdown?.total || bookingData?.totalPrice || 0).toFixed(2)}
                           </span>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
@@ -584,7 +597,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           <h3 className="font-medium">Pay at property</h3>
                           <div className="text-right">
                             <span className="text-[22px] font-semibold">
-                              ${(finalTotal).toFixed(2)}
+                              ${finalTotal.toFixed(2)}
                             </span>
                             <p className="text-xs text-gray-500">incl. 5% service fee</p>
                           </div>
@@ -722,13 +735,13 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600">
-                        ${((bookingData?.totalPrice || 0) / (bookingData?.nights || 1)).toFixed(2)} x {bookingData?.nights} nights
+                        ${(bookingData?.priceBreakdown?.price || 0).toFixed(2)} x {bookingData?.nights} nights
                       </span>
-                      <span>${bookingData?.priceBreakdown?.subtotal?.toFixed(2)}</span>
+                      <span>${(bookingData?.priceBreakdown?.subtotal || 0).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600 underline">Taxes</span>
-                      <span>${bookingData?.priceBreakdown?.taxes?.toFixed(2)}</span>
+                      <span>${(bookingData?.priceBreakdown?.taxes || 0).toFixed(2)}</span>
                     </div>
                     {paymentMethod === 'property' && (
                       <div className="flex justify-between text-base">
@@ -742,7 +755,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                 <div className="pt-6">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total (USD)</span>
-                    <span className="text-base font-semibold">${finalTotal?.toFixed(2)}</span>
+                    <span className="text-base font-semibold">${finalTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

@@ -232,8 +232,8 @@ const Navbar = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#083A85] to-[#F20C8F] flex items-center justify-center">
               <img src="/favicon.ico" alt="logo" className='w-full h-full object-cover rounded-lg'/>
             </div>
-            <span className={`font-bold text-base transition-colors duration-300 ${
-              isScrolled ? 'text-[#083A85]' : 'text-black/40'
+            <span className={`font-bold text-xl transition-colors duration-300 fons-sans ${
+              isScrolled ? 'text-[#083A85]' : 'text-black/80'
             }`}>
               {t('nav.brandName')}
             </span>
@@ -279,7 +279,7 @@ const Navbar = () => {
 
             {/* Book a Tour Button */}
             <button
-              onClick={() => router.push('/all/tours')}
+              onClick={() => router.push('/tours')}
               className="px-3 py-1.5 bg-[#F20C8F] text-white text-sm font-semibold rounded-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer z-10 relative"
             >
               <i className="bi bi-binoculars mr-1.5 text-sm"></i>

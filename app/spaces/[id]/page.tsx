@@ -537,7 +537,7 @@ export default function HousePage({ params }: HousePageProps) {
       if (days > 0) {
         // Return total with tax: display price (includes hidden 10%) + 4% tax
         const breakdown = calculatePriceBreakdown(house.price, days, false);
-        return breakdown.total; // This includes the 4% tax
+        return calculateBookingTotal(house.price, days, false); // This includes the 4% tax
       }
     }
     return 0;
@@ -1456,9 +1456,6 @@ export default function HousePage({ params }: HousePageProps) {
                   </div>
                 </div>
 
-                <button className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-gray-800 transition">
-                  Contact Host
-                </button>
               </div>
 
               <div className="bg-gray-50 rounded-xl p-6">

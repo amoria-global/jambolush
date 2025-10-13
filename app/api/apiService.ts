@@ -304,7 +304,7 @@ class FrontendAPIService {
   };
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || 'http://localhost:5000/api';
+    this.baseURL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || '';
   }
 
   setAuth(token: string): void {

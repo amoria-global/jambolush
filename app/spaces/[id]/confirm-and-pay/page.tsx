@@ -46,8 +46,9 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'property' | null>(null);
   const [onlinePaymentType, setOnlinePaymentType] = useState<'momo' | 'card' | null>(null);
-  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | null>(null);
+  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | 'ORANGE' | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+250');
   const [pollingStatus, setPollingStatus] = useState<string>('');
   const [pollCount, setPollCount] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -192,8 +193,8 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         }
         if (!phoneNumber || phoneNumber.trim() === '') {
           newErrors.phoneNumber = 'Phone number is required';
-        } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
-          newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+        } else if (!/^[0-9]{9,15}$/.test(phoneNumber.replace(/\s/g, ''))) {
+          newErrors.phoneNumber = 'Please enter a valid phone number';
         }
       }
     }
@@ -254,6 +255,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
 
           if (status === 'FAILED' || status === 'REJECTED' || status === 'CANCELLED') {
             setPollingStatus('Payment failed. Redirecting...');
+            setLoading(false);
             sessionStorage.setItem('payment_final_status', 'failed');
             setTimeout(() => {
               router.push(`/payment/failed?tx=${depositId}`);
@@ -265,12 +267,16 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
             setTimeout(() => checkStatus(), 10000);
           } else {
             setPollingStatus('Status check timeout. Please check your payment status.');
+            setLoading(false);
             router.push(`/payment/pending?tx=${depositId}`);
           }
         } else {
           console.error('[PAYMENT] Failed to check status:', response.data);
           if (attempts < maxAttempts) {
             setTimeout(() => checkStatus(), 10000);
+          } else {
+            setPollingStatus('Failed to verify payment status');
+            setLoading(false);
           }
         }
       } catch (error) {
@@ -319,7 +325,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
         const pawaPayDepositPayload = {
           amount: finalAmount,
           currency: 'USD',
-          phoneNumber: phoneNumber,
+          phoneNumber: `${countryCode.replace('+', '')}${phoneNumber}`,
           provider: momoProvider,
           country: 'RW',
           description: `Payment for ${bookingData.propertyName}`,
@@ -354,6 +360,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
           setErrors({
             general: response.data.message || 'Failed to create payment. Please try again.'
           });
+          setLoading(false);
         }
       }
     } catch (error: any) {
@@ -363,6 +370,7 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           error?.message ||
                           'Payment failed. Please try again.';
       setErrors({ general: errorMessage });
+      setLoading(false);
     } finally {
       if (paymentMethod !== 'online' || onlinePaymentType !== 'momo') {
         setLoading(false);
@@ -519,53 +527,113 @@ const PaymentPage: React.FC<PaymentPageProps> = () => {
                           
                           {onlinePaymentType === 'momo' && (
                             <div className="mt-4 space-y-4">
-                              <div className="grid grid-cols-3 gap-2">
-                                {['MTN', 'AIRTEL', 'MPESA'].map((provider) => (
-                                  <button
-                                    key={provider}
-                                    type="button"
-                                    onClick={() => setMomoProvider(provider as any)}
-                                    className={`p-2 text-sm rounded-lg border transition ${
-                                      momoProvider === provider
-                                        ? 'border-[#083A85] bg-[#083A85] text-white'
-                                        : 'border-gray-300 hover:border-gray-400'
-                                    }`}
-                                  >
-                                    {provider}
-                                  </button>
-                                ))}
+                              <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-700">
+                                  Select carrier first
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                  {[
+                                    { name: 'MTN', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/MTN_Logo.svg/240px-MTN_Logo.svg.png' },
+                                    { name: 'AIRTEL', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Airtel_logo.svg/240px-Airtel_logo.svg.png' },
+                                    { name: 'MPESA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/240px-M-PESA_LOGO-01.svg.png' },
+                                    { name: 'ORANGE', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Orange_logo.svg/240px-Orange_logo.svg.png' }
+                                  ].map((provider) => (
+                                    <button
+                                      key={provider.name}
+                                      type="button"
+                                      onClick={() => setMomoProvider(provider.name as any)}
+                                      className={`p-3 rounded-lg border-2 transition flex items-center justify-center gap-2 ${
+                                        momoProvider === provider.name
+                                          ? 'border-[#083A85] bg-blue-50'
+                                          : 'border-gray-300 hover:border-gray-400 bg-white'
+                                      }`}
+                                    >
+                                      <img
+                                        src={provider.logo}
+                                        alt={provider.name}
+                                        className="h-6 object-contain"
+                                      />
+                                      <span className="text-xs font-medium">
+                                        {provider.name === 'MPESA' ? 'M-Pesa' : provider.name === 'ORANGE' ? 'Money' : ''}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                                {errors.momoProvider && (
+                                  <p className="text-red-500 text-sm mt-2">{errors.momoProvider}</p>
+                                )}
                               </div>
-                              <input
-                                type="tel"
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                placeholder="Phone number"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
-                              />
-                              {errors.phoneNumber && (
-                                <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
-                              )}
+
+                              <div>
+                                <label className="block text-sm font-medium mb-2 text-gray-700">
+                                  Phone number
+                                </label>
+                                <div className="flex gap-2">
+                                  <select
+                                    value={countryCode}
+                                    onChange={(e) => setCountryCode(e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85] bg-white"
+                                  >
+                                    <option value="+250">🇷🇼 +250 (Rwanda)</option>
+                                    <option value="+254">🇰🇪 +254 (Kenya)</option>
+                                    <option value="+255">🇹🇿 +255 (Tanzania)</option>
+                                    <option value="+256">🇺🇬 +256 (Uganda)</option>
+                                    <option value="+257">🇧🇮 +257 (Burundi)</option>
+                                    <option value="+243">🇨🇩 +243 (DRC)</option>
+                                    <option value="+251">🇪🇹 +251 (Ethiopia)</option>
+                                    <option value="+27">🇿🇦 +27 (South Africa)</option>
+                                    <option value="+234">🇳🇬 +234 (Nigeria)</option>
+                                    <option value="+233">🇬🇭 +233 (Ghana)</option>
+                                    <option value="+225">🇨🇮 +225 (Côte d'Ivoire)</option>
+                                    <option value="+221">🇸🇳 +221 (Senegal)</option>
+                                  </select>
+                                  <input
+                                    type="tel"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    placeholder="7XX XXX XXX"
+                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
+                                  />
+                                </div>
+                                {errors.phoneNumber && (
+                                  <p className="text-red-500 text-sm mt-2">{errors.phoneNumber}</p>
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
 
-                        <div 
+                        <div
                           className={`border rounded-lg p-3 cursor-pointer transition ${
-                            onlinePaymentType === 'card' 
-                              ? 'border-[#083A85] bg-blue-50' 
+                            onlinePaymentType === 'card'
+                              ? 'border-[#083A85] bg-blue-50'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                           onClick={() => setOnlinePaymentType('card')}
                         >
-                          <label className="flex items-center gap-3 cursor-pointer">
+                          <label className="flex items-start gap-3 cursor-pointer">
                             <input
                               type="radio"
                               name="onlinePayment"
                               checked={onlinePaymentType === 'card'}
                               onChange={() => setOnlinePaymentType('card')}
-                              className="w-4 h-4 accent-[#083A85]"
+                              className="w-4 h-4 accent-[#083A85] mt-0.5"
                             />
-                            <span className="font-medium text-sm">Credit or debit card</span>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="font-medium text-sm">Credit or debit card</span>
+                                <div className="flex items-center gap-1">
+                                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/240px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4" />
+                                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/240px-Mastercard-logo.svg.png" alt="Mastercard" className="h-4" />
+                                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/240px-American_Express_logo_%282018%29.svg.png" alt="Amex" className="h-4" />
+                                </div>
+                              </div>
+                              {onlinePaymentType === 'card' && (
+                                <p className="text-xs text-gray-600 mt-1">
+                                  You will be redirected to enter card details
+                                </p>
+                              )}
+                            </div>
                           </label>
                         </div>
                       </div>

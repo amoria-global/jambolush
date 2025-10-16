@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import AlertNotification from '@/app/components/notify'; // Update this import path
 import { useLanguage } from '@/app/lib/LanguageContext';
+import { tokenRefreshService } from '@/app/utils/tokenRefreshService';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
@@ -214,17 +215,21 @@ function LoginContent() {
       const response = await api.post('/auth/login', { email, password });
       const accessToken = response.data?.accessToken || response.data?.token;
       const refreshToken = response.data?.refreshToken;
-      
+
       if (accessToken) {
         localStorage.setItem('authToken', accessToken);
         if (refreshToken) {
           localStorage.setItem('refreshToken', refreshToken);
         }
+
+        // Initialize token refresh service after successful login
+        tokenRefreshService.startSession();
+        console.log('[Login] Token refresh service initialized');
       }
-      
+
       const userData = response.data?.user;
       handleUserRedirect(userData, accessToken, refreshToken);
-      
+
     } catch (error: any) {
       console.error('Login failed:', error);
       const errorMessage = error.response?.data?.message || error.response?.data?.error || error.data?.message || t('error.somethingWentWrong');
@@ -287,18 +292,22 @@ function LoginContent() {
 
   const handleGoogleCallback = async (response: any) => {
     setGoogleLoading(true);
-    
+
     try {
       const result = await api.post('/auth/google', { token: response.credential });
       const token = result.data?.accessToken;
       const refreshToken = result.data.refreshToken;
-      
+
       if (token) {
         localStorage.setItem('authToken', token);
         if (refreshToken) {
           localStorage.setItem('refreshToken', refreshToken);
         }
-        
+
+        // Initialize token refresh service after successful login
+        tokenRefreshService.startSession();
+        console.log('[Login] Token refresh service initialized (Google)');
+
         const userData = result.data?.user;
         const userStatus = userData?.status;
         
@@ -406,12 +415,17 @@ function LoginContent() {
     const userRole = userData?.userType || userData?.user?.userType;
     
     // =================================================================
-    // MODIFICATION: As requested, redirect 'guest' users to the homepage.
+    // MODIFICATION: Redirect guests to redirect if present, else to homepage.
     // =================================================================
     if (userRole === 'guest') {
+        let target = '/';
+        const redirectParam = searchParams.get('redirect') || searchParams.get('returnUrl') || searchParams.get('return_to');
+        if (redirectParam) {
+            target = getRedirectUrl(token, refreshToken);
+        }
         setNotify({ type: "success", message: `${t('auth.loginSuccess')}! Redirecting ...` });
         setTimeout(() => {
-            performRedirect(token, refreshToken, '/');
+            performRedirect(undefined, undefined, target);
         }, 1500);
         return;
     }
@@ -505,13 +519,6 @@ function LoginContent() {
           <h1 className="text-white text-2xl font-bold mb-1">{t('footer.bookU')}</h1>
           <h2 className="text-white/90 text-2xl font-bold mb-2">{t('footer.bookS')}</h2>
           <p className="text-white/60 text-xs px-4">{t('hero.subtitle')}</p>
-          {redirectInfo && (
-            <div className="mt-3 mx-4">
-              <div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-3 py-2">
-                <p className="text-blue-200 text-xs"><span className="font-medium">Redirecting after login</span></p>
-              </div>
-            </div>
-          )}
         </div>
         <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-t-3xl border-t border-white/20 px-6 pt-6 overflow-y-auto">
           <div className="max-w-sm mx-auto">
@@ -634,9 +641,6 @@ function LoginContent() {
             <div className="text-center mb-6 lg:mb-8">
               <h3 className="text-white text-xl lg:text-2xl font-bold mb-2">{t('auth.welcomeBack')}</h3>
               <p className="text-white/70 text-sm lg:text-base">{!showPasswordField ? t('auth.enterEmailToContinue') : t('auth.enterPasswordToSignIn')}</p>
-              {redirectInfo && (
-                <div className="mt-4"><div className="bg-blue-500/20 backdrop-blur-sm border border-blue-400/30 rounded-lg px-4 py-2"><p className="text-blue-200 text-sm"><span className="font-medium">Redirecting after login</span></p></div></div>
-              )}
             </div>
             {showPasswordField && (
               <button onClick={handleBackToEmail} className="flex items-center text-blue-300 hover:text-blue-200 text-sm mb-6 transition-colors duration-200">

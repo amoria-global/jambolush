@@ -1,4 +1,3 @@
-// app/payment/[status]/page.tsx
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -28,6 +27,38 @@ interface StatusCheckResponse {
   };
 }
 
+interface PawapayResponse {
+  success: boolean;
+  data: {
+    depositId: string;
+    status: string;
+    amount: string;
+    currency: string;
+    country: string;
+    payer: {
+      type: string;
+      accountDetails: {
+        phoneNumber: string;
+        provider: string;
+      };
+    };
+    customerMessage: string;
+    created: string;
+    failureReason?: {
+      failureMessage: string;
+      failureCode: string;
+    };
+    metadata: {
+      checkIn: string;
+      checkOut: string;
+      clientReferenceId: string;
+      propertyId: string;
+      userId: string;
+      bookingId: string;
+    };
+  };
+}
+
 // --- Helper Components ---
 const Spinner = ({ size = 'h-8 w-8', color = 'border-gray-500' }: { size?: string, color?: string }) => (
   <div className={`animate-spin rounded-full ${size} border-t-2 border-b-2 ${color}`}></div>
@@ -47,6 +78,7 @@ export default function PaymentStatusPage() {
 
   const initialStatus = params.status as 'success' | 'failed' | 'pending' | 'error';
   const ref = searchParams.get('ref');
+  const tx = searchParams.get('tx');
   
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,20 +88,44 @@ export default function PaymentStatusPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
   const fetchTransactionStatus = useCallback(async () => {
-    if (!ref) {
+    if (!ref && !tx) {
       setLoading(false);
       return;
     }
     setIsChecking(true);
     try {
-      const response = await fetch(`${API_URL}/payments/transactions/reference/${ref}/status`);
+      let endpoint = '';
+      if (ref) {
+        endpoint = `/payments/transactions/reference/${ref}/status`;
+      } else if (tx) {
+        endpoint = `/pawapay/deposit/${tx}`;
+      }
+      const response = await fetch(`${API_URL}${endpoint}`);
       if (!response.ok) throw new Error('Network response was not ok');
-      const data: StatusCheckResponse = await response.json();
+      const apiData: StatusCheckResponse | PawapayResponse = await response.json();
 
-      if (data.success && data.data.transaction) {
-        setTransaction(data.data.transaction);
+      if (apiData.success) {
+        let txData: Transaction;
+        if (ref) {
+          txData = (apiData as StatusCheckResponse).data.transaction;
+        } else {
+          const pawapayData = (apiData as PawapayResponse).data;
+          txData = {
+            id: pawapayData.depositId,
+            reference: pawapayData.depositId, // or pawapayData.metadata.clientReferenceId if preferred
+            amount: parseFloat(pawapayData.amount),
+            currency: pawapayData.currency,
+            status: pawapayData.status,
+            description: pawapayData.customerMessage || `Payment for booking ${pawapayData.metadata.bookingId} (${new Date(pawapayData.metadata.checkIn).toLocaleDateString()} - ${new Date(pawapayData.metadata.checkOut).toLocaleDateString()})`,
+            createdAt: pawapayData.created,
+            fundedAt: pawapayData.status === 'COMPLETED' ? pawapayData.created : undefined,
+            cancelledAt: pawapayData.status === 'FAILED' ? pawapayData.created : undefined,
+            cancellationReason: pawapayData.failureReason?.failureMessage,
+          };
+        }
+        setTransaction(txData);
       } else {
-        console.error('Failed to fetch transaction status:', data);
+        console.error('Failed to fetch transaction status:', apiData);
       }
     } catch (err) {
       console.error('Error fetching transaction status:', err);
@@ -77,7 +133,7 @@ export default function PaymentStatusPage() {
       setLoading(false);
       setIsChecking(false);
     }
-  }, [ref, API_URL]);
+  }, [ref, tx, API_URL]);
 
   // Initial fetch
   useEffect(() => {
@@ -89,11 +145,13 @@ export default function PaymentStatusPage() {
     switch (transaction.status) {
       case 'HELD':
       case 'RELEASED':
+      case 'COMPLETED':
         return 'success';
       case 'FAILED':
       case 'CANCELLED':
         return 'failed';
       case 'PENDING':
+      case 'SUBMITTED':
         return 'pending';
       default:
         return 'error';

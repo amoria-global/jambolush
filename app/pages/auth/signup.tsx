@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import AlertNotification from '@/app/components/notify'; // Update this import path
 import { useLanguage } from '@/app/lib/LanguageContext';
+import BecomeHostModal from '@/app/pages/auth/become-host';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
@@ -52,6 +53,8 @@ function SignupPage({
   const [loading, setLoading] = useState(false);
   const [notify, setNotify] = useState<{type: "success" | "error" | "info" | "warning", message: string} | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [showServiceProviderModal, setShowServiceProviderModal] = useState(false);
+  const [showBecomeHostModal, setShowBecomeHostModal] = useState(false);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -197,13 +200,19 @@ function SignupPage({
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    
+
     if (!isFormValid) {
       setNotify({type: "warning", message: "Please fill in all required fields correctly."});
       return;
     }
 
+    // Show modal asking if user wants to become a service provider
+    setShowServiceProviderModal(true);
+  };
+
+  const proceedWithSignup = async () => {
     setLoading(true);
+    setShowServiceProviderModal(false);
 
     try {
       const response = await api.post('/auth/register', {
@@ -238,7 +247,7 @@ function SignupPage({
 
       if (error.status) {
         const { status, data } = error;
-        
+
         if (data?.message) {
           setNotify({type: "error", message: data.message});
         } else if (data?.error) {
@@ -377,7 +386,12 @@ function SignupPage({
                     </div>
                     <div className="text-center text-base">
                       <span className="text-white/70">{t('auth.wantToBecomeServiceProvider')} </span>
-                      <a href="/all/become-host" className="text-blue-300 hover:text-blue-200 font-medium">{t('nav.becomeHost')}</a>
+                      <button
+                        onClick={() => setShowBecomeHostModal(true)}
+                        className="text-blue-300 hover:text-blue-200 font-medium underline"
+                      >
+                        {t('nav.becomeHost')}
+                      </button>
                     </div>
                     <div className="relative my-4">
                       <div className="flex items-center">
@@ -394,6 +408,52 @@ function SignupPage({
                 <div className="pb-20"></div>
             </div>
         </div>
+
+        {/* Service Provider Modal - Mobile */}
+        {showServiceProviderModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 animate-slideUp">
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-center w-16 h-16 mx-auto bg-gradient-to-br from-[#083A85] to-[#F20C8F] rounded-full">
+                  <i className="bi bi-briefcase text-white text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-bold text-center text-gray-900">Become a Service Provider?</h3>
+                <p className="text-base text-center text-gray-600">Would you like to continue as a service provider (Host, Tour Guide, or Agent)?</p>
+                <div className="flex flex-col space-y-3 pt-4">
+                  <button
+                    onClick={() => {
+                      setShowServiceProviderModal(false);
+                      setShowBecomeHostModal(true);
+                    }}
+                    className="w-full py-3 px-6 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white font-semibold rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                  >
+                    Yes, I want to become a provider
+                  </button>
+                  <button
+                    onClick={proceedWithSignup}
+                    className="w-full py-3 px-6 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-300"
+                  >
+                    No, continue as guest
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* BecomeHost Modal - Mobile */}
+        <BecomeHostModal
+          isOpen={showBecomeHostModal}
+          onClose={() => setShowBecomeHostModal(false)}
+          prefilledData={{
+            names: `${firstName} ${lastName}`.trim(),
+            email: email,
+            phone: phone,
+            country: country,
+            password: password
+          }}
+        />
+
       </div>
     );
   }
@@ -479,11 +539,11 @@ function SignupPage({
                 <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('forms.email')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300" required />
               </div>
               <div className="space-y-2">
-                <label htmlFor="phone" className="block text-white/90 text-base font-medium">{t('forms.phone')} <span className="text-white/60">({t('contact.form.phone.optional')})</span></label>
+                <label htmlFor="phone" className="block text-white/90 text-base font-medium">{t('forms.phone')}</label>
                 <input type="tel" id="phone" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t('forms.phone')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300"/>
               </div>
               <div className="space-y-2">
-                <label htmlFor="country" className="block text-white/90 text-base font-medium">{t('forms.country')} <span className="text-white/60">({t('contact.form.phone.optional')})</span></label>
+                <label htmlFor="country" className="block text-white/90 text-base font-medium">{t('forms.country')}</label>
                 <input type="text" id="country" name="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder={t('forms.country')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300"/>
               </div>
               <div className="space-y-2">
@@ -522,10 +582,13 @@ function SignupPage({
             </div>
             <div className="text-center mt-3">
               <span className="text-white/70 text-base">{t('auth.wantToBecomeServiceProvider')} </span>
-              <a href="/all/become-host" className="group text-blue-300 text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative">
+              <button
+                onClick={() => setShowBecomeHostModal(true)}
+                className="group text-blue-300 text-base hover:text-blue-200 font-medium transition-all duration-200 cursor-pointer relative"
+              >
                 <span className="relative">{t('nav.becomeHost')}</span>
                 <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-300 to-blue-200 group-hover:w-full transition-all duration-300"></div>
-              </a>
+              </button>
             </div>
             <div className="relative my-6">
               <div className="flex items-center">
@@ -541,6 +604,55 @@ function SignupPage({
           </div>
         </div>
       </div>
+
+      {/* Service Provider Modal - Desktop */}
+      {showServiceProviderModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 animate-slideUp">
+            <div className="p-8 space-y-6">
+              <div className="flex items-center justify-center w-20 h-20 mx-auto bg-gradient-to-br from-[#083A85] to-[#F20C8F] rounded-full shadow-lg">
+                <i className="bi bi-briefcase text-white text-3xl"></i>
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold text-gray-900">Become a Service Provider?</h3>
+                <p className="text-base text-gray-600 leading-relaxed">Would you like to continue as a service provider (Host, Tour Guide, or Agent)?</p>
+              </div>
+              <div className="flex flex-col space-y-3 pt-4">
+                <button
+                  onClick={() => {
+                    setShowServiceProviderModal(false);
+                    setShowBecomeHostModal(true);
+                  }}
+                  className="w-full py-3 px-6 bg-gradient-to-r from-[#083A85] to-[#F20C8F] text-white font-semibold rounded-xl hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <i className="bi bi-check-circle mr-2"></i>
+                  Yes, I want to become a provider
+                </button>
+                <button
+                  onClick={proceedWithSignup}
+                  className="w-full py-3 px-6 bg-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-300 transition-all duration-300"
+                >
+                  <i className="bi bi-person mr-2"></i>
+                  No, continue as guest
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BecomeHost Modal */}
+      <BecomeHostModal
+        isOpen={showBecomeHostModal}
+        onClose={() => setShowBecomeHostModal(false)}
+        prefilledData={{
+          names: `${firstName} ${lastName}`.trim(),
+          email: email,
+          phone: phone,
+          country: country,
+          password: password
+        }}
+      />
     </div>
   );
 }

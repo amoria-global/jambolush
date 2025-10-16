@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import api from "../api/apiService";
 import { useLanguage } from '../lib/LanguageContext';
+import BecomeHostModal from '../pages/auth/become-host';
 
 interface UserProfile {
   email: string;
@@ -45,7 +46,7 @@ const Navbar = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userSession, setUserSession] = useState<UserSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // Language context
   const { currentLanguage, changeLanguage, t, isLoading: langLoading } = useLanguage();
 
@@ -140,6 +141,24 @@ const Navbar = () => {
   // Effect to fetch user session on component mount
   useEffect(() => {
     fetchUserSession();
+  }, []);
+
+  // Effect to remove token and refresh_token from URL if present
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const hasToken = url.searchParams.has('token');
+      const hasRefreshToken = url.searchParams.has('refresh_token');
+
+      if (hasToken || hasRefreshToken) {
+        // Remove the token parameters
+        url.searchParams.delete('token');
+        url.searchParams.delete('refresh_token');
+
+        // Update the URL without reloading the page
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
   }, []);
 
   // Effect to handle navbar background on scroll
@@ -289,7 +308,7 @@ const Navbar = () => {
             {/* Become a Host Button */}
             <button
               className="px-3 py-1.5 bg-[#083A85] text-white text-sm font-medium rounded-md hover:bg-[#083A85]/90 transition-colors duration-300 cursor-pointer"
-              onClick={() => router.push('/all/become-host')}
+              onClick={() => setIsModalOpen(true)}
             >
               <i className="bi bi-house-add mr-1.5 text-sm"></i>
               {t('nav.becomeHost')}
@@ -494,7 +513,7 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    router.push('/all/become-host');
+                    setIsModalOpen(true);
                   }}
                   className="w-full flex items-center px-3 py-2 bg-[#083A85] text-white text-base font-medium rounded-lg hover:bg-[#083A85]/90 transition-colors duration-300"
                 >
@@ -636,6 +655,10 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      <BecomeHostModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </nav>
   );
 };

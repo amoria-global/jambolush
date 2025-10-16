@@ -532,8 +532,7 @@ const companyFeatures = Array.isArray(rawCompanyFeatures) ? rawCompanyFeatures :
                   <p className="text-base text-gray-600 leading-relaxed px-2">{t('becomeHost.success.verifyDescription')}</p>
                 </div>
                 <div className="flex flex-col space-y-3">
-                  <button onClick={() => { const url = `/all/account-verification?application=true&type=${selectedRole}`; window.location.href = url; }} className="w-full bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base cursor-pointer">{t('becomeHost.success.verifyButton')}</button>
-                  <button onClick={() => setCurrentStep('role-selection')} className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base cursor-pointer">{t('becomeHost.success.submitAnother')}</button>
+                  <button onClick={() => { window.location.href = '/all/login'; }} className="w-full bg-[#F20C8F] hover:bg-[#d10b7a] text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-md transition-colors duration-200 text-base sm:text-base cursor-pointer">Go to Login</button>
                 </div>
               </div>
             </div>

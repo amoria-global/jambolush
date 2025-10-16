@@ -1,5 +1,7 @@
 // apiService.ts - Complete Frontend API service for JamboLush
 
+import { tokenRefreshService } from '@/app/utils/tokenRefreshService';
+
 // Global session expiry handler - will be set by AuthContext
 let globalSessionExpiredHandler: ((redirectUrl?: string) => void) | null = null;
 
@@ -441,14 +443,68 @@ class FrontendAPIService {
         }
       }
 
-      // Handle 401 Unauthorized - Session expired
-      // Only trigger session expired modal if user was actually authenticated
-      if (response.status === 401 && globalSessionExpiredHandler) {
+      // Handle 401 Unauthorized - Try to refresh token before giving up
+      if (response.status === 401) {
         const hadAuthToken = typeof window !== 'undefined' &&
           (localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
 
-        // Only show session expired modal if user had auth tokens
-        if (hadAuthToken) {
+        // Only try to refresh if user had auth tokens and this isn't already a refresh request
+        if (hadAuthToken && !endpoint.includes('/auth/refresh-token') && !endpoint.includes('/auth/login')) {
+          console.log('[apiService] Received 401, attempting token refresh...');
+
+          const refreshSuccess = await tokenRefreshService.refreshToken();
+
+          if (refreshSuccess) {
+            console.log('[apiService] Token refreshed successfully, retrying original request');
+
+            // Retry the original request with the new token
+            const newToken = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+            if (newToken) {
+              mergedHeaders['Authorization'] = `Bearer ${newToken}`;
+
+              // Retry the request
+              const retryResponse = await fetch(url, {
+                method: method.toUpperCase(),
+                headers: mergedHeaders,
+                body: preparedBody,
+                signal: controller.signal,
+                credentials: 'include',
+                mode: 'cors'
+              });
+
+              const retryContentType = retryResponse.headers.get('content-type') || '';
+              let retryData: T;
+
+              if (retryContentType.includes('json')) {
+                retryData = await retryResponse.json();
+              } else if (retryContentType.includes('text')) {
+                retryData = await retryResponse.text() as T;
+              } else {
+                const text = await retryResponse.text();
+                try {
+                  retryData = JSON.parse(text);
+                } catch {
+                  retryData = text as T;
+                }
+              }
+
+              if (retryResponse.ok) {
+                return { data: retryData, status: retryResponse.status, ok: retryResponse.ok };
+              }
+
+              // If retry also failed, continue to handle as error
+              data = retryData;
+            }
+          } else {
+            // Token refresh failed, trigger session expired modal
+            console.log('[apiService] Token refresh failed, session expired');
+            if (globalSessionExpiredHandler) {
+              const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
+              globalSessionExpiredHandler(currentUrl);
+            }
+          }
+        } else if (hadAuthToken && globalSessionExpiredHandler) {
+          // This is a refresh request that failed, or login failed, trigger session expired
           const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
           globalSessionExpiredHandler(currentUrl);
         }

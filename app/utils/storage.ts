@@ -41,7 +41,7 @@ export class DocumentUploadService {
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
-        .from('documents')
+        .from('faxon-bucket')
         .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
@@ -54,7 +54,7 @@ export class DocumentUploadService {
 
       // Get public URL
       const { data: urlData } = supabase.storage
-        .from('documents')
+        .from('faxon-bucket')
         .getPublicUrl(filePath);
 
       return urlData.publicUrl;
@@ -98,7 +98,7 @@ export class DocumentUploadService {
       const filePath = pathParts.slice(pathParts.indexOf('verification-documents')).join('/');
 
       const { error } = await supabase.storage
-        .from('documents')
+        .from('faxon-bucket')
         .remove([filePath]);
 
       if (error) {

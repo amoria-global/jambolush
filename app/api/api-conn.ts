@@ -1,6 +1,8 @@
 // api-conn.ts - Centralized API Connector
 // All frontend requests should go through this single file
 
+import { tokenRefreshService } from '@/app/utils/tokenRefreshService';
+
 // Configuration
 const PUBLIC_API_ENDPOINT_URL = process.env.NEXT_PUBLIC_API_ENDPOINT_URL || ''; // Change to your API base URL
 
@@ -257,14 +259,83 @@ class ApiConnector {
         timestamp,
       };
 
-      // Handle 401 Unauthorized - Session expired
-      // Only trigger session expired modal if user was actually authenticated
-      if (response.status === 401 && globalSessionExpiredHandler) {
+      // Handle 401 Unauthorized - Try to refresh token before giving up
+      if (response.status === 401) {
         const hadAuthToken = typeof window !== 'undefined' &&
-          (localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token'));
+          (localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token') ||
+           localStorage.getItem('authToken') || sessionStorage.getItem('authToken'));
 
-        // Only show session expired modal if user had auth tokens
-        if (hadAuthToken) {
+        // Only try to refresh if user had auth tokens and this isn't already a refresh request
+        if (hadAuthToken && !config.endpoint.includes('/auth/refresh-token') && !config.endpoint.includes('/auth/login')) {
+          console.log('[api-conn] Received 401, attempting token refresh...');
+
+          const refreshSuccess = await tokenRefreshService.refreshToken();
+
+          if (refreshSuccess) {
+            console.log('[api-conn] Token refreshed successfully, retrying original request');
+
+            // Retry the original request with the new token
+            const newToken = typeof window !== 'undefined' ?
+              (localStorage.getItem('authToken') || localStorage.getItem('auth_token')) : null;
+
+            if (newToken) {
+              // Update headers with new token
+              requestConfig.headers = {
+                ...requestConfig.headers,
+                'Authorization': `Bearer ${newToken}`
+              };
+
+              // Retry the request
+              const retryResponse = await fetch(fullUrl, {
+                ...requestConfig,
+                signal: controller.signal,
+              });
+
+              const retryContentType = retryResponse.headers.get('content-type');
+              let retryResponseData: any;
+
+              if (retryContentType && retryContentType.includes('application/json')) {
+                retryResponseData = await retryResponse.json();
+              } else {
+                retryResponseData = await retryResponse.text();
+              }
+
+              if (retryResponse.ok) {
+                const retryApiResponse: ApiResponse<T> = {
+                  success: true,
+                  data: retryResponseData,
+                  status: retryResponse.status,
+                  timestamp,
+                };
+
+                // Log the successful retry
+                logger.log({
+                  timestamp,
+                  method: config.method,
+                  endpoint: config.endpoint,
+                  fullUrl,
+                  requestData: config.data,
+                  responseStatus: retryResponse.status,
+                  responseData: retryResponseData,
+                  duration: Date.now() - startTime,
+                });
+
+                return retryApiResponse;
+              }
+
+              // If retry also failed, continue to handle as error
+              responseData = retryResponseData;
+            }
+          } else {
+            // Token refresh failed, trigger session expired modal
+            console.log('[api-conn] Token refresh failed, session expired');
+            if (globalSessionExpiredHandler) {
+              const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
+              globalSessionExpiredHandler(currentUrl);
+            }
+          }
+        } else if (hadAuthToken && globalSessionExpiredHandler) {
+          // This is a refresh request that failed, or login failed, trigger session expired
           const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : undefined;
           globalSessionExpiredHandler(currentUrl);
         }

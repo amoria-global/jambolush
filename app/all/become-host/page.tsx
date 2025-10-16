@@ -1,11 +1,14 @@
+'use client';
 import { Metadata } from 'next'
-import BecomeHost from '@/app/pages/auth/become-host';
+import BecomeHostModal from '@/app/pages/auth/become-host';
+import { useRouter } from 'next/navigation';
 
-export const metadata: Metadata = {
-  title: 'Become a Host - JamboLush',
-  description: 'Join JamboLush to experience the remote life time earnings'
-}
+export default function BecomeHostPage() {
+  const router = useRouter();
 
-export default function ShareModalRoute() {
-  return <BecomeHost />;
+  const handleClose = () => {
+    router.push('/');
+  };
+
+  return <BecomeHostModal isOpen={true} onClose={handleClose} />;
 }

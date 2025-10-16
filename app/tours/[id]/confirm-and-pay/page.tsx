@@ -64,8 +64,9 @@ const TourPaymentPage: React.FC = () => {
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
-  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | null>(null);
+  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | 'ORANGE' | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState('+250');
   const [pollingStatus, setPollingStatus] = useState<string>('');
   const [pollCount, setPollCount] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -233,8 +234,8 @@ const TourPaymentPage: React.FC = () => {
       }
       if (!phoneNumber || phoneNumber.trim() === '') {
         newErrors.phoneNumber = 'Phone number is required for mobile money';
-      } else if (!/^(\+?250|0)?[7][0-9]{8}$/.test(phoneNumber.replace(/\s/g, ''))) {
-        newErrors.phoneNumber = 'Please enter a valid Rwandan phone number';
+      } else if (!/^[0-9]{9,15}$/.test(phoneNumber.replace(/\s/g, ''))) {
+        newErrors.phoneNumber = 'Please enter a valid phone number';
       }
     }
 
@@ -284,6 +285,7 @@ const TourPaymentPage: React.FC = () => {
           if (status === 'FAILED' || status === 'REJECTED' || status === 'CANCELLED') {
             const failureMessage = failureReason?.failureMessage || 'Payment failed';
             setPollingStatus(`Payment failed: ${failureMessage}`);
+            setLoading(false);
             sessionStorage.setItem('payment_final_status', 'failed');
             sessionStorage.setItem('payment_failure_reason', failureMessage);
 
@@ -297,12 +299,16 @@ const TourPaymentPage: React.FC = () => {
             setTimeout(() => checkStatus(), 10000);
           } else {
             setPollingStatus('Status check timeout. Please check your payment status.');
+            setLoading(false);
             router.push(`/payment/pending?tx=${depositId}`);
           }
         } else {
           console.error('[PAYMENT] Failed to check status:', response.data);
           if (attempts < maxAttempts) {
             setTimeout(() => checkStatus(), 10000);
+          } else {
+            setPollingStatus('Failed to verify payment status');
+            setLoading(false);
           }
         }
       } catch (error) {
@@ -337,7 +343,7 @@ const TourPaymentPage: React.FC = () => {
       const pawaPayDepositPayload = {
         amount: finalAmount,
         currency: 'RWF',
-        phoneNumber: phoneNumber,
+        phoneNumber: `${countryCode.replace('+', '')}${phoneNumber}`,
         provider: momoProvider,
         country: 'RW',
         description: `Payment for ${bookingData.tourTitle}`,
@@ -369,19 +375,21 @@ const TourPaymentPage: React.FC = () => {
           pollPaymentStatus(depositId || transactionId);
         }
       } else {
-        setErrors({ 
-          general: response.data.message || 'Failed to create payment. Please try again.' 
+        setErrors({
+          general: response.data.message || 'Failed to create payment. Please try again.'
         });
+        setLoading(false);
       }
     } catch (error: any) {
       console.error('[PAYMENT] Deposit error:', error);
-      
-      const errorMessage = error?.response?.data?.error?.message || 
+
+      const errorMessage = error?.response?.data?.error?.message ||
                              error?.response?.data?.message ||
-                             error?.message || 
+                             error?.message ||
                              'Payment failed. Please try again.';
-      
+
       setErrors({ general: errorMessage });
+      setLoading(false);
     } finally {
       if (paymentMethod !== 'momo') {
         setLoading(false);
@@ -555,20 +563,34 @@ const TourPaymentPage: React.FC = () => {
                     {paymentMethod === 'momo' && (
                       <div className="mt-6 ml-8 space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-3">Select provider</label>
-                          <div className="grid grid-cols-3 gap-2">
-                            {['MTN', 'AIRTEL', 'MPESA'].map((provider) => (
+                          <label className="block text-sm font-medium mb-3 text-gray-700">
+                            Select carrier first
+                          </label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              { name: 'MTN', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/MTN_Logo.svg/240px-MTN_Logo.svg.png' },
+                              { name: 'AIRTEL', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Airtel_logo.svg/240px-Airtel_logo.svg.png' },
+                              { name: 'MPESA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/240px-M-PESA_LOGO-01.svg.png' },
+                              { name: 'ORANGE', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Orange_logo.svg/240px-Orange_logo.svg.png' }
+                            ].map((provider) => (
                               <button
-                                key={provider}
+                                key={provider.name}
                                 type="button"
-                                onClick={() => setMomoProvider(provider as any)}
-                                className={`p-3 text-sm font-medium rounded-lg border-2 transition ${
-                                  momoProvider === provider
-                                    ? 'border-[#083A85] bg-[#083A85] text-white'
-                                    : 'border-gray-300 hover:border-gray-400'
+                                onClick={() => setMomoProvider(provider.name as any)}
+                                className={`p-3 rounded-lg border-2 transition flex items-center justify-center gap-2 ${
+                                  momoProvider === provider.name
+                                    ? 'border-[#083A85] bg-blue-50'
+                                    : 'border-gray-300 hover:border-gray-400 bg-white'
                                 }`}
                               >
-                                {provider === 'MPESA' ? 'M-Pesa' : provider}
+                                <img
+                                  src={provider.logo}
+                                  alt={provider.name}
+                                  className="h-6 object-contain"
+                                />
+                                <span className="text-xs font-medium">
+                                  {provider.name === 'MPESA' ? 'M-Pesa' : provider.name === 'ORANGE' ? 'Money' : ''}
+                                </span>
                               </button>
                             ))}
                           </div>
@@ -578,17 +600,39 @@ const TourPaymentPage: React.FC = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium mb-2">Phone number</label>
-                          <input
-                            type="tel"
-                            value={phoneNumber}
-                            onChange={(e) => {
-                              setPhoneNumber(e.target.value);
-                              setErrors({});
-                            }}
-                            placeholder="07XX XXX XXX"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
-                          />
+                          <label className="block text-sm font-medium mb-2 text-gray-700">
+                            Phone number
+                          </label>
+                          <div className="flex gap-2">
+                            <select
+                              value={countryCode}
+                              onChange={(e) => setCountryCode(e.target.value)}
+                              className="px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85] bg-white"
+                            >
+                              <option value="+250">🇷🇼 +250 (Rwanda)</option>
+                              <option value="+254">🇰🇪 +254 (Kenya)</option>
+                              <option value="+255">🇹🇿 +255 (Tanzania)</option>
+                              <option value="+256">🇺🇬 +256 (Uganda)</option>
+                              <option value="+257">🇧🇮 +257 (Burundi)</option>
+                              <option value="+243">🇨🇩 +243 (DRC)</option>
+                              <option value="+251">🇪🇹 +251 (Ethiopia)</option>
+                              <option value="+27">🇿🇦 +27 (South Africa)</option>
+                              <option value="+234">🇳🇬 +234 (Nigeria)</option>
+                              <option value="+233">🇬🇭 +233 (Ghana)</option>
+                              <option value="+225">🇨🇮 +225 (Côte d'Ivoire)</option>
+                              <option value="+221">🇸🇳 +221 (Senegal)</option>
+                            </select>
+                            <input
+                              type="tel"
+                              value={phoneNumber}
+                              onChange={(e) => {
+                                setPhoneNumber(e.target.value);
+                                setErrors({});
+                              }}
+                              placeholder="7XX XXX XXX"
+                              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#083A85]"
+                            />
+                          </div>
                           {errors.phoneNumber && (
                             <p className="text-red-500 text-sm mt-2">{errors.phoneNumber}</p>
                           )}
@@ -598,10 +642,10 @@ const TourPaymentPage: React.FC = () => {
                   </div>
 
                   {/* Card Option */}
-                  <div 
+                  <div
                     className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                      paymentMethod === 'card' 
-                        ? 'border-gray-900 bg-gray-50' 
+                      paymentMethod === 'card'
+                        ? 'border-gray-900 bg-gray-50'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                     onClick={() => {
@@ -618,10 +662,22 @@ const TourPaymentPage: React.FC = () => {
                         className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
                       />
                       <div className="flex-1">
-                        <h3 className="font-medium">Credit or debit card</h3>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-medium">Credit or debit card</h3>
+                          <div className="flex items-center gap-1">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/240px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/240px-Mastercard-logo.svg.png" alt="Mastercard" className="h-4" />
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/240px-American_Express_logo_%282018%29.svg.png" alt="Amex" className="h-4" />
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600">
                           Secure payment with Visa, Mastercard, or American Express
                         </p>
+                        {paymentMethod === 'card' && (
+                          <p className="text-xs text-blue-600 mt-2 font-medium">
+                            You will be redirected to enter card details
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm ls:*)",
       "Bash(yarn list:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(timeout 120 npm run build)"
     ],
     "deny": [],
     "ask": []

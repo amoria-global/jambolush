@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import AlertNotification from '@/app/components/notify'; // Update this import path
 import { useLanguage } from '@/app/lib/LanguageContext';
-import BecomeHost from '@/app/pages/auth/become-host';
+import BecomeHostModal from '@/app/pages/auth/become-host';
 
 // Google OAuth Configuration
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "739960680632-g75378et3hgeu5qmukdqp8085369gh1t.apps.googleusercontent.com";
@@ -441,6 +441,19 @@ function SignupPage({
           </div>
         )}
 
+        {/* BecomeHost Modal - Mobile */}
+        <BecomeHostModal
+          isOpen={showBecomeHostModal}
+          onClose={() => setShowBecomeHostModal(false)}
+          prefilledData={{
+            names: `${firstName} ${lastName}`.trim(),
+            email: email,
+            phone: phone,
+            country: country,
+            password: password
+          }}
+        />
+
       </div>
     );
   }
@@ -526,11 +539,11 @@ function SignupPage({
                 <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('forms.email')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300" required />
               </div>
               <div className="space-y-2">
-                <label htmlFor="phone" className="block text-white/90 text-base font-medium">{t('forms.phone')} <span className="text-white/60">({t('contact.form.phone.optional')})</span></label>
+                <label htmlFor="phone" className="block text-white/90 text-base font-medium">{t('forms.phone')}</label>
                 <input type="tel" id="phone" name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t('forms.phone')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300"/>
               </div>
               <div className="space-y-2">
-                <label htmlFor="country" className="block text-white/90 text-base font-medium">{t('forms.country')} <span className="text-white/60">({t('contact.form.phone.optional')})</span></label>
+                <label htmlFor="country" className="block text-white/90 text-base font-medium">{t('forms.country')}</label>
                 <input type="text" id="country" name="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder={t('forms.country')} className="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:border-white/60 focus:ring-2 focus:ring-white/20 focus:bg-white/15 transition-all duration-300"/>
               </div>
               <div className="space-y-2">
@@ -628,20 +641,18 @@ function SignupPage({
         </div>
       )}
 
-      {/* BecomeHost Modal - Desktop */}
-      {showBecomeHostModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-white">
-          <div className="relative min-h-screen">
-            <button
-              onClick={() => setShowBecomeHostModal(false)}
-              className="absolute top-6 right-6 z-10 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-            >
-              <i className="bi bi-x-lg text-2xl text-gray-700"></i>
-            </button>
-            <BecomeHost />
-          </div>
-        </div>
-      )}
+      {/* BecomeHost Modal */}
+      <BecomeHostModal
+        isOpen={showBecomeHostModal}
+        onClose={() => setShowBecomeHostModal(false)}
+        prefilledData={{
+          names: `${firstName} ${lastName}`.trim(),
+          email: email,
+          phone: phone,
+          country: country,
+          password: password
+        }}
+      />
     </div>
   );
 }

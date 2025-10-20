@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import api from '@/app/api/apiService';
-import { decodeId } from '@/app/utils/encoder';
-import { calculatePriceBreakdown } from '@/app/utils/pricing';
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import api from "@/app/api/apiService";
+import { decodeId } from "@/app/utils/encoder";
+import { calculatePriceBreakdown } from "@/app/utils/pricing";
 
 interface TourBookingData {
   id: string;
@@ -56,27 +56,31 @@ interface HostDetails {
 const TourPaymentPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState<TourBookingData | null>(null);
   const [hostDetails, setHostDetails] = useState<HostDetails | null>(null);
   const [fetchingBooking, setFetchingBooking] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'momo' | 'card' | null>(null);
-  const [momoProvider, setMomoProvider] = useState<'MTN' | 'AIRTEL' | 'MPESA' | 'ORANGE' | null>(null);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('+250');
-  const [pollingStatus, setPollingStatus] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<"momo" | "card" | null>(
+    null
+  );
+  const [momoProvider, setMomoProvider] = useState<
+    "MTN" | "AIRTEL" | "MPESA" | "ORANGE" | null
+  >(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+250");
+  const [pollingStatus, setPollingStatus] = useState<string>("");
   const [pollCount, setPollCount] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [specialMessage, setSpecialMessage] = useState('');
+  const [specialMessage, setSpecialMessage] = useState("");
 
   // Fetch current user
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get('/auth/me');
+        const response = await api.get("/auth/me");
         if (response.data && response.data.success) {
           setCurrentUser(response.data.data);
           if (response.data.data.phone) {
@@ -89,7 +93,7 @@ const TourPaymentPage: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error("Failed to fetch user:", error);
       }
     };
     fetchUser();
@@ -97,13 +101,13 @@ const TourPaymentPage: React.FC = () => {
 
   // Load booking data
   useEffect(() => {
-    const decodedId = decodeId(searchParams.get('bookingId') || '');
+    const decodedId = decodeId(searchParams.get("bookingId") || "");
     const bookingId = decodedId;
 
     if (bookingId) {
       fetchTourBookingData(bookingId);
     } else {
-      setErrors({ general: 'Booking ID is required' });
+      setErrors({ general: "Booking ID is required" });
       setFetchingBooking(false);
     }
   }, [searchParams]);
@@ -111,16 +115,16 @@ const TourPaymentPage: React.FC = () => {
   const fetchTourBookingData = async (bookingId: string) => {
     try {
       setFetchingBooking(true);
-      
+
       const response = await api.get(`/tours/guest/bookings/${bookingId}`);
-      
+
       if (response.data.success && response.data.data) {
         const booking = response.data.data;
-        
+
         let tourDetails: any = null;
         let hostId = booking.hostId || 1;
         let hostData: HostDetails | null = null;
-        
+
         try {
           const tourResponse = await api.get(`/tours/${booking.tourId}`);
           if (tourResponse.data.success && tourResponse.data.data) {
@@ -131,7 +135,7 @@ const TourPaymentPage: React.FC = () => {
               locationCity: tour.locationCity,
               locationCountry: tour.locationCountry,
               meetingPoint: tour.meetingPoint,
-              images: tour.images
+              images: tour.images,
             };
             hostId = tour.hostId || hostId;
 
@@ -141,52 +145,61 @@ const TourPaymentPage: React.FC = () => {
                 if (hostResponse.data.success && hostResponse.data.data) {
                   const host = hostResponse.data.data;
                   hostData = {
-                    email: host.email || 'host@example.com',
-                    name: `${host.firstName || 'Host'} ${host.lastName || 'Name'}`,
-                    phone: host.phone || '+250788123456'
+                    email: host.email || "host@example.com",
+                    name: `${host.firstName || "Host"} ${
+                      host.lastName || "Name"
+                    }`,
+                    phone: host.phone || "+250788123456",
                   };
                   setHostDetails(hostData);
                 }
               } catch (error) {
-                console.warn('Could not fetch host details:', error);
+                console.warn("Could not fetch host details:", error);
               }
             }
           }
         } catch (error) {
-          console.warn('Could not fetch tour details:', error);
+          console.warn("Could not fetch tour details:", error);
         }
 
         let scheduleDetails = {
-          scheduleDate: booking.scheduleDate || 'TBD',
-          scheduleStartTime: booking.scheduleStartTime || '09:00',
-          scheduleEndTime: booking.scheduleEndTime || '17:00'
+          scheduleDate: booking.scheduleDate || "TBD",
+          scheduleStartTime: booking.scheduleStartTime || "09:00",
+          scheduleEndTime: booking.scheduleEndTime || "17:00",
         };
 
         if (booking.scheduleId && tourDetails) {
           try {
-            const scheduleResponse = await api.get(`/tours/${booking.tourId}/schedules`);
+            const scheduleResponse = await api.get(
+              `/tours/${booking.tourId}/schedules`
+            );
             if (scheduleResponse.data.success && scheduleResponse.data.data) {
               const schedule = scheduleResponse.data.data;
               scheduleDetails = {
                 scheduleDate: schedule.startDate,
                 scheduleStartTime: schedule.startTime,
-                scheduleEndTime: schedule.endTime
+                scheduleEndTime: schedule.endTime,
               };
             }
           } catch (error) {
-            console.warn('Could not fetch schedule details:', error);
+            console.warn("Could not fetch schedule details:", error);
           }
         }
 
-        const displayPricePerPerson = booking.totalAmount / booking.numberOfParticipants;
+        const displayPricePerPerson =
+          booking.totalAmount / booking.numberOfParticipants;
         const basePricePerPerson = displayPricePerPerson;
-        
-        const priceBreakdown = calculatePriceBreakdown(basePricePerPerson, booking.numberOfParticipants, false);
+
+        const priceBreakdown = calculatePriceBreakdown(
+          basePricePerPerson,
+          booking.numberOfParticipants,
+          false
+        );
 
         setBookingData({
           id: booking.id,
           tourId: booking.tourId,
-          tourTitle: booking.tourTitle || 'Tour Experience',
+          tourTitle: booking.tourTitle || "Tour Experience",
           hostId,
           scheduleId: booking.scheduleId,
           ...scheduleDetails,
@@ -204,17 +217,26 @@ const TourPaymentPage: React.FC = () => {
             subtotal: displayPricePerPerson * booking.numberOfParticipants,
             serviceFee: priceBreakdown.serviceFee,
             taxes: priceBreakdown.taxes,
-            total: priceBreakdown.total
-          }
+            total: priceBreakdown.total,
+          },
         });
       } else {
-        setErrors({ general: 'Tour booking not found or invalid' });
+        setErrors({ general: "Tour booking not found or invalid" });
       }
     } catch (error: any) {
-      console.error('Failed to fetch tour booking:', error);
-      const errorMessage = error?.response?.data?.message || 
-                             error?.message || 
-                             'Failed to load booking details';
+      console.error("Failed to fetch tour booking:", error);
+
+      // Handle 401 Unauthorized - redirect to login
+      if (error?.status === 401 || error?.response?.status === 401) {
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/all/login?redirect=${encodeURIComponent(currentUrl)}`);
+        return;
+      }
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to load booking details";
       setErrors({ general: errorMessage });
     } finally {
       setFetchingBooking(false);
@@ -225,22 +247,22 @@ const TourPaymentPage: React.FC = () => {
     const newErrors: Record<string, string> = {};
 
     if (!paymentMethod) {
-      newErrors.paymentMethod = 'Please select a payment method';
+      newErrors.paymentMethod = "Please select a payment method";
     }
 
-    if (paymentMethod === 'momo') {
+    if (paymentMethod === "momo") {
       if (!momoProvider) {
-        newErrors.momoProvider = 'Please select a mobile money provider';
+        newErrors.momoProvider = "Please select a mobile money provider";
       }
-      if (!phoneNumber || phoneNumber.trim() === '') {
-        newErrors.phoneNumber = 'Phone number is required for mobile money';
-      } else if (!/^[0-9]{9,15}$/.test(phoneNumber.replace(/\s/g, ''))) {
-        newErrors.phoneNumber = 'Please enter a valid phone number';
+      if (!phoneNumber || phoneNumber.trim() === "") {
+        newErrors.phoneNumber = "Phone number is required for mobile money";
+      } else if (!/^[0-9]{9,15}$/.test(phoneNumber.replace(/\s/g, ""))) {
+        newErrors.phoneNumber = "Please enter a valid phone number";
       }
     }
 
     if (!agreedToTerms) {
-      newErrors.terms = 'Please agree to the terms and conditions';
+      newErrors.terms = "Please agree to the terms and conditions";
     }
 
     setErrors(newErrors);
@@ -249,8 +271,8 @@ const TourPaymentPage: React.FC = () => {
 
   const isFormComplete = () => {
     if (!paymentMethod || !agreedToTerms) return false;
-    if (paymentMethod === 'momo') {
-      return momoProvider !== null && phoneNumber.trim() !== '';
+    if (paymentMethod === "momo") {
+      return momoProvider !== null && phoneNumber.trim() !== "";
     }
     return true;
   };
@@ -263,34 +285,43 @@ const TourPaymentPage: React.FC = () => {
       try {
         attempts++;
         setPollCount(attempts);
-        setPollingStatus('Verifying payment...');
+        setPollingStatus("Verifying payment...");
 
         const response = await api.get(`/pawapay/deposit/${depositId}`);
 
         if (response.data.success) {
           const depositData = response.data.data?.data || response.data.data;
           const { status, failureReason } = depositData;
-          
+
           setPollingStatus(`Payment status: ${status}`);
 
-          if (status === 'COMPLETED' || status === 'ACCEPTED') {
-            setPollingStatus('Payment successful! Redirecting...');
-            sessionStorage.setItem('payment_final_status', 'success');
+          if (status === "COMPLETED" || status === "ACCEPTED") {
+            setPollingStatus("Payment successful! Redirecting...");
+            sessionStorage.setItem("payment_final_status", "success");
             setTimeout(() => {
               router.push(`/payment/success?tx=${depositId}`);
             }, 1000);
             return;
           }
 
-          if (status === 'FAILED' || status === 'REJECTED' || status === 'CANCELLED') {
-            const failureMessage = failureReason?.failureMessage || 'Payment failed';
+          if (
+            status === "FAILED" ||
+            status === "REJECTED" ||
+            status === "CANCELLED"
+          ) {
+            const failureMessage =
+              failureReason?.failureMessage || "Payment failed";
             setPollingStatus(`Payment failed: ${failureMessage}`);
             setLoading(false);
-            sessionStorage.setItem('payment_final_status', 'failed');
-            sessionStorage.setItem('payment_failure_reason', failureMessage);
+            sessionStorage.setItem("payment_final_status", "failed");
+            sessionStorage.setItem("payment_failure_reason", failureMessage);
 
             setTimeout(() => {
-              router.push(`/payment/failed?tx=${depositId}&error=${encodeURIComponent(failureMessage)}`);
+              router.push(
+                `/payment/failed?tx=${depositId}&error=${encodeURIComponent(
+                  failureMessage
+                )}`
+              );
             }, 2000);
             return;
           }
@@ -298,25 +329,27 @@ const TourPaymentPage: React.FC = () => {
           if (attempts < maxAttempts) {
             setTimeout(() => checkStatus(), 10000);
           } else {
-            setPollingStatus('Status check timeout. Please check your payment status.');
+            setPollingStatus(
+              "Status check timeout. Please check your payment status."
+            );
             setLoading(false);
             router.push(`/payment/pending?tx=${depositId}`);
           }
         } else {
-          console.error('[PAYMENT] Failed to check status:', response.data);
+          console.error("[PAYMENT] Failed to check status:", response.data);
           if (attempts < maxAttempts) {
             setTimeout(() => checkStatus(), 10000);
           } else {
-            setPollingStatus('Failed to verify payment status');
+            setPollingStatus("Failed to verify payment status");
             setLoading(false);
           }
         }
       } catch (error) {
-        console.error('[PAYMENT] Error polling status:', error);
+        console.error("[PAYMENT] Error polling status:", error);
         if (attempts < maxAttempts) {
           setTimeout(() => checkStatus(), 10000);
         } else {
-          setPollingStatus('Error checking payment status');
+          setPollingStatus("Error checking payment status");
           setLoading(false);
         }
       }
@@ -334,85 +367,118 @@ const TourPaymentPage: React.FC = () => {
       setLoading(true);
       setErrors({});
 
-      const finalAmount = bookingData.priceBreakdown?.total || bookingData.totalAmount;
+      const finalAmount =
+        bookingData.priceBreakdown?.total || bookingData.totalAmount;
 
-      const endpoint = paymentMethod === 'card' 
-        ? '/payments/deposits'
-        : '/pawapay/deposit';
+      // Unified endpoint for all payment methods
+      const endpoint = "/api/transactions/deposit";
 
-      const pawaPayDepositPayload = {
-        amount: finalAmount,
-        currency: 'RWF',
-        phoneNumber: `${countryCode.replace('+', '')}${phoneNumber}`,
-        provider: momoProvider,
-        country: 'RW',
+      // Build request payload based on payment method
+      let depositPayload: any = {
+        paymentMethod: paymentMethod, // 'momo' or 'card'
+        amount: finalAmount, // Amount in USD (will be auto-converted to RWF)
         description: `Payment for ${bookingData.tourTitle}`,
         internalReference: bookingData.id,
-        metadata: {
-          bookingType: 'tour',
-          bookingId: bookingData.id,
-          tourId: bookingData.tourId,
-          scheduleId: bookingData.scheduleId,
-          userId: currentUser.id,
-        },
       };
 
-      const response = await api.post(endpoint, pawaPayDepositPayload);
+      // Add payment method specific fields
+      if (paymentMethod === "momo") {
+        depositPayload = {
+          ...depositPayload,
+          phoneNumber: `${countryCode.replace("+", "")}${phoneNumber}`,
+          provider: `${momoProvider}_RWANDA`, // e.g., MTN_RWANDA, AIRTEL_RWANDA
+          country: "RW",
+        };
+      } else if (paymentMethod === "card") {
+        depositPayload = {
+          ...depositPayload,
+          email: currentUser.email || "guest@example.com",
+          customerName:
+            `${currentUser.firstName || ""} ${
+              currentUser.lastName || ""
+            }`.trim() || "Guest",
+          phoneNumber: phoneNumber || currentUser.phone || "0780000000",
+        };
+      }
+
+      const response = await api.post(endpoint, depositPayload);
 
       if (response.data.success) {
-        const { transactionId, depositId, status, redirectUrl, checkoutUrl, instructions } = response.data.data;
+        const {
+          depositId,
+          refId,
+          paymentUrl,
+          status,
+          amountUSD,
+          amountRWF,
+          exchangeRate,
+        } = response.data.data;
 
-        sessionStorage.setItem('payment_transaction_id', transactionId || depositId);
-        sessionStorage.setItem('tour_booking_id', bookingData.id);
+        sessionStorage.setItem("payment_transaction_id", depositId || refId);
+        sessionStorage.setItem("tour_booking_id", bookingData.id);
 
-        // For card payments, use checkoutUrl (Pesapal) or redirectUrl
-        if (paymentMethod === 'card' && (checkoutUrl || redirectUrl)) {
-          window.location.href = checkoutUrl || redirectUrl;
-        } else if (paymentMethod === 'momo') {
-          if (instructions) {
-            alert(instructions);
-          }
-          pollPaymentStatus(depositId || transactionId);
+        // For card payments, redirect to paymentUrl
+        if (paymentMethod === "card" && paymentUrl) {
+          window.location.href = paymentUrl;
+        } else if (paymentMethod === "momo") {
+          // For mobile money, user receives prompt on their phone
+          alert(
+            `Please check your phone for payment prompt. Amount: ${amountRWF} RWF (${amountUSD} USD)`
+          );
+          pollPaymentStatus(depositId);
         }
       } else {
         setErrors({
-          general: response.data.message || 'Failed to create payment. Please try again.'
+          general:
+            response.data.message ||
+            "Failed to create payment. Please try again.",
         });
         setLoading(false);
       }
     } catch (error: any) {
-      console.error('[PAYMENT] Deposit error:', error);
+      console.error("[PAYMENT] Deposit error:", error);
 
-      const errorMessage = error?.response?.data?.error?.message ||
-                             error?.response?.data?.message ||
-                             error?.message ||
-                             'Payment failed. Please try again.';
+      // Handle 401 Unauthorized - redirect to login
+      if (error?.status === 401 || error?.response?.status === 401) {
+        const currentUrl = window.location.pathname + window.location.search;
+        router.push(`/all/login?redirect=${encodeURIComponent(currentUrl)}`);
+        return;
+      }
+
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Payment failed. Please try again.";
 
       setErrors({ general: errorMessage });
       setLoading(false);
     } finally {
-      if (paymentMethod !== 'momo') {
+      if (paymentMethod !== "momo") {
         setLoading(false);
       }
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const getDifficultyBadge = (difficulty: string) => {
     const colors = {
-      easy: 'bg-green-100 text-green-800',
-      moderate: 'bg-yellow-100 text-yellow-800',
-      challenging: 'bg-red-100 text-red-800'
+      easy: "bg-green-100 text-green-800",
+      moderate: "bg-yellow-100 text-yellow-800",
+      challenging: "bg-red-100 text-red-800",
     };
-    return colors[difficulty?.toLowerCase() as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return (
+      colors[difficulty?.toLowerCase() as keyof typeof colors] ||
+      "bg-gray-100 text-gray-800"
+    );
   };
 
   // Loading state
@@ -435,10 +501,12 @@ const TourPaymentPage: React.FC = () => {
           <div className="text-red-500 mb-4">
             <i className="bi bi-exclamation-circle text-5xl"></i>
           </div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Booking Not Found</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            Booking Not Found
+          </h2>
           <p className="text-gray-600 mb-6">{errors.general}</p>
-          <button 
-            onClick={() => router.push('/tours')}
+          <button
+            onClick={() => router.push("/tours")}
             className="px-6 py-3 bg-[#083A85] text-white rounded-lg hover:bg-[#062a5f] transition font-medium"
           >
             Browse Tours
@@ -457,7 +525,7 @@ const TourPaymentPage: React.FC = () => {
         {/* Header */}
         <div className="pt-14">
           <div className="max-w-[1280px] mx-auto px-2 sm:px-7 py-4 flex items-center">
-            <button 
+            <button
               onClick={() => router.back()}
               className="p-2 hover:bg-gray-100 rounded-full transition mr-4"
             >
@@ -469,78 +537,99 @@ const TourPaymentPage: React.FC = () => {
 
         <div className="max-w-[1280px] mx-auto px-5 sm:px-10 py-5">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-20">
-            
             {/* Left Side - Payment Form */}
             <div className="lg:col-span-3">
-              
               {/* Your experience */}
               <div className="mb-10">
-                <h2 className="text-[22px] font-medium mb-6">Your experience</h2>
+                <h2 className="text-[22px] font-medium mb-6">
+                  Your experience
+                </h2>
                 <div className="space-y-6">
                   <div>
                     <h3 className="font-medium mb-2">Date & Time</h3>
                     <p className="text-gray-600">
-                      {formatDate(bookingData?.scheduleDate || '')}
+                      {formatDate(bookingData?.scheduleDate || "")}
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
-                      {bookingData?.scheduleStartTime} - {bookingData?.scheduleEndTime}
+                      {bookingData?.scheduleStartTime} -{" "}
+                      {bookingData?.scheduleEndTime}
                     </p>
                   </div>
                   <div>
                     <h3 className="font-medium mb-2">Participants</h3>
                     <p className="text-gray-600">
-                      {bookingData?.numberOfParticipants} {bookingData?.numberOfParticipants === 1 ? 'person' : 'people'}
+                      {bookingData?.numberOfParticipants}{" "}
+                      {bookingData?.numberOfParticipants === 1
+                        ? "person"
+                        : "people"}
                     </p>
                   </div>
                   <div>
                     <h3 className="font-medium mb-2">Meeting point</h3>
-                    <p className="text-gray-600">{bookingData?.tourDetails?.meetingPoint}</p>
+                    <p className="text-gray-600">
+                      {bookingData?.tourDetails?.meetingPoint}
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Participant Details */}
-              {bookingData?.participants && Array.isArray(bookingData.participants) && bookingData.participants.length > 0 && (
-                <div className="border-t pt-8 pb-8">
-                  <h2 className="text-[22px] font-medium mb-6">Participant details</h2>
-                  <div className="bg-gray-50 rounded-xl p-6">
-                    <div className="space-y-4">
-                      {bookingData.participants.map((participant, idx) => (
-                        <div key={idx} className="pb-4 last:pb-0 last:border-0 border-b">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="font-medium">Participant {idx + 1}</p>
-                              <p className="text-sm text-gray-600 mt-1">{participant.name}, Age: {participant.age}</p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                Emergency: {participant.emergencyContact?.name} ({participant.emergencyContact?.relationship})
-                              </p>
+              {bookingData?.participants &&
+                Array.isArray(bookingData.participants) &&
+                bookingData.participants.length > 0 && (
+                  <div className="border-t pt-8 pb-8">
+                    <h2 className="text-[22px] font-medium mb-6">
+                      Participant details
+                    </h2>
+                    <div className="bg-gray-50 rounded-xl p-6">
+                      <div className="space-y-4">
+                        {bookingData.participants.map((participant, idx) => (
+                          <div
+                            key={idx}
+                            className="pb-4 last:pb-0 last:border-0 border-b"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <p className="font-medium">
+                                  Participant {idx + 1}
+                                </p>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {participant.name}, Age: {participant.age}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Emergency:{" "}
+                                  {participant.emergencyContact?.name} (
+                                  {participant.emergencyContact?.relationship})
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Choose how to pay */}
               <div className="border-t pt-8 pb-8">
                 <h2 className="text-[22px] font-medium mb-6">Pay with</h2>
-                
+
                 {errors.paymentMethod && (
-                  <div className="mb-4 text-red-500 text-sm">{errors.paymentMethod}</div>
+                  <div className="mb-4 text-red-500 text-sm">
+                    {errors.paymentMethod}
+                  </div>
                 )}
 
                 <div className="space-y-3">
                   {/* Mobile Money Option */}
-                  <div 
+                  <div
                     className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                      paymentMethod === 'momo' 
-                        ? 'border-gray-900 bg-gray-50' 
-                        : 'border-gray-300 hover:border-gray-400'
+                      paymentMethod === "momo"
+                        ? "border-gray-900 bg-gray-50"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                     onClick={() => {
-                      setPaymentMethod('momo');
+                      setPaymentMethod("momo");
                       setErrors({});
                     }}
                   >
@@ -548,8 +637,8 @@ const TourPaymentPage: React.FC = () => {
                       <input
                         type="radio"
                         name="paymentMethod"
-                        checked={paymentMethod === 'momo'}
-                        onChange={() => setPaymentMethod('momo')}
+                        checked={paymentMethod === "momo"}
+                        onChange={() => setPaymentMethod("momo")}
                         className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
                       />
                       <div className="flex-1">
@@ -560,7 +649,7 @@ const TourPaymentPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {paymentMethod === 'momo' && (
+                    {paymentMethod === "momo" && (
                       <div className="mt-6 ml-8 space-y-4">
                         <div>
                           <label className="block text-sm font-medium mb-3 text-gray-700">
@@ -568,19 +657,33 @@ const TourPaymentPage: React.FC = () => {
                           </label>
                           <div className="grid grid-cols-2 gap-2">
                             {[
-                              { name: 'MTN', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/MTN_Logo.svg/240px-MTN_Logo.svg.png' },
-                              { name: 'AIRTEL', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Airtel_logo.svg/240px-Airtel_logo.svg.png' },
-                              { name: 'MPESA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/240px-M-PESA_LOGO-01.svg.png' },
-                              { name: 'ORANGE', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Orange_logo.svg/240px-Orange_logo.svg.png' }
+                              {
+                                name: "MTN",
+                                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/MTN_Logo.svg/240px-MTN_Logo.svg.png",
+                              },
+                              {
+                                name: "AIRTEL",
+                                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Airtel_logo.svg/240px-Airtel_logo.svg.png",
+                              },
+                              {
+                                name: "MPESA",
+                                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/240px-M-PESA_LOGO-01.svg.png",
+                              },
+                              {
+                                name: "ORANGE",
+                                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Orange_logo.svg/240px-Orange_logo.svg.png",
+                              },
                             ].map((provider) => (
                               <button
                                 key={provider.name}
                                 type="button"
-                                onClick={() => setMomoProvider(provider.name as any)}
+                                onClick={() =>
+                                  setMomoProvider(provider.name as any)
+                                }
                                 className={`p-3 rounded-lg border-2 transition flex items-center justify-center gap-2 ${
                                   momoProvider === provider.name
-                                    ? 'border-[#083A85] bg-blue-50'
-                                    : 'border-gray-300 hover:border-gray-400 bg-white'
+                                    ? "border-[#083A85] bg-blue-50"
+                                    : "border-gray-300 hover:border-gray-400 bg-white"
                                 }`}
                               >
                                 <img
@@ -589,13 +692,19 @@ const TourPaymentPage: React.FC = () => {
                                   className="h-6 object-contain"
                                 />
                                 <span className="text-xs font-medium">
-                                  {provider.name === 'MPESA' ? 'M-Pesa' : provider.name === 'ORANGE' ? 'Money' : ''}
+                                  {provider.name === "MPESA"
+                                    ? "M-Pesa"
+                                    : provider.name === "ORANGE"
+                                    ? "Money"
+                                    : ""}
                                 </span>
                               </button>
                             ))}
                           </div>
                           {errors.momoProvider && (
-                            <p className="text-red-500 text-sm mt-2">{errors.momoProvider}</p>
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.momoProvider}
+                            </p>
                           )}
                         </div>
 
@@ -619,7 +728,9 @@ const TourPaymentPage: React.FC = () => {
                               <option value="+27">🇿🇦 +27 (South Africa)</option>
                               <option value="+234">🇳🇬 +234 (Nigeria)</option>
                               <option value="+233">🇬🇭 +233 (Ghana)</option>
-                              <option value="+225">🇨🇮 +225 (Côte d'Ivoire)</option>
+                              <option value="+225">
+                                🇨🇮 +225 (Côte d'Ivoire)
+                              </option>
                               <option value="+221">🇸🇳 +221 (Senegal)</option>
                             </select>
                             <input
@@ -634,7 +745,9 @@ const TourPaymentPage: React.FC = () => {
                             />
                           </div>
                           {errors.phoneNumber && (
-                            <p className="text-red-500 text-sm mt-2">{errors.phoneNumber}</p>
+                            <p className="text-red-500 text-sm mt-2">
+                              {errors.phoneNumber}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -644,12 +757,12 @@ const TourPaymentPage: React.FC = () => {
                   {/* Card Option */}
                   <div
                     className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                      paymentMethod === 'card'
-                        ? 'border-gray-900 bg-gray-50'
-                        : 'border-gray-300 hover:border-gray-400'
+                      paymentMethod === "card"
+                        ? "border-gray-900 bg-gray-50"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                     onClick={() => {
-                      setPaymentMethod('card');
+                      setPaymentMethod("card");
                       setErrors({});
                     }}
                   >
@@ -657,23 +770,36 @@ const TourPaymentPage: React.FC = () => {
                       <input
                         type="radio"
                         name="paymentMethod"
-                        checked={paymentMethod === 'card'}
-                        onChange={() => setPaymentMethod('card')}
+                        checked={paymentMethod === "card"}
+                        onChange={() => setPaymentMethod("card")}
                         className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-medium">Credit or debit card</h3>
                           <div className="flex items-center gap-1">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/240px-Visa_Inc._logo.svg.png" alt="Visa" className="h-4" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/240px-Mastercard-logo.svg.png" alt="Mastercard" className="h-4" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/240px-American_Express_logo_%282018%29.svg.png" alt="Amex" className="h-4" />
+                            <img
+                              src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/240px-Visa_Inc._logo.svg.png"
+                              alt="Visa"
+                              className="h-4"
+                            />
+                            <img
+                              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/240px-Mastercard-logo.svg.png"
+                              alt="Mastercard"
+                              className="h-4"
+                            />
+                            <img
+                              src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/240px-American_Express_logo_%282018%29.svg.png"
+                              alt="Amex"
+                              className="h-4"
+                            />
                           </div>
                         </div>
                         <p className="text-sm text-gray-600">
-                          Secure payment with Visa, Mastercard, or American Express
+                          Secure payment with Visa, Mastercard, or American
+                          Express
                         </p>
-                        {paymentMethod === 'card' && (
+                        {paymentMethod === "card" && (
                           <p className="text-xs text-blue-600 mt-2 font-medium">
                             You will be redirected to enter card details
                           </p>
@@ -686,10 +812,13 @@ const TourPaymentPage: React.FC = () => {
 
               {/* Message for the guide */}
               <div className="border-t pt-8 pb-8">
-                <h2 className="text-[22px] font-medium mb-6">Message for the guide</h2>
+                <h2 className="text-[22px] font-medium mb-6">
+                  Message for the guide
+                </h2>
                 <div className="bg-gray-50 rounded-xl p-4">
                   <p className="text-sm text-gray-600 mb-4">
-                    Share any special requests or let your guide know what you're most excited about
+                    Share any special requests or let your guide know what
+                    you're most excited about
                   </p>
                   <textarea
                     value={specialMessage}
@@ -702,16 +831,24 @@ const TourPaymentPage: React.FC = () => {
 
               {/* Cancellation policy */}
               <div className="border-t pt-8 pb-8">
-                <h2 className="text-[22px] font-medium mb-4">Cancellation policy</h2>
+                <h2 className="text-[22px] font-medium mb-4">
+                  Cancellation policy
+                </h2>
                 <p className="text-gray-600 mb-4">
-                  <span className="font-medium">Free cancellation up to 24 hours before the experience starts.</span> After that, no refunds will be issued.
+                  <span className="font-medium">
+                    Free cancellation up to 24 hours before the experience
+                    starts.
+                  </span>{" "}
+                  After that, no refunds will be issued.
                 </p>
                 <button className="font-medium underline">Learn more</button>
               </div>
 
               {/* Ground rules */}
               <div className="border-t pt-8 pb-8">
-                <h2 className="text-[22px] font-medium mb-4">Experience rules</h2>
+                <h2 className="text-[22px] font-medium mb-4">
+                  Experience rules
+                </h2>
                 <p className="text-gray-600 mb-4">
                   To ensure everyone has a great experience, please remember:
                 </p>
@@ -741,11 +878,16 @@ const TourPaymentPage: React.FC = () => {
                     className="mt-1 w-5 h-5 accent-[#083A85] cursor-pointer"
                   />
                   <div className="text-sm text-gray-600">
-                    I agree to the <button className="underline">Experience Rules</button>, <button className="underline">Cancellation Policy</button>, and <button className="underline">RentSpaces Terms</button>
+                    I agree to the{" "}
+                    <button className="underline">Experience Rules</button>,{" "}
+                    <button className="underline">Cancellation Policy</button>,
+                    and <button className="underline">RentSpaces Terms</button>
                   </div>
                 </label>
                 {errors.terms && (
-                  <p className="text-red-500 text-sm mt-2 ml-8">{errors.terms}</p>
+                  <p className="text-red-500 text-sm mt-2 ml-8">
+                    {errors.terms}
+                  </p>
                 )}
               </div>
 
@@ -776,8 +918,8 @@ const TourPaymentPage: React.FC = () => {
                   disabled={loading || !isFormComplete()}
                   className={`w-full py-3 rounded-lg font-medium transition-all ${
                     loading || !isFormComplete()
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700'
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700"
                   }`}
                 >
                   {loading ? (
@@ -786,7 +928,10 @@ const TourPaymentPage: React.FC = () => {
                       Processing...
                     </span>
                   ) : (
-                    `Confirm and pay $${(bookingData?.priceBreakdown?.total || bookingData?.totalAmount)?.toFixed(2)}`
+                    `Confirm and pay $${(
+                      bookingData?.priceBreakdown?.total ||
+                      bookingData?.totalAmount
+                    )?.toFixed(2)}`
                   )}
                 </button>
               </div>
@@ -800,12 +945,19 @@ const TourPaymentPage: React.FC = () => {
                     <i className="bi bi-compass text-3xl text-gray-400"></i>
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium text-sm mb-1">{bookingData?.tourTitle}</h3>
+                    <h3 className="font-medium text-sm mb-1">
+                      {bookingData?.tourTitle}
+                    </h3>
                     <p className="text-xs text-gray-600 mb-2">
-                      {bookingData?.tourDetails?.locationCity}, {bookingData?.tourDetails?.locationCountry}
+                      {bookingData?.tourDetails?.locationCity},{" "}
+                      {bookingData?.tourDetails?.locationCountry}
                     </p>
                     {bookingData?.tourDetails?.difficulty && (
-                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getDifficultyBadge(bookingData.tourDetails.difficulty)}`}>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getDifficultyBadge(
+                          bookingData.tourDetails.difficulty
+                        )}`}
+                      >
                         {bookingData.tourDetails.difficulty}
                       </span>
                     )}
@@ -818,32 +970,41 @@ const TourPaymentPage: React.FC = () => {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Date</span>
                       <span className="font-medium">
-                        {new Date(bookingData?.scheduleDate || '').toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
+                        {new Date(
+                          bookingData?.scheduleDate || ""
+                        ).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
                         })}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Time</span>
                       <span className="font-medium">
-                        {bookingData?.scheduleStartTime} - {bookingData?.scheduleEndTime}
+                        {bookingData?.scheduleStartTime} -{" "}
+                        {bookingData?.scheduleEndTime}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Duration</span>
                       <span className="font-medium">
-                        {Math.floor((bookingData?.tourDetails?.duration || 0) / 24) > 0 
-                          ? `${Math.floor((bookingData?.tourDetails?.duration || 0) / 24)} days`
-                          : `${bookingData?.tourDetails?.duration} hours`
-                        }
+                        {Math.floor(
+                          (bookingData?.tourDetails?.duration || 0) / 24
+                        ) > 0
+                          ? `${Math.floor(
+                              (bookingData?.tourDetails?.duration || 0) / 24
+                            )} days`
+                          : `${bookingData?.tourDetails?.duration} hours`}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Group size</span>
                       <span className="font-medium">
-                        {bookingData?.numberOfParticipants} {bookingData?.numberOfParticipants === 1 ? 'person' : 'people'}
+                        {bookingData?.numberOfParticipants}{" "}
+                        {bookingData?.numberOfParticipants === 1
+                          ? "person"
+                          : "people"}
                       </span>
                     </div>
                   </div>
@@ -854,13 +1015,18 @@ const TourPaymentPage: React.FC = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600">
-                        ${bookingData?.pricePerPerson?.toFixed(2)} x {bookingData?.numberOfParticipants} participants
+                        ${bookingData?.pricePerPerson?.toFixed(2)} x{" "}
+                        {bookingData?.numberOfParticipants} participants
                       </span>
-                      <span>${bookingData?.priceBreakdown?.subtotal?.toFixed(2)}</span>
+                      <span>
+                        ${bookingData?.priceBreakdown?.subtotal?.toFixed(2)}
+                      </span>
                     </div>
                     <div className="flex justify-between text-base">
                       <span className="text-gray-600 underline">Taxes</span>
-                      <span>${bookingData?.priceBreakdown?.taxes?.toFixed(2)}</span>
+                      <span>
+                        ${bookingData?.priceBreakdown?.taxes?.toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -869,7 +1035,11 @@ const TourPaymentPage: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total (USD)</span>
                     <span className="text-base font-semibold">
-                      ${(bookingData?.priceBreakdown?.total || bookingData?.totalAmount)?.toFixed(2)}
+                      $
+                      {(
+                        bookingData?.priceBreakdown?.total ||
+                        bookingData?.totalAmount
+                      )?.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -879,7 +1049,9 @@ const TourPaymentPage: React.FC = () => {
                   <div className="flex items-start gap-3">
                     <i className="bi bi-shield-check text-[#083A85] text-lg mt-0.5"></i>
                     <div className="text-xs text-gray-600">
-                      <p className="font-medium mb-1">Your payment is protected</p>
+                      <p className="font-medium mb-1">
+                        Your payment is protected
+                      </p>
                       <p>All transactions are secure and encrypted</p>
                     </div>
                   </div>

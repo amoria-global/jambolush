@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "./lib/AuthContext";
 import { setSessionExpiredHandler as setSessionExpiredHandlerApiConn } from "./api/api-conn";
 import { setSessionExpiredHandler as setSessionExpiredHandlerApiService } from "./api/apiService";
 import SessionExpiredModal from "./components/SessionExpiredModal";
+import { suppressConsoleErrors } from "./utils/suppressErrors";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/navbar";
@@ -43,6 +44,11 @@ function LayoutContent({
     setSessionExpiredHandlerApiConn(triggerSessionExpired);
     setSessionExpiredHandlerApiService(triggerSessionExpired);
   }, [triggerSessionExpired]);
+
+  // Suppress console errors globally on mount
+  useEffect(() => {
+    suppressConsoleErrors();
+  }, []);
 
   useEffect(() => {
     // Check if we're on the homepage
@@ -189,6 +195,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Load error suppression script FIRST - synchronously */}
+        <script src="/suppress-errors.js"></script>
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
         <meta name="language" content="en" />
         <meta property="og:locale" content="en" />

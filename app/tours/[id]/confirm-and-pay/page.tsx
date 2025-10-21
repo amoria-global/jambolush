@@ -141,7 +141,7 @@ const TourPaymentPage: React.FC = () => {
 
             if (hostId) {
               try {
-                const hostResponse = await api.get(`/users/${hostId}`);
+                const hostResponse = await api.get(`/me/${hostId}`);
                 if (hostResponse.data.success && hostResponse.data.data) {
                   const host = hostResponse.data.data;
                   hostData = {

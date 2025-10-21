@@ -592,7 +592,7 @@ const RoleSelection: React.FC<{
     },
     {
       id: 'agent',
-      title: 'Property Agent',
+      title: 'Field Agent',
       description: 'Help others find and book properties',
       icon: '🤝'
     }

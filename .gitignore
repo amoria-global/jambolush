@@ -39,11 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-<<<<<<< Updated upstream
 node_modules
-=======
+
 
 /app/generated/prisma
->>>>>>> Stashed changes
+
 .env*.local
 .env
+
+.claude

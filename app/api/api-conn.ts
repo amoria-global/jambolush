@@ -104,29 +104,6 @@ class ApiLogger {
       this.logs = this.logs.slice(0, this.maxLogs);
     }
 
-    // Console logging with colors and formatting
-    const color = this.getLogColor(entry.responseStatus);
-    const duration = `${entry.duration}ms`;
-
-    console.group(`🌐 API ${entry.method} ${entry.endpoint}`);
-    console.log(`%c${entry.method} ${entry.fullUrl}`, `color: ${color}; font-weight: bold`);
-    console.log(`⏱️  Duration: ${duration}`);
-    console.log(`📊 Status: ${entry.responseStatus}`);
-
-    if (entry.requestData) {
-      console.log('📤 Request Data:', entry.requestData);
-    }
-
-    if (entry.responseData) {
-      console.log('📥 Response Data:', entry.responseData);
-    }
-
-    if (entry.error) {
-      console.error('❌ Error:', entry.error);
-    }
-
-    console.groupEnd();
-
     // Also store in localStorage for persistence (optional) - only in development
     try {
       const storedLogs = JSON.parse(localStorage.getItem('api_logs') || '[]');
@@ -236,6 +213,16 @@ class ApiConnector {
       const response = await fetch(fullUrl, {
         ...requestConfig,
         signal: controller.signal,
+      }).catch((fetchError) => {
+        // Silently catch and handle fetch errors without logging to console
+        return new Response(JSON.stringify({
+          message: 'Network request failed',
+          error: fetchError.message
+        }), {
+          status: 0,
+          statusText: 'Network Error',
+          headers: { 'Content-Type': 'application/json' }
+        });
       });
 
       clearTimeout(timeoutId);
@@ -289,6 +276,16 @@ class ApiConnector {
               const retryResponse = await fetch(fullUrl, {
                 ...requestConfig,
                 signal: controller.signal,
+              }).catch((fetchError) => {
+                // Silently catch and handle fetch errors without logging to console
+                return new Response(JSON.stringify({
+                  message: 'Network request failed',
+                  error: fetchError.message
+                }), {
+                  status: 0,
+                  statusText: 'Network Error',
+                  headers: { 'Content-Type': 'application/json' }
+                });
               });
 
               const retryContentType = retryResponse.headers.get('content-type');
@@ -473,6 +470,16 @@ class ApiConnector {
           'Authorization': getDefaultHeaders()['Authorization'] || '',
         },
         body: formData,
+      }).catch((fetchError) => {
+        // Silently catch and handle fetch errors without logging to console
+        return new Response(JSON.stringify({
+          message: 'Upload failed',
+          error: fetchError.message
+        }), {
+          status: 0,
+          statusText: 'Network Error',
+          headers: { 'Content-Type': 'application/json' }
+        });
       });
 
       const responseData = await response.json();

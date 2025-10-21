@@ -403,7 +403,7 @@ class FrontendAPIService {
     const url = this.buildURL(endpoint, params);
     const mergedHeaders = { ...this.defaultHeaders, ...headers };
     const preparedBody = this.prepareBody(body);
-    
+
     if (preparedBody instanceof FormData) {
       delete mergedHeaders['Content-Type'];
     } else if (preparedBody && typeof preparedBody === 'string') {
